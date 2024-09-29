@@ -1,0 +1,29 @@
+#common
+.DS_Store
+node_modules
+
+# logs
+.pnpm-debug.log*
+*.log
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Output of 'npm pack'
+*.tgz
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# mocks and stubs
+.svgwormrc.ts
+svg
+
+#production code
+dist
