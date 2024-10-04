@@ -3,7 +3,8 @@ import pc from 'picocolors';
 import buildSources from './build-sources';
 import { PrettyError } from './errors';
 import loadConfig from './load-config';
-import resolvePaths from './resolve-paths';
+import PrettierFormatter from './prettier-formatter';
+import SVGOptimizer from './svg-optimizer';
 import { AppAction } from './types';
 import writeIcon from './write-icon';
 import writeIndex from './write-index';
@@ -12,35 +13,30 @@ import writeTypes from './write-types';
 
 const appAction: AppAction = async (src, dest, options) => {
   const startTime = performance.now();
-  const config = await loadConfig({
+  console.log(pc.yellow('Starting the SVG processing...'));
+  const { paths, prettierConfig, svgoConfig } = await loadConfig({
     src,
     dest,
     optimize: options?.optimize,
     clean: options?.clean,
   });
-  const paths = await resolvePaths({
-    src: config.src,
-    dest: config.dest,
-    clean: config.clean,
-  });
   console.log(
     pc.blueBright(`Processing SVG files inside ${pc.bold(paths.src)}`),
   );
-  // console.time('buildSources');
-  const sources = await buildSources(paths.src);
+  const sources = await buildSources(paths.src, SVGOptimizer(svgoConfig));
   if (!sources.results.length) {
     throw new PrettyError(
       'There were no valid SVG files found in the source directory.',
     );
   }
+  const formatter = PrettierFormatter(prettierConfig);
   await Promise.all([
-    writeTypes(sources.results, paths.dest),
-    writeSprite(sources.results, paths.dest),
-    writeIcon(paths.dest),
-    writeIndex(paths.dest),
+    writeTypes(sources.results, paths.dest, formatter),
+    writeSprite(sources.results, paths.dest, formatter),
+    writeIcon(paths.dest, formatter),
+    writeIndex(paths.dest, formatter),
   ]);
   const endTime = performance.now();
-  // console.timeEnd('buildSources');
   console.log(
     `${pc.greenBright(
       `${pc.bold(sources.results.length)} SVG files processed in ${pc.bold((endTime - startTime).toFixed(2))}ms`,

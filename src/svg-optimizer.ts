@@ -1,10 +1,8 @@
 import { createHash } from 'node:crypto';
 
-import { Config, loadConfig, optimize } from 'svgo';
+import { Config, optimize } from 'svgo';
 
-const SVGOptimizer = async () => {
-  const customConfig = await loadConfig().catch(() => null);
-
+const SVGOptimizer = (customConfig: Config | null) => {
   return (content: string, id: string) => {
     const hasFillOrStroke =
       content.includes('fill="') || content.includes('stroke="');

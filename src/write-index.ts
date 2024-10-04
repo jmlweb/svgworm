@@ -1,9 +1,8 @@
 import fs from 'node:fs/promises';
 
-import PrettierFormatter from './prettier-formatter';
+import { Formatter } from './types';
 
-const writeIndex = async (destPath: string) => {
-  const formatter = PrettierFormatter();
+const writeIndex = async (destPath: string, formatter: Formatter) => {
   const template = await formatter.formatTS(`
     export type { IconProps } from './icon';
     export { default as Icon } from './icon';

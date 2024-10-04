@@ -4,10 +4,12 @@ import path from 'node:path';
 import getFilesMap from './get-files-map';
 import SVGOptimizer from './svg-optimizer';
 
-const buildSources = async (srcPath: string) => {
+const buildSources = async (
+  srcPath: string,
+  svgOptimizer: ReturnType<typeof SVGOptimizer>,
+) => {
   const files = await fs.readdir(srcPath, { recursive: true });
   const filesMap = getFilesMap(files);
-  const svgOptimizer = await SVGOptimizer();
   const rawSources = await Promise.all(
     Object.entries(filesMap).map(async ([id, src]) => {
       const content = await fs
@@ -22,7 +24,11 @@ const buildSources = async (srcPath: string) => {
         };
       }
       try {
-        const formattedContent = svgOptimizer(content, id);
+        const formattedContent = await new Promise<
+          ReturnType<typeof svgOptimizer>
+        >((resolve) => {
+          setTimeout(() => resolve(svgOptimizer(content, id)), 0);
+        });
         if (!formattedContent.data) {
           throw new Error('SVG optimization failed');
         }

@@ -1,69 +1,34 @@
 import { cosmiconfig } from 'cosmiconfig';
-import * as v from 'valibot';
+import { loadConfig as loadSVGOConfig } from 'svgo';
 
-const DEFAULT_FILE_CONFIG = {
-  src: './svg',
-  dest: undefined,
-  optimize: true,
-  clean: true,
-};
+import loadAppConfig from './load-app-config';
+import resolvePaths from './resolve-paths';
 
-const NonEmptyStringSchema = v.pipe(v.string(), v.minLength(1));
-
-const FileConfigSchema = v.fallback(
-  v.object({
-    src: v.fallback(NonEmptyStringSchema, DEFAULT_FILE_CONFIG.src),
-    dest: v.fallback(
-      v.optional(NonEmptyStringSchema),
-      DEFAULT_FILE_CONFIG.dest,
-    ),
-    optimize: v.fallback(v.boolean(), DEFAULT_FILE_CONFIG.optimize),
-    clean: v.fallback(v.boolean(), DEFAULT_FILE_CONFIG.clean),
-  }),
-  DEFAULT_FILE_CONFIG,
-);
-
-const loadFileConfig = async () => {
-  const explorer = cosmiconfig('svgworm', {
+const loadPackageConfig = async (packageName: string) => {
+  const explorer = cosmiconfig(packageName, {
     searchStrategy: 'project',
   });
-  const result = await explorer
-    .search()
-    .catch(() => ({ config: DEFAULT_FILE_CONFIG }));
-  return v.parse(FileConfigSchema, result?.config);
+  const result = await explorer.search().catch(() => ({ config: {} }));
+  return result?.config ?? {};
 };
 
-const CliOptionsSchema = v.object({
-  src: v.fallback(v.optional(NonEmptyStringSchema), undefined),
-  dest: v.fallback(v.optional(NonEmptyStringSchema), undefined),
-  optimize: v.fallback(v.optional(v.boolean()), undefined),
-  clean: v.fallback(v.optional(v.boolean()), undefined),
-});
-
-type CliOptions = v.InferInput<typeof CliOptionsSchema>;
-
-const OptionsSchema = v.object({
-  src: v.string('Source folder is required'),
-  dest: v.string('Destination folder is required'),
-  optimize: v.boolean(),
-  clean: v.boolean(),
-});
-
-type ParsedOptions = v.InferInput<typeof OptionsSchema>;
-
-/**
- * Load the configuration from the CLI options and the configuration file.
- * Returns the merged configuration, with CLI options taking precedence.
- */
-const loadConfig = async (options: CliOptions): Promise<ParsedOptions> => {
-  const cliOptions = v.parse(CliOptionsSchema, options);
-  const fileConfig = await loadFileConfig();
-  return v.parse(OptionsSchema, {
-    src: cliOptions.src ?? fileConfig.src,
-    dest: cliOptions.dest ?? fileConfig.dest,
-    optimize: cliOptions.optimize ?? fileConfig.optimize,
-    clean: cliOptions.clean ?? fileConfig.clean,
+const loadConfig = async (options: Parameters<typeof loadAppConfig>[0]) => {
+  const [appConfig, prettierConfig, svgoConfig] = await Promise.all([
+    loadAppConfig(options),
+    loadPackageConfig('prettier'),
+    loadSVGOConfig().catch(() => null),
+  ]);
+  const paths = await resolvePaths({
+    src: appConfig.src,
+    dest: appConfig.dest,
+    clean: appConfig.clean,
   });
+  return {
+    appConfig,
+    paths,
+    prettierConfig,
+    svgoConfig,
+  };
 };
 
 export default loadConfig;

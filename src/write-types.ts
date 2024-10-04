@@ -1,13 +1,15 @@
 import fs from 'node:fs/promises';
 
-import PrettierFormatter from './prettier-formatter';
-import { Result } from './types';
+import { Formatter, Result } from './types';
 
 const generateTSUnionString = (items: string[]) =>
   items.map((v) => `'${v}'`).join(' | ');
 
-const writeTypes = async (results: Result[], destPath: string) => {
-  const formatter = PrettierFormatter();
+const writeTypes = async (
+  results: Result[],
+  destPath: string,
+  formatter: Formatter,
+) => {
   const typeItems = results.reduce(
     (acc, { id }) => {
       acc.iconNames.push(id);

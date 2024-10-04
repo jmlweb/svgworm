@@ -1,6 +1,6 @@
 import { cosmiconfig } from 'cosmiconfig';
 
-import loadConfig from './load-config';
+import loadAppConfig from './load-app-config';
 
 jest.mock('cosmiconfig', () => {
   return {
@@ -16,7 +16,7 @@ describe('loadConfig', () => {
   });
   it('should throw if no dest option is passed, not from a file nor from the cli', async () => {
     expect(async () => {
-      await loadConfig({});
+      await loadAppConfig({});
     }).rejects.toThrow('Destination folder is required');
   });
   it('should return the config from the file if no options are passed', async () => {
@@ -32,7 +32,7 @@ describe('loadConfig', () => {
         }),
       ),
     }));
-    const config = await loadConfig({});
+    const config = await loadAppConfig({});
     expect(config).toEqual({
       src: './svg2',
       dest: './dest2',
@@ -44,7 +44,7 @@ describe('loadConfig', () => {
     (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
       search: jest.fn(() => Promise.resolve({ config: { dest: './dest' } })),
     }));
-    const config = await loadConfig({});
+    const config = await loadAppConfig({});
     expect(config).toEqual({
       src: './svg',
       dest: './dest',
@@ -60,7 +60,7 @@ describe('loadConfig', () => {
         }),
       ),
     }));
-    const config = await loadConfig({
+    const config = await loadAppConfig({
       src: './svg2',
       optimize: false,
       clean: false,
@@ -76,7 +76,7 @@ describe('loadConfig', () => {
     (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
       search: jest.fn(() => Promise.reject('Error')),
     }));
-    const config = await loadConfig({
+    const config = await loadAppConfig({
       src: './svg2',
       dest: './svg',
       optimize: false,
@@ -96,7 +96,7 @@ describe('loadConfig', () => {
         }),
       ),
     }));
-    const config = await loadConfig({
+    const config = await loadAppConfig({
       src: ['./svg2'] as unknown as string,
       dest: './dest2',
       optimize: 'blabla' as unknown as boolean,

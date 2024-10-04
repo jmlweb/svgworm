@@ -12,3 +12,8 @@ export interface Result {
   src: string;
   content: string;
 }
+
+export interface Formatter {
+  formatSVG: (svg: string) => Promise<string>;
+  formatTS: (template: string) => Promise<string>;
+}

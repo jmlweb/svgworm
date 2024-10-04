@@ -1,9 +1,8 @@
 import fs from 'node:fs/promises';
 
-import PrettierFormatter from './prettier-formatter';
+import { Formatter } from './types';
 
-const writeIcon = async (destPath: string) => {
-  const formatter = PrettierFormatter();
+const writeIcon = async (destPath: string, formatter: Formatter) => {
   const template = await formatter.formatTS(`
     import { ComponentProps } from 'react';
 
