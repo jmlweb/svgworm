@@ -37,9 +37,11 @@
   "dependencies": {
     "cac": "^6.7.14",
     "cosmiconfig": "^9.0.0",
+    "fdir": "^6.4.0",
     "html-to-jsx-transform": "^1.2.0",
     "node-html-parser": "^6.1.13",
     "picocolors": "^1.1.0",
+    "picomatch": "^4.0.2",
     "prettier": "^3.3.3",
     "svgo": "^3.3.2",
     "valibot": "^0.42.1"

@@ -2,17 +2,14 @@ import { createHash } from 'node:crypto';
 
 import { Config, optimize } from 'svgo';
 
-const SVGOptimizer = (customConfig: Config | null) => {
-  return (content: string, id: string) => {
+const SVGOptimizer =
+  (customConfig: Config | null) => (content: string, id: string) => {
     const hasFillOrStroke =
       content.includes('fill="') || content.includes('stroke="');
     const config: Config = {
       ...customConfig,
       path: '1.svg', // recommended
       multipass: true, // all other config fields are available here
-      js2svg: {
-        pretty: false, // boolean
-      },
       plugins: [
         'preset-default',
         'removeDimensions',
@@ -50,6 +47,5 @@ const SVGOptimizer = (customConfig: Config | null) => {
     };
     return optimize(content, config);
   };
-};
 
 export default SVGOptimizer;

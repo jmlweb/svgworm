@@ -20,9 +20,7 @@ const appAction: AppAction = async (src, dest, options) => {
     optimize: options?.optimize,
     clean: options?.clean,
   });
-  console.log(
-    pc.blueBright(`Processing SVG files inside ${pc.bold(paths.src)}`),
-  );
+  console.log(pc.blueBright(`Reading SVG files from ${pc.bold(paths.src)}`));
   const sources = await buildSources(paths.src, SVGOptimizer(svgoConfig));
   if (!sources.results.length) {
     throw new PrettyError(

@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { fdir } from 'fdir';
+
 import { PrettyError } from './errors';
 
 const dirExists = (dir: string) =>
@@ -50,7 +52,11 @@ const resolvePaths = async ({
     }
   } else if (clean) {
     try {
-      const files = await fs.readdir(paths.dest);
+      const api = new fdir()
+        .withRelativePaths()
+        .glob('./index.ts', './icon.tsx', './sprite.tsx', 'types.ts')
+        .crawl(paths.dest);
+      const files = api.sync();
       await Promise.all(
         files.map(async (file) => {
           const filePath = path.join(paths.dest, file);
