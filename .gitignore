@@ -24,6 +24,8 @@ node_modules
 # mocks and stubs
 .svgwormrc.ts
 svg
+dest
+demo
 
 #production code
 dist

@@ -1,0 +1,112 @@
+import { cosmiconfig } from 'cosmiconfig';
+
+import loadConfig from './load-config';
+
+jest.mock('cosmiconfig', () => {
+  return {
+    cosmiconfig: jest.fn(() => ({
+      search: jest.fn(() => Promise.resolve({ config: {} })),
+    })),
+  };
+});
+
+describe('loadConfig', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  it('should throw if no dest option is passed, not from a file nor from the cli', async () => {
+    expect(async () => {
+      await loadConfig({});
+    }).rejects.toThrow('Destination folder is required');
+  });
+  it('should return the config from the file if no options are passed', async () => {
+    (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
+      search: jest.fn(() =>
+        Promise.resolve({
+          config: {
+            src: './svg2',
+            dest: './dest2',
+            optimize: false,
+            clean: false,
+          },
+        }),
+      ),
+    }));
+    const config = await loadConfig({});
+    expect(config).toEqual({
+      src: './svg2',
+      dest: './dest2',
+      optimize: false,
+      clean: false,
+    });
+  });
+  it('should take the default values', async () => {
+    (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
+      search: jest.fn(() => Promise.resolve({ config: { dest: './dest' } })),
+    }));
+    const config = await loadConfig({});
+    expect(config).toEqual({
+      src: './svg',
+      dest: './dest',
+      optimize: true,
+      clean: true,
+    });
+  });
+  it('should merge the values from the config file with the values passed from cli', async () => {
+    (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
+      search: jest.fn(() =>
+        Promise.resolve({
+          config: { src: './svg', dest: './dest', optimize: true },
+        }),
+      ),
+    }));
+    const config = await loadConfig({
+      src: './svg2',
+      optimize: false,
+      clean: false,
+    });
+    expect(config).toEqual({
+      src: './svg2',
+      dest: './dest',
+      optimize: false,
+      clean: false,
+    });
+  });
+  it('should work if an error happens when loading the file', async () => {
+    (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
+      search: jest.fn(() => Promise.reject('Error')),
+    }));
+    const config = await loadConfig({
+      src: './svg2',
+      dest: './svg',
+      optimize: false,
+    });
+    expect(config).toEqual({
+      src: './svg2',
+      dest: './svg',
+      optimize: false,
+      clean: true,
+    });
+  });
+  it('should discard non valid values passed from the cli', async () => {
+    (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
+      search: jest.fn(() =>
+        Promise.resolve({
+          config: { src: './svg', dest: './dest', optimize: true },
+        }),
+      ),
+    }));
+    const config = await loadConfig({
+      src: ['./svg2'] as unknown as string,
+      dest: './dest2',
+      optimize: 'blabla' as unknown as boolean,
+      clean: 'blabla' as unknown as boolean,
+    });
+    expect(config).toEqual({
+      src: './svg',
+      dest: './dest2',
+      optimize: true,
+      clean: true,
+    });
+  });
+});

@@ -1,44 +1,24 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import js from '@eslint/js';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import tseslint from 'typescript-eslint';
 
-import { FlatCompat } from "@eslint/eslintrc";
-import js from "@eslint/js";
-import prettier from "eslint-plugin-prettier";
-import simpleImportSort from "eslint-plugin-simple-import-sort";
-import globals from "globals";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default [{
-    ignores: ["**/.*.js", "**/node_modules/", "**/dist/"],
-}, ...compat.extends("eslint:recommended", "prettier"), {
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  {
+    ignores: ['dist'],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.strict,
+  ...tseslint.configs.stylistic,
+  {
     plugins: {
-        "simple-import-sort": simpleImportSort,
-        prettier,
+      'simple-import-sort': simpleImportSort,
     },
-
-    languageOptions: {
-        globals: {
-            ...globals.node,
-        },
-    },
-
-    settings: {
-        "import/resolver": {
-            typescript: {
-                project: "./tsconfig.json",
-            },
-        },
-    },
-
     rules: {
-        "simple-import-sort/imports": "error",
-        "simple-import-sort/exports": "error",
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
     },
-}];
+  },
+  eslintPluginPrettierRecommended,
+];
