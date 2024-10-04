@@ -42,18 +42,12 @@ describe('convertToHTMLIdSegment', () => {
 
 describe('getFilesMap', () => {
   it('should return a map of files', () => {
-    const files = [
-      'src/foo.svg',
-      'src/bar/foo.svg',
-      'src/bar/baz.svg',
-      'src/bar/baz/qux.svg',
-    ];
-    const expected = {
-      foo: 'src/foo.svg',
-      'src.bar.baz.qux': 'src/bar/baz/qux.svg',
-      'src.bar.baz': 'src/bar/baz.svg',
-      'src.bar.foo': 'src/bar/foo.svg',
-    };
-    expect(getFilesMap(files)).toEqual(expected);
+    const files = ['foo.svg', 'bar.svg', 'baz.svg', 'ai/foo.svg'];
+    expect(getFilesMap(files)).toEqual({
+      foo: 'foo.svg',
+      bar: 'bar.svg',
+      baz: 'baz.svg',
+      'ai.foo': 'ai/foo.svg',
+    });
   });
 });

@@ -22,7 +22,7 @@ describe('PrettierFormatter', () => {
     jest.clearAllMocks();
   });
   it('should work with svg with no options', async () => {
-    const formatter = await PrettierFormatter();
+    const formatter = await PrettierFormatter({});
     await formatter.formatSVG('<svg></svg>');
     expect(format).toHaveBeenCalledWith('<svg></svg>', {
       endOfLine: 'lf',
@@ -34,7 +34,7 @@ describe('PrettierFormatter', () => {
     });
   });
   it('should work with typescript with no options', async () => {
-    const formatter = await PrettierFormatter();
+    const formatter = await PrettierFormatter({});
     await formatter.formatTS('type A = "a";');
     expect(format).toHaveBeenCalledWith('type A = "a";', {
       endOfLine: 'lf',
@@ -46,7 +46,7 @@ describe('PrettierFormatter', () => {
     });
   });
   it('should work with custom options', async () => {
-    const formatter = await PrettierFormatter();
+    const formatter = await PrettierFormatter({ tabWidth: 4 });
     (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
       search: jest.fn(() =>
         Promise.resolve({
