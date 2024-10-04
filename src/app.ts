@@ -22,7 +22,7 @@ const app = async (appAction: AppAction) => {
     await cli.runMatchedCommand();
   } catch (error) {
     console.error(
-      pc.white(
+      pc.whiteBright(
         pc.bgRed(error instanceof Error ? error.message : 'Unknown error'),
       ),
     );
