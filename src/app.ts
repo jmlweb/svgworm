@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { cac } from 'cac';
+import pc from 'picocolors';
 
-import logger from './logger';
 import { AppAction } from './types';
 
 const app = async (appAction: AppAction) => {
@@ -21,7 +21,11 @@ const app = async (appAction: AppAction) => {
     cli.parse(process.argv, { run: false });
     await cli.runMatchedCommand();
   } catch (error) {
-    logger.error(error instanceof Error ? error.message : 'Unknown error');
+    console.error(
+      pc.white(
+        pc.bgRed(error instanceof Error ? error.message : 'Unknown error'),
+      ),
+    );
     process.exit(1);
   }
 };

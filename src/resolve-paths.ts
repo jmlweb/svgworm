@@ -2,7 +2,6 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { PrettyError } from './errors';
-import logger from './logger';
 
 const dirExists = (dir: string) =>
   fs
@@ -59,7 +58,7 @@ const resolvePaths = async ({
         }),
       );
     } catch (error) {
-      logger.error(
+      throw new PrettyError(
         `There was a problem cleaning the destination directory: ${paths.dest}\n${error instanceof Error ? error.message : 'Unknown error'}`,
       );
     }

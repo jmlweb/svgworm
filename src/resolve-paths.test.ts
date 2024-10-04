@@ -2,7 +2,6 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { PrettyError } from './errors';
-import logger from './logger';
 import resolvePaths from './resolve-paths';
 jest.mock('node:fs/promises');
 jest.mock('./logger');
@@ -66,17 +65,16 @@ describe('resolvePaths', () => {
     expect(fs.mkdir).toHaveBeenCalledWith(mockDestPath, { recursive: true });
   });
 
-  it('should log an error if there is a problem cleaning the destination directory', async () => {
+  it('should throw an error if there is a problem cleaning the destination directory', async () => {
     (fs.access as jest.Mock).mockResolvedValueOnce(true);
     (fs.access as jest.Mock).mockResolvedValueOnce(true);
     (fs.readdir as jest.Mock).mockResolvedValueOnce(['file1.txt']);
     (fs.unlink as jest.Mock).mockRejectedValueOnce(
       new Error('Permission denied'),
     );
-
-    await resolvePaths({ src: mockSrc, dest: mockDest, clean: true });
-
-    expect(logger.error).toHaveBeenCalled();
+    await expect(
+      resolvePaths({ src: mockSrc, dest: mockDest, clean: true }),
+    ).rejects.toThrow(PrettyError);
   });
 
   it('should throw an error if the destination directory could not be created', async () => {

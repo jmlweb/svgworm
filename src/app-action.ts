@@ -1,3 +1,5 @@
+import pc from 'picocolors';
+
 import buildSources from './build-sources';
 import { PrettyError } from './errors';
 import loadConfig from './load-config';
@@ -9,6 +11,7 @@ import writeSprite from './write-sprite';
 import writeTypes from './write-types';
 
 const appAction: AppAction = async (src, dest, options) => {
+  const startTime = performance.now();
   const config = await loadConfig({
     src,
     dest,
@@ -20,7 +23,10 @@ const appAction: AppAction = async (src, dest, options) => {
     dest: config.dest,
     clean: config.clean,
   });
-  console.time('buildSources');
+  console.log(
+    pc.blueBright(`Processing SVG files inside ${pc.bold(paths.src)}`),
+  );
+  // console.time('buildSources');
   const sources = await buildSources(paths.src);
   if (!sources.results.length) {
     throw new PrettyError(
@@ -33,7 +39,23 @@ const appAction: AppAction = async (src, dest, options) => {
     writeIcon(paths.dest),
     writeIndex(paths.dest),
   ]);
-  console.timeEnd('buildSources');
+  const endTime = performance.now();
+  // console.timeEnd('buildSources');
+  console.log(
+    `${pc.greenBright(
+      `${pc.bold(sources.results.length)} SVG files processed in ${pc.bold((endTime - startTime).toFixed(2))}ms`,
+    )}\n`,
+  );
+  console.log(
+    pc.black(
+      pc.bgWhite(`
+Generated files:
+- ${paths.dest}/index.ts
+- ${paths.dest}/sprite.tsx
+- ${paths.dest}/icon.tsx
+- ${paths.dest}/types.ts`),
+    ),
+  );
 };
 
 export default appAction;

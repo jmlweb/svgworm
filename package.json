@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "cac": "^6.7.14",
-    "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "html-to-jsx-transform": "^1.2.0",
     "node-html-parser": "^6.1.13",
