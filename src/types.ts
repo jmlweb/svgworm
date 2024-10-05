@@ -3,6 +3,7 @@ export type AppAction = (
   dest?: string,
   cliOptions?: {
     optimize?: boolean;
+    force?: boolean;
     clean?: boolean;
   },
 ) => Promise<void>;

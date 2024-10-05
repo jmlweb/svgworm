@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { Formatter } from './types';
 
@@ -31,7 +32,7 @@ const writeIcon = async (destPath: string, formatter: Formatter) => {
 
     export default Icon;
   `);
-  await fs.writeFile(`${destPath}/icon.tsx`, template);
+  await fs.writeFile(path.join(destPath, 'icon.tsx'), template);
 };
 
 export default writeIcon;

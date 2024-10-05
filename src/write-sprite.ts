@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { htmlToJsx } from 'html-to-jsx-transform';
 
@@ -18,7 +19,7 @@ const writeSprite = async (
     
     export default Sprite;
   `);
-  await fs.writeFile(`${destPath}/sprite.tsx`, template);
+  await fs.writeFile(path.join(destPath, 'sprite.tsx'), template);
 };
 
 export default writeSprite;

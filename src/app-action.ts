@@ -1,10 +1,11 @@
+import path from 'node:path';
+
 import pc from 'picocolors';
 
 import buildSources from './build-sources';
 import { PrettyError } from './errors';
 import loadConfig from './load-config';
 import PrettierFormatter from './prettier-formatter';
-import SVGOptimizer from './svg-optimizer';
 import { AppAction } from './types';
 import writeIcon from './write-icon';
 import writeIndex from './write-index';
@@ -20,9 +21,15 @@ const appAction: AppAction = async (src, dest, options) => {
     optimize: options?.optimize,
     clean: options?.clean,
   });
-  console.log(pc.blueBright(`Reading SVG files from ${pc.bold(paths.src)}`));
-  const sources = await buildSources(paths.src, SVGOptimizer(svgoConfig));
+  console.log(pc.blueBright(`Processing SVG files from ${pc.bold(paths.src)}`));
+
+  const sources = await buildSources(
+    paths.src,
+    svgoConfig,
+    options?.force || false,
+  );
   if (!sources.results.length) {
+    console.table(sources.errors);
     throw new PrettyError(
       'There were no valid SVG files found in the source directory.',
     );
@@ -44,12 +51,15 @@ const appAction: AppAction = async (src, dest, options) => {
     pc.black(
       pc.bgWhite(`
 Generated files:
-- ${paths.dest}/index.ts
-- ${paths.dest}/sprite.tsx
-- ${paths.dest}/icon.tsx
-- ${paths.dest}/types.ts`),
+- ${path.join(paths.dest, 'index.ts')}
+- ${path.join(paths.dest, 'sprite.tsx')}
+- ${path.join(paths.dest, 'icon.tsx')}
+- ${path.join(paths.dest, 'types.ts')}`),
     ),
   );
+  if (sources.errors.length) {
+    console.table(sources.errors);
+  }
 };
 
 export default appAction;

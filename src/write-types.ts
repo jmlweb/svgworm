@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { Formatter, Result } from './types';
 
@@ -52,7 +53,7 @@ const writeTypes = async (
     }
   `);
 
-  await fs.writeFile(`${destPath}/types.ts`, template);
+  await fs.writeFile(path.join(destPath, 'types.ts'), template);
 };
 
 export default writeTypes;

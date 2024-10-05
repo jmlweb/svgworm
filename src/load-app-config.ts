@@ -2,10 +2,11 @@ import { cosmiconfig } from 'cosmiconfig';
 import * as v from 'valibot';
 
 const DEFAULT_FILE_CONFIG = {
-  src: './svg',
+  src: 'svg',
   dest: undefined,
   optimize: true,
   clean: true,
+  force: false,
 };
 
 const NonEmptyStringSchema = v.pipe(v.string(), v.minLength(1));
@@ -19,6 +20,7 @@ const FileConfigSchema = v.fallback(
     ),
     optimize: v.fallback(v.boolean(), DEFAULT_FILE_CONFIG.optimize),
     clean: v.fallback(v.boolean(), DEFAULT_FILE_CONFIG.clean),
+    force: v.fallback(v.boolean(), DEFAULT_FILE_CONFIG.force),
   }),
   DEFAULT_FILE_CONFIG,
 );
@@ -38,6 +40,7 @@ const CliOptionsSchema = v.object({
   dest: v.fallback(v.optional(NonEmptyStringSchema), undefined),
   optimize: v.fallback(v.optional(v.boolean()), undefined),
   clean: v.fallback(v.optional(v.boolean()), undefined),
+  force: v.fallback(v.optional(v.boolean()), undefined),
 });
 
 type CliOptions = v.InferInput<typeof CliOptionsSchema>;
@@ -47,6 +50,7 @@ const OptionsSchema = v.object({
   dest: v.string('Destination folder is required'),
   optimize: v.boolean(),
   clean: v.boolean(),
+  force: v.boolean(),
 });
 
 type ParsedOptions = v.InferInput<typeof OptionsSchema>;
@@ -63,6 +67,7 @@ const loadAppConfig = async (options: CliOptions): Promise<ParsedOptions> => {
     dest: cliOptions.dest ?? fileConfig.dest,
     optimize: cliOptions.optimize ?? fileConfig.optimize,
     clean: cliOptions.clean ?? fileConfig.clean,
+    force: cliOptions.force ?? fileConfig.force,
   });
 };
 

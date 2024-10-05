@@ -13,6 +13,7 @@ const app = async (appAction: AppAction) => {
     .option('--clean', 'Clean destination folder before building', {
       default: undefined,
     })
+    .option('--force', 'Overwrite existing files', { default: undefined })
     .action(appAction);
 
   cli.help();
