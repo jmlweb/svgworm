@@ -5,24 +5,8 @@ import pc from 'picocolors';
 import buildSources from './build-sources';
 import { PrettyError } from './errors';
 import loadConfig from './load-config';
-import { AppAction, Result } from './types';
-import {
-  writeIcon,
-  writeIndex,
-  Writer,
-  writeSprite,
-  writeTypes,
-} from './write';
-import { Write } from './write';
-
-const writeResults = (write: Write, results: Result[]) => {
-  return Promise.all([
-    writeTypes(write, results),
-    writeSprite(write, results),
-    writeIcon(write),
-    writeIndex(write),
-  ]);
-};
+import { AppAction } from './types';
+import { Writer } from './writer';
 
 const appAction: AppAction = async (src, dest, options) => {
   const startTime = performance.now();
@@ -33,7 +17,7 @@ const appAction: AppAction = async (src, dest, options) => {
     optimize: options?.optimize,
     clean: options?.clean,
   });
-  const write = Writer(paths.dest);
+  const writeResults = Writer(paths.dest);
   console.log(pc.blueBright(`Processing SVG files from ${pc.bold(paths.src)}`));
 
   const sources = await buildSources(
@@ -47,7 +31,7 @@ const appAction: AppAction = async (src, dest, options) => {
       'There were no valid SVG files found in the source directory.',
     );
   }
-  await writeResults(write, sources.results);
+  await writeResults(sources.results);
   const endTime = performance.now();
   console.log(
     `${pc.greenBright(
