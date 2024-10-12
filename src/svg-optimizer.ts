@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 
 import { Config, optimize } from 'svgo';
 
+import { PrettyError } from './errors';
+
 const svgOptimizer = (
   content: string,
   id: string,
@@ -48,7 +50,14 @@ const svgOptimizer = (
       'sortDefsChildren',
     ],
   };
-  return optimize(content, config);
+  try {
+    const optimized = optimize(content, config);
+    return optimized.data;
+  } catch (error) {
+    throw new PrettyError(
+      `There was an error optimizing the SVG ${id}: ${error}`,
+    );
+  }
 };
 
 export default svgOptimizer;

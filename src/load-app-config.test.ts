@@ -28,6 +28,7 @@ describe('loadConfig', () => {
             dest: './dest2',
             optimize: false,
             clean: false,
+            force: false,
           },
         }),
       ),
@@ -38,6 +39,7 @@ describe('loadConfig', () => {
       dest: './dest2',
       optimize: false,
       clean: false,
+      force: false,
     });
   });
   it('should take the default values', async () => {
@@ -46,10 +48,11 @@ describe('loadConfig', () => {
     }));
     const config = await loadAppConfig({});
     expect(config).toEqual({
-      src: './svg',
+      src: 'svg',
       dest: './dest',
       optimize: true,
       clean: true,
+      force: false,
     });
   });
   it('should merge the values from the config file with the values passed from cli', async () => {
@@ -70,6 +73,7 @@ describe('loadConfig', () => {
       dest: './dest',
       optimize: false,
       clean: false,
+      force: false,
     });
   });
   it('should work if an error happens when loading the file', async () => {
@@ -86,6 +90,7 @@ describe('loadConfig', () => {
       dest: './svg',
       optimize: false,
       clean: true,
+      force: false,
     });
   });
   it('should discard non valid values passed from the cli', async () => {
@@ -107,6 +112,7 @@ describe('loadConfig', () => {
       dest: './dest2',
       optimize: true,
       clean: true,
+      force: false,
     });
   });
 });
