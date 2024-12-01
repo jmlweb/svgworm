@@ -27,11 +27,11 @@ const formatContentWithCache = async ({
 
   const processFileAndSave = () => {
     const formattedContent = svgOptimizer(content, id, svgConfig);
-    if (!formattedContent.data) {
+    if (!formattedContent) {
       throw new Error('SVG optimization failed');
     }
-    fs.writeFile(tmpFile, formattedContent.data, 'utf8').catch(() => undefined);
-    return formattedContent.data;
+    fs.writeFile(tmpFile, formattedContent, 'utf8').catch(() => undefined);
+    return formattedContent;
   };
 
   if (force) {
