@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { cac } from 'cac';
 
-import command from './command';
+import buildCommand from './build.command';
 import { handleError } from './errors';
 
 const run = async () => {
@@ -9,12 +9,13 @@ const run = async () => {
 
   cli
     .command('[src] [dest]', 'Build files')
+    .option('--optimize', 'Enable SVG optimization', { default: undefined })
     .option('--clean', 'Clean destination folder before building', {
       default: undefined,
     })
     .option('--force', 'Disable caching', { default: undefined })
     .option('--flatten', 'Flatten directories', { default: undefined })
-    .action(command);
+    .action(buildCommand);
 
   cli.help();
 
