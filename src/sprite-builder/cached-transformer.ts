@@ -23,7 +23,7 @@ const CachedTransformer = async () => {
     if (!(await fileExists(filePath))) {
       try {
         const transformedContent = transformer(id, content);
-        await fs.writeFile(filePath, transformedContent);
+        fs.writeFile(filePath, transformedContent);
         return transformedContent;
       } catch (error) {
         throw new Error(
