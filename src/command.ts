@@ -1,70 +1,59 @@
 import path from 'node:path';
 
-import { fdir } from 'fdir';
 import colors from 'picocolors';
 
 import loadAppConfig from './config/load-app-config';
-import loadPrettierConfig from './config/load-prettier-config';
-import loadSvgoConfig from './config/load-svgo-config';
-import { PrettyError } from './errors';
-import IdsGenerator from './ids/ids-generator';
+import Formatter from './formatter/formatter';
+import getSources from './get-sources/get-sources';
 import resolveDest from './resolve-dest/resolve-dest';
-import Wormer from './wormer/wormer';
-
-const filesCrawler = new fdir().withRelativePaths().glob('./**/*.svg');
-const getFilePaths = (srcPath: string) => {
-  try {
-    const filePaths = filesCrawler.crawl(srcPath).sync();
-    if (!filePaths.length) {
-      throw new Error(`No SVG files found in ${srcPath}`);
-    }
-    return filePaths;
-  } catch (error) {
-    throw new PrettyError(
-      error instanceof Error
-        ? error.message
-        : 'There was a problem crawling the source directory',
-    );
-  }
-};
+import resultsWriter from './results-writer/results-writer';
+import SpriteBuilder from './sprite-builder/sprite-builder';
+import timeMeasure from './time-measure/time-measure';
 
 const command = async (
-  src?: string,
-  dest?: string,
-  appOptions: Parameters<typeof loadAppConfig>[0] = {},
+  src: string,
+  dest: string,
+  appOptions: Parameters<typeof loadAppConfig>[0],
 ) => {
-  const startTime = performance.now();
-  const [svgoConfigP, prettierConfigP] = [
-    loadSvgoConfig(),
-    loadPrettierConfig(),
-  ];
+  timeMeasure.start();
 
+  const formatterP = Formatter();
   const appConfig = await loadAppConfig({
+    ...appOptions,
     src,
     dest,
-    ...appOptions,
   });
-
   const srcPath = path.resolve(process.cwd(), appConfig.src);
   const destPathP = resolveDest(appConfig);
-  const filePaths = getFilePaths(srcPath);
-  const generateId = IdsGenerator(appConfig.flatten);
-  const worm = Wormer({
-    srcPath,
-    destPath: await destPathP,
-    force: appConfig.force,
-  });
+  const [sources, spriteBuilder] = await Promise.all([
+    getSources({
+      srcPath,
+      flatten: appConfig.flatten,
+    }),
+    SpriteBuilder(srcPath, appConfig.force),
+  ]);
+  const [results, formatter, destPath] = await Promise.all([
+    spriteBuilder(sources),
+    formatterP,
+    destPathP,
+  ]);
 
-  for (const filePath of filePaths) {
-    const id = generateId(filePath);
-    worm.add(filePath, id);
+  if (results.errors.length) {
+    console.table(results.errors);
   }
 
+  await resultsWriter({
+    results,
+    formatter,
+    destPath,
+  });
+
   console.log(
-    colors.dim(
-      `Command run time: ${(performance.now() - startTime).toFixed(3)}ms`,
+    colors.green(
+      `🎉 A new sprite has been generated with ${results.data.length} icons`,
     ),
   );
+  console.log(colors.dim(`⏳ Command run time: ${timeMeasure.get()}ms`));
 };
 
 export default command;

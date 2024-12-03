@@ -5,7 +5,7 @@ import command from './command';
 import { handleError } from './errors';
 
 const run = async () => {
-  const cli = cac();
+  const cli = cac('svgworm');
 
   cli
     .command('[src] [dest]', 'Build files')

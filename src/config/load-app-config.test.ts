@@ -26,7 +26,6 @@ describe('loadConfig', () => {
           config: {
             src: './svg2',
             dest: './dest2',
-            optimize: false,
             clean: false,
             force: false,
           },
@@ -37,7 +36,6 @@ describe('loadConfig', () => {
     expect(config).toEqual({
       src: './svg2',
       dest: './dest2',
-      optimize: false,
       flatten: false,
       clean: false,
       force: false,
@@ -51,7 +49,6 @@ describe('loadConfig', () => {
     expect(config).toEqual({
       src: 'svg',
       dest: './dest',
-      optimize: true,
       flatten: false,
       clean: true,
       force: false,
@@ -61,19 +58,17 @@ describe('loadConfig', () => {
     (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
       search: jest.fn(() =>
         Promise.resolve({
-          config: { src: './svg', dest: './dest', optimize: true },
+          config: { src: './svg', dest: './dest' },
         }),
       ),
     }));
     const config = await loadAppConfig({
       src: './svg2',
-      optimize: false,
       clean: false,
     });
     expect(config).toEqual({
       src: './svg2',
       dest: './dest',
-      optimize: false,
       flatten: false,
       clean: false,
       force: false,
@@ -86,12 +81,10 @@ describe('loadConfig', () => {
     const config = await loadAppConfig({
       src: './svg2',
       dest: './svg',
-      optimize: false,
     });
     expect(config).toEqual({
       src: './svg2',
       dest: './svg',
-      optimize: false,
       flatten: false,
       clean: true,
       force: false,
@@ -101,20 +94,18 @@ describe('loadConfig', () => {
     (cosmiconfig as jest.Mock).mockImplementationOnce(() => ({
       search: jest.fn(() =>
         Promise.resolve({
-          config: { src: './svg', dest: './dest', optimize: true },
+          config: { src: './svg', dest: './dest' },
         }),
       ),
     }));
     const config = await loadAppConfig({
       src: ['./svg2'] as unknown as string,
       dest: './dest2',
-      optimize: 'blabla' as unknown as boolean,
       clean: 'blabla' as unknown as boolean,
     });
     expect(config).toEqual({
       src: 'svg',
       dest: './dest2',
-      optimize: true,
       flatten: false,
       clean: true,
       force: false,

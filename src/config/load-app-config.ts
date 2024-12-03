@@ -1,6 +1,8 @@
 import { cosmiconfig } from 'cosmiconfig';
 import * as v from 'valibot';
 
+import { PrettyError } from '../errors';
+
 const DEFAULT_CONFIG = {
   src: 'svg',
   dest: undefined,
@@ -47,12 +49,18 @@ const cleanCliOptions = (cliOptions: CliOptions) =>
   );
 
 const loadAppConfig = async (cliOptions: CliOptions) => {
-  const fileConfig = await loadFileConfig();
-  return v.parse(OptionsSchema, {
-    ...DEFAULT_CONFIG,
-    ...fileConfig,
-    ...cleanCliOptions(cliOptions),
-  });
+  try {
+    const fileConfig = await loadFileConfig();
+    return v.parse(OptionsSchema, {
+      ...DEFAULT_CONFIG,
+      ...fileConfig,
+      ...cleanCliOptions(cliOptions),
+    });
+  } catch (error) {
+    throw new PrettyError(
+      `There was a problem loading the app config: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
+  }
 };
 
 export default loadAppConfig;
