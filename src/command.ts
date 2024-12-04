@@ -32,6 +32,7 @@ const command = async (
     }),
     SpriteBuilder(srcPath, appConfig.force),
   ]);
+
   const [results, formatter, destPath] = await Promise.all([
     spriteBuilder(sources),
     formatterP,

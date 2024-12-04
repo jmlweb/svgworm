@@ -4,7 +4,7 @@ import path from 'node:path';
 import CachedTransformer from './cached-transformer';
 import Transformer from './transformer';
 
-const CHUNK_SIZE = 10;
+const CHUNK_SIZE = 50;
 
 const SpriteBuilder = async (srcPath: string, force: boolean) => {
   const transformer = await (force ? Transformer : CachedTransformer)();
@@ -28,10 +28,12 @@ const SpriteBuilder = async (srcPath: string, force: boolean) => {
       const promises = chunk.map(async ([id, filePath]) => {
         try {
           const fileContent = await fs.readFile(
-            path.resolve(srcPath, filePath),
+            path.join(srcPath, filePath),
             'utf-8',
           );
-          results.content += await transformer(id, fileContent);
+          const newContent = await transformer(id, fileContent);
+          console.log(newContent);
+          results.content += newContent;
           results.data.push(id);
         } catch (error) {
           results.errors.push([
@@ -41,10 +43,10 @@ const SpriteBuilder = async (srcPath: string, force: boolean) => {
         }
       });
       await Promise.all(promises);
-      return await runBatch();
+      return runBatch();
     };
 
-    return await runBatch();
+    return runBatch();
   };
 };
 

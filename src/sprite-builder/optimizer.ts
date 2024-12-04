@@ -6,6 +6,27 @@ import md5 from '../md5/md5';
 
 type Plugin = NonNullable<Config['plugins']>[number];
 
+const extractFillAndStrokeValues = (svgString: string): string[] => {
+  // Crear un conjunto para almacenar valores únicos de "fill" y "stroke"
+  const values = new Set<string>();
+
+  // Usar una expresión regular para buscar atributos "fill" y "stroke"
+  const regex = /\s(?:fill|stroke)="(.*?)"/g;
+  let match: RegExpExecArray | null;
+
+  // Iterar sobre los matches
+  while ((match = regex.exec(svgString)) !== null) {
+    const value = match[1];
+    // Agregar al conjunto si el valor no es "none"
+    if (value && value !== 'none') {
+      values.add(value);
+    }
+  }
+
+  // Convertir el conjunto en un arreglo y retornarlo
+  return Array.from(values);
+};
+
 const prefixIdsPlugin = (id: string): Plugin => ({
   name: 'prefixIds',
   params: {
@@ -33,8 +54,10 @@ const Optimizer = async () => {
   const svgoConfig = await loadSvgoConfig();
 
   return (id: string, content: string) => {
-    const hasFillOrStroke =
-      content.includes('fill="') || content.includes('stroke="');
+    const fillAndStrokeValues = extractFillAndStrokeValues(content);
+
+    const hasFillOrStroke = fillAndStrokeValues.length === 1;
+
     try {
       return optimize(content, {
         ...svgoConfig,
@@ -50,7 +73,7 @@ const Optimizer = async () => {
           {
             name: 'convertColors',
             params: {
-              currentColor: true,
+              currentColor: fillAndStrokeValues.length < 2,
             },
           },
           addSVGAttributesPlugin(id, hasFillOrStroke),

@@ -19,7 +19,7 @@ const CachedTransformer = async () => {
 
   return async (id: string, content: string) => {
     const fileHash = md5(`${md5(id)}${md5(content)}`);
-    const filePath = path.resolve(cacheDir, fileHash);
+    const filePath = path.join(cacheDir, fileHash);
     if (!(await fileExists(filePath))) {
       try {
         const transformedContent = transformer(id, content);
