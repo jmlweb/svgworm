@@ -18,7 +18,15 @@ const extractFillAndStrokeValues = (svgString: string): string[] => {
   while ((match = regex.exec(svgString)) !== null) {
     const value = match[1];
     // Agregar al conjunto si el valor no es "none"
-    if (value && value !== 'none') {
+    if (
+      value &&
+      value !== 'none' &&
+      value !== 'currentColor' &&
+      value !== 'inherit' &&
+      value !== '#fff' &&
+      value !== '#ffffff' &&
+      value !== '#424242'
+    ) {
       values.add(value);
     }
   }
@@ -56,7 +64,7 @@ const Optimizer = async () => {
   return (id: string, content: string) => {
     const fillAndStrokeValues = extractFillAndStrokeValues(content);
 
-    const hasFillOrStroke = fillAndStrokeValues.length === 1;
+    const hasFillOrStroke = fillAndStrokeValues.length > 0;
 
     try {
       return optimize(content, {
