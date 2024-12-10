@@ -1,13 +1,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { ResolvedOptions } from '../config/load-app-config';
 import CachedTransformer from './cached-transformer';
 import Transformer from './transformer';
 
 const CHUNK_SIZE = 50;
 
-const SpriteBuilder = async (srcPath: string, force: boolean) => {
-  const transformer = await (force ? Transformer : CachedTransformer)();
+const SpriteBuilder = async (
+  srcPath: string,
+  { force, color, prefix }: Pick<ResolvedOptions, 'force' | 'color' | 'prefix'>,
+) => {
+  const transformer = await (force ? Transformer : CachedTransformer)({
+    color,
+    prefix,
+  });
 
   return async (items: [id: string, filePath: string][]) => {
     const results: {
@@ -32,7 +39,6 @@ const SpriteBuilder = async (srcPath: string, force: boolean) => {
             'utf-8',
           );
           const newContent = await transformer(id, fileContent);
-          console.log(newContent);
           results.content += newContent;
           results.data.push(id);
         } catch (error) {

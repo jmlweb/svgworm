@@ -1,5 +1,6 @@
 import { Config, optimize } from 'svgo';
 
+import { ResolvedOptions } from '../config/load-app-config';
 import loadSvgoConfig from '../config/load-svgo-config';
 import { PrettyError } from '../errors';
 import md5 from '../md5/md5';
@@ -38,7 +39,7 @@ const extractFillAndStrokeValues = (svgString: string): string[] => {
 const prefixIdsPlugin = (id: string): Plugin => ({
   name: 'prefixIds',
   params: {
-    prefix: (args) => `sw_${id}_${md5(JSON.stringify(args))}`,
+    prefix: (args) => `sw_${md5(`${md5(id)}${md5(JSON.stringify(args))}`)}`,
     delim: '_',
   },
 });
@@ -58,13 +59,19 @@ const addSVGAttributesPlugin = (
   },
 });
 
-const Optimizer = async () => {
+const Optimizer = async ({
+  color,
+  prefix,
+}: Pick<ResolvedOptions, 'color' | 'prefix'>) => {
   const svgoConfig = await loadSvgoConfig();
 
   return (id: string, content: string) => {
     const fillAndStrokeValues = extractFillAndStrokeValues(content);
 
     const hasFillOrStroke = fillAndStrokeValues.length > 0;
+
+    const convertColors = !color && fillAndStrokeValues.length < 2;
+    const resolvedId = prefix ? `${prefix}.${id}` : id;
 
     try {
       return optimize(content, {
@@ -77,14 +84,14 @@ const Optimizer = async () => {
           'reusePaths',
           'removeXMLNS',
           'removeXlink',
-          prefixIdsPlugin(id),
+          prefixIdsPlugin(resolvedId),
           {
             name: 'convertColors',
             params: {
-              currentColor: fillAndStrokeValues.length < 2,
+              currentColor: convertColors,
             },
           },
-          addSVGAttributesPlugin(id, hasFillOrStroke),
+          addSVGAttributesPlugin(resolvedId, hasFillOrStroke),
           'sortAttrs',
           'sortDefsChildren',
         ],

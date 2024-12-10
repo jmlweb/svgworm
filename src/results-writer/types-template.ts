@@ -1,7 +1,7 @@
 const generateTSUnionString = (items: string[]) =>
   items.map((v) => `'${v}'`).join(' | ');
 
-const typesTemplate = (data: string[]) => {
+const typesTemplate = (data: string[], prefix?: string) => {
   const typeItems = data.reduce(
     (acc, id) => {
       acc.iconNames.push(id);
@@ -26,18 +26,18 @@ const typesTemplate = (data: string[]) => {
     iconNames: typeItems.iconNames,
   };
   return `
-    export type Families = ${generateTSUnionString(parsedItems.families)};
+    export type ${prefix}IconFamilies = ${generateTSUnionString(parsedItems.families)};
 
-    export type IconNames = ${generateTSUnionString(parsedItems.iconNames)};
+    export type ${prefix}IconNames = ${generateTSUnionString(parsedItems.iconNames)};
 
     type ExtractNames<
-      F extends Families | undefined,
+      F extends ${prefix}IconFamilies | undefined,
       L extends string,
     > = F extends undefined ? L : L extends \`\${F}.\${infer N}\` ? N : never;
 
-    export interface IconNameProps<
-      F extends Families | undefined,
-      N extends ExtractNames<F, IconNames> = ExtractNames<F, IconNames>,
+    export interface ${prefix}IconNameProps<
+      F extends ${prefix}IconFamilies | undefined,
+      N extends ExtractNames<F, ${prefix}IconNames> = ExtractNames<F, ${prefix}IconNames>,
     > {
       family?: F;
       name: N;

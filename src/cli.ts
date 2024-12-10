@@ -14,6 +14,8 @@ const run = async () => {
     })
     .option('--force', 'Disable caching', { default: undefined })
     .option('--flatten', 'Flatten directories', { default: undefined })
+    .option('--color', 'Preserve colors', { default: undefined })
+    .option('--prefix <prefix>', 'Prefix for sprite', { default: undefined })
     .action(command);
 
   cli.help();

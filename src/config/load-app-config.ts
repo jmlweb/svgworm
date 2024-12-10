@@ -9,6 +9,8 @@ const DEFAULT_CONFIG = {
   clean: true,
   force: false,
   flatten: false,
+  color: false,
+  prefix: undefined,
 };
 
 type CliOptions = Partial<Record<keyof typeof DEFAULT_CONFIG, unknown>>;
@@ -31,6 +33,11 @@ const OptionsSchema = v.object({
     v.boolean('Flatten option must be a boolean'),
     () => DEFAULT_CONFIG.flatten,
   ),
+  color: v.fallback(
+    v.boolean('Color option must be a boolean'),
+    () => DEFAULT_CONFIG.color,
+  ),
+  prefix: v.optional(v.string('Prefix option must be a string')),
 });
 
 export type ResolvedOptions = v.InferOutput<typeof OptionsSchema>;

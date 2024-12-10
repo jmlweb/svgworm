@@ -30,7 +30,7 @@ const command = async (
       srcPath,
       flatten: appConfig.flatten,
     }),
-    SpriteBuilder(srcPath, appConfig.force),
+    SpriteBuilder(srcPath, appConfig),
   ]);
 
   const [results, formatter, destPath] = await Promise.all([
@@ -47,6 +47,7 @@ const command = async (
     results,
     formatter,
     destPath,
+    prefix: appConfig.prefix,
   });
 
   console.log(

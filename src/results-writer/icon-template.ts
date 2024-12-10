@@ -1,22 +1,24 @@
-const iconTemplate = () => `
+const iconTemplate = (prefix?: string) => {
+  const parsedId = prefix ? `${prefix.toLowerCase()}.` : undefined;
+  return `
     import { ComponentProps } from 'react';
 
-    import { Families, IconNameProps } from './types';
+    import { ${prefix}IconFamilies, ${prefix}IconNameProps } from './types';
 
-    export type IconProps<F extends Families | undefined> = Omit<
+    export type ${prefix}IconProps<F extends ${prefix}IconFamilies | undefined> = Omit<
       ComponentProps<'svg'>,
-      keyof IconNameProps<F>
+      keyof ${prefix}IconNameProps<F>
     > &
-      IconNameProps<F>;
+      ${prefix}IconNameProps<F>;
 
-    const Icon = <F extends Families | undefined = undefined>({
+    const ${prefix}Icon = <F extends ${prefix}IconFamilies | undefined = undefined>({
       family,
       name,
       width = 24,
       height = 24,
       ...rest
-    }: IconProps<F>) => {
-      const resolvedName = family ? \`\${family}.\${name}\` : name;
+    }: ${prefix}IconProps<F>) => {
+      const resolvedName = family ? \`${parsedId}\${family}.\${name}\` : ${parsedId?.length ? `\`${parsedId}\${name}\`` : 'name'};
       return (
         <svg {...rest} width={width} height={height}>
           <use href={\`#\${resolvedName}\`} />
@@ -24,7 +26,8 @@ const iconTemplate = () => `
       );
     };
 
-    export default Icon;
+    export default ${prefix}Icon;
   `;
+};
 
 export default iconTemplate;

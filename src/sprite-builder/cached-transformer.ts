@@ -11,10 +11,12 @@ const fileExists = (filePath: string) =>
     .then(() => true)
     .catch(() => false);
 
-const CachedTransformer = async () => {
+const CachedTransformer = async (
+  options: Parameters<typeof Transformer>[0],
+) => {
   const [cacheDir, transformer] = await Promise.all([
     getCacheDir(),
-    Transformer(),
+    Transformer(options),
   ]);
 
   return async (id: string, content: string) => {
