@@ -2,7 +2,10 @@
   "name": "svgworm",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/cli.js",
+  "type": "module",
+  "exports": [
+    "./dist/cli.js"
+  ],
   "scripts": {
     "build": "tsup",
     "start": "node ./dist/cli.js",
@@ -10,9 +13,6 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "files": [
-    "dist/*"
-  ],
   "bin": {
     "svgworm": "./dist/cli.js"
   },
@@ -27,6 +27,7 @@
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.1",
+    "@types/prompts": "^2.4.9",
     "@types/react": "^18.3.12",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
@@ -49,6 +50,7 @@
     "picocolors": "^1.1.1",
     "picomatch": "^4.0.2",
     "prettier": "^3.4.1",
+    "prompts": "^2.4.2",
     "svgo": "^3.3.2",
     "valibot": "^0.42.1",
     "yocto-spinner": "^0.1.0"

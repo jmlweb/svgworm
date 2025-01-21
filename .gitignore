@@ -26,6 +26,7 @@ node_modules
 svg
 dest
 demo
+.svgwormrc
 
 #production code
 dist

@@ -2,10 +2,10 @@ import { isMainThread, parentPort } from 'node:worker_threads';
 
 import colors from 'picocolors';
 
-import PrettyError from './pretty-error';
+import { PrettyError } from './pretty-error';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleError = (error: any) => {
+export const handleError = (error: any) => {
   if (error.loc) {
     console.error(
       colors.bold(
@@ -28,5 +28,3 @@ const handleError = (error: any) => {
     parentPort.postMessage('error');
   }
 };
-
-export default handleError;
