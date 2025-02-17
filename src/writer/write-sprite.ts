@@ -4,17 +4,8 @@ import path from 'node:path';
 import { fdir } from 'fdir';
 
 import { Config } from '../config/schemas';
-import { md5 } from '../shared/md5';
 import { timeMeasurer } from '../shared/time-measurer';
 import { FormatFn } from './types';
-
-const buildFileSpriteFileName = ({
-  prefix,
-  fileHash,
-}: {
-  prefix?: string;
-  fileHash: string;
-}) => `${prefix ? `${prefix}-` : ''}sprite.${fileHash}.svg`;
 
 const resolveCurrentFileSprites = async ({
   config,
@@ -24,10 +15,7 @@ const resolveCurrentFileSprites = async ({
   destPath: string;
 }) => {
   const stopMeasuring = timeMeasurer.start('resolveCurrentFileSprites');
-  const fileGlob = buildFileSpriteFileName({
-    prefix: config.prefix,
-    fileHash: '*',
-  });
+  const fileGlob = `${config.prefix ? `${config.prefix}-` : ''}sprite.*.svg`;
   const files = await new fdir()
     .withFullPaths()
     .glob(`./**/${fileGlob}`)
@@ -40,9 +28,6 @@ const resolveCurrentFileSprites = async ({
 
 const fileSpriteTemplate = (content: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg"><defs>${content}</defs></svg>`;
-
-const buildComponentSpriteFileName = ({ prefix }: { prefix?: string }) =>
-  `${prefix ? `${prefix}-` : ''}sprite.tsx`;
 
 const componentSpriteTemplate = ({
   content,
@@ -68,11 +53,10 @@ export const WriteSprite = ({
 }) => {
   if (config.mode === 'file') {
     const currentFileSpritesP = resolveCurrentFileSprites({ config, destPath });
-    return async (content: string) => {
-      const fileHash = md5(content);
+    return async (content: string, fileName: string) => {
       const currentFileSprites = await currentFileSpritesP;
       const newSpriteIndex = currentFileSprites.findIndex((sprite) =>
-        sprite.endsWith(`${fileHash}.svg`),
+        sprite.endsWith(fileName),
       );
 
       if (newSpriteIndex === -1) {
@@ -81,13 +65,7 @@ export const WriteSprite = ({
           width: 120,
         });
         await Promise.all([
-          fs.writeFile(
-            path.join(
-              destPath,
-              buildFileSpriteFileName({ prefix: config.prefix, fileHash }),
-            ),
-            formattedContent,
-          ),
+          fs.writeFile(path.join(destPath, fileName), formattedContent),
           ...currentFileSprites.map((sprite) => fs.unlink(sprite)),
         ]);
       } else {
@@ -99,12 +77,9 @@ export const WriteSprite = ({
     };
   }
 
-  return async (content: string) => {
+  return async (content: string, fileName: string) => {
     return fs.writeFile(
-      path.join(
-        destPath,
-        buildComponentSpriteFileName({ prefix: config.prefix }),
-      ),
+      path.join(destPath, fileName),
       await format(componentSpriteTemplate({ content, prefix: config.prefix })),
     );
   };

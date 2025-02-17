@@ -11,6 +11,9 @@ const run = async () => {
     .command('[src] [dest]', 'Build files')
     .option('--ci', 'ci mode', { default: false })
     .option('--mode <mode>', 'Mode (file or component)')
+    .option('--base-url <base-url>', 'Base URL for file mode', {
+      default: undefined,
+    })
     .option('--ts', 'Enable TypeScript')
     .option('--cache', 'Enable caching')
     .option('--flatten', 'Flatten categories/directories')

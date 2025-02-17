@@ -17,17 +17,19 @@ const iconTemplate = ({
   iconName,
   prefix,
   isTS,
+  url,
 }: {
   iconName: string;
   prefix?: string;
   isTS: boolean;
+  url?: string;
 }) => {
   const formattedPrefix = prefix ? `${prefix}.` : '';
   const typePrefix = prefix ? `${prefix}-` : '';
 
   const baseTemplate = `
     <svg {...rest} width={width} height={height}>
-      <use href={\`#${formattedPrefix}\${name}\`} />
+      <use ${url ? `xlinkHref={\`/${url}#${formattedPrefix}\${name}\`}` : `href={\`#${formattedPrefix}\${name}\`}`} />
     </svg>
   `;
 
@@ -60,17 +62,24 @@ export const writeIcon = async ({
   config,
   destPath,
   format,
+  spriteFileName,
 }: {
-  config: Pick<Config, 'prefix' | 'ts'>;
+  config: Pick<Config, 'prefix' | 'mode' | 'ts'>;
   destPath: string;
   format: FormatFn;
+  spriteFileName: string;
 }) => {
   const iconName = config.prefix ? `${capitalize(config.prefix)}Icon` : 'Icon';
   const extension = config.ts ? 'tsx' : 'jsx';
   const fileName = buildFileIconFileName({ prefix: config.prefix, extension });
 
   const formatted = await format(
-    iconTemplate({ iconName, prefix: config.prefix, isTS: config.ts }),
+    iconTemplate({
+      iconName,
+      prefix: config.prefix,
+      isTS: config.ts,
+      url: config.mode === 'file' ? spriteFileName : undefined,
+    }),
     { parser: config.ts ? 'typescript' : 'babel' },
   );
 

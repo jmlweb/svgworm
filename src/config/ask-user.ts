@@ -38,6 +38,18 @@ export const QUESTIONS = {
     message: 'Select the mode',
     initial: DEFAULT_VALUES.mode === 'file' ? 0 : 1,
   },
+  baseUrl: {
+    type: prev => prev === 'file' ? 'text' : null,
+    name: 'baseUrl',
+    message: 'Base URL for file mode',
+    initial: '/',
+    validate: (value?: string) => {
+      if (!value) {
+        return 'Base URL is required';
+      }
+      return true;
+    },
+  },
   ts: {
     type: 'toggle',
     name: 'ts',

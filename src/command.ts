@@ -3,6 +3,7 @@ import path from 'node:path';
 import colors from 'picocolors';
 import yoctoSpinner from 'yocto-spinner';
 
+import { ArtifactsResolver } from './artifacts/artifacts-resolver';
 import { Cache } from './cache/cache';
 import { resolveCacheDir } from './cache/resolve-cache-dir';
 import { resolveConfig } from './config/resolve-config';
@@ -12,7 +13,6 @@ import { resolveIconContent } from './icon/resolve-icon-content';
 import { resolveResults } from './results/resolve-results';
 import { timeMeasurer } from './shared/time-measurer';
 import { resolveSources } from './sources/resolve-sources';
-import { Writer } from './writer/writer';
 
 export const command = async (
   cliSrc?: string,
@@ -39,7 +39,7 @@ export const command = async (
   const spinner = yoctoSpinner({
     text: `Searching for SVG files in ${colors.whiteBright(paths.src)}`,
   }).start();
-  const writer = Writer({ config, destPath: paths.dest });
+  const resolveArtifacts = ArtifactsResolver({ config, destPath: paths.dest });
   const [sources, cacheDir] = await Promise.all([
     resolveSources({
       config,
@@ -65,14 +65,19 @@ export const command = async (
   spinner.text = `Processing ${sources.length} icons`;
   const results = await resolveResults({ sources, iconPipeline });
   stopMeasuring();
-  await writer({
+  const artifacts = await resolveArtifacts({
     ids: results.ids,
     content: results.content,
   });
   spinner.success(`${results.ids.length} icons processed`);
-  results.errors.forEach((error) => {
-    console.log(`${colors.redBright(error)}\n`);
-  });
+  console.table(artifacts);
+  const errorMessage = results.errors.reduce((acc, error) => {
+    acc += `${colors.redBright(error)}\n`;
+    return acc;
+  }, '');
+  if (errorMessage.length > 0) {
+    console.log(errorMessage);
+  }
   if (config.showPerformance) {
     console.log(timeMeasurer.print());
   }

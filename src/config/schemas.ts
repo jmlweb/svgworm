@@ -12,6 +12,7 @@ export const BaseConfigSchema = v.object({
   prefix: v.optional(v.string()),
   color: v.optional(v.boolean()),
   showPerformance: v.optional(v.boolean()),
+  baseUrl: v.optional(v.string()),
 });
 
 export type BaseConfig = v.InferOutput<typeof BaseConfigSchema>;
@@ -35,6 +36,7 @@ export const FinalConfigSchema = v.object({
   prefix: v.optional(v.string()),
   color: v.boolean(),
   showPerformance: v.boolean(),
+  baseUrl: v.optional(v.string()),
 });
 
 export type Config = v.InferOutput<typeof FinalConfigSchema>;

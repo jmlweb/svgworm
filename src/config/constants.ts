@@ -5,4 +5,5 @@ export const DEFAULT_VALUES = {
   color: false,
   flatten: false,
   showPerformance: false,
+  baseUrl: undefined,
 } as const;
