@@ -27,9 +27,11 @@ const iconTemplate = ({
   const formattedPrefix = prefix ? `${prefix}.` : '';
   const typePrefix = prefix ? `${prefix}-` : '';
 
+  console.log('url', url);
+
   const baseTemplate = `
     <svg {...rest} width={width} height={height}>
-      <use ${url ? `xlinkHref={\`/${url}#${formattedPrefix}\${name}\`}` : `href={\`#${formattedPrefix}\${name}\`}`} />
+      <use ${url ? `xlinkHref={\`${url}#${formattedPrefix}\${name}\`}` : `href={\`#${formattedPrefix}\${name}\`}`} />
     </svg>
   `;
 

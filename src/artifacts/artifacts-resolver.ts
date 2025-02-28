@@ -81,7 +81,7 @@ export const ArtifactsResolver = ({
           ts,
           typesFileName: fileNames.types,
           prefix,
-          url: `${baseUrl}/${fileNames.sprite}`,
+          url: `${!baseUrl || baseUrl?.endsWith('/') ? baseUrl : `${baseUrl}/`}${fileNames.sprite}`,
         }),
       ),
       ts
