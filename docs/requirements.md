@@ -45,3 +45,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-50** Builds 1,000 icons in a few seconds on a laptop. The exact budget is set by a benchmark once the walking skeleton exists.
 - **R-51** Few runtime dependencies for consumers. The adapter has zero dependencies beyond React.
 - **R-52** Clear, actionable error messages.
+- **R-53** A polished CLI experience: animated progress, interactive prompts (for example `init`), and a stats summary at the end of each run. In a non-TTY or with `--json`, output is plain, stable, and machine-readable.
+- **R-54** Supports current, maintained versions of runtimes, browsers, and tools only. No legacy compatibility work.
+- **R-55** Discoverable by search engines and AI agents: keyword-rich README and npm metadata, an `llms.txt`, a published JSON Schema for the config, and copy-pasteable examples.
+- **R-56** Every interactive CLI flow has a non-interactive equivalent (flags, `--json`, stable exit codes), so AI agents and scripts can drive it.

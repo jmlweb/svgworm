@@ -20,6 +20,8 @@ Resolve Q-40, Q-41, Q-42, Q-51. Choose runtime target, language, build, test run
 - [ ] One ADR per major choice or one consolidated ADR with evidence
 - [ ] Dependency budget justified
 - [ ] License decided
+- [ ] CLI UX stack (progress, prompts, stats) chosen per principle 7 / R-53, with non-TTY fallback
+- [ ] Supported version range (runtime, browsers, React) stated per principle 8 / R-54
 
 ## Notes
 

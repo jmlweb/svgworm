@@ -1,5 +1,12 @@
 # Testing rules
 
+## Approach: test-first, not strict TDD
+
+- Default loop: write a failing test (unit, snapshot, or type test), make it pass, then refactor.
+- Bug fixes start with a test that reproduces the bug.
+- Allowed exceptions: spikes, throwaway prototypes, and CLI visuals (animations, colors). Cover CLI visuals with non-TTY output snapshots instead.
+- A change without tests needs a stated reason in the task's progress log.
+
 ## Fixtures
 
 - Only use icons with an **OSS-compatible license** (MIT, ISC, Apache-2.0, CC0). Record the source and license in `fixtures/LICENSES.md`.
