@@ -23,7 +23,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-20** Each icon is optimized, and its internal ids are made unique per icon. _[v0.1]_
 - **R-21** Color is handled per icon: mono icons inherit `currentColor`, multicolor icons keep their colors, and stroke icons keep their stroke semantics. _[v0.1]_
 - **R-22** I can override the color strategy for each icon or each folder. _[v0.1]_
-- **R-23** Each `viewBox` is preserved. An icon without a `viewBox` causes an error or a derived `viewBox`, as decided in an ADR (Q-06). _[v0.1]_
+- **R-23** Each `viewBox` is preserved. An icon without a `viewBox` gets one derived from plain-number or `px` `width`/`height` (reported by the CLI), and otherwise causes an error ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)). _[v0.1]_
 
 ## Workflow
 

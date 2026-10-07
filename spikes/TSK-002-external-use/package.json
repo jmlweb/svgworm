@@ -1,0 +1,14 @@
+{
+  "name": "tsk-002-external-use",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "check": "node src/check.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2",
+    "pngjs": "7.0.0",
+    "svgo": "4.1.0"
+  }
+}

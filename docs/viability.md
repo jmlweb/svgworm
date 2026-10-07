@@ -80,7 +80,7 @@ Checked on 2026-10-08 against the [docs](https://neodx.pages.dev/svg/) and npm. 
 
 ## Go / no-go criteria for v1
 
-- [ ] Spike shows external sprites render gradients, masks, and clipPath correctly in current Chromium, Firefox, and WebKit, or we document a fallback (inline those icons only).
+- [x] Spike shows external sprites render gradients, masks, and clipPath correctly in current Chromium, Firefox, and WebKit, or we document a fallback (inline those icons only). They don't in WebKit. The fallback is a zero-JS SVG-stack file (`<img>`, or a CSS mask for mono), not inline. See [ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md).
 - [ ] The URL delivery approach works in at least plain HTML, Next.js App Router, and Vite without a bundler plugin.
 - [x] Color classification is correct on ≥95% of the fixture corpus, with an override for each icon. 99.98% on 31,390 icons, see [ADR-0004](adr/0004-per-icon-color-classification.md).
 - [ ] Type-checking stays fast with 5,000 icon names. Deferred past v0.1 by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md); v0.1 uses a plain union.

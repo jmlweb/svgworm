@@ -1,6 +1,6 @@
 # 0001. External sprite file as default delivery
 
-- **Status:** proposed (accepted or rejected once TSK-002 lands)
+- **Status:** accepted (2026-10-08, by [ADR-0006](0006-per-icon-delivery-external-use-and-svg-stack.md), which adds a per-icon SVG-stack delivery for icons with `url(#…)` references)
 - **Date:** 2026-10-07
 - **Task:** TSK-002
 - **Resolves:** Q-01
