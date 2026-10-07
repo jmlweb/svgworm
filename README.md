@@ -2,7 +2,7 @@
 
 > Zero-JS, type-safe SVG sprites. A framework-agnostic CLI with deterministic output, plus a thin React adapter that works in Server Components.
 
-**Status: design phase (pre-alpha).** There is no code on this branch yet. The previous prototype lives on `main` and is kept only as a reference.
+**Status: pre-alpha, starting the v0.1 build.** The stack is decided ([ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md)), but there is no package code on this branch yet. The previous prototype lives on `main` and is kept only as a reference.
 
 ## The idea
 

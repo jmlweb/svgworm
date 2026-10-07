@@ -17,6 +17,13 @@ SVG sources ─▶ core (parse, normalize, id, optimize, classify color, assembl
 - The **output contract** (`docs/output-contract.md`) is a public API. Changing it needs an ADR and a semver note.
 - The CLI is a thin shell over the core. Everything the CLI does should also be possible programmatically.
 
+## Packages (ADR-0008)
+
+- `packages/svgworm`: core in `src/core`, CLI in `src/cli`. `src/core` must not import `src/cli`, `@clack/prompts`, or `react`, and must not write to stdout. It reports progress through an event callback. A lint rule enforces this.
+- `packages/react` (`@svgworm/react`): zero dependencies, `react` as a peer only, and no import from `svgworm`.
+- At most 3 direct runtime dependencies in `svgworm`: svgo, zod, @clack/prompts. Prefer `node:` built-ins (`util.parseArgs`, `util.styleText`, `fs.glob`, `path.matchesGlob`, `fs.watch`, `crypto`).
+- Sort with a code-unit comparator, never `localeCompare`. Convert `\` to `/` in every path from `fs.glob` before using it.
+
 ## Determinism
 
 - Sort every collection before emitting (files, ids, attributes).

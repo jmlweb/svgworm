@@ -8,10 +8,11 @@ A CLI that turns a folder of SVG files into **type-safe, cacheable SVG sprites**
 
 Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viability.md).
 
-## Current phase: design
+## Current phase: build (v0.1)
 
-- **No implementation code yet.** Spikes may produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
-- **No tool, library, or runtime choices without an ADR** in `docs/adr/` (see `.claude/rules/decisions.md`).
+- **The stack is decided** in [ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6 strict ESM, `tsc`, Vitest, svgo 4, `node:util.parseArgs`, @clack/prompts, and a JSON config validated with zod. It is a pnpm workspace with `svgworm` (core + CLI) and `@svgworm/react`. Release and license are in [ADR-0009](docs/adr/0009-license-versioning-and-release.md).
+- **Product code starts with the scaffold (TSK-010).** Until then there is no package code. Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
+- **No new tool, library, or runtime choices without an ADR** in `docs/adr/` (see `.claude/rules/decisions.md`). Runtime dependencies are capped by ADR-0008's budget.
 - The old prototype on `main` is reference material only. Port *ideas*, not code.
 
 ## Product principles (non-negotiable unless an ADR changes them)

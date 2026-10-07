@@ -34,11 +34,11 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 
 ## Tooling (decided only through ADRs after the spikes)
 
-- **Q-40** Runtime and build tool, test runner, SVG parser and optimizer, CLI framework, config format → TSK-009
-- **Q-41** Monorepo (core + adapters as separate packages) vs a single package with subpath exports → TSK-009
-- **Q-42** Watch mode implementation and incremental cache → TSK-009 Incremental watch deferred to post-v0.1 (ADR-0005); v0.1 rebuilds everything on change.
+- ✅ **Q-40** Runtime and build tool, test runner, SVG parser and optimizer, CLI framework, config format → TSK-009. Answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6, `tsc`, Vitest 5, svgo 4, `node:util.parseArgs` + @clack/prompts, `svgworm.config.json` validated with zod
+- ✅ **Q-41** Monorepo (core + adapters as separate packages) vs a single package with subpath exports → TSK-009. Answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): pnpm workspace with `svgworm` (core + CLI) and a zero-dependency `@svgworm/react`
+- ✅ **Q-42** Watch mode implementation and incremental cache → TSK-009 Incremental watch deferred to post-v0.1 (ADR-0005); v0.1 rebuilds everything on change. v0.1 part answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): recursive `fs.watch` with a debounced full rebuild; the incremental cache (keyed by content hash) is TSK-023
 
 ## Product
 
 - ✅ **Q-50** Exact differentiators vs current competitor versions (competitor deep-dive) → TSK-007. Resolved by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)
-- **Q-51** License (MIT?) and contribution policy → TSK-009
+- **Q-51** License (MIT?) and contribution policy → TSK-009. Proposed in [ADR-0009](adr/0009-license-versioning-and-release.md): MIT, inbound = outbound with no CLA. Pending the maintainer's confirmation
