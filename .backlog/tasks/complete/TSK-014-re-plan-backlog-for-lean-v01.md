@@ -1,12 +1,14 @@
 ---
 id: TSK-014
 title: Re-plan backlog for lean v0.1
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-10-07
 source: plan/PLN-001
 depends-on: []
+started: 2026-10-07
+completed: 2026-10-07
 ---
 
 # Re-plan backlog for lean v0.1
@@ -109,27 +111,32 @@ v0.1 is done when a team can run `npx svgworm init` in a Next.js 16 app, drop in
 
 ## Acceptance Criteria
 
-- [ ] TSK-002 trimmed: cross-origin reduced to documented constraint; mono rewrite checked in Chromium, Firefox, WebKit
-- [ ] TSK-004 converted to decision task (Next.js 16 + plain HTML only; Q-23/Q-25 deferred; Q-24 into contract)
-- [ ] TSK-005 set to P3 and tagged post-v0.1
-- [ ] TSK-006 timeboxed with proposed defaults: / separator, NFC, lowercase kebab, collisions error; alias map deferred
-- [ ] TSK-008 retitled Output contract v0.1, depends on TSK-002/004/006, single-sprite scope, 0.x breaking-change policy stated
-- [ ] TSK-009 has no dependencies and covers release tooling and license (Q-51)
-- [ ] TSK-010 includes CI on Linux, macOS, Windows
-- [ ] TSK-011 drops R-13, adds NFC/NFD determinism test and minimal CLI UX (progress, stats, --json, stable exit codes)
-- [ ] TSK-012 drops inline sprite, resolves sprite URL from manifest, verifies zero client JS
-- [ ] TSK-013 scoped to check + full-rebuild watch; incremental watch split into new task
-- [ ] New tasks created: svgworm init, example app, discovery docs + comparison page, release v0.1.0, launch outreach, kill-criteria review
-- [ ] One pending task per deferred item: multi-sprite, inline sprite, incremental watch, Vite/Astro recipes, alias map, CSS-variable mode, color edge cases
-- [ ] docs/requirements.md marks each R-xx as v0.1 or later
-- [ ] docs/open-questions.md marks deferred questions with Deferred to post-v0.1 (ADR-0005)
-- [ ] AGENTS.md phase line updated (or scheduled) for the move from design to build once TSK-009 is accepted
-- [ ] Open questions resolved: multi-sprite, Vite, v0.1.0 target date, kill-criteria reminder method
+- [x] TSK-002 trimmed: cross-origin reduced to documented constraint; mono rewrite checked in Chromium, Firefox, WebKit
+- [x] TSK-004 converted to decision task (Next.js 16 + plain HTML only; Q-23/Q-25 deferred; Q-24 into contract)
+- [x] TSK-005 set to P3 and tagged post-v0.1
+- [x] TSK-006 timeboxed with proposed defaults: / separator, NFC, lowercase kebab, collisions error; alias map deferred
+- [x] TSK-008 retitled Output contract v0.1, depends on TSK-002/004/006, single-sprite scope, 0.x breaking-change policy stated
+- [x] TSK-009 has no dependencies and covers release tooling and license (Q-51)
+- [x] TSK-010 includes CI on Linux, macOS, Windows
+- [x] TSK-011 drops R-13, adds NFC/NFD determinism test and minimal CLI UX (progress, stats, --json, stable exit codes)
+- [x] TSK-012 drops inline sprite, resolves sprite URL from manifest, verifies zero client JS
+- [x] TSK-013 scoped to check + full-rebuild watch; incremental watch split into new task
+- [x] New tasks created: svgworm init, example app, discovery docs + comparison page, release v0.1.0, launch outreach, kill-criteria review
+- [x] One pending task per deferred item: multi-sprite, inline sprite, incremental watch, Vite/Astro recipes, alias map, CSS-variable mode, color edge cases
+- [x] docs/requirements.md marks each R-xx as v0.1 or later
+- [x] docs/open-questions.md marks deferred questions with Deferred to post-v0.1 (ADR-0005)
+- [x] AGENTS.md phase line updated (or scheduled) for the move from design to build once TSK-009 is accepted
+- [x] Open questions resolved: multi-sprite, Vite, v0.1.0 target date, kill-criteria reminder method
 
 ## Notes
 
 ## Learnings
 
+- LRN-009: Hand-edited task title or priority leaves index stale
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-07] Started
+- [2026-10-08] Started. Edited TSK-002/004/005/006/008/009/010/011/012/013 per PLN-001 M0/M1. Created TSK-015 to TSK-020 (v0.1) and TSK-021 to TSK-027 (post-v0.1 deferred items). Requirements tagged v0.1 or post-v0.1; deferred questions marked in open-questions.md. AGENTS.md phase update scheduled as a TSK-009 criterion, not done now. Kill-criteria review is TSK-020 (backlog task); optional routine not set. OPEN: v0.1.0 target date needs maintainer input. Left unchecked.
+- [2026-10-08] Target dates accepted by maintainer: M0 by 2026-10-15, M1 by 2026-11-12, M2 and v0.1.0 release by 2026-11-26. Kill-criteria review planned for 2027-02-18 (launch + 12 weeks), recomputed from the actual launch date. All criteria met.
+- [2026-10-07] Completed

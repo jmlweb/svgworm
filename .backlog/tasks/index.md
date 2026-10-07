@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 11 |
+| Pending | 23 |
 | Active | 0 |
 | Blocked | 0 |
-| Complete | 3 |
+| Complete | 4 |
 
 ## Active Tasks
 
@@ -18,16 +18,28 @@ _No active tasks._
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-002 | Spike: external <use> browser compatibility | P1 | spike, browser, adr | 2026-10-07 |
-| TSK-004 | Spike: delivering sprite URL to apps without bundler plugin | P1 | spike, integration, adr | 2026-10-07 |
-| TSK-005 | Spike: TypeScript performance with large icon-name sets | P2 | spike, types, adr | 2026-10-07 |
+| TSK-004 | Decision: sprite URL delivery without bundler plugin | P1 | decision, integration, adr | 2026-10-07 |
+| TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
 | TSK-006 | Define icon naming, namespaces and collision policy | P1 | design, naming, adr | 2026-10-07 |
-| TSK-008 | Freeze output contract v0 | P1 | design, contract, adr | 2026-10-07 |
+| TSK-008 | Output contract v0.1 | P1 | design, contract, adr | 2026-10-07 |
 | TSK-009 | ADR: tech stack and package layout | P1 | adr, tooling | 2026-10-07 |
 | TSK-010 | Scaffold project per stack ADR | P2 | setup | 2026-10-07 |
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | P2 | core, cli | 2026-10-07 |
 | TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
 | TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |
-| TSK-014 | Re-plan backlog for lean v0.1 | P2 |  | 2026-10-07 |
+| TSK-015 | svgworm init: interactive setup for Next.js | P2 | cli, dx, v0.1 | 2026-10-07 |
+| TSK-016 | examples/next-app-router: Next 16 Turbopack example | P2 | example, v0.1 | 2026-10-07 |
+| TSK-017 | Discovery docs and honest comparison page | P2 | docs, discovery, v0.1 | 2026-10-07 |
+| TSK-018 | Release v0.1.0 to npm | P2 | release, v0.1 | 2026-10-07 |
+| TSK-019 | Launch outreach for svgworm v0.1 | P2 | launch, v0.1 | 2026-10-07 |
+| TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
+| TSK-021 | Multiple sprites (namespace or config groups) | P3 | post-v0.1 | 2026-10-07 |
+| TSK-022 | Inline sprite output | P3 | post-v0.1 | 2026-10-07 |
+| TSK-023 | Incremental watch mode | P3 | post-v0.1 | 2026-10-07 |
+| TSK-024 | Vite and Astro recipes | P4 | post-v0.1 | 2026-10-07 |
+| TSK-025 | Alias map for icon name collisions | P4 | post-v0.1 | 2026-10-07 |
+| TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
+| TSK-027 | Color classification edge cases: markers, CSS variables, animations | P4 | post-v0.1, color | 2026-10-07 |
 
 ## Recently Completed
 
@@ -36,3 +48,4 @@ _No active tasks._
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
 | TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |
+| TSK-014 | Re-plan backlog for lean v0.1 | 2026-10-07 |

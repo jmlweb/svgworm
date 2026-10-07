@@ -18,7 +18,8 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 ## Acceptance Criteria
 
 - [ ] Fresh clone: install + test + build pass
-- [ ] CI runs on PR
+- [ ] CI runs on PR on Linux, macOS and Windows
+- [ ] Determinism check runs on all three operating systems
 - [ ] AGENTS.md lists commands
 
 ## Notes

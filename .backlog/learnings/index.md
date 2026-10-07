@@ -12,3 +12,4 @@
 | LRN-006 | Recolor masks only after freezing inherited fill | color, svg, mask | active | 2026-10-07 |
 | LRN-007 | resvg-js returns premultiplied pixels and can abort | testing, rendering, resvg | active | 2026-10-07 |
 | LRN-008 | neodx defaults break colors and Turbopack setup | competitor, neodx, nextjs | active | 2026-10-07 |
+| LRN-009 | Hand-edited task title or priority leaves index stale | backlog, flowstate, index | active | 2026-10-07 |
