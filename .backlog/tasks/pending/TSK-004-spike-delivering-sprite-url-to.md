@@ -13,13 +13,15 @@ depends-on: []
 
 ## Description
 
-Resolve Q-20, Q-21, Q-23. Prototype manifest/generated-module approach in plain HTML, Next.js App Router, Vite. Decide base-path config, preload guidance.
+Resolve Q-20, Q-21, Q-23, Q-24, Q-25. Prototype manifest/generated-module approach in plain HTML, Next.js App Router, Vite. Decide base-path config, preload guidance.
 
 ## Acceptance Criteria
 
 - [ ] Works in plain HTML, Next.js App Router, Vite
 - [ ] Recipes drafted per framework
 - [ ] ADR written; output-contract.md manifest section updated
+- [ ] open-questions.md updated
+- [ ] Learning added
 
 ## Notes
 

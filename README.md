@@ -12,7 +12,7 @@
    - a **manifest** mapping sprite names to their public URLs
    - **types**, so icon names are checked at compile time
    - optional **adapter code**, starting with an `Icon` component for React that ships no client JavaScript
-3. Your app renders `<svg><use href="/sprite.<hash>.svg#icon-name"/></svg>`, and the generated code writes that markup for you.
+3. Your app renders `<svg><use href="/<group>.<hash>.svg#<icon-id>"/></svg>`, and the generated code writes that markup for you.
 
 ## Docs
 

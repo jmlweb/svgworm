@@ -11,6 +11,10 @@ The prototype on `main` has structural flaws (see [viability.md](../viability.md
 
 Start from scratch on the orphan branch `next`, which holds only docs, agent rules, and the backlog. `main` stays untouched as reference. Ideas are ported through flowstate learnings, not by copying code.
 
+## Evidence
+
+The eight structural flaws listed in [viability.md](../viability.md) under "Lessons from the `main` prototype". Most touch the core data flow (ids, color, delivery), so they can't be fixed locally.
+
 ## Consequences
 
 - History is clean, and design decisions are written down before any code.

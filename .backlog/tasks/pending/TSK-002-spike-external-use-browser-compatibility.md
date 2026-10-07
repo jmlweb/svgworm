@@ -13,13 +13,15 @@ depends-on: [TSK-001]
 
 ## Description
 
-Resolve Q-01, Q-03 (and inform Q-02). Throwaway prototype in spikes/. Render fixture symbols via external <use href=file.svg#id> in current Chromium, Firefox, WebKit. Test gradients, masks, clipPath, filters, <style>, viewBox sizing, cross-origin behavior.
+Resolve Q-01, Q-03, Q-04 (browser side), Q-06; inform Q-02 and Q-05. Throwaway prototype in spikes/. Render fixture symbols via external <use href=file.svg#id> in current Chromium, Firefox, WebKit. Test gradients, masks, clipPath, filters, <style>, viewBox sizing, cross-origin behavior.
 
 ## Acceptance Criteria
 
 - [ ] Matrix feature x browser recorded in ADR
 - [ ] Cross-origin behavior documented with recommended workaround
-- [ ] ADR accepted/rejected; ADR 0001 condition resolved
+- [ ] `<style>` leakage between symbols confirmed or ruled out per browser (Q-04)
+- [ ] Repeatable browser-check method chosen and documented (feeds testing.md)
+- [ ] New ADR accepted/rejected; ADR 0001 moved from proposed to accepted or rejected
 - [ ] open-questions.md updated
 - [ ] Learning added
 

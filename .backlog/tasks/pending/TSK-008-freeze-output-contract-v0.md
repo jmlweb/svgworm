@@ -13,7 +13,7 @@ depends-on: [TSK-002, TSK-003, TSK-004, TSK-005, TSK-006]
 
 ## Description
 
-Consolidate spike outcomes into docs/output-contract.md with no remaining question marks for v1 scope. Include sprite grouping (Q-22). Public API — use doubt-driven review.
+Consolidate spike outcomes into docs/output-contract.md with no remaining question marks for v1 scope. Include sprite grouping (Q-22) and per-icon delivery field (Q-05). Public API — use doubt-driven review.
 
 ## Acceptance Criteria
 

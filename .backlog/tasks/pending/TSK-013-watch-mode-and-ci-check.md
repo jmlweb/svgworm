@@ -13,13 +13,12 @@ depends-on: [TSK-011]
 
 ## Description
 
-R-30, R-31, R-15. Incremental rebuild on change; check mode exits non-zero if committed output stale; safe stale-sprite cleanup.
+R-30, R-31. Incremental rebuild on change; check mode exits non-zero if committed output stale. Cleanup (R-15) lives in TSK-011.
 
 ## Acceptance Criteria
 
 - [ ] Watch rebuilds only changed icons
 - [ ] check exits 1 on stale output with diff summary
-- [ ] Cleanup only removes svgworm-owned files
 
 ## Notes
 

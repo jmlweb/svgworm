@@ -7,7 +7,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-01** As a developer, I point the CLI at one or more source folders of `.svg` files.
 - **R-02** Subfolders can map to namespaces (`social/github`) or be flattened. Either way, the result is deterministic.
 - **R-03** Name collisions produce an error that lists every conflicting file. They are never silently renamed.
-- **R-04** Invalid or unsupported SVGs are reported with the file path and reason. The rest of the build continues, and the exit code reflects the failures.
+- **R-04** Invalid or unsupported SVGs are reported with the file path and reason. All errors are collected and reported together, the build exits non-zero, and no output is written (previous output stays untouched).
 
 ## Output
 
@@ -23,7 +23,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-20** Each icon is optimized, and its internal ids are made unique per icon.
 - **R-21** Color is handled per icon: mono icons inherit `currentColor`, multicolor icons keep their colors, and stroke icons keep their stroke semantics.
 - **R-22** I can override the color strategy for each icon or each folder.
-- **R-23** Each `viewBox` is preserved. An icon without a `viewBox` causes an error or a derived `viewBox`, as decided in an ADR.
+- **R-23** Each `viewBox` is preserved. An icon without a `viewBox` causes an error or a derived `viewBox`, as decided in an ADR (Q-06).
 
 ## Workflow
 
@@ -42,6 +42,6 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 
 ## Non-functional
 
-- **R-50** Builds 1,000 icons in well under a few seconds on a laptop (the exact budget is set after the spikes).
+- **R-50** Builds 1,000 icons in a few seconds on a laptop. The exact budget is set by a benchmark once the walking skeleton exists.
 - **R-51** Few runtime dependencies for consumers. The adapter has zero dependencies beyond React.
 - **R-52** Clear, actionable error messages.

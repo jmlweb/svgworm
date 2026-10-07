@@ -1,8 +1,9 @@
 # 0001. External sprite file as default delivery
 
-- **Status:** accepted (conditional on the Q-01 spike)
+- **Status:** proposed (accepted or rejected once TSK-002 lands)
 - **Date:** 2026-10-07
-- **Resolves:** delivery strategy
+- **Task:** TSK-002
+- **Resolves:** Q-01
 
 ## Context
 

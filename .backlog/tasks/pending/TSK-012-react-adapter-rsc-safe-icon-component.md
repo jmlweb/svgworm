@@ -13,7 +13,7 @@ depends-on: [TSK-011]
 
 ## Description
 
-R-40..R-44. Hook-free Icon typed against generated names, resolves sprite URL from generated manifest module, accessible defaults. Verify in Next.js App Router server component with zero client JS.
+R-40..R-44, plus React side of inline sprite (R-13). Hook-free Icon typed against generated names, resolves sprite URL from generated manifest module, accessible defaults. Verify in Next.js App Router server component with zero client JS.
 
 ## Acceptance Criteria
 
@@ -21,6 +21,7 @@ R-40..R-44. Hook-free Icon typed against generated names, resolves sprite URL fr
 - [ ] Renders in RSC without use client
 - [ ] Zero client JS verified in example app
 - [ ] Multiple sprites work transparently
+- [ ] Inline sprite usable from React when enabled (R-13)
 
 ## Notes
 

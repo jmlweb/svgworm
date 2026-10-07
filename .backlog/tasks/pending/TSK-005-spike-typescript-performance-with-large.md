@@ -20,6 +20,8 @@ Resolve Q-30. Benchmark tsc check time + editor autocomplete with 500 / 5000 / 2
 - [ ] Benchmark numbers recorded
 - [ ] Chosen type shape in ADR
 - [ ] output-contract.md types section updated
+- [ ] open-questions.md updated
+- [ ] Learning added
 
 ## Notes
 

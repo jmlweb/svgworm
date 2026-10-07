@@ -13,7 +13,7 @@ depends-on: [TSK-001]
 
 ## Description
 
-Resolve Q-10, Q-11, Q-12. Design heuristic to classify mono / stroke / multicolor and how currentColor is applied. Measure accuracy on fixture corpus. Define override mechanism (per icon/folder).
+Resolve Q-10, Q-11, Q-12, Q-04 (style scoping strategy, since `<style>` often carries color). Design heuristic to classify mono / stroke / multicolor and how currentColor is applied. Measure accuracy on fixture corpus. Define override mechanism (per icon/folder).
 
 ## Acceptance Criteria
 
@@ -21,6 +21,7 @@ Resolve Q-10, Q-11, Q-12. Design heuristic to classify mono / stroke / multicolo
 - [ ] Override mechanism specified
 - [ ] ADR written
 - [ ] open-questions.md updated
+- [ ] Learning added
 
 ## Notes
 

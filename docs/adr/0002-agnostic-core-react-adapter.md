@@ -16,6 +16,10 @@ The prototype mixed SVG processing with JSX generation (`html-to-jsx` inside the
 
 Option 2. React is the first adapter, and it must be a valid Server Component with zero client JS.
 
+## Evidence
+
+The `main` prototype: JSX generation inside the icon formatter, and a CLI coupled to generation with no programmatic API (see [viability.md](../viability.md), lesson 7).
+
 ## Consequences
 
 - The output contract becomes a public API, and changing it needs an ADR.
