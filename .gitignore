@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+*.log
+*.tgz
+dist/
+
+# Legacy prototype fixtures (proprietary, never commit)
+svg/
+
+# Editor-local
+.cursor/
