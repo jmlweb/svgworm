@@ -41,4 +41,4 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 ## Product
 
 - ✅ **Q-50** Exact differentiators vs current competitor versions (competitor deep-dive) → TSK-007. Resolved by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)
-- **Q-51** License (MIT?) and contribution policy → TSK-009. Proposed in [ADR-0009](adr/0009-license-versioning-and-release.md): MIT, inbound = outbound with no CLA. Pending the maintainer's confirmation
+- ✅ **Q-51** License (MIT?) and contribution policy → TSK-009. Answered by [ADR-0009](adr/0009-license-versioning-and-release.md): MIT, inbound = outbound with no CLA

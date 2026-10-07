@@ -1,6 +1,6 @@
 # 0009. License, versioning, and release tooling
 
-- **Status:** proposed (the license needs the maintainer's confirmation; it becomes accepted once confirmed)
+- **Status:** accepted (license confirmed by the maintainer on 2026-10-08)
 - **Date:** 2026-10-08
 - **Task:** TSK-009
 - **Resolves:** Q-51
