@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 10 |
+| Pending | 11 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 3 |
@@ -27,6 +27,7 @@ _No active tasks._
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | P2 | core, cli | 2026-10-07 |
 | TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
 | TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |
+| TSK-014 | Re-plan backlog for lean v0.1 | P2 |  | 2026-10-07 |
 
 ## Recently Completed
 
