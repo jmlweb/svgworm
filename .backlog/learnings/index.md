@@ -13,3 +13,11 @@
 | LRN-007 | resvg-js returns premultiplied pixels and can abort | testing, rendering, resvg | active | 2026-10-07 |
 | LRN-008 | neodx defaults break colors and Turbopack setup | competitor, neodx, nextjs | active | 2026-10-07 |
 | LRN-009 | Hand-edited task title or priority leaves index stale | backlog, flowstate, index | active | 2026-10-07 |
+| LRN-010 | Icon name and symbol id must be different strings | naming, output-contract, svg | active | 2026-10-07 |
+| LRN-011 | NFC alone doesn't make names case- and order-stable | unicode, determinism, naming | active | 2026-10-07 |
+| LRN-012 | Don't use . as the internal-id delimiter in sprites | svgo, sprite, ids | active | 2026-10-07 |
+| LRN-013 | TypeScript 7 blocks type-aware linting | tooling, typescript, adr | active | 2026-10-07 |
+| LRN-014 | Modern Node built-ins replace most CLI dependencies | tooling, dependencies, cli | active | 2026-10-07 |
+| LRN-015 | svgo has no public parse function | svgo, parser | active | 2026-10-07 |
+| LRN-016 | Agent worktrees may be created from main, not next | workflow, agents, git | active | 2026-10-07 |
+| LRN-017 | WebKit ignores url(#...) references in external use sprites | browser, svg, sprite, webkit, delivery, testing | active | 2026-10-07 |

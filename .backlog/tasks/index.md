@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 29 |
+| Pending | 26 |
 | Active | 0 |
 | Blocked | 0 |
-| Complete | 4 |
+| Complete | 7 |
 
 ## Active Tasks
 
@@ -17,12 +17,9 @@ _No active tasks._
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-002 | Spike: external <use> browser compatibility | P1 | spike, browser, adr | 2026-10-07 |
 | TSK-004 | Decision: sprite URL delivery without bundler plugin | P1 | decision, integration, adr | 2026-10-07 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
-| TSK-006 | Define icon naming, namespaces and collision policy | P1 | design, naming, adr | 2026-10-07 |
 | TSK-008 | Output contract v0.1 | P1 | design, contract, adr | 2026-10-07 |
-| TSK-009 | ADR: tech stack and package layout | P1 | adr, tooling | 2026-10-07 |
 | TSK-010 | Scaffold project per stack ADR | P2 | setup | 2026-10-07 |
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | P2 | core, cli | 2026-10-07 |
 | TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
@@ -52,6 +49,9 @@ _No active tasks._
 | ID | Title | Completed |
 |----|-------|-----------|
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
+| TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
+| TSK-006 | Define icon naming, namespaces and collision policy | 2026-10-07 |
 | TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |
+| TSK-009 | ADR: tech stack and package layout | 2026-10-07 |
 | TSK-014 | Re-plan backlog for lean v0.1 | 2026-10-07 |
