@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 23 |
+| Pending | 29 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 4 |
@@ -40,6 +40,12 @@ _No active tasks._
 | TSK-025 | Alias map for icon name collisions | P4 | post-v0.1 | 2026-10-07 |
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-027 | Color classification edge cases: markers, CSS variables, animations | P4 | post-v0.1, color | 2026-10-07 |
+| TSK-028 | Pre-launch post: per-icon color result | P2 | traction, launch, content | 2026-10-07 |
+| TSK-029 | Report TSK-007 findings upstream to @neodx/svg | P2 | traction, launch, community | 2026-10-07 |
+| TSK-030 | Target repo list and direct migration PRs | P2 | traction, outreach | 2026-10-07 |
+| TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | P2 | traction, agents, discovery | 2026-10-07 |
+| TSK-032 | Agent eval harness: guided success and unprompted pick rate | P3 | traction, agents, measure | 2026-10-07 |
+| TSK-033 | Weekly traction metrics snapshot | P3 | traction, measure | 2026-10-07 |
 
 ## Recently Completed
 
