@@ -19,6 +19,6 @@ The large accuracy corpus (31k icons) is not committed. It is rebuilt from pinne
 | `nested-svg/` | `<svg>` inside the root `<svg>` | handled by an AST transform, not string replacement (prototype lesson) |
 | `style/` | Illustrator-style `<style>` class rules (mono and multicolor). `unscopable-media.svg` has an `@media` rule that can't be inlined | inlined to attributes; `unscopable-media` is an error ([Q-04](../docs/open-questions.md)) |
 | `internal-refs/` | `<use href="#id">` and other internal references | references followed; ids prefixed per icon |
-| `duplicates/` | `close.svg` in two folders | collision policy ([Q-32](../docs/open-questions.md)): error unless namespaced |
-| `non-ascii/` | `café.svg` (NFC) and `日本.svg`. Tests generate the NFD variant of `café` at runtime, so git or the OS can't normalize it away | same id for NFC and NFD ([Q-31](../docs/open-questions.md)) |
+| `duplicates/` | `close.svg` in two folders | `actions/close` and `arrows/close`; with `flatten`, one collision error listing both ([ADR-0007](../docs/adr/0007-icon-naming-and-collision-policy.md)) |
+| `non-ascii/` | `café.svg` (NFC) and `日本.svg`. Tests generate the NFD variant of `café` at runtime, so git or the OS can't normalize it away | same name and id for NFC and NFD: `café` / `i-caf_e9_`, `日本` / `i-_65e5__672c_` ([ADR-0007](../docs/adr/0007-icon-naming-and-collision-policy.md)) |
 | `invalid/` | Empty file, unclosed root, non-SVG root, `<script>`, external `href`, missing `viewBox` | clear error per file. Missing `viewBox` is decided by [Q-06](../docs/open-questions.md) |

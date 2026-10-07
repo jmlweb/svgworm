@@ -5,8 +5,8 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 ## Input
 
 - **R-01** As a developer, I point the CLI at one or more source folders of `.svg` files. _[v0.1]_
-- **R-02** Subfolders can map to namespaces (`social/github`) or be flattened. Either way, the result is deterministic. _[v0.1]_
-- **R-03** Name collisions produce an error that lists every conflicting file. They are never silently renamed. _[v0.1]_
+- **R-02** Subfolders can map to namespaces (`social/github`) or be flattened. Either way, the result is deterministic. _[v0.1]_ Rules: [ADR-0007](adr/0007-icon-naming-and-collision-policy.md).
+- **R-03** Name collisions produce an error that lists every conflicting file. They are never silently renamed. _[v0.1]_ Rules: [ADR-0007](adr/0007-icon-naming-and-collision-policy.md).
 - **R-04** Invalid or unsupported SVGs are reported with the file path and reason. All errors are collected and reported together, the build exits non-zero, and no output is written (previous output stays untouched). _[v0.1]_
 
 ## Output
