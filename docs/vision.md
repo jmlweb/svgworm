@@ -21,18 +21,18 @@ A CLI that generates cacheable, hashed sprite files, a manifest, and types from 
 
 ## Positioning
 
-"Zero-JS, type-safe SVG sprites. Framework-agnostic CLI, deterministic output, React Server Components first."
+"Icon sprites for Next.js App Router and Server Components, correct with zero config: drop in your design team's SVGs and they theme and render correctly, with zero client JS and no bundler plugin."
 
-Planned differentiators (to be validated, see [viability.md](viability.md)):
+Decided in [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md), after the competitor review ([viability.md](viability.md#neodxsvg-in-detail)).
 
-1. External hashed sprite with a manifest by default. Inline is opt-in.
-2. Deterministic ids and types, safe to commit and diff in CI.
-3. Per-icon color strategy: mono icons become `currentColor`, multicolor icons are preserved, and stroke icons are handled correctly.
-4. Multiple sprites (namespaces or chunks), so a page doesn't download a giant sprite.
-5. `check` mode for CI that fails when the generated output is stale.
-6. Bundler-independent: plain CLI first, plugins later if needed.
+Differentiators, in order of weight:
 
-> **Note (2026-10-08):** [@neodx/svg](https://neodx.pages.dev/svg/) already covers 1, 4, and 6 (hashed multi-sprites, typed metadata, CLI + Node API + bundler plugins), and covers 3 only partly, through manual path-based rules. 2 and 5 are not documented there. See [viability.md](viability.md#neodxsvg-in-detail). TSK-007 confirms or trims this list.
+1. **Per-icon color with zero config.** Mono icons follow `currentColor`; multicolor icons are never touched; masks and clip paths keep working. Verified on 31k icons ([ADR-0004](adr/0004-per-icon-color-classification.md)). @neodx/svg flattens multicolor icons by default.
+2. **Works in Next.js 16 with Turbopack and Server Components** out of the box, with no client-side injection. Gradients and masks render during SSR.
+3. **Deterministic output**, including Unicode-normalized names, safe to commit and diff in CI, with a `check` mode.
+4. **A CLI UX that reports what it did**: stats, `--json`, stable exit codes.
+
+Table stakes, needed but not the pitch: an external hashed sprite with a manifest, generated types, multiple sprites, and no bundler requirement.
 
 ## Non-goals (for v1)
 

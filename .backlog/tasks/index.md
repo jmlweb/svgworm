@@ -5,13 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 10 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 2 |
+| Complete | 3 |
 
 ## Active Tasks
 
-- TSK-007: Competitor deep-dive and final positioning (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -34,3 +34,4 @@
 |----|-------|-----------|
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
+| TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |

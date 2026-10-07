@@ -4,6 +4,8 @@ _Date: 2026-10-07. Based on the `main` prototype (last commit Jan 2025) and a re
 
 ## Verdict
 
+> **Update 2026-10-08:** after the TSK-007 and TSK-003 spikes, [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md) decides to build. The positioning is narrower: zero-config correctness for Next.js App Router and Server Components. Adoption is the main risk, so there are kill criteria at 12 weeks after v0.1.0.
+
 **Viable.** The technical risk is low: SVG sprites with `<use>` are a mature, well-supported technique. The **main risk is product differentiation** in a crowded space. The project is worth continuing if it commits to the differentiators below and validates the browser edge cases early.
 
 ## Technical feasibility
@@ -51,11 +53,11 @@ What was wrong:
 | [react-icons-svg-sprite](https://github.com/xanderberkein/react-icons-svg-sprite) (0.0.8, Sep 2023) | CLI: pick react-icons into a sprite + types | React-only, curated sets not your own folder; inactive |
 | [react-svg-sprite-generator](https://github.com/simprl/react-svg-sprite-generator) (1.0.38, Apr 2024) | CLI: folder to sprite + names file with base64 previews | React-only; no color handling; inactive |
 | [vite-plugin-svgs-icons](https://github.com/335296558/vite-plugin-svgs-icons) (1.0.10, Jun 2024) | Vite plugin: sprite with color/multicolor props | Tied to Vite; README warns not all SVGs are supported; inactive |
-| SVGR | Component per icon | JS cost, no sprite, no caching |
-| svg-sprite / svgstore | Generic sprite builders | No types, no framework integration |
-| unplugin-icons / Iconify | Icon sets as components | Remote sets, component per icon |
+| [SVGR](https://github.com/gregberge/svgr) (`@svgr/core` 8.1.0, Aug 2023, 21.6M/week) | Component per icon | JS cost, no sprite, no caching |
+| [svg-sprite](https://github.com/svg-sprite/svg-sprite) (2.0.4, Feb 2025, 237k/week) / [svgstore](https://github.com/svgstore/svgstore) (3.0.1, Jun 2022, 99k/week) | Generic sprite builders | No types, no framework integration |
+| [unplugin-icons](https://github.com/unplugin/unplugin-icons) (24.0.0, Sep 2026, 841k/week) / Iconify | Icon sets as components | Remote sets, component per icon |
 
-Versions and dates come from npm on 2026-10-08. SVGR, svg-sprite, svgstore, and unplugin-icons are not re-verified yet (TSK-007).
+Versions, dates, and weekly downloads come from npm on 2026-10-08.
 
 ### @neodx/svg in detail
 
@@ -72,13 +74,13 @@ Checked on 2026-10-08 against the [docs](https://neodx.pages.dev/svg/) and npm. 
 - **Determinism:** not documented. **Verified:** stable across reruns and absolute paths. NFC and NFD file names give different ids and hashes, and the generated type doesn't match the name a developer types.
 - **Footprint:** 16 build-time dependencies (svgo, colord, fast-xml-parser, zod, commander, chokidar, unplugin, and its own `@neodx/*` packages). **Verified:** no runtime import; helpers are inlined into the generated `sprite.gen.ts` (~300 lines).
 
-**What is still left for svgworm** (after the [hands-on spike](../spikes/TSK-007-neodx-next/RESULTS.md)): correct output with zero config. That covers automatic per-icon color that never silently flattens multicolor icons, gradients and masks that render during SSR, Unicode-normalized names, and a working Next.js + Turbopack path that needs no glue code. A JSON manifest, a CLI UX with stats and `--json`, and a CI `check` mode are secondary. Sprites, types, and hashing are table stakes. TSK-007 still has to decide whether to build svgworm or contribute to neodx.
+**What is still left for svgworm** (after the [hands-on spike](../spikes/TSK-007-neodx-next/RESULTS.md)): correct output with zero config. That covers automatic per-icon color that never silently flattens multicolor icons, gradients and masks that render during SSR, Unicode-normalized names, and a working Next.js + Turbopack path that needs no glue code. A JSON manifest, a CLI UX with stats and `--json`, and a CI `check` mode are secondary. Sprites, types, and hashing are table stakes. Decision: build, per [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md).
 
-**Action:** TSK-007 still re-verifies the unchecked rows and records the build-vs-contribute decision.
+
 
 ## Go / no-go criteria for v1
 
 - [ ] Spike shows external sprites render gradients, masks, and clipPath correctly in current Chromium, Firefox, and WebKit, or we document a fallback (inline those icons only).
 - [ ] The URL delivery approach works in at least plain HTML, Next.js App Router, and Vite without a bundler plugin.
-- [ ] Color classification is correct on ≥95% of the fixture corpus, with an override for each icon.
-- [ ] Type-checking stays fast with 5,000 icon names.
+- [x] Color classification is correct on ≥95% of the fixture corpus, with an override for each icon. 99.98% on 31,390 icons, see [ADR-0004](adr/0004-per-icon-color-classification.md).
+- [ ] Type-checking stays fast with 5,000 icon names. Deferred past v0.1 by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md); v0.1 uses a plain union.
