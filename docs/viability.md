@@ -61,20 +61,20 @@ Versions and dates come from npm on 2026-10-08. SVGR, svg-sprite, svgstore, and 
 
 Checked on 2026-10-08 against the [docs](https://neodx.pages.dev/svg/) and npm. MIT, about 94 GitHub stars, active (1.0 in Aug 2026, 1.1.1 on 2026-08-25). It already covers most of what we planned:
 
-- **Delivery:** `sprite` CLI, Node API (`createSvgSpriteBuilder`), and unplugin builds for Vite, webpack, Rollup, esbuild, and Rspack. Next.js is supported only through the webpack plugin, run in the client build. Turbopack is not documented.
+- **Delivery:** Node API (`createSvgSpriteBuilder`) and unplugin builds for Vite, webpack, Rollup, esbuild, and Rspack. The `sprite` CLI is deprecated and has no hash option. **Verified:** the documented Next.js setup (webpack plugin) fails on Next 16, where Turbopack is the default. Only a Node API prebuild script works there.
 - **Multiple sprites:** one sprite per directory by default (`group: true`), or a custom grouping function.
 - **Hashing:** content-based `{hash}` / `{hash:N}` in the `fileName` template. Stale sprites are cleaned up automatically.
 - **Manifest and types:** a generated TS module (`sprite.gen.ts`) with `defineSpriteMap` and a `SpritesMeta` interface (sprite name to a union of icon names). At runtime, `sprites.experimental_get(sprite, icon, { baseUrl })` returns the hashed `href` and `viewBox`. This solves the "hashed URL into apps" problem, but through a TS module and an experimental runtime helper, not a framework-agnostic JSON manifest.
 - **Color:** `resetColors` is **on by default** and turns every color into `currentColor`. Rules can be scoped by file path (`include`/`exclude`) and support `keep`, `replace` (including CSS variables), and `replaceUnknown`. Multicolor icons rely on manually listing colors and mapping the rest to a CSS variable. This is **path-based configuration, not automatic per-icon classification**. With default settings, a multicolor icon gets flattened silently.
-- **Internal references:** `inline.filter: 'auto'` detects symbols that reference other symbols (gradients, masks, and so on) and moves them to an inlined sprite, either injected or fetched and injected. How the inject modes deliver this at runtime, and whether they need client JS, is not documented.
-- **Component:** none ships ("We don't provide a pre-made, ready-to-use component"). The docs' React example uses `forwardRef` and `useMemo`. RSC compatibility is not documented.
+- **Internal references:** `inline.filter: 'auto'` moves symbols with internal references (gradients, masks) to an `inject` asset. **Verified:** under SSR these icons render blank, because the injector returns early when `window` is undefined. A hand-written server-side workaround fixes it. The mask's `#fff` was also rewritten to `currentColor`, so mask opacity depends on text color.
+- **Component:** none ships ("We don't provide a pre-made, ready-to-use component"). **Verified:** both the docs' component and a hook-free one work as Server Components with zero client JS.
 - **Optimization:** svgo 3.
-- **Determinism:** not documented. The package depends on `object-hash`.
-- **Footprint:** 16 dependencies (svgo, colord, fast-xml-parser, zod, commander, chokidar, unplugin, and its own `@neodx/*` packages). Whether consumers need a runtime import for `defineSpriteMap` is unverified.
+- **Determinism:** not documented. **Verified:** stable across reruns and absolute paths. NFC and NFD file names give different ids and hashes, and the generated type doesn't match the name a developer types.
+- **Footprint:** 16 build-time dependencies (svgo, colord, fast-xml-parser, zod, commander, chokidar, unplugin, and its own `@neodx/*` packages). **Verified:** no runtime import; helpers are inlined into the generated `sprite.gen.ts` (~300 lines).
 
-**What is still left for svgworm:** automatic per-icon color classification that fails loudly instead of flattening, a byte-level determinism guarantee, shipped zero-JS RSC adapters, a framework-agnostic JSON manifest with no runtime helper, a CLI UX with stats and `--json`, and Turbopack/bundler-free use. These are real but narrower gaps than the verdict above assumed. TSK-007 must decide whether they justify a separate tool or whether contributing to neodx is better.
+**What is still left for svgworm** (after the [hands-on spike](../spikes/TSK-007-neodx-next/RESULTS.md)): correct output with zero config. That covers automatic per-icon color that never silently flattens multicolor icons, gradients and masks that render during SSR, Unicode-normalized names, and a working Next.js + Turbopack path that needs no glue code. A JSON manifest, a CLI UX with stats and `--json`, and a CI `check` mode are secondary. Sprites, types, and hashing are table stakes. TSK-007 still has to decide whether to build svgworm or contribute to neodx.
 
-**Action:** the competitor deep-dive task (TSK-007) still re-verifies the unchecked rows and tests @neodx/svg hands-on before we finalize positioning.
+**Action:** TSK-007 still re-verifies the unchecked rows and records the build-vs-contribute decision.
 
 ## Go / no-go criteria for v1
 

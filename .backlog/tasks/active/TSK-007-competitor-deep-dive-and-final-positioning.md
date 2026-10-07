@@ -1,12 +1,13 @@
 ---
 id: TSK-007
 title: Competitor deep-dive and final positioning
-status: pending
+status: active
 priority: P2
 tags: [product, research]
 created: 2026-10-07
 source: manual
 depends-on: []
+started: 2026-10-07
 ---
 
 # Competitor deep-dive and final positioning
@@ -31,3 +32,5 @@ Resolve Q-50. Verify current versions/features of SVGR, svg-sprite, svgstore, un
 
 - [2026-10-07] Created
 - [2026-10-08] Added @neodx/svg, vite-plugin-svg-spritemap, react-icons-svg-sprite, react-svg-sprite-generator, vite-plugin-svgs-icons to viability.md with versions + links. Doc review of @neodx/svg in viability.md; hands-on test pending
+- [2026-10-07] Started
+- [2026-10-08] Spike spikes/TSK-007-neodx-next: neodx in Next 16.4 + Turbopack. Webpack plugin path fails; Node API prebuild works; RSC + zero client JS OK; no runtime import. Default output wrong for multicolor (flattened), gradient/mask (blank in SSR), masks (#fff→currentColor), mono fill (black). NFD names change ids/hashes. See RESULTS.md. Not tested: dev watch, Linux/Windows, other browsers

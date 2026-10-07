@@ -4,14 +4,14 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 13 |
-| Active | 0 |
+| Pending | 12 |
+| Active | 1 |
 | Blocked | 0 |
 | Complete | 0 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-007: Competitor deep-dive and final positioning (P2)
 
 ## Pending Tasks
 
@@ -23,7 +23,6 @@ _No active tasks._
 | TSK-004 | Spike: delivering sprite URL to apps without bundler plugin | P1 | spike, integration, adr | 2026-10-07 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P2 | spike, types, adr | 2026-10-07 |
 | TSK-006 | Define icon naming, namespaces and collision policy | P1 | design, naming, adr | 2026-10-07 |
-| TSK-007 | Competitor deep-dive and final positioning | P2 | product, research | 2026-10-07 |
 | TSK-008 | Freeze output contract v0 | P1 | design, contract, adr | 2026-10-07 |
 | TSK-009 | ADR: tech stack and package layout | P1 | adr, tooling | 2026-10-07 |
 | TSK-010 | Scaffold project per stack ADR | P2 | setup | 2026-10-07 |
