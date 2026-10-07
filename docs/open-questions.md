@@ -7,15 +7,15 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 - **Q-01** Do gradients, masks, clipPath, filters, and `<style>` inside `<symbol>` render correctly through an **external** `<use href="file.svg#id">` in current Chromium, Firefox, and WebKit? If not, which features need a fallback? → TSK-002
 - **Q-02** Cross-origin sprites (assets on a CDN domain): which workaround should we recommend? Same-origin proxy, inline fallback, or fetch-and-inject (which costs JS)? → TSK-002
 - **Q-03** Is `viewBox` on `<symbol>` enough for sizing in all browsers, or does the consumer `<svg>` also need it? → TSK-002
-- **Q-04** How are `<style>` blocks kept from leaking between icons in a shared sprite (and into the page when inline)? Inline to attributes, prefix class names, reject what can't be scoped? → TSK-002, TSK-003
+- **Q-04** How are `<style>` blocks kept from leaking between icons in a shared sprite (and into the page when inline)? Inline to attributes, prefix class names, reject what can't be scoped? → TSK-002, TSK-003. Partly answered by [ADR-0004](adr/0004-per-icon-color-classification.md): inline every rule, error on any `<style>` left over (all 929 corpus cases inlined). Inline-sprite leakage still open (TSK-002)
 - **Q-05** If some icons must be inlined as a fallback (Q-01), how does the manifest tell adapters which delivery each icon uses? → TSK-002, TSK-008
 - **Q-06** Icon without a `viewBox`: error, or derive one from `width`/`height`? (R-23) → TSK-002
 
 ## Color
 
-- **Q-10** Which heuristic classifies an icon as mono, stroke, or multicolor reliably? → TSK-003
-- **Q-11** How should `currentColor` be applied: on the root, or rewritten on each element? What about icons that mix fill and stroke? → TSK-003
-- **Q-12** Should a CSS custom-property mode (`--icon-color-1`, …) exist for multicolor theming? → TSK-003
+- ✅ **Q-10** Which heuristic classifies an icon as mono, stroke, or multicolor reliably? → TSK-003. Answered by [ADR-0004](adr/0004-per-icon-color-classification.md): two classes, mono and multicolor, 99.98% on 31k icons
+- ✅ **Q-11** How should `currentColor` be applied: on the root, or rewritten on each element? What about icons that mix fill and stroke? → TSK-003. Answered by [ADR-0004](adr/0004-per-icon-color-classification.md): per element, root only for the default fill, masks frozen
+- **Q-12** Should a CSS custom-property mode (`--icon-color-1`, …) exist for multicolor theming? → Deferred past v1 by [ADR-0004](adr/0004-per-icon-color-classification.md)
 
 ## Delivery and integration
 

@@ -30,7 +30,7 @@ icons:
     sprite: <group>
     id: <iconId>
     viewBox: "0 0 24 24"
-    color: mono | multicolor | stroke   ❓ Q-10 (classification set)
+    color: mono | multicolor            # ADR-0004
     delivery: external | inline          ❓ Q-05 (only if per-icon inline fallback exists)
 ```
 

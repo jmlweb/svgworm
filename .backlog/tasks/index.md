@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 12 |
+| Pending | 10 |
 | Active | 1 |
 | Blocked | 0 |
-| Complete | 0 |
+| Complete | 2 |
 
 ## Active Tasks
 
@@ -17,9 +17,7 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-001 | Source OSS-licensed SVG fixture corpus | P1 | fixtures, testing | 2026-10-07 |
 | TSK-002 | Spike: external <use> browser compatibility | P1 | spike, browser, adr | 2026-10-07 |
-| TSK-003 | Spike: per-icon color classification | P1 | spike, color, adr | 2026-10-07 |
 | TSK-004 | Spike: delivering sprite URL to apps without bundler plugin | P1 | spike, integration, adr | 2026-10-07 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P2 | spike, types, adr | 2026-10-07 |
 | TSK-006 | Define icon naming, namespaces and collision policy | P1 | design, naming, adr | 2026-10-07 |
@@ -34,4 +32,5 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
-
+| TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
+| TSK-003 | Spike: per-icon color classification | 2026-10-07 |

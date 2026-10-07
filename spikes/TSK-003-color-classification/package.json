@@ -1,0 +1,13 @@
+{
+  "name": "tsk-003-color-classification",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "corpus": "node src/build-corpus.mjs",
+    "eval": "node src/evaluate.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "svgo": "4.1.0"
+  }
+}
