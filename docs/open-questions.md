@@ -29,8 +29,8 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 ## Types and naming
 
 - **Q-30** Type-checking performance with 5,000+ names: union, `as const` array, or a template-literal approach? → TSK-005 Deferred to post-v0.1 (ADR-0005); v0.1 uses a plain union.
-- **Q-31** Namespace separator and normalization rules (see output-contract) → TSK-006
-- **Q-32** Collision policy: always error, or allow an alias map? → TSK-006 Collisions are always an error in v0.1; alias map deferred to post-v0.1 (ADR-0005).
+- ✅ **Q-31** Namespace separator and normalization rules (see output-contract) → TSK-006. Answered by [ADR-0007](adr/0007-icon-naming-and-collision-policy.md): `/` separator, NFC + lowercase names, a separate ASCII symbol id (`social/github` → `i-social--github`). Open items with defaults taken are listed in the ADR.
+- ✅ **Q-32** Collision policy: always error, or allow an alias map? → TSK-006 Collisions are always an error in v0.1; alias map deferred to post-v0.1 (ADR-0005). Answered for v0.1 by [ADR-0007](adr/0007-icon-naming-and-collision-policy.md): an error that lists every file; alias map is TSK-025.
 
 ## Tooling (decided only through ADRs after the spikes)
 
