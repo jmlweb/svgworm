@@ -32,6 +32,8 @@ Planned differentiators (to be validated, see [viability.md](viability.md)):
 5. `check` mode for CI that fails when the generated output is stale.
 6. Bundler-independent: plain CLI first, plugins later if needed.
 
+> **Note (2026-10-08):** [@neodx/svg](https://neodx.pages.dev/svg/) already covers 1, 4, and 6 (hashed multi-sprites, typed metadata, CLI + Node API + bundler plugins), and covers 3 only partly, through manual path-based rules. 2 and 5 are not documented there. See [viability.md](viability.md#neodxsvg-in-detail). TSK-007 confirms or trims this list.
+
 ## Non-goals (for v1)
 
 - Fetching icon sets from remote sources (Iconify etc.)

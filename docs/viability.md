@@ -44,13 +44,37 @@ What was wrong:
 
 | Tool | Approach | Gap svgworm targets |
 |------|----------|---------------------|
+| [@neodx/svg](https://neodx.pages.dev/svg/) (1.1.1, Aug 2026) | CLI + Node API + unplugin: multi-sprite, hashed files, typed metadata | **Closest competitor**, see below. Manual color rules; no shipped adapter; RSC and determinism undocumented |
+| [vite-plugin-svg-spritemap](https://github.com/g-makarov/vite-plugin-svg-spritemap) (2.0.1, Aug 2026) | Vite plugin: sprite + optional name union, hoists and namespaces defs | Tied to Vite; no per-icon color; no framework-agnostic manifest |
+| [vite-plugin-icons-spritesheet](https://github.com/forge42dev/vite-plugin-icons-spritesheet) (3.1.0, Jun 2026) | Vite plugin: sprite + types, rebuilds on change | Tied to Vite; one sprite; color handling |
+| [svg-icons-cli](https://github.com/alexanderson1993/svg-icons-cli) (0.0.8, Mar 2024) | CLI: sprite + typed component (Epic Stack lineage) | React + Tailwind specific; limited color and multi-sprite support; inactive |
+| [react-icons-svg-sprite](https://github.com/xanderberkein/react-icons-svg-sprite) (0.0.8, Sep 2023) | CLI: pick react-icons into a sprite + types | React-only, curated sets not your own folder; inactive |
+| [react-svg-sprite-generator](https://github.com/simprl/react-svg-sprite-generator) (1.0.38, Apr 2024) | CLI: folder to sprite + names file with base64 previews | React-only; no color handling; inactive |
+| [vite-plugin-svgs-icons](https://github.com/335296558/vite-plugin-svgs-icons) (1.0.10, Jun 2024) | Vite plugin: sprite with color/multicolor props | Tied to Vite; README warns not all SVGs are supported; inactive |
 | SVGR | Component per icon | JS cost, no sprite, no caching |
-| vite-plugin-icons-spritesheet | Vite plugin: sprite + types | Tied to Vite; one sprite; color handling |
-| svg-icons-cli (Epic Stack lineage) | CLI: sprite + typed component | React-specific; limited color and multi-sprite support |
 | svg-sprite / svgstore | Generic sprite builders | No types, no framework integration |
 | unplugin-icons / Iconify | Icon sets as components | Remote sets, component per icon |
 
-**Action:** the competitor deep-dive task checks this table against current versions before we finalize positioning.
+Versions and dates come from npm on 2026-10-08. SVGR, svg-sprite, svgstore, and unplugin-icons are not re-verified yet (TSK-007).
+
+### @neodx/svg in detail
+
+Checked on 2026-10-08 against the [docs](https://neodx.pages.dev/svg/) and npm. MIT, about 94 GitHub stars, active (1.0 in Aug 2026, 1.1.1 on 2026-08-25). It already covers most of what we planned:
+
+- **Delivery:** `sprite` CLI, Node API (`createSvgSpriteBuilder`), and unplugin builds for Vite, webpack, Rollup, esbuild, and Rspack. Next.js is supported only through the webpack plugin, run in the client build. Turbopack is not documented.
+- **Multiple sprites:** one sprite per directory by default (`group: true`), or a custom grouping function.
+- **Hashing:** content-based `{hash}` / `{hash:N}` in the `fileName` template. Stale sprites are cleaned up automatically.
+- **Manifest and types:** a generated TS module (`sprite.gen.ts`) with `defineSpriteMap` and a `SpritesMeta` interface (sprite name to a union of icon names). At runtime, `sprites.experimental_get(sprite, icon, { baseUrl })` returns the hashed `href` and `viewBox`. This solves the "hashed URL into apps" problem, but through a TS module and an experimental runtime helper, not a framework-agnostic JSON manifest.
+- **Color:** `resetColors` is **on by default** and turns every color into `currentColor`. Rules can be scoped by file path (`include`/`exclude`) and support `keep`, `replace` (including CSS variables), and `replaceUnknown`. Multicolor icons rely on manually listing colors and mapping the rest to a CSS variable. This is **path-based configuration, not automatic per-icon classification**. With default settings, a multicolor icon gets flattened silently.
+- **Internal references:** `inline.filter: 'auto'` detects symbols that reference other symbols (gradients, masks, and so on) and moves them to an inlined sprite, either injected or fetched and injected. How the inject modes deliver this at runtime, and whether they need client JS, is not documented.
+- **Component:** none ships ("We don't provide a pre-made, ready-to-use component"). The docs' React example uses `forwardRef` and `useMemo`. RSC compatibility is not documented.
+- **Optimization:** svgo 3.
+- **Determinism:** not documented. The package depends on `object-hash`.
+- **Footprint:** 16 dependencies (svgo, colord, fast-xml-parser, zod, commander, chokidar, unplugin, and its own `@neodx/*` packages). Whether consumers need a runtime import for `defineSpriteMap` is unverified.
+
+**What is still left for svgworm:** automatic per-icon color classification that fails loudly instead of flattening, a byte-level determinism guarantee, shipped zero-JS RSC adapters, a framework-agnostic JSON manifest with no runtime helper, a CLI UX with stats and `--json`, and Turbopack/bundler-free use. These are real but narrower gaps than the verdict above assumed. TSK-007 must decide whether they justify a separate tool or whether contributing to neodx is better.
+
+**Action:** the competitor deep-dive task (TSK-007) still re-verifies the unchecked rows and tests @neodx/svg hands-on before we finalize positioning.
 
 ## Go / no-go criteria for v1
 
