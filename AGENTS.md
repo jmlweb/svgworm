@@ -11,7 +11,7 @@ Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viab
 ## Current phase: build (v0.1)
 
 - **The stack is decided** in [ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6 strict ESM, `tsc`, Vitest, svgo 4, `node:util.parseArgs`, @clack/prompts, and a JSON config validated with zod. It is a pnpm workspace with `svgworm` (core + CLI) and `@svgworm/react`. Release and license are in [ADR-0009](docs/adr/0009-license-versioning-and-release.md).
-- **Product code starts with the scaffold (TSK-010).** Until then there is no package code. Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
+- **The scaffold is in place (TSK-010).** Packages, lint, format, tests, build, and CI exist under `packages/`. `src/core` currently holds only a determinism placeholder (`fingerprintFiles`) that TSK-011 replaces with the real pipeline. Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
 - **No new tool, library, or runtime choices without an ADR** in `docs/adr/` (see `.claude/rules/decisions.md`). Runtime dependencies are capped by ADR-0008's budget.
 - The old prototype on `main` is reference material only. Port *ideas*, not code.
 
@@ -29,6 +29,27 @@ Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viab
 10. **Findable by humans and AI agents.** README, package metadata, docs, and CLI help are written to be discovered and understood by search engines and AI agents: clear keywords, `llms.txt`, copy-pasteable examples, a JSON Schema for the config, and full non-interactive use (flags, `--json`, stable exit codes).
 
 Any decision here, in an ADR, or in the docs may be questioned. If you think one is wrong, say so explicitly and propose a change (a superseding ADR for accepted ones). Never silently work around it.
+
+## Commands
+
+Requires Node `^22.20 || >=24.11` and pnpm (pinned by `packageManager`; use Corepack or the pnpm action).
+
+| Command | What it does |
+|---------|--------------|
+| `pnpm install` | Install the workspace |
+| `pnpm build` | `tsc` build of both packages into `dist/` |
+| `pnpm test` | Vitest: unit and snapshot tests (`*.test.ts`) and type tests (`*.test-d.ts`) |
+| `pnpm test:watch` | Vitest in watch mode |
+| `pnpm typecheck` | `tsc --noEmit` per package (TypeScript 6) |
+| `pnpm typecheck:ts7` | Same, with TypeScript 7 via `pnpm dlx` |
+| `pnpm lint` | ESLint (typescript-eslint `strictTypeChecked`), including the `src/core` boundary rules |
+| `pnpm format` / `pnpm format:check` | Prettier write / check |
+| `pnpm check:packages` | publint and Are the Types Wrong on each package (run `pnpm build` first) |
+| `pnpm determinism:fingerprint` | Fingerprint `fixtures/**/*.svg` with the built core (run `pnpm build` first). CI requires identical output on Linux, macOS, and Windows |
+| `pnpm verify` | Everything above that CI runs on one OS |
+| `pnpm changeset` | Record a changeset for a user-facing change |
+
+CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, and a changeset reminder.
 
 ## Workflow (flowstate)
 
