@@ -5,13 +5,12 @@
 | Status | Count |
 |--------|-------|
 | Pending | 24 |
-| Active | 2 |
+| Active | 1 |
 | Blocked | 0 |
-| Complete | 7 |
+| Complete | 8 |
 
 ## Active Tasks
 
-- TSK-004: Decision: sprite URL delivery without bundler plugin (P1)
 - TSK-010: Scaffold project per stack ADR (P2)
 
 ## Pending Tasks
@@ -47,6 +46,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-004 | Decision: sprite URL delivery without bundler plugin | 2026-10-08 |
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
 | TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
