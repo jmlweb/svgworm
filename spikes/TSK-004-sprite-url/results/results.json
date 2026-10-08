@@ -1,0 +1,546 @@
+{
+  "checks": [
+    {
+      "name": "file names independent of publicPath (hash from content only)",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg, icons.stack.a506a052.svg"
+    },
+    {
+      "name": "trailing slash in publicPath normalized",
+      "ok": true,
+      "detail": "/docs/static/icons/icons.7f8d9abd.svg"
+    },
+    {
+      "name": "rerun gives byte-identical module and files",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "publicPath \"icons\" rejected with exit 2",
+      "ok": true,
+      "detail": "svgworm: publicPath must start with a single \"/\" (got \"icons\"). Sprites must be same-origin (ADR-0006)."
+    },
+    {
+      "name": "publicPath \"./icons\" rejected with exit 2",
+      "ok": true,
+      "detail": "svgworm: publicPath must start with a single \"/\" (got \"./icons\"). Sprites must be same-origin (ADR-0006)."
+    },
+    {
+      "name": "publicPath \"//cdn.example.com/icons\" rejected with exit 2",
+      "ok": true,
+      "detail": "svgworm: publicPath must start with a single \"/\" (got \"//cdn.example.com/icons\"). Sprites must be same-origin (ADR-0006)."
+    },
+    {
+      "name": "publicPath \"https://cdn.example.com/icons\" rejected with exit 2",
+      "ok": true,
+      "detail": "svgworm: publicPath must start with a single \"/\" (got \"https://cdn.example.com/icons\"). Sprites must be same-origin (ADR-0006)."
+    },
+    {
+      "name": "publicPath \"/icons?v=1\" rejected with exit 2",
+      "ok": true,
+      "detail": "svgworm: publicPath must not contain \"?\", \"#\", \"\\\" or whitespace (got \"/icons?v=1\")"
+    },
+    {
+      "name": "stale hashed files removed, foreign files kept",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg, icons.stack.a506a052.svg, robots.txt"
+    },
+    {
+      "name": "plain-html: sprite served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/icons/icons.7f8d9abd.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "plain-html: stack served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/icons/icons.stack.a506a052.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "plain-html/chromium: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "plain-html/firefox: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "plain-html/webkit: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "plain-html/chromium: negative control (stale hash) renders blank",
+      "ok": true,
+      "detail": "0, 0.014322916666666666"
+    },
+    {
+      "name": "plain-html/firefox: negative control (stale hash) renders blank",
+      "ok": true,
+      "detail": "0, 0.040364583333333336"
+    },
+    {
+      "name": "plain-html/webkit: negative control (stale hash) renders blank",
+      "ok": true,
+      "detail": "0, 0"
+    },
+    {
+      "name": "next: next build (Turbopack, type-checks type-test.tsx)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "next: manifest absent from client JS (.next/static)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "next: SSR HTML contains hashed URLs",
+      "ok": true,
+      "detail": "/icons/icons.7f8d9abd.svg"
+    },
+    {
+      "name": "next: sprite served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/icons/icons.7f8d9abd.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "next: stack served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/icons/icons.stack.a506a052.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "next/chromium: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "next/firefox: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "next/webkit: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "tsc: invalid icon name is a type error (@ts-expect-error holds)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "next-basepath: next build (Turbopack, type-checks type-test.tsx)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "next-basepath: manifest absent from client JS (.next/static)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "next-basepath: SSR HTML contains hashed URLs",
+      "ok": true,
+      "detail": "/docs/icons/icons.7f8d9abd.svg"
+    },
+    {
+      "name": "next-basepath: sprite served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/docs/icons/icons.7f8d9abd.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "next-basepath: stack served as image/svg+xml with immutable cache",
+      "ok": true,
+      "detail": "/docs/icons/icons.stack.a506a052.svg → 200 image/svg+xml | public, max-age=31536000, immutable"
+    },
+    {
+      "name": "next-basepath: URL without basePath is 404 (publicPath must include it)",
+      "ok": true,
+      "detail": "status 404"
+    },
+    {
+      "name": "next-basepath/chromium: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "next-basepath/firefox: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "next-basepath/webkit: sprite requests same-origin and 200",
+      "ok": true,
+      "detail": "icons.7f8d9abd.svg icons.stack.a506a052.svg icons.stack.a506a052.svg; bad: []"
+    },
+    {
+      "name": "renders: 36/36 pass",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "renders": [
+    {
+      "variant": "plain-html",
+      "engine": "chromium",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "chromium",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "chromium",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "chromium",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.345,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "firefox",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "firefox",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "firefox",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "firefox",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "webkit",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "webkit",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.123,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "webkit",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.979,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "plain-html",
+      "engine": "webkit",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "chromium",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "chromium",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "chromium",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "chromium",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.345,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "firefox",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "firefox",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "firefox",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "firefox",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "webkit",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "webkit",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.123,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "webkit",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.979,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next",
+      "engine": "webkit",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "chromium",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "chromium",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "chromium",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "chromium",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.345,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "firefox",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "firefox",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.125,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "firefox",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.977,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "firefox",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "webkit",
+      "name": "home",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.333,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "webkit",
+      "name": "ui/check",
+      "delivery": "use",
+      "color": "mono",
+      "painted": 0.123,
+      "red": 1,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "webkit",
+      "name": "brand/sunset",
+      "delivery": "img",
+      "color": "multicolor",
+      "painted": 0.979,
+      "red": 0.156,
+      "ok": true
+    },
+    {
+      "variant": "next-basepath",
+      "engine": "webkit",
+      "name": "café",
+      "delivery": "mask",
+      "color": "mono",
+      "painted": 0.344,
+      "red": 1,
+      "ok": true
+    }
+  ]
+}

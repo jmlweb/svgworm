@@ -8,7 +8,8 @@ The output contract is the boundary between the core and the adapters. Adapters 
 
 ### 1. Sprite file(s)
 
-- One SVG file per sprite group, named `<group>.<contentHash>.svg` ❓ Q-24 (naming scheme and hash length)
+- One SVG file per sprite group, named `<group>.<hash>.svg`. `<hash>` is the first 8 lowercase hex characters of SHA-256 over the file's exact bytes. v0.1 has one group, `icons` ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
+- Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching its own name pattern (R-15, ADR-0010)
 - Contains one `<symbol id="<iconId>" viewBox="…">` per icon
 - Must not contain scripts or external references
 - Internal ids (gradients, masks, clip paths) are prefixed per icon so they can't collide
@@ -20,32 +21,53 @@ The output contract is the boundary between the core and the adapters. Adapters 
 
 - One content-hashed SVG holding the icons that use `url(#…)` references (gradients, clipPath, masks, filters, markers). WebKit doesn't render those through an external `<use>`
 - Each icon is a nested `<svg id="<iconId>" viewBox="…">`, shown only when it is the URL `:target`. One generated `:target` rule is the only `<style>` in the file
-- Naming and URL handling follow the sprite file ❓ Q-24
+- Named `<group>.stack.<hash>.svg`, same hash rule and `outDir` as the sprite. Not written when no icon needs it ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 
 ### 2. Manifest
 
-Machine-readable, language-neutral. ❓ Q-20 Format (JSON plus a generated module?)
+Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md) (Q-20, Q-24, Q-05 field names). Written to `moduleDir` (default `svgworm/`, never inside a served folder) in two forms of the same object:
 
-Conceptual shape:
+- `icons.js`: an ESM module, data only and importing nothing, that exports `manifest`, plus `icons.d.ts` with its types (see Types);
+- `manifest.json`: the same object, for non-JS consumers, templates, and `svgworm check`.
 
+```json
+{
+  "version": 1,
+  "sprites": {
+    "icons": {
+      "sprite": { "file": "icons.7f8d9abd.svg", "url": "/icons/icons.7f8d9abd.svg" },
+      "stack": { "file": "icons.stack.a506a052.svg", "url": "/icons/icons.stack.a506a052.svg" }
+    }
+  },
+  "icons": {
+    "brand/sunset": { "sprite": "icons", "id": "i-brand--sunset", "viewBox": "0 0 24 24", "color": "multicolor", "delivery": "img" },
+    "home": { "sprite": "icons", "id": "i-home", "viewBox": "0 0 24 24", "color": "mono", "delivery": "use" }
+  }
+}
 ```
-sprites:
-  <group>:
-    url: <basePath>/<group>.<hash>.svg
-    stackUrl: <basePath>/<group>.stack.<hash>.svg   # ADR-0006; only if the group has reference-dependent icons; naming ❓ Q-24
-    icons: [<iconId>, ...]           # sorted
-icons:
-  <iconName>:
-    sprite: <group>
-    id: <iconId>
-    viewBox: "0 0 24 24"
-    color: mono | multicolor            # ADR-0004
-    delivery: use | img | mask           # ADR-0006; field names fixed by TSK-004 (Q-05)
-```
+
+| Field | Meaning |
+|---|---|
+| `version` | Contract version, `1`. An adapter that doesn't know the value fails loudly |
+| `sprites.<group>.sprite` / `.stack` | `{ file, url }`, or `null` when that file has no icons. `file` is the bare file name in `outDir`, and `url` is `publicPath + "/" + file` |
+| `icons.<name>` | Keyed by public name, sorted by code point ([Ordering](#ordering)) |
+| `icons.<name>.sprite` | The group key in `sprites` |
+| `icons.<name>.id` | The symbol id ([Symbol id](#symbol-id)) |
+| `icons.<name>.viewBox` | The icon's `viewBox` |
+| `icons.<name>.color` | `mono` or `multicolor` ([ADR-0004](adr/0004-per-icon-color-classification.md)) |
+| `icons.<name>.delivery` | `use`, `img`, or `mask` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)). `use` reads `sprite.url`, and `img` and `mask` read `stack.url`. Append `#` + `id` |
+
+`publicPath` rules:
+
+- It must start with a single `/` and must not contain `?`, `#`, `\`, or whitespace. A trailing `/` is removed.
+- Relative, protocol-relative, and `http(s):` values exit with code 2, because sprites must be same-origin (ADR-0006).
+- It must include the app's mount point, for example `/docs/icons` under a Next `basePath: '/docs'`.
+- If `outDir` is set without `publicPath`, it is a config error.
+- Key names are working names until the config schema is settled (TSK-011).
 
 ### 3. Types
 
-- A sorted union, or an `as const` array, of all icon names ❓ Q-30 (shape, chosen after the TS perf spike)
+- `icons.d.ts` exports `type IconName`, a plain union of all icon names sorted by code point (v0.1; the shape for large sets is Q-30), and `declare const manifest` with `icons` typed as `Readonly<Record<IconName, …>>` ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 - Per-namespace unions, if namespaces are enabled ❓ Q-30
 
 ### 4. Inline sprite (opt-in)
@@ -171,7 +193,7 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
 
 ## Adapter expectations (React)
 
-- Reads the manifest at build time (through a generated module), never at runtime over the network
+- Reads the manifest at build time, never at runtime over the network. The user passes the generated module's `manifest` to the adapter once (for example `createIcon(manifest)`, final API in TSK-012), because the adapter can't import a path inside the user's project ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 - Renders by the icon's `delivery` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)):
   - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough;
   - `img` (multicolor with references): `<img src="{stackUrl}#{id}" alt="…">`;

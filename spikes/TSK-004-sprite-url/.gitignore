@@ -1,0 +1,7 @@
+node_modules/
+next-app/.next/
+next-app/.next-basepath/
+next-app/next-env.d.ts
+next-app/tsconfig.tsbuildinfo
+plain-html/site/
+plain-html/svgworm/

@@ -18,7 +18,7 @@ _Date: 2026-10-07. Based on the `main` prototype (last commit Jan 2025) and a re
 | React Server Components | Low | A hook-free component that renders `<svg><use/></svg>` is RSC-safe by construction |
 | External sprite + gradients/masks/clipPath/filters | **Medium** | Historic browser quirks with paint servers referenced inside external `<use>`. **Spike required** |
 | Cross-origin sprites (CDN on another domain) | **Medium** | `<use href>` to another origin is blocked. We need a documented constraint or a workaround |
-| Getting the hashed sprite URL into apps | **Medium** | Each framework or bundler serves static assets differently. Needs a framework-agnostic manifest plus guidance |
+| Getting the hashed sprite URL into apps | **Medium** | Each framework or bundler serves static assets differently. Needs a framework-agnostic manifest plus guidance. Addressed by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md): a generated module and JSON manifest with a configured `publicPath`, verified in Next.js 16 and plain HTML |
 | Color classification per icon | Medium | Heuristics for mono, stroke, and multicolor. Needs a fixture corpus |
 | Determinism | Low | A matter of discipline: sorting and content hashing |
 
