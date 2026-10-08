@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [next, main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, format, typecheck, package checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm build
+      - run: pnpm check:packages
+
+  test:
+    name: Test (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+
+  # Type tests for generated types must pass on TS 6 (the repo toolchain) and TS 7 (native).
+  # No generated types exist yet (TSK-011), so for now this type-checks the package sources
+  # with TS 7. Extend it to the generated-types fixtures when they land.
+  typecheck-ts7:
+    name: Typecheck with TypeScript 7
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck:ts7
+
+  # Same input, three operating systems: the fingerprint must be byte-identical (principle 2).
+  determinism:
+    name: Determinism fingerprint (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: node scripts/fingerprint-fixtures.mjs fingerprint.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fingerprint-${{ matrix.os }}
+          path: fingerprint.txt
+          if-no-files-found: error
+
+  determinism-compare:
+    name: Determinism fingerprints match across OSes
+    needs: determinism
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: fingerprints
+      - name: Compare
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(ls fingerprints | wc -l)" -eq 3
+          test -s fingerprints/fingerprint-ubuntu-latest/fingerprint.txt
+          cmp fingerprints/fingerprint-ubuntu-latest/fingerprint.txt fingerprints/fingerprint-macos-latest/fingerprint.txt
+          cmp fingerprints/fingerprint-ubuntu-latest/fingerprint.txt fingerprints/fingerprint-windows-latest/fingerprint.txt
+          wc -l fingerprints/fingerprint-ubuntu-latest/fingerprint.txt
+
+  changeset:
+    name: Changeset reminder
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    # Warning only: not every PR is user-facing (ADR-0009).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm changeset status --since="origin/$BASE_REF"
+        env:
+          BASE_REF: ${{ github.base_ref }}
