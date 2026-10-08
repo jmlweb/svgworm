@@ -1,0 +1,21 @@
+{
+  "name": "tsk-004-sprite-url",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node src/generate.mjs",
+    "check": "node src/check.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "next": "16.4.0",
+    "playwright": "1.58.2",
+    "pngjs": "7.0.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "6.0.3"
+  },
+  "packageManager": "pnpm@10.26.2"
+}
