@@ -4,23 +4,22 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 26 |
-| Active | 0 |
+| Pending | 24 |
+| Active | 2 |
 | Blocked | 0 |
 | Complete | 7 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-004: Decision: sprite URL delivery without bundler plugin (P1)
+- TSK-010: Scaffold project per stack ADR (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-004 | Decision: sprite URL delivery without bundler plugin | P1 | decision, integration, adr | 2026-10-07 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
 | TSK-008 | Output contract v0.1 | P1 | design, contract, adr | 2026-10-07 |
-| TSK-010 | Scaffold project per stack ADR | P2 | setup | 2026-10-07 |
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | P2 | core, cli | 2026-10-07 |
 | TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
 | TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |

@@ -1,12 +1,13 @@
 ---
 id: TSK-010
 title: Scaffold project per stack ADR
-status: pending
+status: active
 priority: P2
 tags: [setup]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-009]
+started: 2026-10-07
 ---
 
 # Scaffold project per stack ADR
@@ -29,3 +30,4 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-07] Started

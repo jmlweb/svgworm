@@ -1,12 +1,13 @@
 ---
 id: TSK-004
 title: Decision: sprite URL delivery without bundler plugin
-status: pending
+status: active
 priority: P1
 tags: [decision, integration, adr]
 created: 2026-10-07
 source: manual
 depends-on: []
+started: 2026-10-07
 ---
 
 # Decision: sprite URL delivery without bundler plugin
@@ -30,3 +31,4 @@ Resolve Q-20, Q-24. Q-21 is limited to Next.js App Router and plain HTML. Q-23 (
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-07] Started
