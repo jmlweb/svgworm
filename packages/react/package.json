@@ -1,0 +1,44 @@
+{
+  "name": "@svgworm/react",
+  "version": "0.0.0",
+  "description": "React Server Component adapter for svgworm sprites.",
+  "license": "MIT",
+  "author": "svgworm contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmlweb/svgworm.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "svg",
+    "sprite",
+    "icons",
+    "react",
+    "server-components",
+    "svgworm"
+  ],
+  "type": "module",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:package": "publint && attw --pack . --profile esm-only"
+  }
+}

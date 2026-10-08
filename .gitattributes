@@ -1,0 +1,3 @@
+# Byte-identical checkouts on every OS: the determinism check hashes file bytes.
+* text=auto eol=lf
+*.svg text eol=lf

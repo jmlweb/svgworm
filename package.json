@@ -1,0 +1,35 @@
+{
+  "name": "svgworm-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "typecheck:ts7": "pnpm -r exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "determinism:fingerprint": "node scripts/fingerprint-fixtures.mjs",
+    "check:packages": "pnpm -r check:package",
+    "verify": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:packages",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@changesets/cli": "3.0.3",
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.4",
+    "eslint": "10.11.0",
+    "prettier": "3.9.9",
+    "publint": "0.3.24",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.1",
+    "vitest": "5.0.1"
+  }
+}
