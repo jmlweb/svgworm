@@ -1,11 +1,18 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { findLeftoverStyles, normalizeStyles, optimizeMarkup } from './optimize.ts';
+import {
+  findLeftoverStyles,
+  normalizeStyles,
+  optimizeMarkup,
+} from './optimize.ts';
 import { parseSvgTree } from './tree.ts';
 
 const fixture = (name: string): string =>
-  readFileSync(new URL(`../../../../../fixtures/${name}`, import.meta.url), 'utf8');
+  readFileSync(
+    new URL(`../../../../../fixtures/${name}`, import.meta.url),
+    'utf8',
+  );
 
 const leftoverCodes = (text: string): readonly string[] => {
   const parsed = parseSvgTree(normalizeStyles(text));
@@ -33,11 +40,15 @@ describe('normalizeStyles', () => {
 
 describe('findLeftoverStyles', () => {
   it('finds nothing after a full inline', () => {
-    expect(leftoverCodes(fixture('style/illustrator-multicolor.svg'))).toEqual([]);
+    expect(leftoverCodes(fixture('style/illustrator-multicolor.svg'))).toEqual(
+      [],
+    );
   });
 
   it('flags an @media rule as unscopable', () => {
-    expect(leftoverCodes(fixture('style/unscopable-media.svg'))).toEqual(['style/unscopable']);
+    expect(leftoverCodes(fixture('style/unscopable-media.svg'))).toEqual([
+      'style/unscopable',
+    ]);
   });
 
   it('flags a rule that cannot be inlined', () => {

@@ -5,7 +5,10 @@ import { getSvgRoot, parseSvgTree, parseUrlId, walkElements } from './tree.ts';
 import { decodeSource, validateTree } from './validate.ts';
 
 const fixture = (name: string): string =>
-  readFileSync(new URL(`../../../../../fixtures/${name}`, import.meta.url), 'utf8');
+  readFileSync(
+    new URL(`../../../../../fixtures/${name}`, import.meta.url),
+    'utf8',
+  );
 
 const errorsOf = (text: string) => {
   const parsed = parseSvgTree(text);
@@ -15,7 +18,9 @@ const errorsOf = (text: string) => {
 
 describe('parseSvgTree', () => {
   it('parses a document into a tree', () => {
-    const parsed = parseSvgTree('<svg xmlns="http://www.w3.org/2000/svg"><g><path d="M0 0"/></g></svg>');
+    const parsed = parseSvgTree(
+      '<svg xmlns="http://www.w3.org/2000/svg"><g><path d="M0 0"/></g></svg>',
+    );
     if (!parsed.ok) throw new Error(parsed.message);
     const names: string[] = [];
     walkElements(parsed.root, (element) => names.push(element.name));
@@ -24,7 +29,9 @@ describe('parseSvgTree', () => {
   });
 
   it('reports malformed XML', () => {
-    expect(parseSvgTree(fixture('invalid/not-xml.svg'))).toMatchObject({ ok: false });
+    expect(parseSvgTree(fixture('invalid/not-xml.svg'))).toMatchObject({
+      ok: false,
+    });
   });
 });
 
@@ -77,11 +84,26 @@ describe('validateTree', () => {
   });
 
   it.each([
-    ['<svg viewBox="0 0 1 1"><rect onclick="x()"/></svg>', 'svg/forbidden-attribute'],
-    ['<svg viewBox="0 0 1 1"><a href="javascript:alert(1)"/></svg>', 'svg/forbidden-attribute'],
-    ['<svg viewBox="0 0 1 1"><rect style="fill:url(http://x/y#a)"/></svg>', 'svg/external-reference'],
-    ['<svg viewBox="0 0 1 1"><style>@import url(https://x/y.css);</style></svg>', 'svg/external-reference'],
-    ['<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1 1"><image xlink:href="https://x/a.png"/></svg>', 'svg/external-reference'],
+    [
+      '<svg viewBox="0 0 1 1"><rect onclick="x()"/></svg>',
+      'svg/forbidden-attribute',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><a href="javascript:alert(1)"/></svg>',
+      'svg/forbidden-attribute',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><rect style="fill:url(http://x/y#a)"/></svg>',
+      'svg/external-reference',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><style>@import url(https://x/y.css);</style></svg>',
+      'svg/external-reference',
+    ],
+    [
+      '<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1 1"><image xlink:href="https://x/a.png"/></svg>',
+      'svg/external-reference',
+    ],
   ])('%s', (text, code) => {
     expect(errorsOf(text).map((error) => error.code)).toContain(code);
   });

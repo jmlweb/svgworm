@@ -1,4 +1,10 @@
-import { optimize, type XastChild, type XastElement, type XastParent, type XastRoot } from 'svgo';
+import {
+  optimize,
+  type XastChild,
+  type XastElement,
+  type XastParent,
+  type XastRoot,
+} from 'svgo';
 
 export type { XastChild, XastElement, XastParent, XastRoot };
 

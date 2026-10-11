@@ -8,7 +8,10 @@ const OUTPUT = { pretty: false, eol: 'lf', finalNewline: false } as const;
 // Phase one: every <style> rule and style="" declaration becomes a presentation attribute,
 // so later passes read colors from a single place and no stylesheet can leak between symbols.
 const STYLE_PLUGINS: readonly PluginConfig[] = [
-  { name: 'inlineStyles', params: { onlyMatchedOnce: false, removeMatchedSelectors: true } },
+  {
+    name: 'inlineStyles',
+    params: { onlyMatchedOnce: false, removeMatchedSelectors: true },
+  },
   'convertStyleToAttrs',
 ];
 
@@ -33,10 +36,18 @@ const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
 ];
 
 export const normalizeStyles = (text: string): string =>
-  optimize(text, { multipass: false, js2svg: OUTPUT, plugins: [...STYLE_PLUGINS] }).data;
+  optimize(text, {
+    multipass: false,
+    js2svg: OUTPUT,
+    plugins: [...STYLE_PLUGINS],
+  }).data;
 
 export const optimizeMarkup = (text: string): string =>
-  optimize(text, { multipass: false, js2svg: OUTPUT, plugins: [...OPTIMIZE_PLUGINS] }).data;
+  optimize(text, {
+    multipass: false,
+    js2svg: OUTPUT,
+    plugins: [...OPTIMIZE_PLUGINS],
+  }).data;
 
 /** A `<style>` that survives normalizeStyles holds rules that cannot be inlined. */
 export const findLeftoverStyles = (
@@ -48,7 +59,9 @@ export const findLeftoverStyles = (
     if (element.name !== 'style') return;
     const hasAtRule = getTextContent(element).includes('@');
     errors.push({
-      code: hasAtRule ? DiagnosticCode.UNSCOPABLE_STYLE : DiagnosticCode.LEFTOVER_STYLE,
+      code: hasAtRule
+        ? DiagnosticCode.UNSCOPABLE_STYLE
+        : DiagnosticCode.LEFTOVER_STYLE,
       file,
       message: hasAtRule
         ? '<style> has an at-rule (such as @media) that cannot be inlined, and a raw <style> leaks between icons in a sprite'
