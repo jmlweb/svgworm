@@ -3,9 +3,17 @@ import { DiagnosticCode, type Diagnostic } from './errors.ts';
 
 export type NamedPath = { readonly name: string; readonly path: string };
 
-/** Output paths are NFC and `/`-separated (output contract, "Public name"). */
+/** Messages show a path as found on disk, with `/` separators (output contract). */
 export const toDisplayPath = (path: string): string =>
-  path.replaceAll('\\', '/').normalize('NFC');
+  path.replaceAll('\\', '/');
+
+/** Sort key: NFC, so the order never depends on how the file system stored the name. */
+export const toSortKey = (path: string): string =>
+  toDisplayPath(path).normalize('NFC');
+
+/** NFC order first, raw bytes as the tie-break for NFC and NFD twins. */
+export const comparePaths = (a: string, b: string): number =>
+  compareCodePoints(toSortKey(a), toSortKey(b)) || compareCodePoints(a, b);
 
 /** One error per name produced by more than one file, listing every file (R-03). */
 export const findCollisions = (
@@ -17,12 +25,12 @@ export const findCollisions = (
     .map(([name, group]) => {
       const paths = group
         .map((entry) => toDisplayPath(entry.path))
-        .toSorted(compareCodePoints);
+        .toSorted(comparePaths);
       return {
         code: DiagnosticCode.NAME_COLLISION,
         file: paths[0] ?? name,
         message: `name "${name}" is produced by ${String(paths.length)} files: ${paths.join(', ')}`,
       };
     })
-    .toSorted((a, b) => compareCodePoints(a.file, b.file));
+    .toSorted((a, b) => comparePaths(a.file, b.file));
 };

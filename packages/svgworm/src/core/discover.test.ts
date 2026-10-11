@@ -61,10 +61,12 @@ describe('discoverSvgFiles', () => {
     expect(result.files).toEqual([]);
   });
 
-  it('returns the same NFC paths whatever the on-disk Unicode form', async () => {
-    await touch('icons/café.svg');
+  it('finds the file whatever the on-disk Unicode form', async () => {
+    await touch(`icons/${'café'.normalize('NFD')}.svg`);
     const result = await discoverSvgFiles(root, ['icons']);
-    expect(result.files.map((file) => file.path)).toEqual(['icons/café.svg']);
+    expect(result.files.map((file) => file.path.normalize('NFC'))).toEqual([
+      'icons/café.svg',
+    ]);
   });
 
   it('merges several source folders in one sorted list', async () => {

@@ -1,0 +1,137 @@
+[
+  {
+    "name": "clip-path/fluent-paperclip",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "duplicates/actions/close",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "duplicates/arrows/close",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "filter/logos-grove",
+    "color": "multicolor",
+    "delivery": "img"
+  },
+  {
+    "name": "gradient/logos-kotlin",
+    "color": "multicolor",
+    "delivery": "img"
+  },
+  {
+    "name": "gradient/logos-scaledrone-transparent-stop",
+    "color": "multicolor",
+    "delivery": "img"
+  },
+  {
+    "name": "internal-refs/flat-color-up-right",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "internal-refs/logos-dropmark",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "mask/knockout",
+    "color": "mono",
+    "delivery": "mask"
+  },
+  {
+    "name": "mask/logos-nextjs",
+    "color": "multicolor",
+    "delivery": "img"
+  },
+  {
+    "name": "mixed-fill-stroke/badge",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "mixed-fill-stroke/two-tone",
+    "color": "multicolor",
+    "delivery": "use"
+  },
+  {
+    "name": "mono-fill/figma-export",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "mono-fill/heroicons-home",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "mono-fill/phosphor-house-duotone-opacity",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "mono-fill/simple-icons-github",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "multicolor/flag-es",
+    "color": "multicolor",
+    "delivery": "use"
+  },
+  {
+    "name": "multicolor/flat-color-about",
+    "color": "multicolor",
+    "delivery": "use"
+  },
+  {
+    "name": "nested-svg/nested",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "non-ascii/café",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "non-ascii/日本",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "stroke/figma-export",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "stroke/lucide-house",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "stroke/tabler-home",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "style/illustrator-mono",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "style/illustrator-multicolor",
+    "color": "multicolor",
+    "delivery": "use"
+  },
+  {
+    "name": "viewbox-derived/no-viewbox",
+    "color": "mono",
+    "delivery": "use"
+  }
+]

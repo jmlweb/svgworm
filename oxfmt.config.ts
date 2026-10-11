@@ -9,6 +9,8 @@ export default defineConfig({
     'fixtures/**',
     // Generated output samples are byte-exact: formatting would change them.
     'docs/samples/**',
+    // Snapshot files hold exact generated output.
+    '**/__snapshots__/**',
     'spikes/**',
     '.backlog/**',
     '.claude/**',

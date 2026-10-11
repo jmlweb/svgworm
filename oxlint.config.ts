@@ -59,6 +59,8 @@ export default defineConfig({
   ignorePatterns: [
     '**/dist/**',
     'fixtures/**',
+    // Snapshot files hold exact generated output.
+    '**/__snapshots__/**',
     // Generated output samples: their shape is fixed by the output contract.
     'docs/samples/**',
     'spikes/**',

@@ -30,7 +30,7 @@ const table: readonly (readonly [string, string, string])[] = [
   ['icon.svg.svg', 'icon-svg', 'i-icon-svg'],
   ['actions/close.svg', 'actions/close', 'i-actions--close'],
   ['café.svg', 'café', 'i-caf_e9_'],
-  ['café.svg', 'café', 'i-caf_e9_'],
+  ['cafe'.concat(String.fromCharCode(0x301), '.svg'), 'café', 'i-caf_e9_'],
   ['CAFÉ.svg', 'café', 'i-caf_e9_'],
   ['日本.svg', '日本', 'i-_65e5__672c_'],
   ['ΟΔΟΣ.ΚΑΤΩ.svg', 'οδοσ-κατω', 'i-_3bf__3b4__3bf__3c3_-_3ba__3b1__3c4__3c9_'],

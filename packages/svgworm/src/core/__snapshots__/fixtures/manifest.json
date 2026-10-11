@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "sprites": {
+    "icons": {
+      "sprite": {
+        "file": "icons.94d3c60e.svg",
+        "url": "/icons/icons.94d3c60e.svg"
+      },
+      "stack": {
+        "file": "icons.stack.dc0de9ff.svg",
+        "url": "/icons/icons.stack.dc0de9ff.svg"
+      }
+    }
+  },
+  "icons": {
+    "clip-path/fluent-paperclip": {
+      "sprite": "icons",
+      "id": "i-clip-path--fluent-paperclip",
+      "viewBox": "0 0 32 32",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "duplicates/actions/close": {
+      "sprite": "icons",
+      "id": "i-duplicates--actions--close",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "duplicates/arrows/close": {
+      "sprite": "icons",
+      "id": "i-duplicates--arrows--close",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "filter/logos-grove": {
+      "sprite": "icons",
+      "id": "i-filter--logos-grove",
+      "viewBox": "0 0 256 267",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "gradient/logos-kotlin": {
+      "sprite": "icons",
+      "id": "i-gradient--logos-kotlin",
+      "viewBox": "0 0 256 256",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "gradient/logos-scaledrone-transparent-stop": {
+      "sprite": "icons",
+      "id": "i-gradient--logos-scaledrone-transparent-stop",
+      "viewBox": "0 0 256 256",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "internal-refs/flat-color-up-right": {
+      "sprite": "icons",
+      "id": "i-internal-refs--flat-color-up-right",
+      "viewBox": "0 0 48 48",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "internal-refs/logos-dropmark": {
+      "sprite": "icons",
+      "id": "i-internal-refs--logos-dropmark",
+      "viewBox": "0 0 256 348",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "mask/knockout": {
+      "sprite": "icons",
+      "id": "i-mask--knockout",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "mask"
+    },
+    "mask/logos-nextjs": {
+      "sprite": "icons",
+      "id": "i-mask--logos-nextjs",
+      "viewBox": "0 0 256 256",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "mixed-fill-stroke/badge": {
+      "sprite": "icons",
+      "id": "i-mixed-fill-stroke--badge",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "mixed-fill-stroke/two-tone": {
+      "sprite": "icons",
+      "id": "i-mixed-fill-stroke--two-tone",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "mono-fill/figma-export": {
+      "sprite": "icons",
+      "id": "i-mono-fill--figma-export",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "mono-fill/heroicons-home": {
+      "sprite": "icons",
+      "id": "i-mono-fill--heroicons-home",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "mono-fill/phosphor-house-duotone-opacity": {
+      "sprite": "icons",
+      "id": "i-mono-fill--phosphor-house-duotone-opacity",
+      "viewBox": "0 0 256 256",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "mono-fill/simple-icons-github": {
+      "sprite": "icons",
+      "id": "i-mono-fill--simple-icons-github",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "multicolor/flag-es": {
+      "sprite": "icons",
+      "id": "i-multicolor--flag-es",
+      "viewBox": "0 0 640 480",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "multicolor/flat-color-about": {
+      "sprite": "icons",
+      "id": "i-multicolor--flat-color-about",
+      "viewBox": "0 0 48 48",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "nested-svg/nested": {
+      "sprite": "icons",
+      "id": "i-nested-svg--nested",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "non-ascii/café": {
+      "sprite": "icons",
+      "id": "i-non-ascii--caf_e9_",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "non-ascii/日本": {
+      "sprite": "icons",
+      "id": "i-non-ascii--_65e5__672c_",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "stroke/figma-export": {
+      "sprite": "icons",
+      "id": "i-stroke--figma-export",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "stroke/lucide-house": {
+      "sprite": "icons",
+      "id": "i-stroke--lucide-house",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "stroke/tabler-home": {
+      "sprite": "icons",
+      "id": "i-stroke--tabler-home",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "style/illustrator-mono": {
+      "sprite": "icons",
+      "id": "i-style--illustrator-mono",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "style/illustrator-multicolor": {
+      "sprite": "icons",
+      "id": "i-style--illustrator-multicolor",
+      "viewBox": "0 0 48 48",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "viewbox-derived/no-viewbox": {
+      "sprite": "icons",
+      "id": "i-viewbox-derived--no-viewbox",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    }
+  }
+}

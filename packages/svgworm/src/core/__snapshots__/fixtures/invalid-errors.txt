@@ -1,0 +1,7 @@
+fixtures/invalid/empty.svg	svg/not-svg-root	file has no root element
+fixtures/invalid/external-ref.svg	svg/external-reference	<use> href="https://example.com/sprite.svg#icon" points outside the file
+fixtures/invalid/not-svg-root.svg	svg/not-svg-root	root element is <html>, expected <svg>
+fixtures/invalid/not-xml.svg	svg/invalid-xml	<input>:2:0: Unclosed root tag
+fixtures/invalid/percent-size.svg	viewbox/underivable	no viewBox, and width and height are not both plain numbers or px values, so a viewBox cannot be derived
+fixtures/invalid/script.svg	svg/forbidden-element	<script> is not allowed
+fixtures/style/unscopable-media.svg	style/unscopable	<style> has an at-rule (such as @media) that cannot be inlined, and a raw <style> leaks between icons in a sprite

@@ -1,14 +1,13 @@
 import { lstat, readdir } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
-import { toDisplayPath } from './collisions.ts';
-import { compareCodePoints } from './compare-code-units.ts';
+import { comparePaths, toDisplayPath } from './collisions.ts';
 import { ConfigError, DiagnosticCode, type Diagnostic } from './errors.ts';
 
 export type DiscoveredFile = {
-  /** Path from `cwd`, NFC and `/`-separated. Used in messages and sorting. */
+  /** Path from `cwd` as found on disk, `/`-separated. Used in messages. */
   readonly path: string;
-  /** Path from its source folder, NFC and `/`-separated. Input of the naming rules. */
+  /** Path from its source folder as found on disk, `/`-separated. Input of the naming rules. */
   readonly relativePath: string;
   /** Path to open on disk. */
   readonly absolutePath: string;
@@ -66,7 +65,7 @@ const walk = async (
     } else if (stats.isFile() && isSvgName(name)) {
       out.files.push({
         path: displayPath,
-        relativePath: toDisplayPath(entryRelative),
+        relativePath: entryRelative,
         absolutePath: absolute,
       });
     }
@@ -89,7 +88,7 @@ export const discoverSvgFiles = async (
     await walk(directory, '', prefix, out);
   }
   return {
-    files: out.files.toSorted((a, b) => compareCodePoints(a.path, b.path)),
-    errors: out.errors.toSorted((a, b) => compareCodePoints(a.file, b.file)),
+    files: out.files.toSorted((a, b) => comparePaths(a.path, b.path)),
+    errors: out.errors.toSorted((a, b) => comparePaths(a.file, b.file)),
   };
 };

@@ -27,13 +27,13 @@ describe('findCollisions', () => {
     expect(findCollisions(entries.toReversed())).toEqual(expected);
   });
 
-  it('treats NFC and NFD paths of the same name as a collision', () => {
+  it('treats NFC and NFD paths of the same name as a collision and shows them as found', () => {
     const errors = findCollisions([
       { name: 'café', path: 'a/café.svg' },
-      { name: 'café', path: 'b/café.svg' },
+      { name: 'café', path: `b/${'café'.normalize('NFD')}.svg` },
     ]);
     expect(errors).toHaveLength(1);
-    expect(errors[0]?.message).toContain('a/café.svg, b/café.svg');
+    expect(errors[0]?.message).toContain('a/caf\u00e9.svg, b/cafe\u0301.svg');
   });
 
   it('returns nothing when names are unique', () => {
