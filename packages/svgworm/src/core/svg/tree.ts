@@ -88,6 +88,11 @@ export const removeAttribute = (element: XastElement, name: string): void => {
   Reflect.deleteProperty(element.attributes, name);
 };
 
+export const removeChild = (parent: XastParent, child: XastChild): void => {
+  // eslint-disable-next-line no-param-reassign
+  parent.children = parent.children.filter((candidate) => candidate !== child);
+};
+
 export const isElement = (node: XastChild | XastRoot): node is XastElement =>
   node.type === 'element';
 
