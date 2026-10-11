@@ -9,3 +9,6 @@ svg/
 
 # Editor-local
 .cursor/
+
+# Claude Code agent worktrees
+.claude/worktrees/
