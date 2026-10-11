@@ -41,6 +41,53 @@ export const parseSvgTree = (text: string): ParseResult => {
     : { ok: true, root: captured };
 };
 
+export const SERIALIZE_OPTIONS = {
+  pretty: false,
+  eol: 'lf',
+  finalNewline: false,
+} as const;
+
+/**
+ * Runs `transform` on the parsed tree and serializes the result. svgo is the only
+ * serializer available (LRN-015), so every tree mutation goes through this one helper.
+ */
+export const mutateSvgTree = <T>(
+  text: string,
+  transform: (root: XastRoot) => T,
+): { readonly data: string; readonly result: T } => {
+  let outcome: { readonly value: T } | undefined;
+  const { data } = optimize(text, {
+    multipass: false,
+    js2svg: SERIALIZE_OPTIONS,
+    plugins: [
+      {
+        name: 'svgworm-transform',
+        fn: (root) => {
+          outcome = { value: transform(root) };
+          return {};
+        },
+      },
+    ],
+  });
+  if (outcome === undefined) throw new Error('svgo did not run the transform');
+  return { data, result: outcome.value };
+};
+
+// svgo trees are mutable by design and plugins edit them in place, so these two helpers are
+// the only places that write to a node.
+export const setAttribute = (
+  element: XastElement,
+  name: string,
+  value: string,
+): void => {
+  // eslint-disable-next-line no-param-reassign
+  element.attributes[name] = value;
+};
+
+export const removeAttribute = (element: XastElement, name: string): void => {
+  Reflect.deleteProperty(element.attributes, name);
+};
+
 export const isElement = (node: XastChild | XastRoot): node is XastElement =>
   node.type === 'element';
 

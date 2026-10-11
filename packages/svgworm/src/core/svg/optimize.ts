@@ -1,9 +1,12 @@
 import { optimize, type PluginConfig } from 'svgo';
 
 import { DiagnosticCode, type Diagnostic } from '../errors.ts';
-import { getTextContent, walkElements, type XastRoot } from './tree.ts';
-
-const OUTPUT = { pretty: false, eol: 'lf', finalNewline: false } as const;
+import {
+  SERIALIZE_OPTIONS,
+  getTextContent,
+  walkElements,
+  type XastRoot,
+} from './tree.ts';
 
 // Phase one: every <style> rule and style="" declaration becomes a presentation attribute,
 // so later passes read colors from a single place and no stylesheet can leak between symbols.
@@ -38,14 +41,14 @@ const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
 export const normalizeStyles = (text: string): string =>
   optimize(text, {
     multipass: false,
-    js2svg: OUTPUT,
+    js2svg: SERIALIZE_OPTIONS,
     plugins: [...STYLE_PLUGINS],
   }).data;
 
 export const optimizeMarkup = (text: string): string =>
   optimize(text, {
     multipass: false,
-    js2svg: OUTPUT,
+    js2svg: SERIALIZE_OPTIONS,
     plugins: [...OPTIMIZE_PLUGINS],
   }).data;
 
