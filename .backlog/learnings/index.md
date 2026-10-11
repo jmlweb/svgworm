@@ -27,3 +27,5 @@
 | LRN-021 | Worktree agents: rtk-rewritten git commands are refused; use /usr/bin/env git | tooling, worktree, git | active | 2026-10-11 |
 | LRN-022 | Oxlint config gotchas: no extends in overrides, no restricted-properties, typeAware root-only | tooling, oxlint, lint, monorepo | active | 2026-10-11 |
 | LRN-023 | Task scope text goes stale when later ADRs change a decision | design, contract, adr | active | 2026-10-11 |
+| LRN-024 | Spike-made contract samples must come from the product pipeline | output-contract, svgo, determinism | active | 2026-10-11 |
+| LRN-025 | oxlint can die with a possible out-of-memory error | tooling, oxlint, flaky | active | 2026-10-11 |

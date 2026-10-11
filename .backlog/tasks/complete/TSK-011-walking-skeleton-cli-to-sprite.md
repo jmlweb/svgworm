@@ -1,13 +1,14 @@
 ---
 id: TSK-011
 title: Walking skeleton: CLI to sprite + manifest + types
-status: active
+status: complete
 priority: P2
 tags: [core, cli]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-010]
 started: 2026-10-11
+completed: 2026-10-11
 ---
 
 # Walking skeleton: CLI to sprite + manifest + types
@@ -31,6 +32,8 @@ Minimal end-to-end core per output contract on fixture corpus: read, normalize, 
 
 ## Learnings
 
+- LRN-024: Spike-made contract samples must come from the product pipeline
+- LRN-025: oxlint can die with a possible out-of-memory error
 ## Progress Log
 
 - [2026-10-07] Created
@@ -41,3 +44,4 @@ Minimal end-to-end core per output contract on fixture corpus: read, normalize, 
 - [2026-10-11] Decision: color override globs match the public name (NFC, "/"); zero icons exits 2; unexpected I/O failure exits 1.
 - [2026-10-11] Benchmark (scripts/bench-build.mjs, compile of 1,000 icons, 5 runs after warmup): median 991 ms, p95 992 ms on darwin arm64 Apple M4 Max x14, Node v24.13.0. R-50 budget set to under 3 s on M-series in docs/requirements.md; CI runs a smoke only.
 - [2026-10-11] pnpm verify and pnpm typecheck:ts7 pass.
+- [2026-10-11] Completed

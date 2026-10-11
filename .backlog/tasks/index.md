@@ -5,13 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 23 |
-| Active | 1 |
+| Active | 0 |
 | Blocked | 0 |
-| Complete | 10 |
+| Complete | 11 |
 
 ## Active Tasks
 
-- TSK-011: Walking skeleton: CLI to sprite + manifest + types (P2)
+_No active tasks._
 
 ## Pending Tasks
 
@@ -47,6 +47,7 @@
 |----|-------|-----------|
 | TSK-008 | Output contract v0.1 | 2026-10-11 |
 | TSK-010 | Scaffold project per stack ADR | 2026-10-11 |
+| TSK-011 | Walking skeleton: CLI to sprite + manifest + types | 2026-10-11 |
 | TSK-004 | Decision: sprite URL delivery without bundler plugin | 2026-10-08 |
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
 | TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
@@ -54,4 +55,3 @@
 | TSK-006 | Define icon naming, namespaces and collision policy | 2026-10-07 |
 | TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |
 | TSK-009 | ADR: tech stack and package layout | 2026-10-07 |
-| TSK-014 | Re-plan backlog for lean v0.1 | 2026-10-07 |
