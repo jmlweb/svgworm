@@ -4,21 +4,20 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 24 |
-| Active | 0 |
+| Pending | 23 |
+| Active | 1 |
 | Blocked | 0 |
 | Complete | 10 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-011: Walking skeleton: CLI to sprite + manifest + types (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
-| TSK-011 | Walking skeleton: CLI to sprite + manifest + types | P2 | core, cli | 2026-10-07 |
 | TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
 | TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |
 | TSK-015 | svgworm init: interactive setup for Next.js | P2 | cli, dx, v0.1 | 2026-10-07 |

@@ -1,12 +1,13 @@
 ---
 id: TSK-011
 title: Walking skeleton: CLI to sprite + manifest + types
-status: pending
+status: active
 priority: P2
 tags: [core, cli]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-010]
+started: 2026-10-11
 ---
 
 # Walking skeleton: CLI to sprite + manifest + types
@@ -33,3 +34,4 @@ Minimal end-to-end core per output contract on fixture corpus: read, normalize, 
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-11] Started
