@@ -22,6 +22,9 @@ const STYLE_PLUGINS: readonly PluginConfig[] = [
 // version with the core's fixed config"). Changing it changes output bytes, so it needs a
 // changeset and a review of the contract snapshots.
 const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
+  // SVG 2 `href` works in every supported browser, and it lets removeUnusedNS drop the
+  // xlink namespace so the sprite root needs no extra declarations.
+  'removeXlink',
   {
     name: 'preset-default',
     params: {

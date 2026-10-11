@@ -70,6 +70,14 @@ describe('optimizeMarkup', () => {
     expect(output).not.toMatch(/<!--|<title|<desc/);
   });
 
+  it('replaces xlink:href with href and drops the namespace', () => {
+    const output = optimizeMarkup(
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24"><defs><path id="p" d="M0 0h9v9z"/></defs><use xlink:href="#p"/></svg>',
+    );
+    expect(output).toContain('href="#p"');
+    expect(output).not.toContain('xlink');
+  });
+
   it('is deterministic', () => {
     expect(optimizeMarkup(input)).toBe(optimizeMarkup(input));
   });
