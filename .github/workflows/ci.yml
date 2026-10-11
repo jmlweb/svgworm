@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   quality:
-    name: Lint, format, typecheck, package checks
+    name: Lint (Oxlint), format (Oxfmt), typecheck, package checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -107,6 +107,24 @@ jobs:
           cmp fingerprints/fingerprint-ubuntu-latest/fingerprint.txt fingerprints/fingerprint-macos-latest/fingerprint.txt
           cmp fingerprints/fingerprint-ubuntu-latest/fingerprint.txt fingerprints/fingerprint-windows-latest/fingerprint.txt
           wc -l fingerprints/fingerprint-ubuntu-latest/fingerprint.txt
+
+  commitlint:
+    name: Conventional Commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec commitlint --from "origin/$BASE_REF" --to HEAD
+        env:
+          BASE_REF: ${{ github.base_ref }}
 
   changeset:
     name: Changeset reminder
