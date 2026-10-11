@@ -16,13 +16,13 @@
 | LRN-010 | Icon name and symbol id must be different strings | naming, output-contract, svg | active | 2026-10-07 |
 | LRN-011 | NFC alone doesn't make names case- and order-stable | unicode, determinism, naming | active | 2026-10-07 |
 | LRN-012 | Don't use . as the internal-id delimiter in sprites | svgo, sprite, ids | active | 2026-10-07 |
-| LRN-013 | TypeScript 7 blocks type-aware linting | tooling, typescript, adr | active | 2026-10-07 |
+| LRN-013 | TypeScript 7 blocked typescript-eslint, not type-aware linting (superseded by ADR-0011) | tooling, typescript, adr | active | 2026-10-07 |
 | LRN-014 | Modern Node built-ins replace most CLI dependencies | tooling, dependencies, cli | active | 2026-10-07 |
 | LRN-015 | svgo has no public parse function | svgo, parser | active | 2026-10-07 |
 | LRN-016 | Agent worktrees may be created from main, not next | workflow, agents, git | active | 2026-10-07 |
 | LRN-017 | WebKit ignores url(#...) references in external use sprites | browser, svg, sprite, webkit, delivery, testing | active | 2026-10-07 |
 | LRN-018 | Next.js public/ is the right home for use-href sprites, but basePath and caching are manual | nextjs, delivery, caching, same-origin, output-contract | active | 2026-10-08 |
 | LRN-019 | Browser render checks need a negative control; WebKit collapses a broken alt-less img | testing, browser-check, playwright, webkit | active | 2026-10-08 |
-| LRN-020 | Scaffold gotchas: typescript-eslint 8.70 config API, TS 7 via pnpm dlx, Prettier rewrites docs | tooling, eslint, typescript, pnpm | active | 2026-10-11 |
+| LRN-020 | Scaffold gotchas: TS 7 via pnpm dlx, passWithNoTests, Markdown rewritten by formatters (ESLint parts obsolete) | tooling, eslint, typescript, pnpm | active | 2026-10-11 |
 | LRN-021 | Worktree agents: rtk-rewritten git commands are refused; use /usr/bin/env git | tooling, worktree, git | active | 2026-10-11 |
 | LRN-022 | Oxlint config gotchas: no extends in overrides, no restricted-properties, typeAware root-only | tooling, oxlint, lint, monorepo | active | 2026-10-11 |

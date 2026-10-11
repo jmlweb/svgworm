@@ -52,6 +52,14 @@ Requires Node `^22.20 || >=24.11` and pnpm (pinned by `packageManager`; use Core
 
 CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, and commit messages checked with commitlint over the PR range, and a changeset reminder.
 
+### Shared tooling (jmlweb/tooling)
+
+Lint, format, tsconfig, Vitest defaults and commit rules come from the `@jmlweb/*` packages of [jmlweb/tooling](https://github.com/jmlweb/tooling) ([docs](https://jmlweb.github.io/tooling/), [agent context](https://jmlweb.github.io/tooling/llms-full.txt)), chosen in [ADR-0011](docs/adr/0011-oxc-lint-format-and-shared-tooling-configs.md).
+
+- Versions are pinned exactly. When new versions are published, bump them together, then run `pnpm install`, `pnpm verify` and `pnpm typecheck:ts7`.
+- The tooling repo belongs to the project owner. If a shared config needs a local workaround, report it upstream and remove the workaround after the fix is published, instead of keeping it.
+- `pnpm install` sets up the husky hook in each checkout. A new worktree needs its own `pnpm install` before the hook runs.
+
 ## Workflow (flowstate)
 
 Backlog lives in `.backlog/`. Always use the flowstate skills; never edit index files by hand.

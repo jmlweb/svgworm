@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 24 |
+| Pending | 25 |
 | Active | 1 |
 | Blocked | 0 |
 | Complete | 8 |
@@ -41,6 +41,7 @@
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | P2 | traction, agents, discovery | 2026-10-07 |
 | TSK-032 | Agent eval harness: guided success and unprompted pick rate | P3 | traction, agents, measure | 2026-10-07 |
 | TSK-033 | Weekly traction metrics snapshot | P3 | traction, measure | 2026-10-07 |
+| TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 
 ## Recently Completed
 
