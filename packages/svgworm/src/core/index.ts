@@ -1,4 +1,6 @@
+export * from './api.ts';
 export { compareCodeUnits } from './compare-code-units.ts';
+// Removed together with the placeholder once the fingerprint script uses the real build.
 export {
   DuplicatePathError,
   fingerprintFiles,

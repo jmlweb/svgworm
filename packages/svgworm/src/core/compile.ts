@@ -46,15 +46,17 @@ export type OutputFile = {
 
 export type IconSummary = ManifestIcon & { readonly file: string };
 
+export type CompileSuccess = {
+  readonly ok: true;
+  readonly files: readonly OutputFile[];
+  readonly manifest: ManifestInput;
+  readonly icons: readonly IconSummary[];
+  readonly warnings: readonly Diagnostic[];
+  readonly stats: BuildStats;
+};
+
 export type CompileResult =
-  | {
-      readonly ok: true;
-      readonly files: readonly OutputFile[];
-      readonly manifest: ManifestInput;
-      readonly icons: readonly IconSummary[];
-      readonly warnings: readonly Diagnostic[];
-      readonly stats: BuildStats;
-    }
+  | CompileSuccess
   | {
       readonly ok: false;
       readonly errors: readonly Diagnostic[];
