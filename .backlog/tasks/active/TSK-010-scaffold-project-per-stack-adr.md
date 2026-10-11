@@ -29,6 +29,7 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 
 - LRN-020: Scaffold gotchas: typescript-eslint 8.70 config API, TS 7 via pnpm dlx, Prettier rewrites docs
 - LRN-021: Worktree agents: rtk-rewritten git commands are refused; use /usr/bin/env git
+- LRN-022: Oxlint config gotchas: no extends in overrides, no restricted-properties, typeAware root-only
 ## Progress Log
 
 - [2026-10-07] Created

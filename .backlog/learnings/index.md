@@ -25,3 +25,4 @@
 | LRN-019 | Browser render checks need a negative control; WebKit collapses a broken alt-less img | testing, browser-check, playwright, webkit | active | 2026-10-08 |
 | LRN-020 | Scaffold gotchas: typescript-eslint 8.70 config API, TS 7 via pnpm dlx, Prettier rewrites docs | tooling, eslint, typescript, pnpm | active | 2026-10-11 |
 | LRN-021 | Worktree agents: rtk-rewritten git commands are refused; use /usr/bin/env git | tooling, worktree, git | active | 2026-10-11 |
+| LRN-022 | Oxlint config gotchas: no extends in overrides, no restricted-properties, typeAware root-only | tooling, oxlint, lint, monorepo | active | 2026-10-11 |
