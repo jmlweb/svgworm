@@ -16,14 +16,14 @@
 
 ## Docs
 
-| Doc | Purpose |
-|-----|---------|
-| [docs/vision.md](docs/vision.md) | Problem, users, positioning, non-goals |
-| [docs/viability.md](docs/viability.md) | Viability analysis and lessons from the prototype |
-| [docs/requirements.md](docs/requirements.md) | Functional requirements (user stories) |
-| [docs/output-contract.md](docs/output-contract.md) | Draft of what the CLI generates |
-| [docs/open-questions.md](docs/open-questions.md) | Unresolved questions that feed the spikes |
-| [docs/adr/](docs/adr/) | Architecture Decision Records |
+| Doc                                                | Purpose                                           |
+| -------------------------------------------------- | ------------------------------------------------- |
+| [docs/vision.md](docs/vision.md)                   | Problem, users, positioning, non-goals            |
+| [docs/viability.md](docs/viability.md)             | Viability analysis and lessons from the prototype |
+| [docs/requirements.md](docs/requirements.md)       | Functional requirements (user stories)            |
+| [docs/output-contract.md](docs/output-contract.md) | v0.1 contract of what the CLI generates           |
+| [docs/open-questions.md](docs/open-questions.md)   | Unresolved questions that feed the spikes         |
+| [docs/adr/](docs/adr/)                             | Architecture Decision Records                     |
 
 ## Working on this project
 

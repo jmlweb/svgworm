@@ -1,15 +1,24 @@
-# Output contract (DRAFT)
+# Output contract v0.1
 
-> This draft is **not final**. Items marked ❓ are tracked in [open-questions.md](open-questions.md). Once accepted, the contract is a public API, and changes need an ADR and a semver note.
+> Frozen for v0.1 by [ADR-0012](adr/0012-output-contract-v0.1.md). It is a public API. Changes need an ADR, and a changeset with a "Breaking" note when they break consumers.
 
 The output contract is the boundary between the core and the adapters. Adapters may only read what is listed here.
+
+## Scope and stability
+
+- **v0.1 scope:** one sprite group (`icons`), the manifest with `color: mono | multicolor` and its per-icon `delivery`, the types, and the naming rules below. Sprite files and stack files are both in scope because the delivery forms need them ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)).
+- **Not in v0.1:** multiple sprite groups or namespace-based splitting ([Q-22](open-questions.md), [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)), per-namespace types ([Q-30](open-questions.md)), inline sprite output ([Q-25](open-questions.md)). A consumer never sees these in v0.1 output.
+- **0.x policy:** until `1.0.0`, a breaking change to the output contract is a **minor** bump, with a "Breaking" note in the changeset ([ADR-0009](adr/0009-license-versioning-and-release.md)). The manifest's `version` field changes only when the manifest format changes. `1.0.0` comes with its own ADR, when the contract is declared stable.
+- **Zero icons:** an error (exit code 2). No file is written.
+- **Byte-level details:** generated JSON and `.js`/`.d.ts` use LF, 2-space indent, `JSON.stringify` quoting, and one trailing newline. SVG bytes come from the pinned svgo version of [ADR-0008](adr/0008-tech-stack-and-package-layout.md) with the core's fixed config; TSK-011 pins and documents that config. Naming follows the Unicode tables of the supported Node range, and a character assigned in a newer Unicode version may name differently ([ADR-0007](adr/0007-icon-naming-and-collision-policy.md)).
+- A sample of the generated output for one fixture set is in [samples/output-contract-v0.1/](samples/output-contract-v0.1/). The core (TSK-011) must reproduce it byte for byte.
 
 ## Generated artifacts
 
 ### 1. Sprite file(s)
 
 - One SVG file per sprite group, named `<group>.<hash>.svg`. `<hash>` is the first 8 lowercase hex characters of SHA-256 over the file's exact bytes. v0.1 has one group, `icons` ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
-- Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching its own name pattern (R-15, ADR-0010)
+- Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching `^icons(\.stack)?\.[0-9a-f]{8}\.svg$` (R-15, ADR-0010)
 - Contains one `<symbol id="<iconId>" viewBox="…">` per icon
 - Must not contain scripts or external references
 - Internal ids (gradients, masks, clip paths) are prefixed per icon so they can't collide
@@ -35,54 +44,80 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
   "version": 1,
   "sprites": {
     "icons": {
-      "sprite": { "file": "icons.7f8d9abd.svg", "url": "/icons/icons.7f8d9abd.svg" },
-      "stack": { "file": "icons.stack.a506a052.svg", "url": "/icons/icons.stack.a506a052.svg" }
+      "sprite": {
+        "file": "icons.7f8d9abd.svg",
+        "url": "/icons/icons.7f8d9abd.svg"
+      },
+      "stack": {
+        "file": "icons.stack.a506a052.svg",
+        "url": "/icons/icons.stack.a506a052.svg"
+      }
     }
   },
   "icons": {
-    "brand/sunset": { "sprite": "icons", "id": "i-brand--sunset", "viewBox": "0 0 24 24", "color": "multicolor", "delivery": "img" },
-    "home": { "sprite": "icons", "id": "i-home", "viewBox": "0 0 24 24", "color": "mono", "delivery": "use" }
+    "brand/sunset": {
+      "sprite": "icons",
+      "id": "i-brand--sunset",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "home": {
+      "sprite": "icons",
+      "id": "i-home",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    }
   }
 }
 ```
 
-| Field | Meaning |
-|---|---|
-| `version` | Contract version, `1`. An adapter that doesn't know the value fails loudly |
-| `sprites.<group>.sprite` / `.stack` | `{ file, url }`, or `null` when that file has no icons. `file` is the bare file name in `outDir`, and `url` is `publicPath + "/" + file` |
-| `icons.<name>` | Keyed by public name, sorted by code point ([Ordering](#ordering)) |
-| `icons.<name>.sprite` | The group key in `sprites` |
-| `icons.<name>.id` | The symbol id ([Symbol id](#symbol-id)) |
-| `icons.<name>.viewBox` | The icon's `viewBox` |
-| `icons.<name>.color` | `mono` or `multicolor` ([ADR-0004](adr/0004-per-icon-color-classification.md)) |
-| `icons.<name>.delivery` | `use`, `img`, or `mask` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)). `use` reads `sprite.url`, and `img` and `mask` read `stack.url`. Append `#` + `id` |
+| Field                               | Meaning                                                                                                                                                                            |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version`                           | Contract version, `1`. An adapter that doesn't know the value fails loudly                                                                                                         |
+| `sprites.<group>.sprite` / `.stack` | `{ file, url }`, or `null` when that file has no icons. `file` is the bare file name in `outDir`, and `url` is `publicPath + "/" + file`                                           |
+| `icons.<name>`                      | Keyed by public name, sorted by code point ([Ordering](#ordering))                                                                                                                 |
+| `icons.<name>.sprite`               | The group key in `sprites`                                                                                                                                                         |
+| `icons.<name>.id`                   | The symbol id ([Symbol id](#symbol-id))                                                                                                                                            |
+| `icons.<name>.viewBox`              | The icon's `viewBox`                                                                                                                                                               |
+| `icons.<name>.color`                | `mono` or `multicolor` ([ADR-0004](adr/0004-per-icon-color-classification.md))                                                                                                     |
+| `icons.<name>.delivery`             | `use`, `img`, or `mask` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)). `use` reads `sprite.url`, and `img` and `mask` read `stack.url`. Append `#` + `id` |
 
 `publicPath` rules:
 
-- It must start with a single `/` and must not contain `?`, `#`, `\`, or whitespace. A trailing `/` is removed.
+- It must start with a single `/` and must not contain `?`, `#`, `\`, or whitespace. A trailing `/` is removed, so `/` alone is the site root and normalizes to the empty string: `url` is then `"/" + file`, never `//file`. Empty segments (`//`), `.` and `..` segments, `%`, and non-ASCII characters are rejected with exit code 2.
 - Relative, protocol-relative, and `http(s):` values exit with code 2, because sprites must be same-origin (ADR-0006).
 - It must include the app's mount point, for example `/docs/icons` under a Next `basePath: '/docs'`.
 - If `outDir` is set without `publicPath`, it is a config error.
-- Key names are working names until the config schema is settled (TSK-011).
+- `outDir`, `publicPath` and `moduleDir` are descriptive terms. The config keys that set them are outside this contract (TSK-011).
+- The key names above are frozen for v0.1. Renaming one is a breaking change.
 
 ### 3. Types
 
-- `icons.d.ts` exports `type IconName`, a plain union of all icon names sorted by code point (v0.1; the shape for large sets is Q-30), and `declare const manifest` with `icons` typed as `Readonly<Record<IconName, …>>` ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
-- Per-namespace unions, if namespaces are enabled ❓ Q-30
+`icons.d.ts` exports these names, and no others are part of the contract:
 
-### 4. Inline sprite (opt-in)
+- `type IconName`: a plain union of all public names, sorted by code point. A name that is not in the union is a type error. The shape for large sets (namespace unions, template literals) is deferred ([Q-30](open-questions.md))
+- `interface SvgwormFile { readonly file: string; readonly url: string }`
+- `interface SvgwormIcon { readonly sprite: string; readonly id: string; readonly viewBox: string; readonly color: 'mono' | 'multicolor'; readonly delivery: 'use' | 'img' | 'mask' }`
+- `interface SvgwormManifest<Name extends string> { readonly version: 1; readonly sprites: Readonly<Record<string, { readonly sprite: SvgwormFile | null; readonly stack: SvgwormFile | null }>>; readonly icons: Readonly<Record<Name, SvgwormIcon>> }`
+- `declare const manifest: SvgwormManifest<IconName>`
 
-- The same symbols, emitted for embedding in HTML ❓ Q-25 (raw string vs framework component)
+`icons.js` exports the same `manifest` value as data ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md)). The sample in [samples/output-contract-v0.1/svgworm/icons.d.ts](samples/output-contract-v0.1/svgworm/icons.d.ts) is the reference.
+
+### 4. Inline sprite
+
+Not in v0.1. Inline output is deferred ([ADR-0005](adr/0005-build-standalone-with-kill-criteria.md), [Q-25](open-questions.md)), and no inline file or field is emitted.
 
 ## Icon naming
 
 Decided by [ADR-0007](adr/0007-icon-naming-and-collision-policy.md) (Q-31, Q-32, R-02, R-03). Each icon has two identifiers, and both are pure functions of the icon's path relative to its source folder. Nothing else feeds them: not crawl order, absolute paths, timestamps, locale, or the file contents.
 
-| | **Public name** (`<iconName>`) | **Symbol id** (`<iconId>`) |
-|---|---|---|
-| Used in | TS types, manifest keys, the adapter's `name` prop | `<symbol id>` in the sprite, `#fragment` in `<use href>` |
-| Alphabet | Unicode letters (lowercased), marks, and numbers, plus `-` and `/` | ASCII `a-z 0-9 - _` only |
-| Example | `social/github`, `non-ascii/café` | `i-social--github`, `i-non-ascii--caf_e9_` |
+|          | **Public name** (`<iconName>`)                                     | **Symbol id** (`<iconId>`)                               |
+| -------- | ------------------------------------------------------------------ | -------------------------------------------------------- |
+| Used in  | TS types, manifest keys, the adapter's `name` prop                 | `<symbol id>` in the sprite, `#fragment` in `<use href>` |
+| Alphabet | Unicode letters (lowercased), marks, and numbers, plus `-` and `/` | ASCII `a-z 0-9 - _` only                                 |
+| Example  | `social/github`, `non-ascii/café`                                  | `i-social--github`, `i-non-ascii--caf_e9_`               |
 
 ### Public name
 
@@ -91,19 +126,23 @@ Input: the file's path relative to the source folder it was found in.
 1. **Separators.** Treat `\` and `/` as path separators. Split into segments.
 2. **Inputs and extension.** Inputs are regular files whose name ends in `.svg`, matched case-insensitively (`.SVG` counts). Other files are ignored, and a folder named `x.svg` is still a folder. Files and folders whose name starts with `.` are not inputs (this also skips macOS `._*` files). Remove the one `.svg` extension. `\` is a separator on every OS, so a Linux file literally named `a\b.svg` becomes `a/b`.
    - A path that isn't valid Unicode is an **error**: undecodable bytes on Linux, lone surrogates on Windows, or anything that decodes to U+FFFD. It is never silently replaced.
-3. **Folders.** By default every folder segment is kept, so folders become namespaces (R-02). With `flatten` on, only the file segment is kept. The exact config key is set by the config schema (TSK-011).
+3. **Folders.** By default every folder segment is kept, so folders become namespaces (R-02). With `flatten` on, only the file segment is kept. The config key that turns it on is not part of this contract; the naming rules are.
 4. **Per segment**, in this order:
+
    1. Unicode-normalize to **NFC**.
    2. Lowercase with the locale-independent Unicode default mapping (`String.prototype.toLowerCase`, never `toLocaleLowerCase`), then NFC again. This is default lowercasing, not case folding: `ß` stays `ß`, and a few uppercase letters with no lowercase form (`ℂ`, `ϒ`) stay as they are.
    3. Replace final sigma `ς` with `σ`. `toLowerCase` picks one or the other depending on the neighbouring characters, so without this step a case-only rename could change the name (`ΟΔΟΣ.ΚΑΤΩ` vs `ΟΔΟΣ_ΚΑΤΩ`).
    4. Replace each separator run with a single `-`. A separator run starts with:
+
       - a character that is not a letter, mark, or number (`[^\p{L}\p{M}\p{N}]`), such as a space, `_`, `.`, `@`, `=`, `+`, or an emoji;
       - a default-ignorable code point (`\p{Default_Ignorable_Code_Point}`): variation selectors, zero-width joiners, bidi controls;
       - or a combining mark at the start of the segment.
 
       The run then continues over any following characters of those kinds, including combining marks. So a mark survives only when it is attached to a letter or number, and nothing invisible is ever left in a name.
+
    5. Trim `-` from both ends.
    6. If the segment is now empty, it is an **error** for that file (`🔥.svg`, `❤️.svg`, `---.svg`, a folder named `_`).
+
 5. **Join** the segments with `/`.
 
 What this implies:
@@ -114,7 +153,7 @@ What this implies:
 - No length limit beyond the file system's own.
 - Names may start with a digit (`2fa`, `24/add`). No name is reserved. Adapters look names up with `Map` or `Object.hasOwn`, never with a bare `obj[name]`, so a name like `constructor` is safe.
 - An icon named `social` and an icon named `social/github` may both exist.
-- Any path svgworm writes to output (for example a source path in the manifest) is also NFC-normalized and uses `/`. Error messages show the path as found on disk.
+- Any path svgworm writes to output is also NFC-normalized and uses `/`. Error messages show the path as found on disk.
 
 ### Symbol id
 
@@ -131,11 +170,12 @@ Guarantees:
 - The id is always a valid XML `NCName`, HTML id, CSS identifier, and URL fragment, with no escaping or percent-encoding needed.
 - The mapping is injective: `--` and `_` can't occur inside a name, so two different names never share an id.
 - Every other id in the sprite (gradients, masks, clip paths) is an **internal id** of the form `<symbolId>_<n>`. `<n>` is a decimal ordinal from 1, assigned in document order of the optimized icon, so it is a pure function of the icon's content.
+
   - An internal id is never a symbol id: in a symbol id every `_` opens a `_hex_` group that is closed again, while the trailing `_<n>` is never closed.
   - Two icons' internal ids can't collide, because the last `_` splits an internal id into exactly one symbol id and one ordinal.
   - Internal ids are also valid NCNames and CSS identifiers. `.` is avoided because it would read as a class selector in CSS and as a syncbase separator in SMIL `begin` values.
 
-  See Sprite file(s) above.
+
 - Adapters copy the id from the manifest. They never derive it from the name.
 
 ### Collisions
@@ -149,54 +189,54 @@ Guarantees:
 
 ### Ordering
 
-Wherever names are sorted (types, manifest, sprite symbols), they are compared by Unicode code point, which is the same as UTF-8 byte order. Never use `localeCompare` or JS's default UTF-16 order.
+Wherever names are sorted (types, manifest), and for sprite symbols and stack icons (sorted by public name, not by id), they are compared by Unicode code point, which is the same as UTF-8 byte order. Never use `localeCompare` or JS's default UTF-16 order.
 
 ### Examples
 
 Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/check.mjs`.
 
-| Input path | Public name | Symbol id |
-|---|---|---|
-| `home.svg` | `home` | `i-home` |
-| `Arrow Left.svg` | `arrow-left` | `i-arrow-left` |
-| `arrow_left.svg` | `arrow-left` | `i-arrow-left` |
-| `ArrowLeft.svg` | `arrowleft` | `i-arrowleft` |
-| `IC_Close.SVG` | `ic-close` | `i-ic-close` |
-| `icon.filled.svg` | `icon-filled` | `i-icon-filled` |
-| `logo@2x.svg` | `logo-2x` | `i-logo-2x` |
-| `Property 1=Default.svg` (Figma variant export) | `property-1-default` | `i-property-1-default` |
-| `C++.svg` | `c` | `i-c` |
-| `social/github.svg` | `social/github` | `i-social--github` |
-| `social\github.svg` (Windows) | `social/github` | `i-social--github` |
-| `Social Media/GitHub.svg` | `social-media/github` | `i-social-media--github` |
-| `a-b/c.svg` | `a-b/c` | `i-a-b--c` |
-| `a/b-c.svg` | `a/b-c` | `i-a--b-c` |
-| `24/add.svg` | `24/add` | `i-24--add` |
-| `2fa.svg` | `2fa` | `i-2fa` |
-| `Straße.svg` | `straße` | `i-stra_df_e` |
-| `icon.svg.svg` | `icon-svg` | `i-icon-svg` |
-| fixture `duplicates/actions/close.svg` | `actions/close` | `i-actions--close` |
-| fixture `duplicates/arrows/close.svg` | `arrows/close` | `i-arrows--close` |
-| both `duplicates/*/close.svg` with `flatten` | error: collision on `close`, lists both files | |
-| fixture `non-ascii/café.svg` (NFC) | `café` | `i-caf_e9_` |
-| `café.svg` with NFD bytes, or `CAFÉ.svg` | `café` | `i-caf_e9_` |
-| fixture `non-ascii/日本.svg` | `日本` | `i-_65e5__672c_` |
-| `Icon.svg` and `icon.svg` in one folder | error: collision on `icon`, lists both files | |
-| `ΟΔΟΣ.ΚΑΤΩ.svg`, `ΟΔΟΣ_ΚΑΤΩ.svg`, `οδος.κατω.svg` | `οδοσ-κατω` | `i-_3bf__3b4__3bf__3c3_-_3ba__3b1__3c4__3c9_` |
-| `home︀.svg` (`home` + variation selector U+FE00) | `home` (so it collides with `home.svg`) | `i-home` |
-| `_` + U+0301 (combining acute) + `x.svg` | `x` | `i-x` |
-| `１２.svg` (full-width digits) | `１２` | `i-_ff11__ff12_` |
-| `🔥.svg`, `❤️.svg`, `---.svg` | error: empty name | |
-| `caf\xE9.svg` (Latin-1 bytes, invalid UTF-8) | error: not valid Unicode | |
-| `_/close.svg` | error: empty folder segment | |
-| `.hidden.svg`, `._close.svg` | ignored (dotfile) | |
+| Input path                                        | Public name                                   | Symbol id                                     |
+| ------------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
+| `home.svg`                                        | `home`                                        | `i-home`                                      |
+| `Arrow Left.svg`                                  | `arrow-left`                                  | `i-arrow-left`                                |
+| `arrow_left.svg`                                  | `arrow-left`                                  | `i-arrow-left`                                |
+| `ArrowLeft.svg`                                   | `arrowleft`                                   | `i-arrowleft`                                 |
+| `IC_Close.SVG`                                    | `ic-close`                                    | `i-ic-close`                                  |
+| `icon.filled.svg`                                 | `icon-filled`                                 | `i-icon-filled`                               |
+| `logo@2x.svg`                                     | `logo-2x`                                     | `i-logo-2x`                                   |
+| `Property 1=Default.svg` (Figma variant export)   | `property-1-default`                          | `i-property-1-default`                        |
+| `C++.svg`                                         | `c`                                           | `i-c`                                         |
+| `social/github.svg`                               | `social/github`                               | `i-social--github`                            |
+| `social\github.svg` (Windows)                     | `social/github`                               | `i-social--github`                            |
+| `Social Media/GitHub.svg`                         | `social-media/github`                         | `i-social-media--github`                      |
+| `a-b/c.svg`                                       | `a-b/c`                                       | `i-a-b--c`                                    |
+| `a/b-c.svg`                                       | `a/b-c`                                       | `i-a--b-c`                                    |
+| `24/add.svg`                                      | `24/add`                                      | `i-24--add`                                   |
+| `2fa.svg`                                         | `2fa`                                         | `i-2fa`                                       |
+| `Straße.svg`                                      | `straße`                                      | `i-stra_df_e`                                 |
+| `icon.svg.svg`                                    | `icon-svg`                                    | `i-icon-svg`                                  |
+| fixture `duplicates/actions/close.svg`            | `actions/close`                               | `i-actions--close`                            |
+| fixture `duplicates/arrows/close.svg`             | `arrows/close`                                | `i-arrows--close`                             |
+| both `duplicates/*/close.svg` with `flatten`      | error: collision on `close`, lists both files |                                               |
+| fixture `non-ascii/café.svg` (NFC)                | `café`                                        | `i-caf_e9_`                                   |
+| `café.svg` with NFD bytes, or `CAFÉ.svg`          | `café`                                        | `i-caf_e9_`                                   |
+| fixture `non-ascii/日本.svg`                      | `日本`                                        | `i-_65e5__672c_`                              |
+| `Icon.svg` and `icon.svg` in one folder           | error: collision on `icon`, lists both files  |                                               |
+| `ΟΔΟΣ.ΚΑΤΩ.svg`, `ΟΔΟΣ_ΚΑΤΩ.svg`, `οδος.κατω.svg` | `οδοσ-κατω`                                   | `i-_3bf__3b4__3bf__3c3_-_3ba__3b1__3c4__3c9_` |
+| `home︀.svg` (`home` + variation selector U+FE00)  | `home` (so it collides with `home.svg`)       | `i-home`                                      |
+| `_` + U+0301 (combining acute) + `x.svg`          | `x`                                           | `i-x`                                         |
+| `１２.svg` (full-width digits)                    | `１２`                                        | `i-_ff11__ff12_`                              |
+| `🔥.svg`, `❤️.svg`, `---.svg`                     | error: empty name                             |                                               |
+| `caf\xE9.svg` (Latin-1 bytes, invalid UTF-8)      | error: not valid Unicode                      |                                               |
+| `_/close.svg`                                     | error: empty folder segment                   |                                               |
+| `.hidden.svg`, `._close.svg`                      | ignored (dotfile)                             |                                               |
 
 ## Adapter expectations (React)
 
-- Reads the manifest at build time, never at runtime over the network. The user passes the generated module's `manifest` to the adapter once (for example `createIcon(manifest)`, final API in TSK-012), because the adapter can't import a path inside the user's project ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
+- Reads the manifest at build time, never at runtime over the network. The user passes the generated module's `manifest` to the adapter once (for example `createIcon(manifest)`; the adapter's own API lives in `@svgworm/react`, not in this contract), because the adapter can't import a path inside the user's project ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 - Renders by the icon's `delivery` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)):
   - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough;
-  - `img` (multicolor with references): `<img src="{stackUrl}#{id}" alt="…">`;
+  - `img` (multicolor with references): `<img src="{stackUrl}#{id}" width height alt="…">`;
   - `mask` (mono with references): an element masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
 - Adds `aria-hidden="true"` unless a title or label is given; with a title it renders `role="img"` and a `<title>`
 - Takes no part in SVG processing
