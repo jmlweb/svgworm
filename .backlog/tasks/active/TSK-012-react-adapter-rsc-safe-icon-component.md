@@ -1,12 +1,13 @@
 ---
 id: TSK-012
 title: React adapter: RSC-safe Icon component
-status: pending
+status: active
 priority: P2
 tags: [adapter, react]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-011]
+started: 2026-10-11
 ---
 
 # React adapter: RSC-safe Icon component
@@ -29,3 +30,4 @@ R-40..R-44. Inline sprite (R-13) is out of v0.1, so there is no inline React pat
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-11] Started

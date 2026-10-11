@@ -4,25 +4,24 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 23 |
-| Active | 0 |
+| Pending | 21 |
+| Active | 2 |
 | Blocked | 0 |
 | Complete | 11 |
 
 ## Active Tasks
 
-_No active tasks._
+- TSK-012: React adapter: RSC-safe Icon component (P2)
+- TSK-017: Discovery docs and honest comparison page (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
-| TSK-012 | React adapter: RSC-safe Icon component | P2 | adapter, react | 2026-10-07 |
 | TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |
 | TSK-015 | svgworm init: interactive setup for Next.js | P2 | cli, dx, v0.1 | 2026-10-07 |
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | P2 | example, v0.1 | 2026-10-07 |
-| TSK-017 | Discovery docs and honest comparison page | P2 | docs, discovery, v0.1 | 2026-10-07 |
 | TSK-018 | Release v0.1.0 to npm | P2 | release, v0.1 | 2026-10-07 |
 | TSK-019 | Launch outreach for svgworm v0.1 | P2 | launch, v0.1 | 2026-10-07 |
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |

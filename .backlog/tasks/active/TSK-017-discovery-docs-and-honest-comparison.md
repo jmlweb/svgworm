@@ -1,12 +1,13 @@
 ---
 id: TSK-017
 title: Discovery docs and honest comparison page
-status: pending
+status: active
 priority: P2
 tags: [docs, discovery, v0.1]
 created: 2026-10-07
 source: plan/PLN-001
 depends-on: [TSK-011]
+started: 2026-10-11
 ---
 
 # Discovery docs and honest comparison page
@@ -29,3 +30,4 @@ R-55. README with copy-pasteable quick start and npm keywords, llms.txt, JSON Sc
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-11] Started
