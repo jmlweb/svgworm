@@ -15,7 +15,7 @@ Migrating the TSK-010 scaffold from ESLint to Oxlint 1.87 with @jmlweb/oxlint-co
 - No `no-restricted-properties` rule: forbid the whole `process` global with `no-restricted-globals` to keep `process.stdout` out of src/core.
 - `pnpm exec oxlint --rules` prints nothing; check a rule by planting a violation.
 - `oxfmt` formats Markdown and rewrites hand-written docs; exclude `**/*.md` in `ignorePatterns`.
-- @jmlweb/commitlint-config forces lower-case subjects, which rejects `(TSK-010)`; turn `subject-case` off.
-- n/no-missing-import fails on scripts that import `dist/` before the build; n/hashbang fails on a bin source whose `bin` points to dist.
+- n/hashbang on a bin source: set `settings.n.convertPath` (src to dist) in the root config. n/no-missing-import on scripts that import `dist/`: turn it off for those scripts.
+- @jmlweb/commitlint-config before 4.1.0 forced lower-case subjects and rejected `(TSK-010)`; 4.1.0 fixes it.
 ## Application
 Check every new boundary rule with a planted violation before relying on it.

@@ -45,6 +45,17 @@ export default defineConfig({
   extends: [nodeConfig],
   // Oxlint ignores `options` in extended configs: this must stay in the root file.
   options: { typeAware: true },
+  // `bin` and `files` in package.json point at dist/: map sources to build output.
+  settings: {
+    n: {
+      convertPath: [
+        {
+          include: ['src/**/*.ts'],
+          replace: ['^src/(.+)\\.ts$', 'dist/$1.js'],
+        },
+      ],
+    },
+  },
   ignorePatterns: [
     '**/dist/**',
     'fixtures/**',
@@ -63,11 +74,6 @@ export default defineConfig({
       // The CLI is the only place that talks to the terminal, and it is a bin.
       files: ['packages/svgworm/src/cli/**'],
       rules: { 'n/no-process-exit': 'off' },
-    },
-    {
-      // `bin` points at dist/, so the plugin cannot map the shebang back to this source file.
-      files: ['packages/svgworm/src/cli/main.ts'],
-      rules: { 'n/hashbang': 'off' },
     },
     {
       // These scripts import build output that does not exist at lint time.

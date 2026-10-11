@@ -51,11 +51,12 @@ Details:
   - `eslint-config-prettier`: the Oxlint configs enable no formatting rules.
   - `no-restricted-exports` with `restrictDefaultExports`: replaced by `import/no-default-export` from the shared base config.
 - **Git hooks tool: husky 9.1.7.** A commit-msg hook is the only hook needed. Husky is what the tooling repo itself uses, needs no binary beyond the npm package, and keeps the hook as a plain file in `.husky/`. Lefthook was rejected because it adds a second ecosystem (a Go binary and its own config format) for one hook. `simple-git-hooks` was rejected because it stores the command in `package.json`, away from where the `commitlint` call can be read and reviewed. Husky runs through the `prepare` script, which pnpm runs on `pnpm install`. It is a dev dependency only.
-- **Commit rules:** `@jmlweb/commitlint-config` as is, except `subject-case` is turned off, because subjects cite upper-case ids (`TSK-010`, `ADR-0008`). CI checks the PR commit range.
+- **Commit rules:** `@jmlweb/commitlint-config` as is. Since 4.1.0 its default `subject-case` follows `@commitlint/config-conventional`, so subjects can cite upper-case ids (`TSK-010`, `ADR-0008`). CI checks the PR commit range.
+- **Node rules:** `settings.n.convertPath` maps `src/**/*.ts` to `dist/**/*.js`, so `eslint-plugin-n` matches the `bin` entry (this is the documented fix for `n/hashbang`). `n/no-missing-import` is off only for `scripts/**`, which import build output, as the package README suggests.
 - `eslint-plugin-n` is a dev dependency because `@jmlweb/oxlint-config-node` requires it as a peer. `eslint` is no longer a direct dependency and has no config here. pnpm still installs it, because `@jmlweb/oxlint-config-react` has `@eslint-react/eslint-plugin` as a peer, which depends on it. Nothing runs ESLint.
 - No runtime dependency is added. `@svgworm/react` keeps zero dependencies.
 
-Versions (dev, pinned exactly; each satisfies its `@jmlweb` peer range): `oxlint` 1.87.0, `oxfmt` 0.72.0, `oxlint-tsgolint` 7.0.2004, `eslint-plugin-n` 18.4.1, `@jmlweb/oxlint-config-node` 0.1.0, `@jmlweb/oxlint-config-react` 0.1.0, `@jmlweb/oxfmt-config-base` 0.2.1, `@jmlweb/tsconfig-node` 2.0.0, `@jmlweb/tsconfig-base` 2.0.0, `@jmlweb/vitest-config` 3.0.0, `@jmlweb/commitlint-config` 4.0.1, `@commitlint/cli` and `@commitlint/config-conventional` 21.2.3, `husky` 9.1.7.
+Versions (dev, pinned exactly; each satisfies its `@jmlweb` peer range): `oxlint` 1.87.0, `oxfmt` 0.72.0, `oxlint-tsgolint` 7.0.2004, `eslint-plugin-n` 18.4.1, `@jmlweb/oxlint-config-node` 0.1.2, `@jmlweb/oxlint-config-react` 0.1.1, `@jmlweb/oxfmt-config-base` 0.2.2, `@jmlweb/tsconfig-node` 2.0.0, `@jmlweb/tsconfig-base` 2.0.0, `@jmlweb/vitest-config` 3.0.1, `@jmlweb/commitlint-config` 4.1.0, `@commitlint/cli` and `@commitlint/config-conventional` 21.2.3, `husky` 9.1.7.
 
 ## Evidence
 
