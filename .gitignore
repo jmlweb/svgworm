@@ -5,7 +5,7 @@ node_modules/
 dist/
 
 # Legacy prototype fixtures (proprietary, never commit)
-svg/
+/svg/
 
 # Editor-local
 .cursor/

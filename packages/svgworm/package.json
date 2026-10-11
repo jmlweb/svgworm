@@ -43,6 +43,7 @@
     "check:package": "publint && attw --pack . --profile esm-only"
   },
   "dependencies": {
+    "svgo": "4.1.0",
     "zod": "4.6.6"
   }
 }
