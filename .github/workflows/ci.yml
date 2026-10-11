@@ -84,6 +84,8 @@ jobs:
       - run: pnpm build
       - run: pnpm test
       - run: node scripts/fingerprint-fixtures.mjs fingerprint.txt
+      # Smoke only: proves the benchmark runs. Timing on shared runners is too noisy to gate on.
+      - run: node scripts/bench-build.mjs 200 1
       - uses: actions/upload-artifact@v7
         with:
           name: fingerprint-${{ matrix.os }}

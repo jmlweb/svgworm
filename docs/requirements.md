@@ -42,7 +42,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 
 ## Non-functional
 
-- **R-50** Builds 1,000 icons in a few seconds on a laptop. The exact budget is set by a benchmark once the walking skeleton exists. _[v0.1]_
+- **R-50** Builds 1,000 icons in under 3 seconds on a recent laptop (Apple M-series), measured by `scripts/bench-build.mjs` on the pure `compile` step (median of 5 runs after a warmup). The first measurement was about 1.0 s on an M4 Max (TSK-011). CI runs the benchmark as a smoke test and has no timing gate. _[v0.1]_
 - **R-51** Few runtime dependencies for consumers. The adapter has zero dependencies beyond React. _[v0.1]_
 - **R-52** Clear, actionable error messages. _[v0.1]_
 - **R-53** A polished CLI experience: animated progress, interactive prompts (for example `init`), and a stats summary at the end of each run. In a non-TTY or with `--json`, output is plain, stable, and machine-readable. _[v0.1]_
