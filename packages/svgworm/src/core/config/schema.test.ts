@@ -1,0 +1,80 @@
+import { describe, expect, it } from 'vitest';
+
+import { configSchema, normalizePublicPath } from './schema.ts';
+
+const parse = (input: unknown) => configSchema.safeParse(input);
+
+describe('normalizePublicPath', () => {
+  it.each([
+    ['/icons', '/icons'],
+    ['/icons/', '/icons'],
+    ['/docs/icons', '/docs/icons'],
+    ['/', ''],
+    ['/a-b_c/d.e', '/a-b_c/d.e'],
+  ])('accepts %s as %j', (input, expected) => {
+    expect(normalizePublicPath(input)).toEqual({ ok: true, value: expected });
+  });
+
+  it.each([
+    'icons',
+    './icons',
+    '//cdn.example.com/icons',
+    'https://cdn.example.com/icons',
+    'http://x/icons',
+    '/a//b',
+    '//',
+    '/a/./b',
+    '/a/../b',
+    '/a?x=1',
+    '/a#frag',
+    '/a\\b',
+    '/a b',
+    '/a%20b',
+    '/café',
+    '',
+  ])('rejects %j', (input) => {
+    expect(normalizePublicPath(input)).toMatchObject({ ok: false });
+  });
+});
+
+describe('configSchema', () => {
+  it('accepts a minimal config', () => {
+    expect(parse({ sources: ['icons'] }).success).toBe(true);
+  });
+
+  it('accepts a full config', () => {
+    const result = parse({
+      $schema: './node_modules/svgworm/config.schema.json',
+      sources: ['icons', 'brand'],
+      outDir: 'public/icons',
+      publicPath: '/icons',
+      moduleDir: 'svgworm',
+      flatten: true,
+      color: [{ match: 'brand/**', color: 'preserve' }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it.each([
+    ['no sources', {}],
+    ['empty sources', { sources: [] }],
+    ['empty source string', { sources: [''] }],
+    ['unknown key', { sources: ['a'], outDirr: 'x' }],
+    ['wrong type', { sources: 'icons' }],
+    [
+      'bad color mode',
+      { sources: ['a'], color: [{ match: 'a', color: 'red' }] },
+    ],
+    ['empty match', { sources: ['a'], color: [{ match: '', color: 'mono' }] }],
+    ['bad publicPath', { sources: ['a'], publicPath: 'icons' }],
+    ['not an object', 'sources'],
+  ])('rejects %s', (_label, input) => {
+    expect(parse(input).success).toBe(false);
+  });
+
+  it('names the offending key in the error path', () => {
+    const result = parse({ sources: ['a'], publicPath: 'https://x/y' });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual(['publicPath']);
+  });
+});

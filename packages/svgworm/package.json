@@ -41,5 +41,8 @@
     "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check:package": "publint && attw --pack . --profile esm-only"
+  },
+  "dependencies": {
+    "zod": "4.6.6"
   }
 }
