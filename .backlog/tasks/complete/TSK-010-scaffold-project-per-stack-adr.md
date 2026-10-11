@@ -1,13 +1,14 @@
 ---
 id: TSK-010
 title: Scaffold project per stack ADR
-status: active
+status: complete
 priority: P2
 tags: [setup]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-009]
 started: 2026-10-07
+completed: 2026-10-11
 ---
 
 # Scaffold project per stack ADR
@@ -41,3 +42,5 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 - [2026-10-11] AGENTS.md (commands, ADR-0011 bullet) and CONTRIBUTING.md updated. Tests: the existing determinism, Unicode and collision tests carry over; no new product code, the boundary rules were checked with planted violations instead.
 - [2026-10-11] CI run 38172153283 on next passed: quality job, tests on Linux, macOS and Windows with Node 22, 24 and 26, TypeScript 7 typecheck, determinism fingerprints identical across the three OSes.
 - [2026-10-11] Commitlint and changeset jobs run on pull requests only; verified through the PR that records this entry.
+- [2026-10-11] Completed: scaffold, Oxc tooling (ADR-0011), CI green on push and PR, docs updated. Follow-up: TSK-034.
+- [2026-10-11] Completed
