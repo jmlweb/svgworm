@@ -90,7 +90,9 @@ Backlog lives in `.backlog/`. Always use the flowstate skills; never edit index 
 - `docs/viability.md`: feasibility, risks, prototype lessons, competitors
 - `docs/requirements.md`: what (user stories)
 - `docs/output-contract.md`: the core/adapter boundary (generated files)
+- `docs/comparison.md`: honest comparison with SVGR, @neodx/svg and others (spike numbers)
 - `docs/traction.md`: how we get users and AI agents to adopt it (human and agent tracks, metrics)
+- `llms.txt`: summary for AI agents (keep in sync with the README quick start and CLI flags)
 - `docs/open-questions.md`: unknowns; each one should map to a task
 - `docs/adr/`: decisions, numbered and immutable once accepted (supersede, don't edit)
 - `.claude/rules/`: focused rules for architecture, decisions, and testing

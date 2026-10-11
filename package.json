@@ -21,7 +21,8 @@
     "changeset": "changeset",
     "lint:fix": "oxlint --fix",
     "commitlint": "commitlint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "schema:generate": "node scripts/generate-config-schema.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

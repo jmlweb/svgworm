@@ -11,10 +11,14 @@
   },
   "keywords": [
     "svg",
+    "svg-sprite",
     "sprite",
     "icons",
     "react",
-    "server-components",
+    "react-server-components",
+    "rsc",
+    "nextjs",
+    "type-safe",
     "svgworm"
   ],
   "type": "module",

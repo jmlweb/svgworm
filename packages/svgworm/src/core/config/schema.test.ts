@@ -1,6 +1,11 @@
+import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
-import { configSchema, normalizePublicPath } from './schema.ts';
+import {
+  configSchema,
+  getConfigJsonSchema,
+  normalizePublicPath,
+} from './schema.ts';
 
 const parse = (input: unknown) => configSchema.safeParse(input);
 
@@ -76,5 +81,24 @@ describe('configSchema', () => {
     const result = parse({ sources: ['a'], publicPath: 'https://x/y' });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.path).toEqual(['publicPath']);
+  });
+});
+
+describe('published JSON Schema', () => {
+  it('matches the committed svgworm.schema.json (run pnpm schema:generate)', async () => {
+    const committed = await readFile(
+      new URL('../../../svgworm.schema.json', import.meta.url),
+      'utf8',
+    );
+    expect(JSON.parse(committed)).toEqual(getConfigJsonSchema());
+  });
+
+  it('accepts a minimal config and rejects unknown keys', () => {
+    const schema = getConfigJsonSchema() as {
+      required: string[];
+      additionalProperties: boolean;
+    };
+    expect(schema.required).toEqual(['sources']);
+    expect(schema.additionalProperties).toBe(false);
   });
 });

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "sources": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Folders that contain the SVG files, relative to the config."
+    },
+    "outDir": {
+      "description": "Where sprite files are written. Default \"public/icons\". Needs publicPath when set.",
+      "type": "string",
+      "minLength": 1
+    },
+    "publicPath": {
+      "description": "URL path the sprites are served from, same-origin. Default \"/icons\".",
+      "type": "string"
+    },
+    "moduleDir": {
+      "description": "Where the manifest and types are written. Default \"svgworm\".",
+      "type": "string",
+      "minLength": 1
+    },
+    "flatten": {
+      "description": "Drop folder names from icon names. Default false.",
+      "type": "boolean"
+    },
+    "color": {
+      "description": "Per-icon color overrides. The last matching rule wins.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Glob matched against the icon public name (NFC, \"/\" separators). The last matching rule wins."
+          },
+          "color": {
+            "type": "string",
+            "enum": ["auto", "mono", "preserve"],
+            "description": "\"auto\" classifies the icon, \"mono\" forces currentColor, \"preserve\" keeps the colors."
+          }
+        },
+        "required": ["match", "color"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["sources"],
+  "additionalProperties": false
+}

@@ -11,12 +11,21 @@
   },
   "keywords": [
     "svg",
+    "svg-sprite",
     "sprite",
     "icons",
+    "icon-sprite",
     "typescript",
+    "type-safe",
     "cli",
+    "nextjs",
+    "next",
     "react",
-    "server-components"
+    "server-components",
+    "rsc",
+    "svgo",
+    "zero-js",
+    "ai-agents"
   ],
   "type": "module",
   "engines": {
@@ -30,10 +39,12 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./schema.json": "./svgworm.schema.json"
   },
   "files": [
     "dist",
+    "svgworm.schema.json",
     "LICENSE"
   ],
   "sideEffects": false,
