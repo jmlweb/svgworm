@@ -1,0 +1,2 @@
+error [svg/not-svg-root] icons/broken.svg: file has no root element
+svgworm: build failed with 1 error(s), nothing was written

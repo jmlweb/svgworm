@@ -77,6 +77,9 @@ importers:
 
   packages/svgworm:
     dependencies:
+      '@clack/prompts':
+        specifier: 1.8.0
+        version: 1.8.0
       svgo:
         specifier: 4.1.0
         version: 4.1.0
@@ -176,8 +179,16 @@ packages:
     resolution: {integrity: sha512-q/ThtP9gcnEP6xlv7LrY26C2mHqdGBti/MmOVngt/M/oIGYkssmQGxPK9WzBNt2juVcH/vml2WQ+ra8LXYOTaA==}
     engines: {node: ^22.11 || ^24 || >=26}
 
+  '@clack/core@1.5.0':
+    resolution: {integrity: sha512-zNikCcd8BbcEvzzG1sbXFrRHFk5kHPrpwZwksPvf9qyQO1Teb7JaXaOAxXZei9nZLDW0gaZawiuTCji88bTBhw==}
+    engines: {node: '>= 20.12.0'}
+
   '@clack/core@1.5.1':
     resolution: {integrity: sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==}
+    engines: {node: '>= 20.12.0'}
+
+  '@clack/prompts@1.8.0':
+    resolution: {integrity: sha512-PXzLZ8N34rxmuo4dJg3xtOXhcBse94qGjDqsteoEYrFrrZ5FSjIGwMAuOcv64ln8rHVBBD06XeVGr+/JX+plcA==}
     engines: {node: '>= 20.12.0'}
 
   '@clack/prompts@1.8.1':
@@ -2251,8 +2262,20 @@ snapshots:
       '@changesets/types': 7.0.0
       human-id: 4.2.2
 
+  '@clack/core@1.5.0':
+    dependencies:
+      fast-wrap-ansi: 0.2.2
+      sisteransi: 1.0.5
+
   '@clack/core@1.5.1':
     dependencies:
+      fast-wrap-ansi: 0.2.2
+      sisteransi: 1.0.5
+
+  '@clack/prompts@1.8.0':
+    dependencies:
+      '@clack/core': 1.5.0
+      fast-string-width: 3.0.2
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 

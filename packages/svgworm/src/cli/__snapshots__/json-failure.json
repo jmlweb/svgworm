@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "stats": null,
+  "icons": [],
+  "warnings": [],
+  "errors": [
+    {
+      "code": "svg/not-svg-root",
+      "file": "icons/broken.svg",
+      "message": "file has no root element"
+    }
+  ]
+}

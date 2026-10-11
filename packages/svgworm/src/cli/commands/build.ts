@@ -1,5 +1,3 @@
-import type { Reporter } from '../reporters/types.ts';
-
 import {
   build,
   ConfigError,
@@ -8,6 +6,7 @@ import {
   type ConfigOverrides,
 } from '../../core/api.ts';
 import { ExitCode } from '../exit-codes.ts';
+import { FatalCode, type Reporter } from '../reporters/types.ts';
 
 export type BuildCommand = {
   readonly cwd: string;
@@ -42,11 +41,12 @@ export const runBuildCommand = async (
       : ExitCode.FAILED;
   } catch (error) {
     if (error instanceof ConfigError) {
-      reporter.fatal(error.message);
+      reporter.fatal(error.message, FatalCode.USAGE);
       return ExitCode.USAGE;
     }
     reporter.fatal(
       `unexpected failure: ${error instanceof Error ? error.message : String(error)}`,
+      FatalCode.UNEXPECTED,
     );
     return ExitCode.FAILED;
   }

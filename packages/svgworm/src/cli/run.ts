@@ -4,7 +4,8 @@ import { parseCliArgs } from './args.ts';
 import { runBuildCommand } from './commands/build.ts';
 import { ExitCode } from './exit-codes.ts';
 import { USAGE } from './help.ts';
-import { createPlainReporter } from './reporters/plain.ts';
+import { selectReporter } from './reporters/select.ts';
+import { FatalCode } from './reporters/types.ts';
 import { readVersion } from './version.ts';
 
 /** The whole CLI as a function of its arguments and host, so tests need no process. */
@@ -21,8 +22,9 @@ export const run = async (
       io.stdout.write(`${readVersion()}\n`);
       return ExitCode.OK;
     case 'usage-error':
-      createPlainReporter(io).fatal(
+      selectReporter(io, args.isJson).fatal(
         `${args.message}\nRun "svgworm --help" for usage.`,
+        FatalCode.USAGE,
       );
       return ExitCode.USAGE;
     case 'build':
@@ -32,7 +34,7 @@ export const run = async (
           configFile: args.configFile,
           overrides: args.overrides,
         },
-        createPlainReporter(io),
+        selectReporter(io, args.isJson),
       );
   }
 };
