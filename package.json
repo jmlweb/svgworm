@@ -1,0 +1,48 @@
+{
+  "name": "svgworm-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "typecheck:ts7": "pnpm -r exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "determinism:fingerprint": "node scripts/fingerprint-fixtures.mjs",
+    "check:packages": "pnpm -r check:package",
+    "verify": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:packages",
+    "changeset": "changeset",
+    "lint:fix": "oxlint --fix",
+    "commitlint": "commitlint",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@changesets/cli": "3.0.3",
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "@jmlweb/commitlint-config": "4.1.0",
+    "@jmlweb/oxfmt-config-base": "0.2.2",
+    "@jmlweb/oxlint-config-node": "0.1.2",
+    "@jmlweb/oxlint-config-react": "0.1.1",
+    "@jmlweb/tsconfig-base": "2.0.0",
+    "@jmlweb/tsconfig-node": "2.0.0",
+    "@jmlweb/vitest-config": "3.0.1",
+    "@types/node": "22.20.4",
+    "eslint-plugin-n": "18.4.1",
+    "husky": "9.1.7",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "oxlint-tsgolint": "7.0.2004",
+    "publint": "0.3.24",
+    "typescript": "6.0.3",
+    "vitest": "5.0.1"
+  }
+}

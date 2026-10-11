@@ -1,0 +1,45 @@
+{
+  "name": "svgworm",
+  "version": "0.0.0",
+  "description": "Turn a folder of SVG files into type-safe, cacheable SVG sprites.",
+  "license": "MIT",
+  "author": "svgworm contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmlweb/svgworm.git",
+    "directory": "packages/svgworm"
+  },
+  "keywords": [
+    "svg",
+    "sprite",
+    "icons",
+    "typescript",
+    "cli",
+    "react",
+    "server-components"
+  ],
+  "type": "module",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "bin": {
+    "svgworm": "./dist/cli/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:package": "publint && attw --pack . --profile esm-only"
+  }
+}
