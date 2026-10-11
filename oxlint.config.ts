@@ -59,6 +59,8 @@ export default defineConfig({
   ignorePatterns: [
     '**/dist/**',
     'fixtures/**',
+    // Generated output samples: their shape is fixed by the output contract.
+    'docs/samples/**',
     'spikes/**',
     '.claude/**',
     '.backlog/**',

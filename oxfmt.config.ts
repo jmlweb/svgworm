@@ -7,6 +7,8 @@ export default defineConfig({
     '**/dist/**',
     'pnpm-lock.yaml',
     'fixtures/**',
+    // Generated output samples are byte-exact: formatting would change them.
+    'docs/samples/**',
     'spikes/**',
     '.backlog/**',
     '.claude/**',
