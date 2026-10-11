@@ -19,8 +19,8 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 ## Acceptance Criteria
 
 - [x] Fresh clone: install + test + build pass
-- [ ] CI runs on PR on Linux, macOS and Windows
-- [ ] Determinism check runs on all three operating systems
+- [x] CI runs on PR on Linux, macOS and Windows
+- [x] Determinism check runs on all three operating systems
 - [x] AGENTS.md lists commands
 
 ## Notes
@@ -39,3 +39,5 @@ Create package(s), lint/format/test/build, CI (lint, test, typecheck, determinis
 - [2026-10-11] Fresh clone of the branch: install --frozen-lockfile, lint (planted floating promise reported, so type-aware is active), format:check, typecheck, typecheck:ts7, build, test and check:packages all pass.
 - [2026-10-11] CI updated (Oxc tools, commitlint over the PR range). Unverified until pushed; criteria 2 and 3 stay open until a run on GitHub.
 - [2026-10-11] AGENTS.md (commands, ADR-0011 bullet) and CONTRIBUTING.md updated. Tests: the existing determinism, Unicode and collision tests carry over; no new product code, the boundary rules were checked with planted violations instead.
+- [2026-10-11] CI run 38172153283 on next passed: quality job, tests on Linux, macOS and Windows with Node 22, 24 and 26, TypeScript 7 typecheck, determinism fingerprints identical across the three OSes.
+- [2026-10-11] Commitlint and changeset jobs run on pull requests only; verified through the PR that records this entry.
