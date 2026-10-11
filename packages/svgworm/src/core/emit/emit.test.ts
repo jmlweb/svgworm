@@ -14,8 +14,8 @@ const sample = (name: string): string =>
   );
 
 const input: ManifestInput = {
-  sprite: toFileReference('icons.7f8d9abd.svg', '/icons'),
-  stack: toFileReference('icons.stack.a506a052.svg', '/icons'),
+  sprite: toFileReference('icons.d907d82b.svg', '/icons'),
+  stack: toFileReference('icons.stack.91bff0b3.svg', '/icons'),
   icons: [
     {
       name: 'brand/sunset',

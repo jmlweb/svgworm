@@ -29,8 +29,8 @@ describe('contentHash', () => {
 
 describe('file names', () => {
   it('follows <group>.<hash>.svg and <group>.stack.<hash>.svg', () => {
-    expect(spriteFileName('7f8d9abd')).toBe('icons.7f8d9abd.svg');
-    expect(stackFileName('a506a052')).toBe('icons.stack.a506a052.svg');
+    expect(spriteFileName('d907d82b')).toBe('icons.d907d82b.svg');
+    expect(stackFileName('91bff0b3')).toBe('icons.stack.91bff0b3.svg');
   });
 });
 

@@ -4,12 +4,12 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.7f8d9abd.svg",
-        "url": "/icons/icons.7f8d9abd.svg"
+        "file": "icons.d907d82b.svg",
+        "url": "/icons/icons.d907d82b.svg"
       },
       "stack": {
-        "file": "icons.stack.a506a052.svg",
-        "url": "/icons/icons.stack.a506a052.svg"
+        "file": "icons.stack.91bff0b3.svg",
+        "url": "/icons/icons.stack.91bff0b3.svg"
       }
     }
   },

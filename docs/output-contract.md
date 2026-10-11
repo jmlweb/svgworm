@@ -11,7 +11,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 - **0.x policy:** until `1.0.0`, a breaking change to the output contract is a **minor** bump, with a "Breaking" note in the changeset ([ADR-0009](adr/0009-license-versioning-and-release.md)). The manifest's `version` field changes only when the manifest format changes. `1.0.0` comes with its own ADR, when the contract is declared stable.
 - **Zero icons:** an error (exit code 2). No file is written.
 - **Byte-level details:** generated JSON and `.js`/`.d.ts` use LF, 2-space indent, `JSON.stringify` quoting, and one trailing newline. SVG bytes come from the pinned svgo version of [ADR-0008](adr/0008-tech-stack-and-package-layout.md) with the core's fixed config; TSK-011 pins and documents that config. Naming follows the Unicode tables of the supported Node range, and a character assigned in a newer Unicode version may name differently ([ADR-0007](adr/0007-icon-naming-and-collision-policy.md)).
-- A sample of the generated output for one fixture set is in [samples/output-contract-v0.1/](samples/output-contract-v0.1/). The core (TSK-011) must reproduce it byte for byte.
+- A sample of the generated output for one fixture set is in [samples/output-contract-v0.1/](samples/output-contract-v0.1/). The core reproduces it byte for byte, and `sample.test.ts` checks that. The sprite and stack were regenerated from product code in TSK-011: the TSK-004 spike never ran svgo, so its bytes could not be reproduced once the pinned svgo config is applied. The manifest keys, types, and structure did not change; only the sprite and stack bytes, and so their content hashes, did.
 
 ## Generated artifacts
 
@@ -45,12 +45,12 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.7f8d9abd.svg",
-        "url": "/icons/icons.7f8d9abd.svg"
+        "file": "icons.d907d82b.svg",
+        "url": "/icons/icons.d907d82b.svg"
       },
       "stack": {
-        "file": "icons.stack.a506a052.svg",
-        "url": "/icons/icons.stack.a506a052.svg"
+        "file": "icons.stack.91bff0b3.svg",
+        "url": "/icons/icons.stack.91bff0b3.svg"
       }
     }
   },
