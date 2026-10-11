@@ -26,3 +26,4 @@
 | LRN-020 | Scaffold gotchas: TS 7 via pnpm dlx, passWithNoTests, Markdown rewritten by formatters (ESLint parts obsolete) | tooling, eslint, typescript, pnpm | active | 2026-10-11 |
 | LRN-021 | Worktree agents: rtk-rewritten git commands are refused; use /usr/bin/env git | tooling, worktree, git | active | 2026-10-11 |
 | LRN-022 | Oxlint config gotchas: no extends in overrides, no restricted-properties, typeAware root-only | tooling, oxlint, lint, monorepo | active | 2026-10-11 |
+| LRN-023 | Task scope text goes stale when later ADRs change a decision | design, contract, adr | active | 2026-10-11 |
