@@ -28,3 +28,4 @@ ADR-0011 keeps builds and type checks on TypeScript 6.0 and drops the typescript
 ## Progress Log
 
 - [2026-10-11] Created
+- [2026-10-12] 2026-10-12: TypeScript 7.1 is not released (npm latest 7.0.2, next 7.1.0-dev.20261011.1). Nothing to decide yet; revisit when 7.1 ships. typecheck:ts7 still runs 7.0.2 in CI.
