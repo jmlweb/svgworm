@@ -1,7 +1,11 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { dirname, join, posix, relative } from 'node:path';
+import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 
-import { DEFAULT_CONFIG_FILE } from '../../core/config/resolve.ts';
+import {
+  DEFAULT_CONFIG_FILE,
+  resolveConfig,
+} from '../../core/config/resolve.ts';
+import { ConfigError } from '../../core/errors.ts';
 
 /** What `init` was asked to set up. Every field has a default, so no flag is required (R-56). */
 export type InitOptions = {
@@ -34,6 +38,7 @@ type PackageJson = {
   readonly text: string;
   readonly value: Record<string, unknown>;
   readonly indent: string;
+  readonly newline: '\n' | '\r\n';
   readonly hasTrailingNewline: boolean;
 };
 
@@ -63,6 +68,8 @@ export type InitAction = {
   readonly status: InitStatus;
   /** The full content to write, for `created` and `updated`. */
   readonly content?: string;
+  /** What the file held when it was planned, for `updated`; apply refuses to overwrite anything else. */
+  readonly previous?: string;
   readonly reason?: string;
 };
 
@@ -92,11 +99,15 @@ export const defaultInitOptions = (): InitOptions => ({
 
 const toPosix = (path: string): string => path.replaceAll('\\', '/');
 
+// Only a missing file is "missing"; an unreadable one must not be treated as free to create.
 const readText = async (path: string): Promise<string | undefined> => {
   try {
     return await readFile(path, 'utf8');
-  } catch {
-    return undefined;
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      return undefined;
+    }
+    throw error;
   }
 };
 
@@ -112,12 +123,14 @@ const parsePackageJson = (text: string): PackageJson | undefined => {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return undefined;
     }
-    const indent = /^(\s+)"/m.exec(text)?.[1] ?? '  ';
+    // Spaces or tabs only: `\s` would swallow a blank line into the indent.
+    const indent = /^([ \t]+)"/m.exec(text)?.[1] ?? '  ';
     return {
       text,
       value: value as Record<string, unknown>,
       indent,
-      hasTrailingNewline: text.endsWith('\n'),
+      newline: text.includes('\r\n') ? '\r\n' : '\n',
+      hasTrailingNewline: /\r?\n$/.test(text),
     };
   } catch {
     return undefined;
@@ -248,7 +261,16 @@ const planFile = (
 
 const SCRIPT_HOOKS = ['predev', 'prebuild'] as const;
 
-const planScripts = (facts: ProjectFacts): InitAction => {
+// `svgworm` as a command word, not as part of `svgworm-foo` or `my-svgworm-wrapper`.
+const RUNS_SVGWORM = /(?:^|[\s&|;(])svgworm(?=$|[\s&|;)])/;
+
+/** The build command the scripts and docs should run: plain, or with the custom config file. */
+const buildCommand = (options: InitOptions): string =>
+  options.configFile === DEFAULT_CONFIG_FILE
+    ? 'svgworm'
+    : `svgworm --config ${options.configFile}`;
+
+const planScripts = (facts: ProjectFacts, command: string): InitAction => {
   const path = 'package.json';
   const pkg = facts.packageJson;
   if (pkg === undefined) {
@@ -268,20 +290,26 @@ const planScripts = (facts: ProjectFacts): InitAction => {
   for (const hook of SCRIPT_HOOKS) {
     const current = scripts[hook];
     if (current === undefined || current === '') {
-      scripts[hook] = 'svgworm';
+      scripts[hook] = command;
       changed = true;
-    } else if (typeof current === 'string' && !/\bsvgworm\b/.test(current)) {
+    } else if (typeof current === 'string' && !RUNS_SVGWORM.test(current)) {
       // Keep what is there, run svgworm first so the output exists before the app starts.
-      scripts[hook] = `svgworm && ${current}`;
+      scripts[hook] = `${command} && ${current}`;
       changed = true;
     }
   }
   if (!changed) return { path, status: InitStatus.UNCHANGED };
   const next = { ...pkg.value, scripts };
+  // Like npm itself: re-serialized with the file's own indent and line endings.
   const text =
-    JSON.stringify(next, null, pkg.indent) +
-    (pkg.hasTrailingNewline ? '\n' : '');
-  return { path, status: InitStatus.UPDATED, content: text };
+    JSON.stringify(next, null, pkg.indent).replaceAll('\n', pkg.newline) +
+    (pkg.hasTrailingNewline ? pkg.newline : '');
+  return {
+    path,
+    status: InitStatus.UPDATED,
+    content: text,
+    previous: pkg.text,
+  };
 };
 
 const componentContent = (componentFile: string, moduleDir: string): string => {
@@ -304,6 +332,7 @@ const componentContent = (componentFile: string, moduleDir: string): string => {
 const agentsSection = (
   options: InitOptions,
   componentFile: string | undefined,
+  command: string,
 ): string => {
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
   const outDir = options.outDir ?? 'public/icons';
@@ -312,7 +341,7 @@ const agentsSection = (
     '## Icons (svgworm)',
     '',
     `- SVG icons live in \`${options.sources.join('`, `')}\`. Do not edit the generated files.`,
-    `- \`svgworm\` (runs before \`dev\` and \`build\`) writes the hashed sprite to \`${outDir}/\` and the manifest and types to \`${moduleDir}/\`.`,
+    `- \`${command}\` (runs before \`dev\` and \`build\`) writes the hashed sprite to \`${outDir}/\` and the manifest and types to \`${moduleDir}/\`.`,
     ...(componentFile === undefined
       ? []
       : [
@@ -338,7 +367,7 @@ const planAgentsMd = (
     };
   }
   const start = existing.indexOf(AGENTS_START);
-  const end = existing.indexOf(AGENTS_END);
+  const end = existing.indexOf(AGENTS_END, start === -1 ? 0 : start);
   if (start !== -1 && end > start) {
     const current = existing.slice(start, end + AGENTS_END.length);
     if (current === section) return { path, status: InitStatus.UNCHANGED };
@@ -349,6 +378,14 @@ const planAgentsMd = (
         existing.slice(0, start) +
         section +
         existing.slice(end + AGENTS_END.length),
+      previous: existing,
+    };
+  }
+  if (start !== -1 || end !== -1) {
+    return {
+      path,
+      status: InitStatus.SKIPPED,
+      reason: `has an unpaired ${start === -1 ? AGENTS_END : AGENTS_START} marker; fix it by hand`,
     };
   }
   const separator = existing.endsWith('\n\n')
@@ -360,7 +397,60 @@ const planAgentsMd = (
     path,
     status: InitStatus.UPDATED,
     content: `${existing}${separator}${section}\n`,
+    previous: existing,
   };
+};
+
+const PATH_OPTIONS = [
+  ['--config', (options: InitOptions) => options.configFile],
+  ['--component-file', (options: InitOptions) => options.componentFile],
+  ['--out-dir', (options: InitOptions) => options.outDir],
+  ['--module-dir', (options: InitOptions) => options.moduleDir],
+] as const;
+
+const pathProblem = (cwd: string, value: string): string | undefined => {
+  if (/[\n\r`'"\\]/.test(value)) {
+    return 'must not contain quotes, backticks, backslashes or line breaks';
+  }
+  if (isAbsolute(value)) return 'must be relative to the project folder';
+  const inside = relative(resolve(cwd), resolve(cwd, value));
+  if (inside === '' || inside.startsWith('..')) {
+    return 'must point inside the project folder';
+  }
+  return undefined;
+};
+
+/**
+ * Problems that would make `init` write outside the project, write text that breaks the
+ * generated files, or write a config the next build rejects. Empty when the options are fine.
+ */
+export const validateInitOptions = (
+  options: InitOptions,
+  cwd: string,
+): readonly string[] => {
+  const issues: string[] = [];
+  for (const [flag, read] of PATH_OPTIONS) {
+    const value = read(options);
+    if (value === undefined) continue;
+    const problem = pathProblem(cwd, value);
+    if (problem !== undefined) issues.push(`${flag} "${value}" ${problem}`);
+  }
+  options.sources.forEach((source) => {
+    const problem = pathProblem(cwd, source);
+    if (problem !== undefined) issues.push(`--source "${source}" ${problem}`);
+  });
+  if (issues.length > 0) return issues;
+  try {
+    resolveConfig(JSON.parse(configContent(options)), cwd);
+  } catch (error) {
+    if (!(error instanceof ConfigError)) throw error;
+    issues.push(
+      ...(error.issues.length > 0 ? error.issues : [error.message]).map(
+        (issue) => `the config would be invalid: ${issue}`,
+      ),
+    );
+  }
+  return issues;
 };
 
 const installCommand = (manager: PackageManager): readonly string[] => {
@@ -385,6 +475,7 @@ export const planInit = (
   const addComponent = options.addComponent ?? facts.usesReact;
   const componentFile = componentFileFor(options, facts.hasSrcFolder);
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
+  const command = buildCommand(options);
 
   const actions: InitAction[] = [
     planFile(
@@ -394,7 +485,7 @@ export const planInit = (
       sameJson,
     ),
   ];
-  if (options.addScripts) actions.push(planScripts(facts));
+  if (options.addScripts) actions.push(planScripts(facts, command));
   if (addComponent) {
     actions.push(
       planFile(
@@ -414,32 +505,37 @@ export const planInit = (
   if (options.addAgentsMd) {
     actions.push(
       planAgentsMd(
-        agentsSection(options, addComponent ? componentFile : undefined),
+        agentsSection(
+          options,
+          addComponent ? componentFile : undefined,
+          command,
+        ),
         facts.existing['AGENTS.md'],
       ),
     );
   }
 
   const deps = dependencyNames(facts.packageJson);
-  const install = installCommand(facts.packageManager).filter(
-    (command, index) =>
-      index === 0
-        ? !deps.has('svgworm')
-        : addComponent && !deps.has('@svgworm/react'),
+  const install = installCommand(facts.packageManager).filter((line, index) =>
+    index === 0
+      ? !deps.has('svgworm')
+      : addComponent && !deps.has('@svgworm/react'),
   );
-  const run =
-    facts.packageManager === PackageManager.NPM
-      ? 'npx svgworm'
-      : `${facts.packageManager} svgworm`;
+  const runner =
+    facts.packageManager === PackageManager.NPM ? 'npx' : facts.packageManager;
+  const configFlag =
+    options.configFile === DEFAULT_CONFIG_FILE
+      ? ''
+      : ` --config ${options.configFile}`;
   const nextSteps = [
-    ...install.map((command) => `Install: ${command}`),
-    `Put SVG files in ${options.sources.join(', ')}/ and run: ${run}`,
+    ...install.map((line) => `Install: ${line}`),
+    `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`,
     ...(addComponent
       ? [
           `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render <Icon name="…" />`,
         ]
       : []),
-    `In CI, run: ${run} check`,
+    `In CI, run: ${runner} svgworm check${configFlag}`,
   ];
   return { actions, nextSteps };
 };

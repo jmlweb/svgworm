@@ -372,6 +372,24 @@ describe('run: init (R-56)', () => {
     expect(await exists('svgworm')).toBe(false);
   });
 
+  it('refuses paths outside the project and configs the next build would reject, writing nothing', async () => {
+    const escape = await exec([
+      'init',
+      '--component',
+      '--component-file',
+      '../outside/icon.tsx',
+    ]);
+    expect(escape.code).toBe(ExitCode.USAGE);
+    expect(escape.stderr).toContain('--component-file');
+    expect(await exists('../outside/icon.tsx')).toBe(false);
+    expect(await exists('svgworm.config.json')).toBe(false);
+
+    const invalid = await exec(['init', '--out-dir', 'static/icons']);
+    expect(invalid.code).toBe(ExitCode.USAGE);
+    expect(invalid.stderr).toContain('outDir');
+    expect(await exists('svgworm.config.json')).toBe(false);
+  });
+
   it('skips the wiring without React unless --component is given', async () => {
     await put('package.json', '{ "name": "api" }\n');
     const skipped = await exec(['init']);

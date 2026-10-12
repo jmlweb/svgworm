@@ -5,6 +5,7 @@ import {
   InitStatus,
   PackageManager,
   planInit,
+  validateInitOptions,
   type ProjectFacts,
 } from './plan.ts';
 
@@ -20,7 +21,13 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
 
 const pkg = (value: Record<string, unknown>, indent = '  ') => {
   const text = `${JSON.stringify(value, null, indent)}\n`;
-  return { text, value, indent, hasTrailingNewline: true };
+  return {
+    text,
+    value,
+    indent,
+    newline: '\n' as const,
+    hasTrailingNewline: true,
+  };
 };
 
 const statusOf = (plan: ReturnType<typeof planInit>, path: string) =>
@@ -108,6 +115,87 @@ describe('planInit', () => {
     expect(statusOf(tabbed, 'package.json')?.content).toContain(
       '\n\t"scripts"',
     );
+  });
+
+  it('keeps CRLF line endings and remembers the text it planned against', () => {
+    const value = { name: 'app', scripts: { dev: 'next dev' } };
+    const text = `${JSON.stringify(value, null, 2)}\n`.replaceAll('\n', '\r\n');
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        packageJson: {
+          text,
+          value,
+          indent: '  ',
+          newline: '\r\n',
+          hasTrailingNewline: true,
+        },
+      }),
+    );
+    const action = statusOf(plan, 'package.json');
+    expect(action?.previous).toBe(text);
+    expect(action?.content).toMatch(/^\{\r\n {2}"name"/);
+    expect(action?.content?.endsWith('}\r\n')).toBe(true);
+    expect(action?.content).not.toMatch(/[^\r]\n/);
+  });
+
+  it('does not mistake svgworm-like names for a script that already runs svgworm', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        packageJson: pkg({
+          scripts: { predev: 'svgworm-icons', prebuild: 'my-svgworm-wrapper' },
+        }),
+      }),
+    );
+    expect(
+      (
+        JSON.parse(statusOf(plan, 'package.json')?.content ?? '') as {
+          scripts: Record<string, string>;
+        }
+      ).scripts,
+    ).toEqual({
+      predev: 'svgworm && svgworm-icons',
+      prebuild: 'svgworm && my-svgworm-wrapper',
+    });
+  });
+
+  it('passes a custom config file to the scripts, the next steps and AGENTS.md', () => {
+    const plan = planInit(
+      {
+        ...defaultInitOptions(),
+        configFile: 'config/svgworm.json',
+        addAgentsMd: true,
+      },
+      facts({ packageJson: pkg({ name: 'app' }) }),
+    );
+    expect(
+      (
+        JSON.parse(statusOf(plan, 'package.json')?.content ?? '') as {
+          scripts: Record<string, string>;
+        }
+      ).scripts,
+    ).toEqual({
+      predev: 'svgworm --config config/svgworm.json',
+      prebuild: 'svgworm --config config/svgworm.json',
+    });
+    expect(plan.nextSteps.at(-1)).toBe(
+      'In CI, run: npx svgworm check --config config/svgworm.json',
+    );
+    expect(statusOf(plan, 'AGENTS.md')?.content).toContain(
+      '`svgworm --config config/svgworm.json`',
+    );
+  });
+
+  it('leaves AGENTS.md alone when a marker is unpaired', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), addAgentsMd: true },
+      facts({ existing: { 'AGENTS.md': '# x\n<!-- svgworm:end -->\n' } }),
+    );
+    expect(statusOf(plan, 'AGENTS.md')).toMatchObject({
+      status: InitStatus.SKIPPED,
+      reason: expect.stringContaining('unpaired') as string,
+    });
   });
 
   it('writes the Icon wiring for a React project, under src/ when it exists', () => {
@@ -221,6 +309,24 @@ describe('planInit', () => {
     expect(updated?.content?.match(/svgworm:start/g)).toHaveLength(1);
   });
 
+  it('reports a package.json with a blank line after the brace with a two-space indent', () => {
+    // `\s+` would have captured the blank line as part of the indent and corrupted the file.
+    const text = '{\n\n  "name": "app"\n}\n';
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        packageJson: {
+          text,
+          value: { name: 'app' },
+          indent: '  ',
+          newline: '\n',
+          hasTrailingNewline: true,
+        },
+      }),
+    );
+    expect(statusOf(plan, 'package.json')?.content).toContain('\n  "scripts"');
+  });
+
   it('tailors next steps to the package manager and installed packages', () => {
     const plan = planInit(
       defaultInitOptions(),
@@ -240,5 +346,63 @@ describe('planInit', () => {
       'Import { Icon } from components/icon in a Server Component and render <Icon name="…" />',
       'In CI, run: pnpm svgworm check',
     ]);
+  });
+});
+
+describe('validateInitOptions', () => {
+  const cwd = '/proj';
+
+  it('accepts the defaults and ordinary relative paths', () => {
+    expect(validateInitOptions(defaultInitOptions(), cwd)).toEqual([]);
+    expect(
+      validateInitOptions(
+        {
+          ...defaultInitOptions(),
+          sources: ['assets/icons', 'brand'],
+          outDir: 'public/sprites',
+          publicPath: '/sprites',
+          moduleDir: 'src/generated',
+          componentFile: 'src/ui/icon.tsx',
+          configFile: 'config/svgworm.json',
+        },
+        cwd,
+      ),
+    ).toEqual([]);
+  });
+
+  it.each([
+    [{ componentFile: '../victim/icon.tsx' }, '--component-file', 'inside'],
+    [{ configFile: '/etc/svgworm.json' }, '--config', 'relative'],
+    [{ moduleDir: '.' }, '--module-dir', 'inside'],
+    [
+      { outDir: 'public/x', publicPath: '/x', sources: ['../shared'] },
+      '--source',
+      'inside',
+    ],
+    [{ sources: ["ic'ons"] }, '--source', 'quotes'],
+    [{ moduleDir: 'a`b' }, '--module-dir', 'quotes'],
+  ])('rejects %j', (overrides, flag, word) => {
+    const issues = validateInitOptions(
+      { ...defaultInitOptions(), ...overrides },
+      cwd,
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toContain(flag);
+    expect(issues[0]).toContain(word);
+  });
+
+  it('rejects options that would write a config the next build refuses', () => {
+    const issues = validateInitOptions(
+      { ...defaultInitOptions(), outDir: 'static/icons' },
+      cwd,
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toContain('the config would be invalid: outDir');
+    expect(
+      validateInitOptions(
+        { ...defaultInitOptions(), sources: ['icons', 'icons/brand'] },
+        cwd,
+      )[0],
+    ).toContain('overlap');
   });
 });

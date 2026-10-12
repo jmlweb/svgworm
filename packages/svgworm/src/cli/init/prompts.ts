@@ -26,17 +26,23 @@ export const askInitOptions = async (
   options: InitOptions,
   facts: ProjectFacts,
 ): Promise<InitOptions> => {
-  const source = orCancel(
-    await text({
-      message: 'Folder with your SVG files',
-      defaultValue: options.sources[0] ?? 'icons',
-      placeholder: options.sources[0] ?? 'icons',
-      validate: (value) =>
-        value !== undefined && /[?*\\]/.test(value)
-          ? 'A folder path, not a glob'
-          : undefined,
-    }),
-  );
+  // Several --source flags are an explicit choice the single-folder prompt cannot hold.
+  const sources =
+    options.sources.length > 1
+      ? options.sources
+      : [
+          orCancel(
+            await text({
+              message: 'Folder with your SVG files',
+              defaultValue: options.sources[0] ?? 'icons',
+              placeholder: options.sources[0] ?? 'icons',
+              validate: (value) =>
+                value !== undefined && /[?*\\]/.test(value)
+                  ? 'A folder path, not a glob'
+                  : undefined,
+            }),
+          ),
+        ];
   const publicPath = orCancel(
     await text({
       message:
@@ -70,7 +76,7 @@ export const askInitOptions = async (
   );
   return {
     ...options,
-    sources: [source],
+    sources,
     publicPath: publicPath === '/icons' ? options.publicPath : publicPath,
     // A custom publicPath needs an outDir the app serves there; keep the default folder.
     ...(publicPath !== '/icons' && options.outDir === undefined
