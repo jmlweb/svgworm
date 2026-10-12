@@ -103,5 +103,23 @@ export const createClackReporter = (io: CliIo): Reporter => {
         `Watching ${sources.join(', ')} for changes. Press Ctrl+C to stop`,
       );
     },
+    initialized: (result) => {
+      intro('svgworm init');
+      const width = Math.max(
+        ...result.actions.map((action) => action.status.length),
+      );
+      result.actions.forEach((action) => {
+        const line = `${action.status.padEnd(width)}  ${action.path}${action.reason === undefined ? '' : ` (${action.reason})`}`;
+        if (action.status === 'skipped') log.warn(line);
+        else log.success(line);
+      });
+      note(
+        result.nextSteps
+          .map((step, index) => `${String(index + 1)}. ${step}`)
+          .join('\n'),
+        'Next steps',
+      );
+      outro('svgworm is set up');
+    },
   };
 };

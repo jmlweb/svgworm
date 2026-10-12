@@ -1,4 +1,12 @@
-import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -236,5 +244,147 @@ describe('run: watch (R-30)', () => {
   it('exits 2 at once for a config error', async () => {
     const { code } = await exec(['watch', '--source', 'missing']);
     expect(code).toBe(ExitCode.USAGE);
+  });
+});
+
+describe('run: init (R-56)', () => {
+  const readJson = async (relative: string) =>
+    JSON.parse(await readFile(join(root, relative), 'utf8')) as Record<
+      string,
+      unknown
+    >;
+
+  it('completes with flags and no TTY, writing config, scripts and the Icon wiring', async () => {
+    await put(
+      'package.json',
+      JSON.stringify(
+        {
+          name: 'app',
+          scripts: { dev: 'next dev', build: 'next build' },
+          dependencies: { next: '16.4.0', react: '19.3.0' },
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    await mkdir(join(root, 'src/app'), { recursive: true });
+    const { code, stdout, stderr } = await exec([
+      'init',
+      '--source',
+      'assets/icons',
+      '--agents-md',
+    ]);
+    expect(code).toBe(ExitCode.OK);
+    expect(stderr).toBe('');
+    expect(stdout).toContain('init svgworm.config.json created');
+    expect(stdout).toContain('init package.json updated');
+    expect(stdout).toContain('init src/components/icon.tsx created');
+    expect(stdout).toContain('init AGENTS.md created');
+    expect(stdout).toContain('Next steps:');
+    expect(await readJson('svgworm.config.json')).toEqual({
+      $schema: 'https://unpkg.com/svgworm/svgworm.schema.json',
+      sources: ['assets/icons'],
+    });
+    expect((await readJson('package.json'))['scripts']).toEqual({
+      dev: 'next dev',
+      build: 'next build',
+      predev: 'svgworm',
+      prebuild: 'svgworm',
+    });
+    expect(
+      await readFile(join(root, 'src/components/icon.tsx'), 'utf8'),
+    ).toContain("from '../../svgworm/icons.js'");
+    expect(await readFile(join(root, 'AGENTS.md'), 'utf8')).toContain(
+      '<!-- svgworm:start -->',
+    );
+  });
+
+  it('is idempotent: a second run changes nothing', async () => {
+    await put(
+      'package.json',
+      '{ "name": "app", "dependencies": { "react": "19.3.0" } }\n',
+    );
+    await exec(['init', '--agents-md']);
+    const before = {
+      config: await readFile(join(root, 'svgworm.config.json'), 'utf8'),
+      pkg: await readFile(join(root, 'package.json'), 'utf8'),
+      icon: await readFile(join(root, 'components/icon.tsx'), 'utf8'),
+      agents: await readFile(join(root, 'AGENTS.md'), 'utf8'),
+    };
+    const { code, stdout } = await exec(['init', '--agents-md']);
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout.match(/ unchanged$/gm)).toHaveLength(4);
+    expect(await readFile(join(root, 'svgworm.config.json'), 'utf8')).toBe(
+      before.config,
+    );
+    expect(await readFile(join(root, 'package.json'), 'utf8')).toBe(before.pkg);
+    expect(await readFile(join(root, 'components/icon.tsx'), 'utf8')).toBe(
+      before.icon,
+    );
+    expect(await readFile(join(root, 'AGENTS.md'), 'utf8')).toBe(before.agents);
+  });
+
+  it('never overwrites a file with different content', async () => {
+    await put('svgworm.config.json', '{ "sources": ["svg"] }\n');
+    const { code, stdout } = await exec(['init']);
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout).toContain(
+      'init svgworm.config.json skipped (exists with different content',
+    );
+    expect(await readFile(join(root, 'svgworm.config.json'), 'utf8')).toBe(
+      '{ "sources": ["svg"] }\n',
+    );
+  });
+
+  it('with --json prints one document and no prompt', async () => {
+    const { code, stdout, stderr } = await exec([
+      'init',
+      '--json',
+      '--no-scripts',
+    ]);
+    expect(code).toBe(ExitCode.OK);
+    expect(stderr).toBe('');
+    const document = JSON.parse(stdout) as {
+      ok: boolean;
+      actions: { path: string; status: string }[];
+      nextSteps: string[];
+    };
+    expect(document.ok).toBe(true);
+    expect(
+      document.actions.map((action) => [action.path, action.status]),
+    ).toEqual([
+      ['svgworm.config.json', 'created'],
+      ['components/icon.tsx', 'skipped'],
+    ]);
+    expect(document.nextSteps.length).toBeGreaterThan(0);
+  });
+
+  it('rejects init-only flags on other commands', async () => {
+    await put('icons/home.svg');
+    const { code, stderr } = await exec([
+      'build',
+      '--source',
+      'icons',
+      '--yes',
+    ]);
+    expect(code).toBe(ExitCode.USAGE);
+    expect(stderr).toContain('--yes only applies to "svgworm init"');
+    expect(await exists('svgworm')).toBe(false);
+  });
+
+  it('skips the wiring without React unless --component is given', async () => {
+    await put('package.json', '{ "name": "api" }\n');
+    const skipped = await exec(['init']);
+    expect(skipped.stdout).toContain(
+      'init components/icon.tsx skipped (no react or next dependency',
+    );
+    const forced = await exec([
+      'init',
+      '--component',
+      '--component-file',
+      'ui/icon.tsx',
+    ]);
+    expect(forced.stdout).toContain('init ui/icon.tsx created');
+    expect(await exists('ui/icon.tsx')).toBe(true);
   });
 });

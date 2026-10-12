@@ -5,7 +5,7 @@ import { createClackReporter } from './clack.ts';
 import { createJsonReporter } from './json.ts';
 import { createPlainReporter } from './plain.ts';
 
-const isCi = (env: CliIo['env']): boolean => {
+export const isCi = (env: CliIo['env']): boolean => {
   const value = env['CI'];
   return (
     value !== undefined && value !== '' && value !== '0' && value !== 'false'

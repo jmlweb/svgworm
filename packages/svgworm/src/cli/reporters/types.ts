@@ -4,6 +4,7 @@ import type {
   CheckOutcome,
   Diagnostic,
 } from '../../core/api.ts';
+import type { InitResult } from '../init/apply.ts';
 
 /** Machine-readable cause of a failure that has no file to point at. */
 export const FatalCode = {
@@ -27,4 +28,6 @@ export type Reporter = {
   readonly fatal: (message: string, code: FatalCode) => void;
   /** `watch` is idle and waiting for a change in these source folders. */
   readonly watching: (sources: readonly string[]) => void;
+  /** `init` finished: what it wrote, skipped or left alone, and what to do next. */
+  readonly initialized: (result: InitResult) => void;
 };

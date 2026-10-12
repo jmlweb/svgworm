@@ -14,6 +14,7 @@ process.exitCode = await run(process.argv.slice(2), {
   stderr: process.stderr,
   env: process.env,
   isTTY: process.stdout.isTTY,
+  isInputTTY: process.stdin.isTTY,
   cwd: process.cwd(),
   signal: controller.signal,
 });

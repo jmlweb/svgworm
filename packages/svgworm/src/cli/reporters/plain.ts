@@ -79,5 +79,19 @@ export const createPlainReporter = (io: CliIo): Reporter => {
     watching: (sources) => {
       out(`svgworm: watching ${sources.join(', ')} for changes`);
     },
+    initialized: (result) => {
+      result.actions.forEach((action) => {
+        out(
+          action.reason === undefined
+            ? `init ${action.path} ${action.status}`
+            : `init ${action.path} ${action.status} (${action.reason})`,
+        );
+      });
+      out(style('green', 'svgworm: init done'));
+      out('Next steps:');
+      result.nextSteps.forEach((step, index) => {
+        out(`  ${String(index + 1)}. ${step}`);
+      });
+    },
   };
 };

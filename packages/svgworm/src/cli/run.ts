@@ -3,10 +3,11 @@ import type { CliIo } from './io.ts';
 import { Command, parseCliArgs } from './args.ts';
 import { runBuildCommand } from './commands/build.ts';
 import { runCheckCommand } from './commands/check.ts';
+import { runInitCommand } from './commands/init.ts';
 import { runWatchCommand } from './commands/watch.ts';
 import { ExitCode } from './exit-codes.ts';
 import { USAGE } from './help.ts';
-import { selectReporter } from './reporters/select.ts';
+import { isCi, selectReporter } from './reporters/select.ts';
 import { FatalCode } from './reporters/types.ts';
 import { readVersion } from './version.ts';
 
@@ -29,6 +30,21 @@ export const run = async (
         FatalCode.USAGE,
       );
       return ExitCode.USAGE;
+    case 'init': {
+      // Prompts need both streams on a terminal, no CI, no --json and no --yes (ADR-0008).
+      const isInteractive =
+        io.isTTY &&
+        io.isInputTTY === true &&
+        !isCi(io.env) &&
+        !args.isJson &&
+        !args.isYes;
+      return runInitCommand(
+        args.options,
+        io,
+        selectReporter(io, args.isJson),
+        isInteractive,
+      );
+    }
     case 'command': {
       const input = {
         cwd: io.cwd,

@@ -4,11 +4,14 @@ Usage:
   svgworm [build] [options]
   svgworm check [options]
   svgworm watch [options]
+  svgworm init [options] [init options]
 
 Commands:
   build                   Write the sprite, manifest and types (default)
   check                   Exit 1 if the committed output is stale. Writes nothing (CI)
   watch                   Build, then rebuild on every change in the source folders
+  init                    Set a project up: config, predev/prebuild scripts, Icon wiring.
+                          Asks on a terminal; flags answer everything otherwise. Idempotent
 
 Options:
   --config <file>         Config file. Default: svgworm.config.json (optional)
@@ -23,6 +26,14 @@ Options:
 
 Flags override the config file. --out-dir needs --public-path.
 
+Init options:
+  --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx
+                          (src/components/icon.tsx when src/ exists)
+  --no-component          Skip the Icon wiring (default: written when react or next is a dependency)
+  --no-scripts            Do not add predev and prebuild scripts to package.json
+  --agents-md             Add a short svgworm section to AGENTS.md for AI agents
+  -y, --yes               Take the defaults and flags without asking
+
 Exit codes:
   0  built, or check found the output up to date
   1  invalid SVG, name collision, or I/O failure (nothing is written); or stale output (check)
@@ -32,6 +43,7 @@ Example:
   svgworm --source icons
   svgworm --source icons --out-dir public/sprites --public-path /sprites --json
   svgworm check --json
+  svgworm init --source icons --agents-md --yes
 
 Config (svgworm.config.json):
   { "sources": ["icons"], "color": [{ "match": "brand/*", "color": "preserve" }] }

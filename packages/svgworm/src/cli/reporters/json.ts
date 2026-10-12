@@ -63,5 +63,14 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     },
     // Idle state is not a result, and stdout holds results only.
     watching: () => undefined,
+    initialized: (result) => {
+      print({
+        ok: true,
+        actions: result.actions,
+        nextSteps: result.nextSteps,
+        warnings: [],
+        errors: [],
+      });
+    },
   };
 };
