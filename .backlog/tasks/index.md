@@ -5,13 +5,12 @@
 | Status | Count |
 |--------|-------|
 | Pending | 8 |
-| Active | 5 |
+| Active | 4 |
 | Blocked | 0 |
-| Complete | 21 |
+| Complete | 22 |
 
 ## Active Tasks
 
-- TSK-005: Spike: TypeScript performance with large icon-name sets (P3)
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-028: Pre-launch post: per-icon color result (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
@@ -34,6 +33,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-005 | Spike: TypeScript performance with large icon-name sets | 2026-10-12 |
 | TSK-012 | React adapter: RSC-safe Icon component | 2026-10-12 |
 | TSK-013 | Watch mode and CI check mode | 2026-10-12 |
 | TSK-015 | svgworm init: interactive setup for Next.js | 2026-10-12 |
@@ -43,4 +43,3 @@
 | TSK-027 | Color classification edge cases: markers, CSS variables, animations | 2026-10-12 |
 | TSK-029 | Report TSK-007 findings upstream to @neodx/svg | 2026-10-12 |
 | TSK-032 | Agent eval harness: guided success and unprompted pick rate | 2026-10-12 |
-| TSK-033 | Weekly traction metrics snapshot | 2026-10-12 |
