@@ -1,12 +1,13 @@
 ---
 id: TSK-015
 title: svgworm init: interactive setup for Next.js
-status: pending
+status: active
 priority: P2
 tags: [cli, dx, v0.1]
 created: 2026-10-07
 source: plan/PLN-001
 depends-on: [TSK-011, TSK-012]
+started: 2026-10-12
 ---
 
 # svgworm init: interactive setup for Next.js
@@ -29,3 +30,4 @@ Interactive in a TTY, fully driven by flags otherwise (R-56). Writes the config,
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Started

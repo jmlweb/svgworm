@@ -4,22 +4,20 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 20 |
+| Pending | 18 |
 | Active | 1 |
 | Blocked | 0 |
-| Complete | 13 |
+| Complete | 15 |
 
 ## Active Tasks
 
-- TSK-012: React adapter: RSC-safe Icon component (P2)
+- TSK-015: svgworm init: interactive setup for Next.js (P2)
 
 ## Pending Tasks
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
-| TSK-015 | svgworm init: interactive setup for Next.js | P2 | cli, dx, v0.1 | 2026-10-07 |
-| TSK-016 | examples/next-app-router: Next 16 Turbopack example | P2 | example, v0.1 | 2026-10-07 |
 | TSK-018 | Release v0.1.0 to npm | P2 | release, v0.1 | 2026-10-07 |
 | TSK-019 | Launch outreach for svgworm v0.1 | P2 | launch, v0.1 | 2026-10-07 |
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
@@ -42,7 +40,9 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-012 | React adapter: RSC-safe Icon component | 2026-10-12 |
 | TSK-013 | Watch mode and CI check mode | 2026-10-12 |
+| TSK-016 | examples/next-app-router: Next 16 Turbopack example | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
 | TSK-008 | Output contract v0.1 | 2026-10-11 |
 | TSK-010 | Scaffold project per stack ADR | 2026-10-11 |
@@ -50,5 +50,3 @@
 | TSK-004 | Decision: sprite URL delivery without bundler plugin | 2026-10-08 |
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
 | TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
-| TSK-003 | Spike: per-icon color classification | 2026-10-07 |
-| TSK-006 | Define icon naming, namespaces and collision policy | 2026-10-07 |
