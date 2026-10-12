@@ -1,0 +1,32 @@
+{
+  "name": "svgworm-example-next-app-router",
+  "version": "0.0.0",
+  "private": true,
+  "description": "svgworm in a Next.js 16 App Router app built with Turbopack: Server Component icons with zero client JavaScript.",
+  "type": "module",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "scripts": {
+    "predev": "svgworm",
+    "dev": "next dev",
+    "prebuild": "svgworm",
+    "build": "next build",
+    "start": "next start",
+    "check": "svgworm check",
+    "check:client-js": "node scripts/check-client-chunks.mjs"
+  },
+  "dependencies": {
+    "@svgworm/react": "workspace:*",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "svgworm": "workspace:*",
+    "typescript": "6.0.3"
+  }
+}

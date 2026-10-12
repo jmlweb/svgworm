@@ -5,6 +5,8 @@ export default defineConfig({
   ...baseConfig,
   ignorePatterns: [
     '**/dist/**',
+    '**/.next/**',
+    'examples/*/svgworm/**',
     'pnpm-lock.yaml',
     'fixtures/**',
     // Generated output samples are byte-exact: formatting would change them.

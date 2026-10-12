@@ -26,6 +26,7 @@ Requires Node ^22.20 || >=24.11. Package manager: pnpm.
 ## Docs
 
 - [README](https://github.com/jmlweb/svgworm/blob/main/README.md): quick start, CLI, config
+- [Next.js example](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router): runnable App Router app with Turbopack and a zero-client-JS check
 - [Comparison](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md): svgworm vs SVGR, @neodx/svg, vite-plugin-icons-spritesheet, with spike numbers and when each is better
 - [Output contract](https://github.com/jmlweb/svgworm/blob/main/docs/output-contract.md): exact shape of the generated files and manifest
 - [Vision](https://github.com/jmlweb/svgworm/blob/main/docs/vision.md)

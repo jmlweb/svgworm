@@ -90,6 +90,8 @@ Requires Node `^22.20 || >=24.11`.
 
    With a `basePath` of `/docs`, set `--public-path /docs/icons`. Next does not add `basePath` to a raw `href`.
 
+   A complete app with these steps, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
+
 ## CLI
 
 ```text
@@ -143,6 +145,7 @@ It prints stats at the end (icons, sprites, sizes, savings, time). When stdout i
 
 | Doc                                                | Purpose                                           |
 | -------------------------------------------------- | ------------------------------------------------- |
+| [examples/next-app-router](examples/next-app-router) | Runnable Next.js 16 example with a zero-client-JS check |
 | [docs/comparison.md](docs/comparison.md)           | svgworm vs SVGR, @neodx/svg and others            |
 | [docs/vision.md](docs/vision.md)                   | Problem, users, positioning, non-goals            |
 | [docs/viability.md](docs/viability.md)             | Viability analysis and lessons from the prototype |

@@ -110,6 +110,22 @@ jobs:
           cmp fingerprints/fingerprint-ubuntu-latest/fingerprint.txt fingerprints/fingerprint-windows-latest/fingerprint.txt
           wc -l fingerprints/fingerprint-ubuntu-latest/fingerprint.txt
 
+  # The documented Next.js path, built with Turbopack: the committed output must be current
+  # (svgworm check), and no icon code may reach a client chunk (TSK-016, R-40).
+  example:
+    name: Next.js example (Turbopack, zero client JS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm example:check
+
   commitlint:
     name: Conventional Commits
     if: github.event_name == 'pull_request'

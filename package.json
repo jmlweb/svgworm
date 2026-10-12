@@ -7,7 +7,7 @@
     "node": "^22.20.0 || >=24.11.0"
   },
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm --filter \"./packages/*\" build",
     "typecheck": "pnpm -r typecheck",
     "typecheck:ts7": "pnpm -r exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
     "lint": "oxlint",
@@ -17,6 +17,8 @@
     "test:watch": "vitest",
     "determinism:fingerprint": "node scripts/fingerprint-fixtures.mjs",
     "check:packages": "pnpm -r check:package",
+    "example:build": "pnpm --filter svgworm-example-next-app-router build",
+    "example:check": "pnpm --filter svgworm-example-next-app-router check && pnpm example:build && pnpm --filter svgworm-example-next-app-router check:client-js",
     "verify": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:packages",
     "changeset": "changeset",
     "lint:fix": "oxlint --fix",

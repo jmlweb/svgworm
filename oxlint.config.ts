@@ -58,6 +58,8 @@ export default defineConfig({
   },
   ignorePatterns: [
     '**/dist/**',
+    '**/.next/**',
+    'examples/*/svgworm/**',
     'fixtures/**',
     // Snapshot files hold exact generated output.
     '**/__snapshots__/**',

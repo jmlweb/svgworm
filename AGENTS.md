@@ -11,7 +11,7 @@ Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viab
 ## Current phase: build (v0.1)
 
 - **The stack is decided** in [ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6 strict ESM, `tsc`, Vitest, svgo 4, `node:util.parseArgs`, @clack/prompts, and a JSON config validated with zod. It is a pnpm workspace with `svgworm` (core + CLI) and `@svgworm/react`. Lint and format are Oxlint and Oxfmt on the shared `@jmlweb/*` configs, which supersede ADR-0008's ESLint + Prettier row ([ADR-0011](docs/adr/0011-oxc-lint-format-and-shared-tooling-configs.md)). Release and license are in [ADR-0009](docs/adr/0009-license-versioning-and-release.md).
-- **The walking skeleton is in place (TSK-011).** `svgworm` compiles a folder of SVGs into a hashed sprite, a stack file, a manifest module, and types, through `src/core` (pure `compile`, plus `build` for the file system) and a thin CLI in `src/cli` (plain, `--json`, and clack reporters; exit codes 0, 1, 2). `@svgworm/react` is still a stub (TSK-012). Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
+- **The walking skeleton is in place (TSK-011).** `svgworm` compiles a folder of SVGs into a hashed sprite, a stack file, a manifest module, and types, through `src/core` (pure `compile`, plus `build` for the file system) and a thin CLI in `src/cli` (plain, `--json`, and clack reporters; exit codes 0, 1, 2). `@svgworm/react` exports `createIcon(manifest)` (TSK-012), and `examples/next-app-router` is the documented Next.js 16 path with a zero-client-JS check (TSK-016). Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
 - **No new tool, library, or runtime choices without an ADR** in `docs/adr/` (see `.claude/rules/decisions.md`). Runtime dependencies are capped by ADR-0008's budget.
 - The old prototype on `main` is reference material only. Port *ideas*, not code.
 
@@ -47,10 +47,11 @@ Requires Node `^22.20 || >=24.11` and pnpm (pinned by `packageManager`; use Core
 | `pnpm commitlint` | Check a commit message (stdin or `--from`/`--to`); a husky `commit-msg` hook runs it on every commit |
 | `pnpm check:packages` | publint and Are the Types Wrong on each package (run `pnpm build` first) |
 | `pnpm determinism:fingerprint` | Fingerprint `fixtures/**/*.svg` with the built core (run `pnpm build` first). CI requires identical output on Linux, macOS, and Windows |
-| `pnpm verify` | Everything above that CI runs on one OS |
+| `pnpm example:build` / `pnpm example:check` | Build the Next.js 16 example in `examples/next-app-router` with Turbopack, or check it: committed svgworm output current, then build, then no icon code in client chunks (run `pnpm build` first) |
+| `pnpm verify` | Everything above that CI runs on one OS, except the Next.js example |
 | `pnpm changeset` | Record a changeset for a user-facing change |
 
-CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, and commit messages checked with commitlint over the PR range, and a changeset reminder.
+CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, the Next.js example (Turbopack build and zero-client-JS check), commit messages checked with commitlint over the PR range, and a changeset reminder.
 
 ### Shared tooling (jmlweb/tooling)
 
