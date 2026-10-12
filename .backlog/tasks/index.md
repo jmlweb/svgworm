@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 21 |
+| Pending | 20 |
 | Active | 1 |
 | Blocked | 0 |
-| Complete | 12 |
+| Complete | 13 |
 
 ## Active Tasks
 
@@ -18,7 +18,6 @@
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | P3 | spike, types, adr, post-v0.1 | 2026-10-07 |
-| TSK-013 | Watch mode and CI check mode | P3 | cli, dx | 2026-10-07 |
 | TSK-015 | svgworm init: interactive setup for Next.js | P2 | cli, dx, v0.1 | 2026-10-07 |
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | P2 | example, v0.1 | 2026-10-07 |
 | TSK-018 | Release v0.1.0 to npm | P2 | release, v0.1 | 2026-10-07 |
@@ -43,6 +42,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-013 | Watch mode and CI check mode | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
 | TSK-008 | Output contract v0.1 | 2026-10-11 |
 | TSK-010 | Scaffold project per stack ADR | 2026-10-11 |
@@ -52,4 +52,3 @@
 | TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
 | TSK-006 | Define icon naming, namespaces and collision policy | 2026-10-07 |
-| TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |
