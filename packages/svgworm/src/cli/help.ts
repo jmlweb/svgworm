@@ -2,6 +2,13 @@ export const USAGE = `svgworm: turn a folder of SVG files into type-safe, cachea
 
 Usage:
   svgworm [build] [options]
+  svgworm check [options]
+  svgworm watch [options]
+
+Commands:
+  build                   Write the sprite, manifest and types (default)
+  check                   Exit 1 if the committed output is stale. Writes nothing (CI)
+  watch                   Build, then rebuild on every change in the source folders
 
 Options:
   --config <file>         Config file. Default: svgworm.config.json (optional)
@@ -17,13 +24,14 @@ Options:
 Flags override the config file. --out-dir needs --public-path.
 
 Exit codes:
-  0  built
-  1  invalid SVG, name collision, or I/O failure (nothing is written)
+  0  built, or check found the output up to date
+  1  invalid SVG, name collision, or I/O failure (nothing is written); or stale output (check)
   2  usage or config error, or no SVG files found
 
 Example:
   svgworm --source icons
   svgworm --source icons --out-dir public/sprites --public-path /sprites --json
+  svgworm check --json
 
 Config (svgworm.config.json):
   { "sources": ["icons"], "color": [{ "match": "brand/*", "color": "preserve" }] }

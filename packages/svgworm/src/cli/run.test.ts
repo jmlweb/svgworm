@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CliIo } from './io.ts';
 
@@ -32,7 +32,7 @@ const exists = (relative: string): Promise<boolean> =>
     () => false,
   );
 
-const exec = async (argv: readonly string[]) => {
+const exec = async (argv: readonly string[], signal?: AbortSignal) => {
   let stdout = '';
   let stderr = '';
   const io: CliIo = {
@@ -41,6 +41,7 @@ const exec = async (argv: readonly string[]) => {
     env: {},
     isTTY: false,
     cwd: root,
+    ...(signal === undefined ? {} : { signal }),
   };
   const code = await run(argv, io);
   return { code, stdout, stderr };
@@ -161,5 +162,79 @@ describe('run: config file and flags', () => {
     const { stdout } = await exec(['--source', 'icons']);
     expect(stdout).toContain('remove public/icons/icons.');
     expect(await readdir(join(root, 'public/icons'))).toHaveLength(1);
+  });
+});
+
+describe('run: check (R-31)', () => {
+  it('exits 1 with a diff summary when the output is stale, and writes nothing', async () => {
+    await put('icons/home.svg');
+    const { code, stdout, stderr } = await exec(['check', '--source', 'icons']);
+    expect(code).toBe(ExitCode.FAILED);
+    expect(stdout).toContain('check svgworm/manifest.json missing');
+    expect(stderr).toContain('output is stale (4 file(s)); icons added: home');
+    expect(stderr).toContain('Run "svgworm build"');
+    expect(await exists('svgworm')).toBe(false);
+  });
+
+  it('exits 0 when the output is up to date', async () => {
+    await put('icons/home.svg');
+    await exec(['--source', 'icons']);
+    const { code, stdout, stderr } = await exec(['check', '--source', 'icons']);
+    expect(code).toBe(ExitCode.OK);
+    expect(stderr).toBe('');
+    expect(stdout).toContain('svgworm: output is up to date (4 file(s))');
+  });
+
+  it('exits 1 on invalid input like build', async () => {
+    await put('icons/broken.svg', '<svg');
+    const { code, stderr } = await exec(['check', '--source', 'icons']);
+    expect(code).toBe(ExitCode.FAILED);
+    expect(stderr).toContain('svg/not-svg-root');
+  });
+
+  it('exits 2 for a config error like build', async () => {
+    const { code } = await exec(['check', '--source', 'missing']);
+    expect(code).toBe(ExitCode.USAGE);
+  });
+
+  it('with --json prints one document whose ok mirrors the exit code', async () => {
+    await put('icons/home.svg');
+    const stale = await exec(['check', '--source', 'icons', '--json']);
+    expect(stale.code).toBe(ExitCode.FAILED);
+    expect(JSON.parse(stale.stdout)).toMatchObject({
+      ok: false,
+      upToDate: false,
+      iconDiff: { added: ['home'], removed: [] },
+      errors: [],
+    });
+    await exec(['--source', 'icons']);
+    const fresh = await exec(['check', '--source', 'icons', '--json']);
+    expect(fresh.code).toBe(ExitCode.OK);
+    expect(JSON.parse(fresh.stdout)).toMatchObject({
+      ok: true,
+      upToDate: true,
+      stale: [],
+    });
+  });
+});
+
+describe('run: watch (R-30)', () => {
+  it('builds, reports that it is watching, and exits 0 when aborted', async () => {
+    await put('icons/home.svg');
+    const controller = new AbortController();
+    const pending = exec(['watch', '--source', 'icons'], controller.signal);
+    await vi.waitFor(async () => {
+      expect(await exists('svgworm/manifest.json')).toBe(true);
+    });
+    controller.abort();
+    const { code, stdout } = await pending;
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout).toContain('svgworm: build done');
+    expect(stdout).toContain('svgworm: watching icons for changes');
+  });
+
+  it('exits 2 at once for a config error', async () => {
+    const { code } = await exec(['watch', '--source', 'missing']);
+    expect(code).toBe(ExitCode.USAGE);
   });
 });

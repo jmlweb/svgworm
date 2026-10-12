@@ -1,6 +1,6 @@
 import { styleText } from 'node:util';
 
-import type { BuildStats } from '../../core/api.ts';
+import type { BuildStats, CheckOutcome } from '../../core/api.ts';
 
 type Format = Parameters<typeof styleText>[0];
 
@@ -54,3 +54,17 @@ export const summaryRows = (
   ['savings', formatSavings(stats)],
   ['time', formatDuration(stats.durationMs)],
 ];
+
+/** One sentence on what a stale check found, so CI logs say what to do. */
+export const describeStale = (result: CheckOutcome): string => {
+  const parts = [
+    `output is stale (${String(result.stale.length)} file(s))`,
+    ...(result.iconDiff.added.length === 0
+      ? []
+      : [`icons added: ${result.iconDiff.added.join(', ')}`]),
+    ...(result.iconDiff.removed.length === 0
+      ? []
+      : [`icons removed: ${result.iconDiff.removed.join(', ')}`]),
+  ];
+  return `${parts.join('; ')}. Run "svgworm build" and commit the result`;
+};

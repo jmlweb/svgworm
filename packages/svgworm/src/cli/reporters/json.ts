@@ -6,16 +6,18 @@ import { createPlainReporter } from './plain.ts';
 
 /**
  * One document on stdout and nothing else (R-56). The human diagnostics still go to
- * stderr, as in every mode, so a failing run is readable in a log as well.
+ * stderr, as in every mode, so a failing run is readable in a log as well. `watch`
+ * prints one document per build.
  */
 export const createJsonReporter = (io: CliIo): Reporter => {
   const diagnostics = createPlainReporter({
     ...io,
     stdout: { write: () => undefined },
   });
-  const warnings: Diagnostic[] = [];
+  let warnings: Diagnostic[] = [];
   const print = (document: unknown): void => {
     io.stdout.write(`${JSON.stringify(document, null, 2)}\n`);
+    warnings = [];
   };
 
   return {
@@ -26,6 +28,19 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     succeed: (result: BuildSuccess) => {
       print({
         ok: true,
+        stats: result.stats,
+        icons: result.icons,
+        warnings: result.warnings,
+        errors: [],
+      });
+    },
+    checked: (result) => {
+      diagnostics.checked(result);
+      print({
+        ok: result.upToDate,
+        upToDate: result.upToDate,
+        stale: result.stale,
+        iconDiff: result.iconDiff,
         stats: result.stats,
         icons: result.icons,
         warnings: result.warnings,
@@ -46,5 +61,7 @@ export const createJsonReporter = (io: CliIo): Reporter => {
         errors: [{ code, file: '', message }],
       });
     },
+    // Idle state is not a result, and stdout holds results only.
+    watching: () => undefined,
   };
 };

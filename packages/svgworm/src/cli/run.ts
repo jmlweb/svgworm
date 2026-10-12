@@ -1,7 +1,9 @@
 import type { CliIo } from './io.ts';
 
-import { parseCliArgs } from './args.ts';
+import { Command, parseCliArgs } from './args.ts';
 import { runBuildCommand } from './commands/build.ts';
+import { runCheckCommand } from './commands/check.ts';
+import { runWatchCommand } from './commands/watch.ts';
 import { ExitCode } from './exit-codes.ts';
 import { USAGE } from './help.ts';
 import { selectReporter } from './reporters/select.ts';
@@ -27,14 +29,21 @@ export const run = async (
         FatalCode.USAGE,
       );
       return ExitCode.USAGE;
-    case 'build':
-      return runBuildCommand(
-        {
-          cwd: io.cwd,
-          configFile: args.configFile,
-          overrides: args.overrides,
-        },
-        selectReporter(io, args.isJson),
-      );
+    case 'command': {
+      const input = {
+        cwd: io.cwd,
+        configFile: args.configFile,
+        overrides: args.overrides,
+      };
+      const reporter = selectReporter(io, args.isJson);
+      switch (args.command) {
+        case Command.BUILD:
+          return runBuildCommand(input, reporter);
+        case Command.CHECK:
+          return runCheckCommand(input, reporter);
+        case Command.WATCH:
+          return runWatchCommand(input, reporter, io.signal);
+      }
+    }
   }
 };

@@ -1,0 +1,1 @@
+svgworm: output is stale (5 file(s)); icons added: plus; icons removed: home. Run "svgworm build" and commit the result

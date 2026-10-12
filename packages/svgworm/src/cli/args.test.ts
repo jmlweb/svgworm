@@ -5,16 +5,24 @@ import { parseCliArgs } from './args.ts';
 describe('parseCliArgs', () => {
   it('builds by default with no overrides', () => {
     expect(parseCliArgs([])).toEqual({
-      kind: 'build',
+      kind: 'command',
+      command: 'build',
       configFile: undefined,
       overrides: {},
       isJson: false,
     });
   });
 
-  it('accepts the build command', () => {
-    expect(parseCliArgs(['build']).kind).toBe('build');
-  });
+  it.each(['build', 'check', 'watch'] as const)(
+    'accepts the %s command with the same flags',
+    (command) => {
+      expect(parseCliArgs([command, '--source', 'a'])).toMatchObject({
+        kind: 'command',
+        command,
+        overrides: { sources: ['a'] },
+      });
+    },
+  );
 
   it('maps every flag to a config override', () => {
     expect(
@@ -35,7 +43,8 @@ describe('parseCliArgs', () => {
         '--json',
       ]),
     ).toEqual({
-      kind: 'build',
+      kind: 'command',
+      command: 'build',
       configFile: 'my.json',
       isJson: true,
       overrides: {

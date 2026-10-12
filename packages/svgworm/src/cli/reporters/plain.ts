@@ -2,7 +2,12 @@ import type { Diagnostic } from '../../core/api.ts';
 import type { CliIo } from '../io.ts';
 import type { Reporter } from './types.ts';
 
-import { createStyle, formatBytes, summaryRows } from './format.ts';
+import {
+  createStyle,
+  describeStale,
+  formatBytes,
+  summaryRows,
+} from './format.ts';
 
 const describe = (diagnostic: Diagnostic): string =>
   diagnostic.file === ''
@@ -45,6 +50,21 @@ export const createPlainReporter = (io: CliIo): Reporter => {
         out(`  ${label.padEnd(width)}  ${value}`);
       });
     },
+    checked: (result) => {
+      result.stale.forEach((entry) => {
+        out(`check ${entry.path} ${entry.status}`);
+      });
+      if (result.upToDate) {
+        out(
+          style(
+            'green',
+            `svgworm: output is up to date (${String(result.files.length)} file(s))`,
+          ),
+        );
+      } else {
+        err(`${style('red', 'svgworm:')} ${describeStale(result)}`);
+      }
+    },
     fail: (errors) => {
       errors.forEach((error) => {
         err(`${style('red', 'error')} ${describe(error)}`);
@@ -55,6 +75,9 @@ export const createPlainReporter = (io: CliIo): Reporter => {
     },
     fatal: (message) => {
       err(`${style('red', 'svgworm:')} ${message}`);
+    },
+    watching: (sources) => {
+      out(`svgworm: watching ${sources.join(', ')} for changes`);
     },
   };
 };

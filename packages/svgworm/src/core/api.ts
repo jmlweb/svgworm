@@ -1,5 +1,14 @@
-export { build } from './build.ts';
+export { build, compileFromDisk } from './build.ts';
 export type { BuildResult, BuildSuccess } from './build.ts';
+export { check, CheckStatus } from './check.ts';
+export type {
+  CheckEntry,
+  CheckOutcome,
+  CheckResult,
+  IconDiff,
+} from './check.ts';
+export { watch } from './watch.ts';
+export type { Watcher, WatcherFactory, WatchOptions } from './watch.ts';
 export { compile } from './compile.ts';
 export type {
   CompileOptions,

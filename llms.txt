@@ -12,14 +12,15 @@ Requires Node ^22.20 || >=24.11. Package manager: pnpm.
 2. Run `svgworm --source icons`. It writes `public/icons/icons.<hash>.svg` (and `icons.stack.<hash>.svg` when an icon needs it) and, in `svgworm/`, `icons.js`, `icons.d.ts` and `manifest.json`.
 3. In a Server Component file: `export const Icon = createIcon(manifest)` with `import { createIcon } from '@svgworm/react'` and `import { manifest } from '../svgworm/icons.js'`.
 4. Render `<Icon name="home" />`. The icon is aria-hidden unless `title` or `label` is passed. An invalid name is a type error.
-5. Run `svgworm` in `predev` and `prebuild`.
+5. Run `svgworm` in `predev` and `prebuild`. In CI, `svgworm check` exits 1 when the committed output is stale. `svgworm watch` rebuilds on every change.
 6. Optional: serve `/icons/:file*` with `Cache-Control: public, max-age=31536000, immutable`. With a Next `basePath`, set `--public-path` to include it.
 
 ## Non-interactive use
 
+- Commands: `build` (default), `check` (exit 1 if the committed output is stale, writes nothing), `watch` (rebuild on change). All take the same flags.
 - Flags: `--config <file>`, `--source <dir>` (repeatable), `--out-dir <dir>`, `--public-path <path>`, `--module-dir <dir>`, `--flatten`, `--json`. Flags override the config file. `--out-dir` needs `--public-path`.
 - `--json` prints one JSON document on stdout and nothing else.
-- Exit codes: 0 built; 1 invalid SVG, name collision or I/O failure (nothing is written); 2 usage or config error, or no SVG files found.
+- Exit codes: 0 built or check up to date; 1 invalid SVG, name collision or I/O failure (nothing is written), or stale output from `check`; 2 usage or config error, or no SVG files found.
 - Config file `svgworm.config.json` has a JSON Schema: https://raw.githubusercontent.com/jmlweb/svgworm/main/packages/svgworm/svgworm.schema.json (`svgworm/schema.json` once published).
 
 ## Docs
@@ -32,4 +33,4 @@ Requires Node ^22.20 || >=24.11. Package manager: pnpm.
 
 ## Not in v0.1
 
-Several sprites, inline sprite, watch mode, frameworks other than React.
+Several sprites, inline sprite, incremental watch (watch rebuilds everything), frameworks other than React.

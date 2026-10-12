@@ -7,6 +7,8 @@ import type { BuildEventHandler } from './events.ts';
 // The only files svgworm may delete: its own content-hashed sprite and stack (R-15).
 const OWNED_FILE = /^icons(?:\.stack)?\.[0-9a-f]{8}\.svg$/;
 
+export const isOwnedFile = (name: string): boolean => OWNED_FILE.test(name);
+
 export type WriteTargets = {
   readonly cwd: string;
   readonly outDir: string;
@@ -19,7 +21,8 @@ export type WriteResult = {
   readonly removed: readonly string[];
 };
 
-const toReportPath = (cwd: string, absolute: string): string =>
+/** A path from `cwd` with `/` separators, as events and results report it. */
+export const toReportPath = (cwd: string, absolute: string): string =>
   relative(cwd, absolute).replaceAll('\\', '/');
 
 const folderOf = (targets: WriteTargets, file: OutputFile): string =>
@@ -51,7 +54,7 @@ const removeStale = async (
   const folder = join(targets.cwd, targets.outDir);
   const names = await readdir(folder);
   const stale = names
-    .filter((name) => OWNED_FILE.test(name) && !kept.has(name))
+    .filter((name) => isOwnedFile(name) && !kept.has(name))
     .toSorted();
   const removed: string[] = [];
   for (const name of stale) {

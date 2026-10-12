@@ -1,0 +1,75 @@
+{
+  "ok": false,
+  "upToDate": false,
+  "stale": [
+    {
+      "path": "public/icons/icons.6d36e3d0.svg",
+      "status": "missing"
+    },
+    {
+      "path": "svgworm/icons.js",
+      "status": "changed"
+    },
+    {
+      "path": "svgworm/icons.d.ts",
+      "status": "changed"
+    },
+    {
+      "path": "svgworm/manifest.json",
+      "status": "changed"
+    },
+    {
+      "path": "public/icons/icons.d907d82b.svg",
+      "status": "stale"
+    }
+  ],
+  "iconDiff": {
+    "added": [],
+    "removed": [
+      "home"
+    ]
+  },
+  "stats": {
+    "icons": 3,
+    "mono": 2,
+    "multicolor": 1,
+    "delivery": {
+      "use": 1,
+      "img": 1,
+      "mask": 1
+    },
+    "sourceBytes": 690,
+    "spriteBytes": 177,
+    "stackBytes": 661,
+    "savingsBytes": -148,
+    "durationMs": 0
+  },
+  "icons": [
+    {
+      "name": "brand/sunset",
+      "id": "i-brand--sunset",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "img",
+      "file": "icons/brand/sunset.svg"
+    },
+    {
+      "name": "café",
+      "id": "i-caf_e9_",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "mask",
+      "file": "icons/café.svg"
+    },
+    {
+      "name": "ui/check",
+      "id": "i-ui--check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use",
+      "file": "icons/ui/check.svg"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

@@ -113,3 +113,31 @@ describe('json reporter', () => {
     expect(JSON.parse(stdout)).toMatchObject({ ok: false });
   });
 });
+
+describe('check reporters', () => {
+  it('plain: lists stale files on stdout and the verdict on stderr', async () => {
+    await exec(['--source', 'icons']);
+    await rm(join(root, 'icons/home.svg'));
+    await writeFile(
+      join(root, 'icons/plus.svg'),
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M1 1h22v22H1z"/></svg>',
+    );
+    const { code, stdout, stderr } = await exec(['check', '--source', 'icons']);
+    expect(code).toBe(1);
+    await expect(stable(stdout)).toMatchFileSnapshot(
+      `${snapshots}plain-check-stale.txt`,
+    );
+    await expect(stderr).toMatchFileSnapshot(
+      `${snapshots}plain-check-stale.stderr.txt`,
+    );
+  });
+
+  it('json: prints one document with the stale entries and the icon diff', async () => {
+    await exec(['--source', 'icons']);
+    await rm(join(root, 'icons/home.svg'));
+    const { stdout } = await exec(['check', '--source', 'icons', '--json']);
+    await expect(stable(stdout)).toMatchFileSnapshot(
+      `${snapshots}json-check-stale.json`,
+    );
+  });
+});

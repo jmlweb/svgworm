@@ -11,7 +11,7 @@ import type { Diagnostic } from '../../core/api.ts';
 import type { CliIo } from '../io.ts';
 import type { Reporter } from './types.ts';
 
-import { summaryRows } from './format.ts';
+import { describeStale, summaryRows } from './format.ts';
 import { createPlainReporter } from './plain.ts';
 
 /**
@@ -20,13 +20,23 @@ import { createPlainReporter } from './plain.ts';
  */
 export const createClackReporter = (io: CliIo): Reporter => {
   let bar: ProgressResult | undefined;
-  const warnings: Diagnostic[] = [];
-  const removed: string[] = [];
+  let warnings: Diagnostic[] = [];
+  let removed: string[] = [];
   // Messages wait until the bar stops, because a log line would tear the animation.
   const flushWarnings = (): void => {
     warnings.forEach((warning) => {
       log.warn(`${warning.file}: ${warning.message}`);
     });
+    warnings = [];
+  };
+  const summary = (rows: readonly (readonly [string, string])[]): void => {
+    const width = Math.max(...rows.map(([label]) => label.length));
+    note(
+      rows
+        .map(([label, value]) => `${label.padEnd(width)}  ${value}`)
+        .join('\n'),
+      'Summary',
+    );
   };
 
   return {
@@ -57,15 +67,21 @@ export const createClackReporter = (io: CliIo): Reporter => {
       removed.forEach((path) => {
         log.info(`Removed stale ${path}`);
       });
-      const rows = summaryRows(result.stats);
-      const width = Math.max(...rows.map(([label]) => label.length));
-      note(
-        rows
-          .map(([label, value]) => `${label.padEnd(width)}  ${value}`)
-          .join('\n'),
-        'Summary',
-      );
+      removed = [];
+      summary(summaryRows(result.stats));
       outro(`Wrote ${String(result.written.length)} files`);
+    },
+    checked: (result) => {
+      bar?.stop(`Compiled ${String(result.stats.icons)} icons`);
+      flushWarnings();
+      if (result.upToDate) {
+        outro(`Output is up to date (${String(result.files.length)} files)`);
+        return;
+      }
+      result.stale.forEach((entry) => {
+        log.error(`${entry.status.padEnd(7)} ${entry.path}`);
+      });
+      outro(describeStale(result));
     },
     fail: (errors) => {
       bar?.error('Build failed');
@@ -81,6 +97,11 @@ export const createClackReporter = (io: CliIo): Reporter => {
       // Not worth an animation: a usage mistake should read like any other CLI error.
       bar?.error('Build failed');
       createPlainReporter(io).fatal(message, code);
+    },
+    watching: (sources) => {
+      log.info(
+        `Watching ${sources.join(', ')} for changes. Press Ctrl+C to stop`,
+      );
     },
   };
 };

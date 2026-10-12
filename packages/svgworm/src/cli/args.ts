@@ -2,11 +2,21 @@ import { parseArgs } from 'node:util';
 
 import type { ConfigOverrides } from '../core/api.ts';
 
+export const Command = {
+  BUILD: 'build',
+  CHECK: 'check',
+  WATCH: 'watch',
+} as const;
+export type Command = (typeof Command)[keyof typeof Command];
+
+const COMMANDS: readonly string[] = Object.values(Command);
+
 export type ParsedArgs =
   | { readonly kind: 'help' }
   | { readonly kind: 'version' }
   | {
-      readonly kind: 'build';
+      readonly kind: 'command';
+      readonly command: Command;
       readonly configFile: string | undefined;
       readonly overrides: ConfigOverrides;
       readonly isJson: boolean;
@@ -29,6 +39,8 @@ const OPTIONS = {
   version: { type: 'boolean', short: 'v' },
 } as const;
 
+const isCommand = (value: string): value is Command => COMMANDS.includes(value);
+
 export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
   const isJson = argv.includes('--json');
   try {
@@ -40,16 +52,17 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
     });
     if (values.help === true) return { kind: 'help' };
     if (values.version === true) return { kind: 'version' };
-    const [command, ...extra] = positionals;
-    if ((command !== undefined && command !== 'build') || extra.length > 0) {
+    const [command = Command.BUILD, ...extra] = positionals;
+    if (!isCommand(command) || extra.length > 0) {
       return {
         kind: 'usage-error',
-        message: `unknown command "${positionals.join(' ')}". The only command is "build"`,
+        message: `unknown command "${positionals.join(' ')}". Commands: ${COMMANDS.join(', ')}`,
         isJson,
       };
     }
     return {
-      kind: 'build',
+      kind: 'command',
+      command,
       configFile: values.config,
       isJson: values.json === true,
       // Only given flags become overrides, so a flag never blanks a config value.

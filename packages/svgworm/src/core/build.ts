@@ -73,14 +73,11 @@ const sortErrors = (errors: readonly Diagnostic[]): readonly Diagnostic[] =>
       compareCodePoints(a.message, b.message),
   );
 
-/**
- * Discovers, compiles and writes. Nothing is written unless the whole input is valid
- * (R-04). Expected problems come back as `errors`; an unexpected I/O failure throws.
- */
-export const build = async (
+/** Discovers and compiles, without writing. Shared by `build` and `check`. */
+export const compileFromDisk = async (
   config: ResolvedConfig,
   onEvent: BuildEventHandler = () => undefined,
-): Promise<BuildResult> => {
+): Promise<CompileResult> => {
   const discovery = await discoverSvgFiles(config.cwd, config.sources);
   const outcomes = await readAll(discovery.files);
   const sources = outcomes.flatMap((outcome) =>
@@ -103,19 +100,30 @@ export const build = async (
     onEvent,
   );
 
-  if (!compiled.ok || earlyErrors.length > 0) {
-    const compileErrors = compiled.ok ? [] : compiled.errors;
-    // "No icons" would only repeat what the earlier errors already explain.
-    const errors = [...earlyErrors, ...compileErrors].filter(
-      (error) =>
-        error.code !== DiagnosticCode.NO_ICONS || earlyErrors.length === 0,
-    );
-    return {
-      ok: false,
-      errors: sortErrors(errors),
-      warnings: compiled.warnings,
-    };
-  }
+  if (compiled.ok && earlyErrors.length === 0) return compiled;
+  const compileErrors = compiled.ok ? [] : compiled.errors;
+  // "No icons" would only repeat what the earlier errors already explain.
+  const errors = [...earlyErrors, ...compileErrors].filter(
+    (error) =>
+      error.code !== DiagnosticCode.NO_ICONS || earlyErrors.length === 0,
+  );
+  return {
+    ok: false,
+    errors: sortErrors(errors),
+    warnings: compiled.warnings,
+  };
+};
+
+/**
+ * Discovers, compiles and writes. Nothing is written unless the whole input is valid
+ * (R-04). Expected problems come back as `errors`; an unexpected I/O failure throws.
+ */
+export const build = async (
+  config: ResolvedConfig,
+  onEvent: BuildEventHandler = () => undefined,
+): Promise<BuildResult> => {
+  const compiled = await compileFromDisk(config, onEvent);
+  if (!compiled.ok) return compiled;
 
   const { written, removed } = await writeOutput(
     compiled.files,
