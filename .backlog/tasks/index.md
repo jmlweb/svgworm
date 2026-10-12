@@ -4,14 +4,14 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 18 |
+| Pending | 17 |
 | Active | 1 |
 | Blocked | 0 |
-| Complete | 15 |
+| Complete | 16 |
 
 ## Active Tasks
 
-- TSK-015: svgworm init: interactive setup for Next.js (P2)
+- TSK-031: Agent discoverability: Context7, agent skill, AGENTS.md snippet (P2)
 
 ## Pending Tasks
 
@@ -31,7 +31,6 @@
 | TSK-028 | Pre-launch post: per-icon color result | P2 | traction, launch, content | 2026-10-07 |
 | TSK-029 | Report TSK-007 findings upstream to @neodx/svg | P2 | traction, launch, community | 2026-10-07 |
 | TSK-030 | Target repo list and direct migration PRs | P2 | traction, outreach | 2026-10-07 |
-| TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | P2 | traction, agents, discovery | 2026-10-07 |
 | TSK-032 | Agent eval harness: guided success and unprompted pick rate | P3 | traction, agents, measure | 2026-10-07 |
 | TSK-033 | Weekly traction metrics snapshot | P3 | traction, measure | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
@@ -42,6 +41,7 @@
 |----|-------|-----------|
 | TSK-012 | React adapter: RSC-safe Icon component | 2026-10-12 |
 | TSK-013 | Watch mode and CI check mode | 2026-10-12 |
+| TSK-015 | svgworm init: interactive setup for Next.js | 2026-10-12 |
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
 | TSK-008 | Output contract v0.1 | 2026-10-11 |
@@ -49,4 +49,3 @@
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | 2026-10-11 |
 | TSK-004 | Decision: sprite URL delivery without bundler plugin | 2026-10-08 |
 | TSK-001 | Source OSS-licensed SVG fixture corpus | 2026-10-07 |
-| TSK-002 | Spike: external <use> browser compatibility | 2026-10-07 |
