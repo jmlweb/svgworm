@@ -31,3 +31,5 @@
 | LRN-025 | oxlint can die with a possible out-of-memory error | tooling, oxlint, flaky | active | 2026-10-11 |
 | LRN-026 | Parallel worktree agents branched from main, not the current branch | worktree, parallel, flowstate, git | active | 2026-10-12 |
 | LRN-027 | React 19 prepends a preload link to server-rendered img | react, rsc, testing, adapter | active | 2026-10-12 |
+| LRN-028 | Turbopack resolves imports by file extension, not by TypeScript's .js-to-.ts mapping | nextjs, turbopack, typescript, example | active | 2026-10-12 |
+| LRN-029 | svgworm check must run before the build in CI, or it proves nothing | ci, check, example | active | 2026-10-12 |

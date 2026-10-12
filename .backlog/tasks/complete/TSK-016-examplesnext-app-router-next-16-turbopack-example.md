@@ -27,6 +27,8 @@ Next 16, Turbopack, Server Components. Includes an automated check that no icon 
 
 ## Learnings
 
+- LRN-028: Turbopack resolves imports by file extension, not by TypeScript's .js-to-.ts mapping
+- LRN-029: svgworm check must run before the build in CI, or it proves nothing
 ## Progress Log
 
 - [2026-10-07] Created
