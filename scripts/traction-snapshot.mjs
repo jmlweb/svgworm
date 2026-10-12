@@ -11,6 +11,7 @@
 import { execFile } from 'node:child_process';
 import { appendFile, mkdir, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 const REPO = 'jmlweb/svgworm';
@@ -44,12 +45,20 @@ const gh = async (path, { paginate = false } = {}) => {
   }
 };
 
+// 404 means "not published"; anything else is an outage and must not be logged as zero
+// downloads, because the kill-criteria review would read it as a real number.
 const npmDownloads = async (pkg) => {
-  const response = await fetch(
-    `https://api.npmjs.org/downloads/range/last-month/${pkg}`,
-  );
-  if (!response.ok)
+  let response;
+  try {
+    response = await fetch(
+      `https://api.npmjs.org/downloads/range/last-month/${pkg}`,
+    );
+  } catch (error) {
+    return { error: `fetch failed: ${error.message}` };
+  }
+  if (response.status === 404)
     return { lastWeek: 0, fourWeekAverage: 0, isPublished: false };
+  if (!response.ok) return { error: `HTTP ${response.status}` };
   const { downloads } = await response.json();
   const days = downloads.map((day) => day.downloads);
   const sum = (list) => list.reduce((total, value) => total + value, 0);
@@ -99,8 +108,19 @@ const snapshot = async () => {
       readManual(),
       ...PACKAGES.map(npmDownloads),
     ]);
+  // A row with a failed source is marked, kept out of the review, and fails the run.
+  const failures = [
+    ...downloads.flatMap((result, index) =>
+      result.error === undefined
+        ? []
+        : [`npm ${PACKAGES[index]}: ${result.error}`],
+    ),
+    ...(repo === null ? ['github repo'] : []),
+    ...(authors === null ? ['github issues'] : []),
+  ];
   return {
     date: new Date().toISOString().slice(0, 10),
+    ...(failures.length === 0 ? {} : { incomplete: failures }),
     npm: Object.fromEntries(
       PACKAGES.map((pkg, index) => [pkg, downloads[index]]),
     ),
@@ -132,6 +152,9 @@ const snapshot = async () => {
 };
 
 const review = (row) => {
+  if (row.incomplete !== undefined) {
+    return `Kill-criteria review (ADR-0005) for ${row.date}: no verdict, the snapshot is incomplete (${row.incomplete.join('; ')}). Rerun it.`;
+  }
   const downloads = row.npm['svgworm']?.fourWeekAverage ?? 0;
   const authors = row.github.externalAuthors?.count ?? 0;
   const starters = row.manual.starters.length;
@@ -172,10 +195,16 @@ const review = (row) => {
   return lines.join('\n');
 };
 
+// The latest complete row: an incomplete one never reaches the log, but be safe.
 const latestRow = async () => {
   const text = await readFile(LOG, 'utf8').catch(() => '');
-  const lines = text.trim().split('\n').filter(Boolean);
-  return lines.length === 0 ? null : JSON.parse(lines.at(-1));
+  const rows = text
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line))
+    .filter((row) => row.incomplete === undefined);
+  return rows.at(-1) ?? null;
 };
 
 if (isReview) {
@@ -184,10 +213,14 @@ if (isReview) {
 } else {
   const row = await snapshot();
   console.log(JSON.stringify(row, null, 2));
-  if (!isDryRun) {
-    await mkdir(dirname(LOG.pathname), { recursive: true });
+  if (row.incomplete !== undefined) {
+    console.error(`not logged, a source failed: ${row.incomplete.join('; ')}`);
+    process.exitCode = 1;
+  } else if (!isDryRun) {
+    const logPath = fileURLToPath(LOG);
+    await mkdir(dirname(logPath), { recursive: true });
     await appendFile(LOG, `${JSON.stringify(row)}\n`);
-    console.log(`appended to ${LOG.pathname}`);
+    console.log(`appended to ${logPath}`);
   }
   console.log(review(row));
 }

@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
           },
+          // The sprite is served as image/svg+xml; never let a browser guess otherwise.
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
         ],
       },
     ]),

@@ -18,12 +18,17 @@ const files = Object.values(manifest.sprites).flatMap((group) =>
 );
 const icons = Object.values(manifest.icons);
 
+// Minification removes identifiers, so only strings that survive it are markers: the package
+// specifier, the sprite URLs, and each icon's full `url#id` reference (a bare `#id` could match
+// unrelated chunk text).
 const markers = [
   '@svgworm/react',
-  'createIcon',
-  'SvgwormReactError',
   ...files.map((file) => file.url),
-  ...icons.map((icon) => `#${icon.id}`),
+  ...icons.flatMap((icon) =>
+    [manifest.sprites[icon.sprite].sprite, manifest.sprites[icon.sprite].stack]
+      .filter(Boolean)
+      .map((file) => `${file.url}#${icon.id}`),
+  ),
 ];
 
 const listJs = async (dir) => {
