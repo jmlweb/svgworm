@@ -22,7 +22,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([viability.md](
 - **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](../spikes/TSK-006-icon-naming/RESULTS.md)).
 - **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
 
-What it does **not** do yet (v0.1): several sprites, an inline sprite, a watch mode, and frameworks other than React. See the [backlog notes in AGENTS.md](../AGENTS.md) and [open-questions.md](open-questions.md).
+What it does **not** do yet (v0.1): several sprites, an inline sprite, incremental watch (`svgworm watch` rebuilds everything), and frameworks other than React. See the [backlog notes in AGENTS.md](../AGENTS.md) and [open-questions.md](open-questions.md).
 
 ## @neodx/svg
 
@@ -40,7 +40,7 @@ We tested version 1.1.1 in Next.js 16.4 with Turbopack ([TSK-007](../spikes/TSK-
 | Gradient and mask icons                | Blank in SSR with the default `inline: 'auto'`; a 20-line workaround fixes it                        |
 | NFC vs NFD file name                   | Different id and sprite hash                                                                         |
 
-**Pick neodx when** you need multiple sprites, a watcher, or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. Its weekly downloads are small (about 2k), so expect fewer answers online.
+**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. Its weekly downloads are small (about 2k), so expect fewer answers online.
 
 ## SVGR
 
