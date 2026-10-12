@@ -1,4 +1,9 @@
-import type { CSSProperties, ReactElement, SVGProps } from 'react';
+import type {
+  CSSProperties,
+  HTMLAttributes,
+  ReactElement,
+  SVGProps,
+} from 'react';
 
 // Structural copy of the output contract (docs/output-contract.md). The adapter may not import
 // `svgworm`, so it depends on the shape of the generated manifest, not on its package.
@@ -77,7 +82,10 @@ export const createIcon = <const M extends IconManifest>(
     height = DEFAULT_SIZE,
     ...rest
   }) {
-    const icon = manifest.icons[name];
+    // An own property only: a runtime name such as "constructor" must not find Object.prototype.
+    const icon = Object.hasOwn(manifest.icons, name)
+      ? manifest.icons[name]
+      : undefined;
     if (!icon) {
       throw new SvgwormReactError(
         `Unknown icon "${name}". It is not in the svgworm manifest.`,
@@ -89,15 +97,18 @@ export const createIcon = <const M extends IconManifest>(
       accessibleName === undefined
         ? ({ 'aria-hidden': true } as const)
         : ({ role: 'img' } as const);
+    // The non-svg deliveries render HTML elements; id, class, style, data-* and aria-* carry
+    // over, and the element's own attributes come last so the icon stays intact.
+    const { style, ...htmlRest } = rest as HTMLAttributes<HTMLElement>;
 
     if (icon.delivery === 'img') {
       return (
         <img
+          {...htmlRest}
           alt={accessibleName ?? ''}
-          className={rest.className}
           height={height}
           src={resolveFileUrl(manifest, name, icon, 'stack')}
-          style={rest.style}
+          style={style}
           width={width}
         />
       );
@@ -110,13 +121,13 @@ export const createIcon = <const M extends IconManifest>(
         height,
         backgroundColor: 'currentColor',
         mask: `url("${resolveFileUrl(manifest, name, icon, 'stack')}") center / contain no-repeat`,
-        ...rest.style,
+        ...style,
       };
       return (
         <span
+          {...htmlRest}
           {...a11y}
           aria-label={accessibleName}
-          className={rest.className}
           style={maskStyle}
         />
       );

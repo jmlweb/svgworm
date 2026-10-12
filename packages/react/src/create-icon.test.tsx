@@ -66,6 +66,22 @@ describe('delivery img', () => {
       'alt="Sunset logo"',
     );
   });
+
+  it('passes id, className, data and aria attributes through like the svg delivery', () => {
+    const html = render(
+      <Icon
+        aria-describedby="d"
+        className="x"
+        data-testid="sunset"
+        id="logo"
+        name="brand/sunset"
+      />,
+    );
+    expect(html).toContain('id="logo"');
+    expect(html).toContain('class="x"');
+    expect(html).toContain('data-testid="sunset"');
+    expect(html).toContain('aria-describedby="d"');
+  });
 });
 
 describe('delivery mask', () => {
@@ -90,6 +106,12 @@ describe('delivery mask', () => {
       'color:red',
     );
   });
+
+  it('passes id and data attributes through', () => {
+    const html = render(<Icon data-testid="cafe" id="c" name="café" />);
+    expect(html).toContain('id="c"');
+    expect(html).toContain('data-testid="cafe"');
+  });
 });
 
 describe('failing loudly', () => {
@@ -103,6 +125,14 @@ describe('failing loudly', () => {
     expect(() => render(<Icon name={'nope' as never} />)).toThrow(
       SvgwormReactError,
     );
+  });
+
+  it('treats prototype keys from untyped runtime names as unknown icons', () => {
+    for (const name of ['constructor', 'toString', '__proto__']) {
+      expect(() => render(<Icon name={name as never} />)).toThrow(
+        /Unknown icon/,
+      );
+    }
   });
 
   it('throws when the sprite file an icon needs is null', () => {
