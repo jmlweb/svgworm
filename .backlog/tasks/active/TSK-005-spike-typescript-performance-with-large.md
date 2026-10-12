@@ -30,6 +30,7 @@ Resolve Q-30. Benchmark tsc check time + editor autocomplete with 500 / 5000 / 2
 
 ## Learnings
 
+- LRN-030: Benchmark consumers must type-check cleanly or the negative control proves nothing
 ## Progress Log
 
 - [2026-10-07] Created

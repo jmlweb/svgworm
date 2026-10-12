@@ -33,3 +33,4 @@
 | LRN-027 | React 19 prepends a preload link to server-rendered img | react, rsc, testing, adapter | active | 2026-10-12 |
 | LRN-028 | Turbopack resolves imports by file extension, not by TypeScript's .js-to-.ts mapping | nextjs, turbopack, typescript, example | active | 2026-10-12 |
 | LRN-029 | svgworm check must run before the build in CI, or it proves nothing | ci, check, example | active | 2026-10-12 |
+| LRN-030 | Benchmark consumers must type-check cleanly or the negative control proves nothing | benchmark, typescript, testing | active | 2026-10-12 |
