@@ -162,7 +162,7 @@ It prints stats at the end (icons, sprites, sizes, savings, time). When stdout i
 
 ## For AI agents
 
-Read [llms.txt](llms.txt). Everything is non-interactive: flags, `--json`, stable exit codes, and a JSON Schema for the config.
+Read [llms.txt](llms.txt). Everything is non-interactive: flags, `--json`, stable exit codes, and a JSON Schema for the config. The agent skill in [skills/svgworm-nextjs/SKILL.md](skills/svgworm-nextjs/SKILL.md) walks an agent through setting svgworm up in a Next.js app and fixing each error code.
 
 ## Working on this project
 
