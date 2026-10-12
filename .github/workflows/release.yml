@@ -1,6 +1,6 @@
 name: Release
 
-# ADR-0009: Changesets keeps a "Version Packages" PR open on `next`. Merging it publishes
+# ADR-0009: Changesets keeps a "Version Packages" PR open on `main`. Merging it publishes
 # both packages through npm trusted publishing (OIDC, no stored token) and creates the
 # GitHub releases. The npm side (org, trusted publisher per package pointing at this file
 # and the `npm-publish` environment) is set up by hand before the first release: see
@@ -10,11 +10,11 @@ name: Release
 #   check    builds and tests with a read-only token, and decides which of the next two runs;
 #   version  opens or updates the Version PR while changesets are pending;
 #   publish  runs only with no pending changesets, inside the `npm-publish` environment
-#            (required reviewer, `next` only), and is the only job that can mint an npm token.
+#            (required reviewer, `main` only), and is the only job that can mint an npm token.
 # Every action is pinned to a commit (Dependabot bumps them) and the toolchain to a major.
 on:
   push:
-    branches: [next]
+    branches: [main]
 
 concurrency:
   group: release-${{ github.ref }}

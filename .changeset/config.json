@@ -5,7 +5,7 @@
   "fixed": [["svgworm", "@svgworm/react"]],
   "linked": [],
   "access": "public",
-  "baseBranch": "next",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []
 }

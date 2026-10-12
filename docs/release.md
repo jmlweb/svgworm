@@ -9,13 +9,15 @@ How a version of `svgworm` and `@svgworm/react` reaches npm. Decided in [ADR-000
 
 ## Every release
 
-The `Release` workflow (`.github/workflows/release.yml`) runs on every push to `next`, in three jobs:
+The `Release` workflow (`.github/workflows/release.yml`) runs on every push to `main`, in three jobs:
 
 - **check** builds, type-checks, tests and runs `check:packages` with a read-only token, then counts the pending changesets.
 - **version** (pending changesets) opens or updates the **"chore(release): version packages"** PR. That PR bumps both `package.json` versions, writes `CHANGELOG.md` per package and deletes the changesets. Review the changelog like code.
-- **publish** (no pending changesets, so right after that PR is merged) runs inside the **`npm-publish` GitHub environment**: it waits until the maintainer approves the deployment (Actions → the run → *Review deployments*), and only `next` may deploy to it. It is the only job with `id-token: write`. It publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog. A run with nothing new to publish is a no-op, so approving it is harmless; rejecting it is how to hold a release.
+- **publish** (no pending changesets, so right after that PR is merged) runs inside the **`npm-publish` GitHub environment**: it waits until the maintainer approves the deployment (Actions → the run → *Review deployments*), and only `main` may deploy to it. It is the only job with `id-token: write`. It publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog. A run with nothing new to publish is a no-op, so approving it is harmless; rejecting it is how to hold a release.
 
-The environment was created on 2026-10-13 (`gh api PUT repos/jmlweb/svgworm/environments/npm-publish`, required reviewer `jmlweb`, custom branch policy `next`). Recreate it with the same name if the repo is moved.
+The environment was created on 2026-10-13 (`gh api PUT repos/jmlweb/svgworm/environments/npm-publish`, required reviewer `jmlweb`, custom branch policy `main`). Recreate it with the same name if the repo is moved.
+
+Branches: `main` is the default branch and the only release branch since 2026-10-13, when the rewrite branch `next` was renamed to `main` and the old prototype moved from `main` to `prototype` (ADR-0003, ADR-0009). A clone from before that day needs `git fetch --prune && git switch main`.
 
 After it finishes:
 

@@ -2,7 +2,7 @@
 
 > Turn a folder of SVG files into type-safe, cacheable SVG sprites. A framework-agnostic CLI with deterministic output, plus a thin React adapter that works in Server Components with zero client JavaScript.
 
-**Status: pre-alpha, v0.1 in progress.** The CLI builds sprites, a manifest and types. The React adapter (`@svgworm/react`) has `createIcon`. Nothing is on npm yet, so the commands below use the repo build until v0.1.0 is published. The previous prototype lives on `main` and is kept only as a reference.
+**Status: pre-alpha, v0.1 in progress.** The CLI builds sprites, a manifest and types. The React adapter (`@svgworm/react`) has `createIcon`. Nothing is on npm yet, so the commands below use the repo build until v0.1.0 is published. The previous prototype lives on the `prototype` branch and is kept only as a reference.
 
 ## Why
 
