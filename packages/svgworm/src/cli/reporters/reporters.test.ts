@@ -1,17 +1,20 @@
 import { cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import type { CliIo } from '../io.ts';
 
 import { run } from '../run.ts';
 
-const sampleSource = new URL(
-  '../../../../../docs/samples/output-contract-v0.1/source',
-  import.meta.url,
-).pathname;
-const snapshots = new URL('../__snapshots__/', import.meta.url).pathname;
+const sampleSource = fileURLToPath(
+  new URL(
+    '../../../../../docs/samples/output-contract-v0.1/source',
+    import.meta.url,
+  ),
+);
+const snapshots = fileURLToPath(new URL('../__snapshots__/', import.meta.url));
 
 let root = '';
 

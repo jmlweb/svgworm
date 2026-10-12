@@ -82,8 +82,8 @@ export default defineConfig({
       rules: { 'n/no-process-exit': 'off' },
     },
     {
-      // These scripts import build output that does not exist at lint time.
-      files: ['scripts/**'],
+      // These scripts and the bin shim import build output that does not exist at lint time.
+      files: ['scripts/**', 'packages/*/bin/**'],
       rules: { 'n/no-missing-import': 'off' },
     },
     {

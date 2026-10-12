@@ -32,7 +32,7 @@
     "node": "^22.20.0 || >=24.11.0"
   },
   "bin": {
-    "svgworm": "./dist/cli/main.js"
+    "svgworm": "./bin/svgworm.js"
   },
   "exports": {
     ".": {
@@ -43,6 +43,7 @@
     "./schema.json": "./svgworm.schema.json"
   },
   "files": [
+    "bin",
     "dist",
     "svgworm.schema.json",
     "LICENSE"

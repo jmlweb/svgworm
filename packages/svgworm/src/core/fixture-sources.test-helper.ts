@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import type { SourceInput } from './compile.ts';
 
@@ -7,7 +8,7 @@ const repositoryRoot = new URL('../../../../', import.meta.url);
 
 /** Reads every `.svg` under a repository folder as compile input, in an arbitrary order. */
 export const readSources = (folder: string): readonly SourceInput[] => {
-  const root = new URL(`${folder}/`, repositoryRoot).pathname;
+  const root = fileURLToPath(new URL(`${folder}/`, repositoryRoot));
   return readdirSync(root, { recursive: true, withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith('.svg'))
     .map((entry) => {

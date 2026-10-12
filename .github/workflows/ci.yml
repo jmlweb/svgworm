@@ -24,10 +24,11 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Type-aware lint of the example resolves @svgworm/react from dist/, so build first.
+      - run: pnpm build
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm typecheck
-      - run: pnpm build
       - run: pnpm check:packages
 
   test:

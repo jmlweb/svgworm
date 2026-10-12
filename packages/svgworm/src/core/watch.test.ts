@@ -160,14 +160,16 @@ describe('watch', () => {
       signal: controller.signal,
     });
     await vi.waitFor(() => {
-      expect(results).toHaveLength(1);
+      expect(results.length).toBeGreaterThanOrEqual(1);
     });
-    // Recursive fs.watch may need a moment to attach on macOS.
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    // FSEvents on macOS can replay the folder creation once the watcher attaches, so let
+    // any such build settle before counting.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const before = results.length;
     await put('icons/more.svg', svg.replace('M0 0', 'M1 1'));
     await vi.waitFor(
       () => {
-        expect(results.length).toBeGreaterThanOrEqual(2);
+        expect(results.length).toBeGreaterThan(before);
       },
       { timeout: 5000 },
     );

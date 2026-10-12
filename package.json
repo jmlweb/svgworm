@@ -19,7 +19,7 @@
     "check:packages": "pnpm -r check:package",
     "example:build": "pnpm --filter svgworm-example-next-app-router build",
     "example:check": "pnpm --filter svgworm-example-next-app-router check && pnpm example:build && pnpm --filter svgworm-example-next-app-router check:client-js",
-    "verify": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:packages",
+    "verify": "pnpm build && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm check:packages",
     "changeset": "changeset",
     "lint:fix": "oxlint --fix",
     "commitlint": "commitlint",

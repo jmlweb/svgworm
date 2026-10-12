@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { run } from './run.ts';
 
 // Ctrl+C ends `watch` cleanly; the other commands finish their current step first.

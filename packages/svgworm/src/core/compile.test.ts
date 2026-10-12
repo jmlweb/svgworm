@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import type { BuildEvent } from './events.ts';
@@ -25,8 +26,9 @@ const source = (path: string, content: string = svg()): SourceInput => ({
   content: encode(content),
 });
 
-const snapshotDir = new URL('./__snapshots__/fixtures/', import.meta.url)
-  .pathname;
+const snapshotDir = fileURLToPath(
+  new URL('./__snapshots__/fixtures/', import.meta.url),
+);
 const unscopable = 'style/unscopable-media.svg';
 
 const corpus = readSources('fixtures').filter(
