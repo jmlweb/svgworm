@@ -29,3 +29,5 @@
 | LRN-023 | Task scope text goes stale when later ADRs change a decision | design, contract, adr | active | 2026-10-11 |
 | LRN-024 | Spike-made contract samples must come from the product pipeline | output-contract, svgo, determinism | active | 2026-10-11 |
 | LRN-025 | oxlint can die with a possible out-of-memory error | tooling, oxlint, flaky | active | 2026-10-11 |
+| LRN-026 | Parallel worktree agents branched from main, not the current branch | worktree, parallel, flowstate, git | active | 2026-10-12 |
+| LRN-027 | React 19 prepends a preload link to server-rendered img | react, rsc, testing, adapter | active | 2026-10-12 |

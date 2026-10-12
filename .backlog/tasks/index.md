@@ -5,14 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 21 |
-| Active | 2 |
+| Active | 1 |
 | Blocked | 0 |
-| Complete | 11 |
+| Complete | 12 |
 
 ## Active Tasks
 
 - TSK-012: React adapter: RSC-safe Icon component (P2)
-- TSK-017: Discovery docs and honest comparison page (P2)
 
 ## Pending Tasks
 
@@ -44,6 +43,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
 | TSK-008 | Output contract v0.1 | 2026-10-11 |
 | TSK-010 | Scaffold project per stack ADR | 2026-10-11 |
 | TSK-011 | Walking skeleton: CLI to sprite + manifest + types | 2026-10-11 |
@@ -53,4 +53,3 @@
 | TSK-003 | Spike: per-icon color classification | 2026-10-07 |
 | TSK-006 | Define icon naming, namespaces and collision policy | 2026-10-07 |
 | TSK-007 | Competitor deep-dive and final positioning | 2026-10-07 |
-| TSK-009 | ADR: tech stack and package layout | 2026-10-07 |
