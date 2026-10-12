@@ -7,7 +7,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 ## Scope and stability
 
 - **v0.1 scope:** one sprite group (`icons`), the manifest with `color: mono | multicolor` and its per-icon `delivery`, the types, and the naming rules below. Sprite files and stack files are both in scope because the delivery forms need them ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)).
-- **Not in v0.1:** multiple sprite groups or namespace-based splitting ([Q-22](open-questions.md), [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)), per-namespace types ([Q-30](open-questions.md)), inline sprite output ([Q-25](open-questions.md)). A consumer never sees these in v0.1 output.
+- **Not in v0.1:** multiple sprite groups or namespace-based splitting ([Q-22](open-questions.md), [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)), inline sprite output ([Q-25](open-questions.md)). Per-namespace types were considered and rejected ([ADR-0014](adr/0014-icon-name-type-shape.md)). A consumer never sees these in v0.1 output.
 - **0.x policy:** until `1.0.0`, a breaking change to the output contract is a **minor** bump, with a "Breaking" note in the changeset ([ADR-0009](adr/0009-license-versioning-and-release.md)). The manifest's `version` field changes only when the manifest format changes. `1.0.0` comes with its own ADR, when the contract is declared stable.
 - **Zero icons:** an error (exit code 2). No file is written.
 - **Byte-level details:** generated JSON and `.js`/`.d.ts` use LF, 2-space indent, `JSON.stringify` quoting, and one trailing newline. SVG bytes come from the pinned svgo version of [ADR-0008](adr/0008-tech-stack-and-package-layout.md) with the core's fixed config; TSK-011 pins and documents that config. Naming follows the Unicode tables of the supported Node range, and a character assigned in a newer Unicode version may name differently ([ADR-0007](adr/0007-icon-naming-and-collision-policy.md)).
@@ -97,7 +97,7 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
 
 `icons.d.ts` exports these names, and no others are part of the contract:
 
-- `type IconName`: a plain union of all public names, sorted by code point. A name that is not in the union is a type error. The shape for large sets (namespace unions, template literals) is deferred ([Q-30](open-questions.md))
+- `type IconName`: a plain union of all public names, sorted by code point. A name that is not in the union is a type error. This shape is final for every set size: at 20,000 names it type-checks in 0.14 s on TypeScript 6 and 0.05 s on TypeScript 7 ([ADR-0014](adr/0014-icon-name-type-shape.md))
 - `interface SvgwormFile { readonly file: string; readonly url: string }`
 - `interface SvgwormIcon { readonly sprite: string; readonly id: string; readonly viewBox: string; readonly color: 'mono' | 'multicolor'; readonly delivery: 'use' | 'img' | 'mask' }`
 - `interface SvgwormManifest<Name extends string> { readonly version: 1; readonly sprites: Readonly<Record<string, { readonly sprite: SvgwormFile | null; readonly stack: SvgwormFile | null }>>; readonly icons: Readonly<Record<Name, SvgwormIcon>> }`

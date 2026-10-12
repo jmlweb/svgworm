@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-12",
+  "node": "v24.13.0",
+  "ts6": "6.0.3",
+  "ts7": "7.0.2",
+  "runs": 3,
+  "results": [
+    {
+      "size": 500,
+      "shape": "union",
+      "bytes": 10040,
+      "ts6": {
+        "checkTimeS": 0.03,
+        "totalTimeS": 0.12,
+        "instantiations": 24,
+        "types": 1427,
+        "memoryMb": 70
+      },
+      "ts7": {
+        "checkTimeS": 0.002,
+        "totalTimeS": 0.019,
+        "instantiations": 24,
+        "types": 1682,
+        "memoryMb": 26
+      },
+      "completion": {
+        "completionMs": 1,
+        "entries": 500
+      }
+    },
+    {
+      "size": 500,
+      "shape": "tuple",
+      "bytes": 9612,
+      "ts6": {
+        "checkTimeS": 0.03,
+        "totalTimeS": 0.12,
+        "instantiations": 527,
+        "types": 1935,
+        "memoryMb": 72
+      },
+      "ts7": {
+        "checkTimeS": 0.002,
+        "totalTimeS": 0.02,
+        "instantiations": 527,
+        "types": 2190,
+        "memoryMb": 26
+      },
+      "completion": {
+        "completionMs": 0,
+        "entries": 500
+      }
+    },
+    {
+      "size": 500,
+      "shape": "template",
+      "bytes": 7278,
+      "ts6": {
+        "checkTimeS": 0.03,
+        "totalTimeS": 0.12,
+        "instantiations": 24,
+        "types": 2267,
+        "memoryMb": 72
+      },
+      "ts7": {
+        "checkTimeS": 0.002,
+        "totalTimeS": 0.019,
+        "instantiations": 24,
+        "types": 2522,
+        "memoryMb": 26
+      },
+      "completion": {
+        "completionMs": 0,
+        "entries": 500
+      }
+    },
+    {
+      "size": 5000,
+      "shape": "union",
+      "bytes": 101790,
+      "ts6": {
+        "checkTimeS": 0.06,
+        "totalTimeS": 0.15,
+        "instantiations": 24,
+        "types": 10427,
+        "memoryMb": 123
+      },
+      "ts7": {
+        "checkTimeS": 0.011,
+        "totalTimeS": 0.026,
+        "instantiations": 24,
+        "types": 10682,
+        "memoryMb": 30
+      },
+      "completion": {
+        "completionMs": 1,
+        "entries": 5000
+      }
+    },
+    {
+      "size": 5000,
+      "shape": "tuple",
+      "bytes": 96862,
+      "ts6": {
+        "checkTimeS": 0.07,
+        "totalTimeS": 0.16,
+        "instantiations": 5027,
+        "types": 15435,
+        "memoryMb": 133
+      },
+      "ts7": {
+        "checkTimeS": 0.018,
+        "totalTimeS": 0.034,
+        "instantiations": 5027,
+        "types": 15690,
+        "memoryMb": 33
+      },
+      "completion": {
+        "completionMs": 1,
+        "entries": 5000
+      }
+    },
+    {
+      "size": 5000,
+      "shape": "template",
+      "bytes": 69778,
+      "ts6": {
+        "checkTimeS": 0.06,
+        "totalTimeS": 0.15,
+        "instantiations": 24,
+        "types": 15767,
+        "memoryMb": 130
+      },
+      "ts7": {
+        "checkTimeS": 0.012,
+        "totalTimeS": 0.028,
+        "instantiations": 24,
+        "types": 16022,
+        "memoryMb": 31
+      },
+      "completion": {
+        "completionMs": 1,
+        "entries": 5000
+      }
+    },
+    {
+      "size": 20000,
+      "shape": "union",
+      "bytes": 419290,
+      "ts6": {
+        "checkTimeS": 0.14,
+        "totalTimeS": 0.23,
+        "instantiations": 24,
+        "types": 40427,
+        "memoryMb": 118
+      },
+      "ts7": {
+        "checkTimeS": 0.051,
+        "totalTimeS": 0.066,
+        "instantiations": 24,
+        "types": 40682,
+        "memoryMb": 45
+      },
+      "completion": {
+        "completionMs": 5,
+        "entries": 20000
+      }
+    },
+    {
+      "size": 20000,
+      "shape": "tuple",
+      "bytes": 399362,
+      "ts6": {
+        "checkTimeS": 0.23,
+        "totalTimeS": 0.32,
+        "instantiations": 20027,
+        "types": 60435,
+        "memoryMb": 108
+      },
+      "ts7": {
+        "checkTimeS": 0.114,
+        "totalTimeS": 0.131,
+        "instantiations": 20027,
+        "types": 60690,
+        "memoryMb": 58
+      },
+      "completion": {
+        "completionMs": 4,
+        "entries": 20000
+      }
+    },
+    {
+      "size": 20000,
+      "shape": "template",
+      "bytes": 289778,
+      "ts6": {
+        "checkTimeS": 0.16,
+        "totalTimeS": 0.26,
+        "instantiations": 24,
+        "types": 60767,
+        "memoryMb": 141
+      },
+      "ts7": {
+        "checkTimeS": 0.052,
+        "totalTimeS": 0.068,
+        "instantiations": 24,
+        "types": 61022,
+        "memoryMb": 49
+      },
+      "completion": {
+        "completionMs": 4,
+        "entries": 20000
+      }
+    }
+  ]
+}
