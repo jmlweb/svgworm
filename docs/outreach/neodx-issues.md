@@ -1,4 +1,6 @@
-# Upstream issues for @neodx/svg (drafts)
+# Upstream issues for @neodx/svg
+
+**Posted 2026-10-12:** [#186](https://github.com/secundant/neodx/issues/186) (Turbopack), [#187](https://github.com/secundant/neodx/issues/187) (SSR inject blanks, mask recolor), [#188](https://github.com/secundant/neodx/issues/188) (NFC/NFD ids). The drafts below are kept as the record of what was reported.
 
 Principle "be fair to competitors" ([traction.md](../traction.md)): report what the [TSK-007 spike](../../spikes/TSK-007-neodx-next/RESULTS.md) found before publishing the comparison, and link the issues from [comparison.md](../comparison.md) once they exist. Tracker: <https://github.com/secundant/neodx/issues>. On 2026-10-12 no open or closed issue there mentions Turbopack, SSR injection, or Unicode normalization (`gh search issues --repo secundant/neodx turbopack`, `"ssr OR inject"`, `"NFD OR normalize"` all return nothing), so these would not be duplicates.
 

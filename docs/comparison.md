@@ -32,13 +32,15 @@ We tested version 1.1.1 in Next.js 16.4 with Turbopack ([TSK-007](../spikes/TSK-
 
 | Check                                  | Result                                                                                               |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Documented setup (`@neodx/svg/webpack`) | Fails under Turbopack. Works with `next build --webpack`                                            |
+| Documented setup (`@neodx/svg/webpack`) | Fails under Turbopack. Works with `next build --webpack`. Reported: [neodx#186](https://github.com/secundant/neodx/issues/186) |
 | Node API as a `prebuild` script        | Works, about 12 lines of glue                                                                        |
 | Server Components, zero client JS      | Works                                                                                                |
 | Types and hashed URLs                  | Work                                                                                                 |
 | Multicolor icons, default config       | Silently flattened to `currentColor`                                                                 |
-| Gradient and mask icons                | Blank in SSR with the default `inline: 'auto'`; a 20-line workaround fixes it                        |
-| NFC vs NFD file name                   | Different id and sprite hash                                                                         |
+| Gradient and mask icons                | Blank in SSR with the default `inline: 'auto'`; a 20-line workaround fixes it. Reported: [neodx#187](https://github.com/secundant/neodx/issues/187) |
+| NFC vs NFD file name                   | Different id and sprite hash. Reported: [neodx#188](https://github.com/secundant/neodx/issues/188)  |
+
+The three findings were reported upstream on 2026-10-12 before this page was published; if they get fixed, this table must change.
 
 **Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. Its weekly downloads are small (about 2k), so expect fewer answers online.
 

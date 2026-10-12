@@ -1,12 +1,13 @@
 ---
 id: TSK-032
 title: Agent eval harness: guided success and unprompted pick rate
-status: pending
+status: active
 priority: P3
 tags: [traction, agents, measure]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-016, TSK-017]
+started: 2026-10-12
 ---
 
 # Agent eval harness: guided success and unprompted pick rate
@@ -31,3 +32,4 @@ Agent track item 5 of docs/traction.md. Guided success measures docs and CLI qua
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Started

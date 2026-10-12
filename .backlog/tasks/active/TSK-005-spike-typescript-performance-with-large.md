@@ -1,12 +1,13 @@
 ---
 id: TSK-005
 title: Spike: TypeScript performance with large icon-name sets
-status: pending
+status: active
 priority: P3
 tags: [spike, types, adr, post-v0.1]
 created: 2026-10-07
 source: manual
 depends-on: []
+started: 2026-10-12
 ---
 
 # Spike: TypeScript performance with large icon-name sets
@@ -32,3 +33,4 @@ Resolve Q-30. Benchmark tsc check time + editor autocomplete with 500 / 5000 / 2
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Started
