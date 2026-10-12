@@ -9,16 +9,20 @@ import { createTransformCache } from './svg/cache.ts';
 
 export type Watcher = { readonly close: () => void };
 
-/** Watches `path` recursively and calls `onChange` with the changed file name, when known. */
+/**
+ * Watches `path` recursively. Calls `onChange` with the changed file name, when known, and
+ * `onError` when the watcher itself fails (folder gone, descriptor limit); no events follow.
+ */
 export type WatcherFactory = (
   path: string,
   onChange: (fileName: string | null) => void,
+  onError: (error: unknown) => void,
 ) => Watcher;
 
 export type WatchOptions = {
   /** Called with every build's outcome, including the first one. */
   readonly onResult: (result: BuildResult) => void;
-  /** Called when a build throws (an unexpected I/O failure). Watching continues. */
+  /** Called when a build throws (an unexpected I/O failure) or a watcher fails. Watching continues. */
   readonly onError?: (error: unknown) => void;
   readonly onEvent?: BuildEventHandler;
   /** Stops watching. Without it, `watch` never resolves. */
@@ -31,14 +35,13 @@ export type WatchOptions = {
 
 const DEFAULT_DEBOUNCE_MS = 100;
 
-const createFsWatcher: WatcherFactory = (path, onChange) => {
+const createFsWatcher: WatcherFactory = (path, onChange, onError) => {
   // The callback form gives a synchronous `close()` and an error event; the promise form has neither.
   // oxlint-disable-next-line n/prefer-promises/fs
   const watcher = watchPath(path, { recursive: true }, (_event, fileName) => {
     onChange(fileName);
   });
-  // A folder that vanishes mid-watch is reported by the next build, not by a crash.
-  watcher.on('error', () => undefined);
+  watcher.on('error', onError);
   return {
     close: () => {
       watcher.close();
@@ -59,6 +62,10 @@ const mayHoldIcons = (fileName: string | null): boolean => {
  * and the output is reassembled on each rebuild, but only icons whose content changed are
  * re-optimized (ADR-0015). Network file systems and container bind mounts can miss
  * `fs.watch` events (ADR-0008).
+ *
+ * The watchers attach before the first build, so a change made during it is not lost. The
+ * returned promise resolves after the signal aborts and any build in flight has finished, so
+ * nothing is written after the caller believes the watch is over.
  */
 export const watch = async (
   config: ResolvedConfig,
@@ -73,52 +80,114 @@ export const watch = async (
 
   let isBuilding = false;
   let isDirty = false;
+  let isStopped = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let inFlight: Promise<void> | undefined;
 
-  const rebuild = async (): Promise<void> => {
-    if (isBuilding) {
-      isDirty = true;
-      return;
-    }
-    isBuilding = true;
-    try {
-      options.onResult(await build(config, onEvent, { cache }));
-    } catch (error) {
-      onError(error);
-    } finally {
-      isBuilding = false;
-    }
-    if (isDirty) {
+  const scheduleIfDirty = (): void => {
+    if (isDirty && !isStopped) {
       isDirty = false;
       schedule();
     }
   };
+  const rebuild = async (): Promise<void> => {
+    isBuilding = true;
+    try {
+      const result = await build(config, onEvent, { cache });
+      if (!isStopped) options.onResult(result);
+    } catch (error) {
+      if (!isStopped) onError(error);
+    } finally {
+      isBuilding = false;
+      inFlight = undefined;
+    }
+    scheduleIfDirty();
+  };
   const schedule = (): void => {
+    if (isStopped) return;
     clearTimeout(timer);
     timer = setTimeout(() => {
-      void rebuild();
+      timer = undefined;
+      if (isStopped) return;
+      if (isBuilding) {
+        isDirty = true;
+        return;
+      }
+      inFlight = rebuild();
     }, debounceMs);
   };
+  const onChange = (fileName: string | null): void => {
+    if (!mayHoldIcons(fileName)) return;
+    if (isBuilding) {
+      // Coalesce with the running build; it reschedules when it finishes.
+      isDirty = true;
+      return;
+    }
+    schedule();
+  };
 
-  // The first build throws like `build` does, so a missing source folder is a config error.
-  options.onResult(await build(config, onEvent, { cache }));
-  if (options.signal?.aborted === true) return;
+  // A function, so the check after the first build is not narrowed away by the one before it.
+  const isAborted = (): boolean => options.signal?.aborted === true;
 
-  const watchers = config.sources.map((source) =>
-    createWatcher(join(config.cwd, source), (fileName) => {
-      if (mayHoldIcons(fileName)) schedule();
-    }),
-  );
+  if (isAborted()) {
+    options.onResult(await build(config, onEvent, { cache }));
+    return;
+  }
+
+  // Attach first so edits during the first build are seen. If a folder cannot be watched,
+  // the first build explains why (a missing source is a config error) before the watcher
+  // error is raised.
+  const watchers: Watcher[] = [];
+  let attachError: unknown;
+  for (const source of config.sources) {
+    try {
+      watchers.push(
+        createWatcher(join(config.cwd, source), onChange, (error) => {
+          onError(error);
+          // The next build reports a vanished folder through the normal path.
+          schedule();
+        }),
+      );
+    } catch (error) {
+      attachError = error;
+      break;
+    }
+  }
+  const closeAll = (): void => {
+    watchers.forEach((watcher) => {
+      watcher.close();
+    });
+  };
+
+  isBuilding = true;
+  try {
+    options.onResult(await build(config, onEvent, { cache }));
+  } catch (error) {
+    closeAll();
+    throw error;
+  } finally {
+    isBuilding = false;
+  }
+  if (attachError !== undefined) {
+    closeAll();
+    throw attachError instanceof Error
+      ? attachError
+      : new Error('cannot watch a source folder', { cause: attachError });
+  }
+  if (isAborted()) {
+    closeAll();
+    return;
+  }
+  scheduleIfDirty();
 
   await new Promise<void>((resolve) => {
     options.signal?.addEventListener(
       'abort',
       () => {
+        isStopped = true;
         clearTimeout(timer);
-        watchers.forEach((watcher) => {
-          watcher.close();
-        });
-        resolve();
+        closeAll();
+        resolve(inFlight);
       },
       { once: true },
     );

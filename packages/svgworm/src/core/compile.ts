@@ -114,6 +114,8 @@ export const compile = (
     .toSorted((a, b) => comparePaths(a.file, b.file));
 
   if (ordered.length === 0) {
+    // Nothing from the previous build is still on disk, so the cache has nothing to keep.
+    options.cache?.sweep();
     return {
       ok: false,
       errors: [

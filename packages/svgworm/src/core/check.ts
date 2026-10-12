@@ -42,11 +42,15 @@ export type CheckResult =
   | CheckOutcome
   | Extract<CompileResult, { readonly ok: false }>;
 
+// Only a missing file is "missing"; a permission or type error is reported, not hidden.
 const readBytes = async (path: string): Promise<Uint8Array | undefined> => {
   try {
     return await readFile(path);
-  } catch {
-    return undefined;
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      return undefined;
+    }
+    throw error;
   }
 };
 

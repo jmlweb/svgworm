@@ -1,13 +1,7 @@
 import { run } from './run.ts';
 
-// Ctrl+C ends `watch` cleanly; the other commands finish their current step first.
-const controller = new AbortController();
-const stop = (): void => {
-  controller.abort();
-};
-process.once('SIGINT', stop);
-process.once('SIGTERM', stop);
-
+// No signal here: `watch` hooks SIGINT/SIGTERM itself, so Ctrl+C still ends the other
+// commands at once instead of being swallowed by an unused AbortController.
 process.exitCode = await run(process.argv.slice(2), {
   stdout: process.stdout,
   stderr: process.stderr,
@@ -15,5 +9,4 @@ process.exitCode = await run(process.argv.slice(2), {
   isTTY: process.stdout.isTTY,
   isInputTTY: process.stdin.isTTY,
   cwd: process.cwd(),
-  signal: controller.signal,
 });

@@ -1,4 +1,13 @@
-import { lstat, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import {
+  lstat,
+  mkdir,
+  readdir,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 import type { OutputFile } from './compile.ts';
@@ -16,7 +25,10 @@ export type WriteTargets = {
 };
 
 export type WriteResult = {
-  /** Paths from `cwd`, `/`-separated, in write order. */
+  /**
+   * Every output file, as a path from `cwd` with `/` separators, in write order. A file whose
+   * bytes did not change is listed but not rewritten, and emits no `write` event.
+   */
   readonly written: readonly string[];
   readonly removed: readonly string[];
 };
@@ -24,6 +36,37 @@ export type WriteResult = {
 /** A path from `cwd` with `/` separators, as events and results report it. */
 export const toReportPath = (cwd: string, absolute: string): string =>
   relative(cwd, absolute).replaceAll('\\', '/');
+
+const isMissing = (error: unknown): boolean =>
+  error instanceof Error && 'code' in error && error.code === 'ENOENT';
+
+const readIfPresent = async (path: string): Promise<Buffer | undefined> => {
+  try {
+    return await readFile(path);
+  } catch (error) {
+    if (isMissing(error)) return undefined;
+    throw error;
+  }
+};
+
+/**
+ * Writes through a temporary file in the same folder and renames it over the target, so a
+ * reader never sees a half-written module and a symlink at the target is replaced, not
+ * followed.
+ */
+const replaceFile = async (
+  path: string,
+  content: Uint8Array,
+): Promise<void> => {
+  const temporary = `${path}.${randomUUID().slice(0, 8)}.tmp`;
+  try {
+    await writeFile(temporary, content, { flag: 'wx' });
+    await rename(temporary, path);
+  } catch (error) {
+    await rm(temporary, { force: true });
+    throw error;
+  }
+};
 
 const folderOf = (targets: WriteTargets, file: OutputFile): string =>
   join(targets.cwd, targets[file.target]);
@@ -36,13 +79,13 @@ const writeOne = async (
   const folder = folderOf(targets, file);
   await mkdir(folder, { recursive: true });
   const path = join(folder, file.name);
-  await writeFile(path, file.content);
   const reported = toReportPath(targets.cwd, path);
-  onEvent({
-    type: 'write',
-    path: reported,
-    bytes: new TextEncoder().encode(file.content).byteLength,
-  });
+  const content = new TextEncoder().encode(file.content);
+  // Skipping an identical file keeps a dev server's file watcher quiet during `watch`.
+  const current = await readIfPresent(path);
+  if (current?.equals(content) === true) return reported;
+  await replaceFile(path, content);
+  onEvent({ type: 'write', path: reported, bytes: content.byteLength });
   return reported;
 };
 

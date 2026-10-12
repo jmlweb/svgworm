@@ -1,10 +1,12 @@
 import {
+  lstat,
   mkdir,
   mkdtemp,
   readdir,
   readFile,
   rm,
   stat,
+  symlink,
   writeFile,
 } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -148,13 +150,39 @@ describe('build', () => {
     expect(await exists('svgworm/notes.md')).toBe(true);
   });
 
-  it('is idempotent', async () => {
+  it('is idempotent, and a rebuild with the same input rewrites nothing', async () => {
     await put('icons/home.svg');
     const first = await build(config());
-    const second = await build(config());
+    const events: BuildEvent[] = [];
+    const second = await build(config(), (event) => events.push(event));
     if (!first.ok || !second.ok) throw new Error('build failed');
     expect(second.removed).toEqual([]);
     expect(second.written).toEqual(first.written);
+    // Untouched files keep a dev server's watcher quiet (ADR-0015).
+    expect(events.filter((event) => event.type === 'write')).toEqual([]);
+  });
+
+  it('replaces a symlinked output file instead of writing through it', async () => {
+    await put('icons/home.svg');
+    await put('elsewhere/keep.txt', 'mine');
+    await mkdir(join(root, 'svgworm'), { recursive: true });
+    await symlink(
+      join(root, 'elsewhere/keep.txt'),
+      join(root, 'svgworm/icons.js'),
+    );
+    const result = await build(config());
+    if (!result.ok) throw new Error(JSON.stringify(result.errors));
+    expect(await readFile(join(root, 'elsewhere/keep.txt'), 'utf8')).toBe(
+      'mine',
+    );
+    expect((await lstat(join(root, 'svgworm/icons.js'))).isSymbolicLink()).toBe(
+      false,
+    );
+    expect(await readdir(join(root, 'svgworm'))).toEqual([
+      'icons.d.ts',
+      'icons.js',
+      'manifest.json',
+    ]);
   });
 
   it('builds the same output for an NFD file name', async () => {

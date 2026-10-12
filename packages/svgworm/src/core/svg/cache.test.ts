@@ -53,6 +53,13 @@ describe('transform cache (ADR-0015)', () => {
     expect(cache.size()).toBe(2);
   });
 
+  it('drops every entry when the next compile has no icons at all', () => {
+    const cache = createTransformCache();
+    compile([source('a'), source('b')], { ...options, cache });
+    expect(compile([], { ...options, cache }).ok).toBe(false);
+    expect(cache.size()).toBe(0);
+  });
+
   it('keys on the color mode and the name, not only on the bytes', () => {
     const cache = createTransformCache();
     compile([source('a')], { ...options, cache });

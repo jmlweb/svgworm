@@ -10,6 +10,6 @@ export type CliIo = {
   /** stdin is a terminal too: prompts are allowed (ADR-0008). Default false. */
   readonly isInputTTY?: boolean;
   readonly cwd: string;
-  /** Ends a long-running command such as `watch`. The process signal does that in `main`. */
+  /** Ends `watch`, for tests. Without it, `watch` listens to SIGINT and SIGTERM itself. */
   readonly signal?: AbortSignal;
 };

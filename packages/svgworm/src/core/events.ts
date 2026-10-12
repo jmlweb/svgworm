@@ -30,6 +30,7 @@ export type BuildEvent =
       readonly fromCache: boolean;
     }
   | { readonly type: 'warning'; readonly diagnostic: Diagnostic }
+  /** A file whose bytes changed was written. Identical files are left alone and emit nothing. */
   | { readonly type: 'write'; readonly path: string; readonly bytes: number }
   | { readonly type: 'remove'; readonly path: string }
   | { readonly type: 'done'; readonly stats: BuildStats };
