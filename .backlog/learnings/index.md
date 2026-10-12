@@ -34,3 +34,4 @@
 | LRN-028 | Turbopack resolves imports by file extension, not by TypeScript's .js-to-.ts mapping | nextjs, turbopack, typescript, example | active | 2026-10-12 |
 | LRN-029 | svgworm check must run before the build in CI, or it proves nothing | ci, check, example | active | 2026-10-12 |
 | LRN-030 | Benchmark consumers must type-check cleanly or the negative control proves nothing | benchmark, typescript, testing | active | 2026-10-12 |
+| LRN-031 | Validate SVG by local name and review 'done' code before a release | security, svg, validation, review, cli, watch, fs | active | 2026-10-12 |
