@@ -32,7 +32,7 @@
     "node": "^22.20.0 || >=24.11.0"
   },
   "bin": {
-    "svgworm": "./bin/svgworm.js"
+    "svgworm": "bin/svgworm.js"
   },
   "exports": {
     ".": {
