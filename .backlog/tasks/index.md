@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 9 |
+| Pending | 8 |
 | Active | 4 |
 | Blocked | 0 |
-| Complete | 22 |
+| Complete | 23 |
 
 ## Active Tasks
 
@@ -20,7 +20,6 @@
 
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
-| TSK-018 | Release v0.1.0 to npm | P2 | release, v0.1 | 2026-10-07 |
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-021 | Multiple sprites (namespace or config groups) | P3 | post-v0.1 | 2026-10-07 |
 | TSK-022 | Inline sprite output | P3 | post-v0.1 | 2026-10-07 |
@@ -40,7 +39,7 @@
 | TSK-015 | svgworm init: interactive setup for Next.js | 2026-10-12 |
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
+| TSK-018 | Release v0.1.0 to npm | 2026-10-12 |
 | TSK-023 | Incremental watch mode | 2026-10-12 |
 | TSK-027 | Color classification edge cases: markers, CSS variables, animations | 2026-10-12 |
 | TSK-029 | Report TSK-007 findings upstream to @neodx/svg | 2026-10-12 |
-| TSK-032 | Agent eval harness: guided success and unprompted pick rate | 2026-10-12 |
