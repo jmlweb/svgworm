@@ -123,7 +123,7 @@ It prints stats at the end (icons, sprites, sizes, savings, time). When stdout i
 
 `svgworm init` prompts on a terminal and takes flags everywhere else: `--component-file <path>`, `--no-component`, `--no-scripts`, `--agents-md` (adds a short svgworm section to `AGENTS.md` for AI agents) and `--yes`. It never overwrites a file that differs from what it would write, so re-running it is safe.
 
-`svgworm check` compiles the icons and compares the result with the files on disk, so CI can fail when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed. `svgworm watch` rebuilds everything after each change in a source folder (incremental rebuilds come later). `fs.watch` can miss events on network file systems and container bind mounts; run `svgworm` by hand there. With `--json`, `watch` prints one document per build.
+`svgworm check` compiles the icons and compares the result with the files on disk, so CI can fail when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed. `svgworm watch` rebuilds after each change in a source folder and re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). `fs.watch` can miss events on network file systems and container bind mounts; run `svgworm` by hand there. With `--json`, `watch` prints one document per build.
 
 ## Config
 

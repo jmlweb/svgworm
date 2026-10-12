@@ -37,4 +37,4 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 
 ## Not in v0.1
 
-Several sprites, inline sprite, incremental watch (watch rebuilds everything), frameworks other than React.
+Several sprites, inline sprite, frameworks other than React.

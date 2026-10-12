@@ -103,4 +103,4 @@ If an icon renders black instead of following the text color, it was classified 
 
 ## Not in v0.1
 
-Several sprites, inline sprite output, incremental watch (`svgworm watch` rebuilds everything), frameworks other than React. Status, flags and the output contract: https://github.com/jmlweb/svgworm/blob/main/llms.txt
+Several sprites, inline sprite output, frameworks other than React. Status, flags and the output contract: https://github.com/jmlweb/svgworm/blob/main/llms.txt

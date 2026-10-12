@@ -1,4 +1,5 @@
 import type { BuildEventHandler, BuildStats } from './events.ts';
+import type { TransformCache } from './svg/cache.ts';
 
 import { contentHash, spriteFileName, stackFileName } from './assemble/hash.ts';
 import {
@@ -20,7 +21,11 @@ import { deriveName, toSymbolId } from './naming.ts';
 import { ColorKind } from './svg/color/classify.ts';
 import { resolveColorMode } from './svg/color/overrides.ts';
 import { Delivery } from './svg/references.ts';
-import { transformIcon, type IconMarkup } from './svg/transform.ts';
+import {
+  transformIcon,
+  type IconMarkup,
+  type TransformInput,
+} from './svg/transform.ts';
 
 export type SourceInput = {
   /** Path used in messages and as a sort key. */
@@ -35,6 +40,8 @@ export type CompileOptions = {
   /** Normalized: no trailing slash, "" for the site root. */
   readonly publicPath: string;
   readonly color: readonly Pick<ColorRule, 'match' | 'color'>[];
+  /** Reuses per-icon transforms across compiles of one process (`watch`, ADR-0015). */
+  readonly cache?: TransformCache;
 };
 
 /** A generated file. `target` says which configured folder it belongs in. */
@@ -140,11 +147,25 @@ export const compile = (
     ),
   );
 
+  const cache = options.cache;
+  const transformCached = (
+    input: TransformInput,
+  ): {
+    readonly result: ReturnType<typeof transformIcon>;
+    readonly fromCache: boolean;
+  } => {
+    const hit = cache?.get(input);
+    if (hit !== undefined) return { result: hit, fromCache: true };
+    const result = transformIcon(input);
+    cache?.set(input, result);
+    return { result, fromCache: false };
+  };
+
   const processed: Processed[] = [];
   named.forEach((entry, index) => {
     const name = entry.name;
     const id = toSymbolId(name ?? 'invalid');
-    const result = transformIcon({
+    const { result, fromCache } = transformCached({
       content: entry.source.content,
       file: entry.file,
       symbolId: id,
@@ -175,6 +196,7 @@ export const compile = (
       total: ordered.length,
       color: result.icon.color,
       delivery: result.icon.delivery,
+      fromCache,
     });
     processed.push({
       source: entry.source,
@@ -184,6 +206,9 @@ export const compile = (
       icon: result.icon,
     });
   });
+
+  // Entries the icons of this compile did not touch belong to deleted or changed files.
+  cache?.sweep();
 
   if (errors.length > 0) {
     return {

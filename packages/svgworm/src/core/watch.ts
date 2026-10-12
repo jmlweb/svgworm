@@ -5,6 +5,7 @@ import type { ResolvedConfig } from './config/resolve.ts';
 import type { BuildEventHandler } from './events.ts';
 
 import { build, type BuildResult } from './build.ts';
+import { createTransformCache } from './svg/cache.ts';
 
 export type Watcher = { readonly close: () => void };
 
@@ -54,9 +55,10 @@ const mayHoldIcons = (fileName: string | null): boolean => {
 };
 
 /**
- * Builds once, then rebuilds everything after each change in a source folder (R-30, v0.1).
- * Incremental rebuilds are post-v0.1 (Q-42). Network file systems and container bind mounts
- * can miss `fs.watch` events (ADR-0008).
+ * Builds once, then rebuilds after each change in a source folder (R-30). Every file is read
+ * and the output is reassembled on each rebuild, but only icons whose content changed are
+ * re-optimized (ADR-0015). Network file systems and container bind mounts can miss
+ * `fs.watch` events (ADR-0008).
  */
 export const watch = async (
   config: ResolvedConfig,
@@ -66,6 +68,8 @@ export const watch = async (
   const createWatcher = options.createWatcher ?? createFsWatcher;
   const onEvent = options.onEvent ?? (() => undefined);
   const onError = options.onError ?? (() => undefined);
+  // Only icons whose bytes changed are re-optimized on a rebuild (ADR-0015).
+  const cache = createTransformCache();
 
   let isBuilding = false;
   let isDirty = false;
@@ -78,7 +82,7 @@ export const watch = async (
     }
     isBuilding = true;
     try {
-      options.onResult(await build(config, onEvent));
+      options.onResult(await build(config, onEvent, { cache }));
     } catch (error) {
       onError(error);
     } finally {
@@ -97,7 +101,7 @@ export const watch = async (
   };
 
   // The first build throws like `build` does, so a missing source folder is a config error.
-  options.onResult(await build(config, onEvent));
+  options.onResult(await build(config, onEvent, { cache }));
   if (options.signal?.aborted === true) return;
 
   const watchers = config.sources.map((source) =>

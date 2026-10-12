@@ -1,5 +1,7 @@
 export { build, compileFromDisk } from './build.ts';
-export type { BuildResult, BuildSuccess } from './build.ts';
+export type { BuildOptions, BuildResult, BuildSuccess } from './build.ts';
+export { createTransformCache } from './svg/cache.ts';
+export type { TransformCache } from './svg/cache.ts';
 export { check, CheckStatus } from './check.ts';
 export type {
   CheckEntry,

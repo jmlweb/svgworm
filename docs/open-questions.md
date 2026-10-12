@@ -28,7 +28,7 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 
 ## Types and naming
 
-- **Q-30** Type-checking performance with 5,000+ names: union, `as const` array, or a template-literal approach? → TSK-005 Deferred to post-v0.1 (ADR-0005); v0.1 uses a plain union.
+- ✅ **Q-30** Type-checking performance with 5,000+ names: union, `as const` array, or a template-literal approach? → TSK-005. Answered by [ADR-0014](adr/0014-icon-name-type-shape.md): the plain union stays for every size. 20,000 names check in 0.15 s (TS 6) and 0.05 s (TS 7); the `as const` tuple is the slowest shape and the template shape buys nothing but a smaller file
 - ✅ **Q-31** Namespace separator and normalization rules (see output-contract) → TSK-006. Answered by [ADR-0007](adr/0007-icon-naming-and-collision-policy.md): `/` separator, NFC + lowercase names, a separate ASCII symbol id (`social/github` → `i-social--github`). Open items with defaults taken are listed in the ADR.
 - ✅ **Q-32** Collision policy: always error, or allow an alias map? → TSK-006 Collisions are always an error in v0.1; alias map deferred to post-v0.1 (ADR-0005). Answered for v0.1 by [ADR-0007](adr/0007-icon-naming-and-collision-policy.md): an error that lists every file; alias map is TSK-025.
 
@@ -36,7 +36,7 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 
 - ✅ **Q-40** Runtime and build tool, test runner, SVG parser and optimizer, CLI framework, config format → TSK-009. Answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6, `tsc`, Vitest 5, svgo 4, `node:util.parseArgs` + @clack/prompts, `svgworm.config.json` validated with zod
 - ✅ **Q-41** Monorepo (core + adapters as separate packages) vs a single package with subpath exports → TSK-009. Answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): pnpm workspace with `svgworm` (core + CLI) and a zero-dependency `@svgworm/react`
-- ✅ **Q-42** Watch mode implementation and incremental cache → TSK-009 Incremental watch deferred to post-v0.1 (ADR-0005); v0.1 rebuilds everything on change. v0.1 part answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): recursive `fs.watch` with a debounced full rebuild; the incremental cache (keyed by content hash) is TSK-023
+- ✅ **Q-42** Watch mode implementation and incremental cache → TSK-009, TSK-023. Watch answered by [ADR-0008](adr/0008-tech-stack-and-package-layout.md): recursive `fs.watch` with a debounced rebuild. Incremental part answered by [ADR-0015](adr/0015-incremental-watch-transform-cache.md): an in-memory per-icon transform cache keyed by content, so a rebuild after one change takes about 10 ms for 1,000 icons instead of 850 ms
 
 ## Product
 

@@ -26,6 +26,8 @@ export type BuildEvent =
       readonly total: number;
       readonly color: ColorKind;
       readonly delivery: Delivery;
+      /** True when a watch rebuild reused the previous transform of this exact content (ADR-0015). */
+      readonly fromCache: boolean;
     }
   | { readonly type: 'warning'; readonly diagnostic: Diagnostic }
   | { readonly type: 'write'; readonly path: string; readonly bytes: number }

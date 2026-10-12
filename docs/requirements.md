@@ -27,7 +27,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 
 ## Workflow
 
-- **R-30** Watch mode rebuilds only what changed. _[v0.1 full rebuild; incremental post-v0.1]_
+- **R-30** Watch mode rebuilds only what changed. _[v0.1]_ Full rebuild in TSK-013; only changed icons are re-optimized since [ADR-0015](adr/0015-incremental-watch-transform-cache.md).
 - **R-31** Check mode exits non-zero if the committed output is stale (for CI). _[v0.1]_
 - **R-32** Config can come from a file, from CLI flags, or from both, and the config is validated. _[v0.1]_
 - **R-33** A programmatic API that matches the CLI. _[v0.1]_

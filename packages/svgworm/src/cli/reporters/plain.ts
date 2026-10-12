@@ -27,7 +27,9 @@ export const createPlainReporter = (io: CliIo): Reporter => {
           out(`svgworm: reading ${String(event.total)} SVG file(s)`);
           break;
         case 'icon':
-          out(`icon ${event.name} ${event.color} ${event.delivery}`);
+          out(
+            `icon ${event.name} ${event.color} ${event.delivery}${event.fromCache ? ' (cached)' : ''}`,
+          );
           break;
         case 'warning':
           err(`${style('yellow', 'warning')} ${describe(event.diagnostic)}`);

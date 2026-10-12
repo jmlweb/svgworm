@@ -22,7 +22,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([viability.md](
 - **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](../spikes/TSK-006-icon-naming/RESULTS.md)).
 - **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
 
-What it does **not** do yet (v0.1): several sprites, an inline sprite, incremental watch (`svgworm watch` rebuilds everything), and frameworks other than React. See the [backlog notes in AGENTS.md](../AGENTS.md) and [open-questions.md](open-questions.md).
+What it does **not** do yet (v0.1): several sprites, an inline sprite, and frameworks other than React. See the [backlog notes in AGENTS.md](../AGENTS.md) and [open-questions.md](open-questions.md).
 
 ## @neodx/svg
 

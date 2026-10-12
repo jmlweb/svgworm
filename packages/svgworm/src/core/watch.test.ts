@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { BuildResult } from './build.ts';
+import type { BuildEvent } from './events.ts';
 
 import { resolveConfig, type ResolvedConfig } from './config/resolve.ts';
 import { watch, type WatcherFactory } from './watch.ts';
@@ -173,6 +174,45 @@ describe('watch', () => {
       },
       { timeout: 5000 },
     );
+    controller.abort();
+    await done;
+  });
+});
+
+describe('watch: incremental rebuilds (ADR-0015)', () => {
+  it('re-optimizes only the icons whose content changed', async () => {
+    await put('icons/home.svg');
+    await put('icons/other.svg', svg.replace('M0 0', 'M2 2'));
+    const events: BuildEvent[] = [];
+    const results: BuildResult[] = [];
+    const watcher = fakeWatcher();
+    const controller = new AbortController();
+    const done = watch(config(), {
+      onEvent: (event) => events.push(event),
+      onResult: (result) => results.push(result),
+      createWatcher: watcher.factory,
+      debounceMs: 5,
+      signal: controller.signal,
+    });
+    await vi.waitFor(() => {
+      expect(results).toHaveLength(1);
+    });
+    expect(events.filter((e) => e.type === 'icon' && e.fromCache)).toHaveLength(
+      0,
+    );
+
+    await put('icons/home.svg', svg.replace('M0 0', 'M1 1'));
+    events.length = 0;
+    watcher.fire('home.svg');
+    await vi.waitFor(() => {
+      expect(results).toHaveLength(2);
+    });
+    expect(
+      events.flatMap((e) => (e.type === 'icon' ? [[e.name, e.fromCache]] : [])),
+    ).toEqual([
+      ['home', false],
+      ['other', true],
+    ]);
     controller.abort();
     await done;
   });

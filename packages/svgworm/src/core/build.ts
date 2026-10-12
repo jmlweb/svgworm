@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 
 import type { ResolvedConfig } from './config/resolve.ts';
 import type { BuildEventHandler } from './events.ts';
+import type { TransformCache } from './svg/cache.ts';
 
 import { comparePaths } from './collisions.ts';
 import { compareCodePoints } from './compare-code-units.ts';
@@ -23,6 +24,11 @@ export type BuildSuccess = CompileSuccess & {
 export type BuildResult =
   | BuildSuccess
   | Extract<CompileResult, { readonly ok: false }>;
+
+export type BuildOptions = {
+  /** Per-icon transform cache shared across builds of one process (`watch`, ADR-0015). */
+  readonly cache?: TransformCache;
+};
 
 const READ_BATCH_SIZE = 64;
 
@@ -77,6 +83,7 @@ const sortErrors = (errors: readonly Diagnostic[]): readonly Diagnostic[] =>
 export const compileFromDisk = async (
   config: ResolvedConfig,
   onEvent: BuildEventHandler = () => undefined,
+  options: BuildOptions = {},
 ): Promise<CompileResult> => {
   const discovery = await discoverSvgFiles(config.cwd, config.sources);
   const outcomes = await readAll(discovery.files);
@@ -96,6 +103,7 @@ export const compileFromDisk = async (
       flatten: config.flatten,
       publicPath: config.publicPath,
       color: config.color,
+      ...(options.cache === undefined ? {} : { cache: options.cache }),
     },
     onEvent,
   );
@@ -121,8 +129,9 @@ export const compileFromDisk = async (
 export const build = async (
   config: ResolvedConfig,
   onEvent: BuildEventHandler = () => undefined,
+  options: BuildOptions = {},
 ): Promise<BuildResult> => {
-  const compiled = await compileFromDisk(config, onEvent);
+  const compiled = await compileFromDisk(config, onEvent, options);
   if (!compiled.ok) return compiled;
 
   const { written, removed } = await writeOutput(
