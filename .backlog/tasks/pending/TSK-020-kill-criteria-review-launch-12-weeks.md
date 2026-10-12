@@ -17,7 +17,7 @@ ADR-0005 criteria, reviewed 12 weeks after v0.1.0: at least 500 weekly npm downl
 
 ## Acceptance Criteria
 
-- [ ] Script computes the three criteria
+- [x] Script computes the three criteria
 - [ ] Report and continue-or-stop ADR written
 - [ ] Review date derived from the recorded launch date
 
@@ -28,3 +28,4 @@ ADR-0005 criteria, reviewed 12 weeks after v0.1.0: at least 500 weekly npm downl
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Criterion 1 met by TSK-033: `node scripts/traction-snapshot.mjs --review` computes the three ADR-0005 criteria and the review date from manual.json launchDate. Report and ADR wait for launch + 84 days.

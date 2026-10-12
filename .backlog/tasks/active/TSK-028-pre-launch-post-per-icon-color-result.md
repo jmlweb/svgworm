@@ -1,12 +1,13 @@
 ---
 id: TSK-028
 title: Pre-launch post: per-icon color result
-status: pending
+status: active
 priority: P2
 tags: [traction, launch, content]
 created: 2026-10-07
 source: manual
 depends-on: []
+started: 2026-10-12
 ---
 
 # Pre-launch post: per-icon color result
@@ -30,3 +31,5 @@ Build in public before the 12-week clock starts (docs/traction.md, pre-launch). 
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Started
+- [2026-10-12] docs/posts/per-icon-color.md: full draft of the blog post (symptom, method, numbers linked to the TSK-003 spike, mask trap, call to action) plus a 5-post social thread and the spec of the before/after image. Publishing on jmlweb.es, the image and the date need the maintainer.

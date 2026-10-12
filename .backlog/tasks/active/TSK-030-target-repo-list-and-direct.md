@@ -1,12 +1,13 @@
 ---
 id: TSK-030
 title: Target repo list and direct migration PRs
-status: pending
+status: active
 priority: P2
 tags: [traction, outreach]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-018]
+started: 2026-10-12
 ---
 
 # Target repo list and direct migration PRs
@@ -18,8 +19,8 @@ Direct path to the target user and to the "5 distinct external people" kill crit
 
 ## Acceptance Criteria
 
-- [ ] List of ~20 public Next.js App Router repos or design systems with a custom SVG icon folder, ranked by fit
-- [ ] Search queries used are recorded so the list is reproducible
+- [x] List of ~20 public Next.js App Router repos or design systems with a custom SVG icon folder, ranked by fit
+- [x] Search queries used are recorded so the list is reproducible
 - [ ] At least 5 migration PRs opened after v0.1.0, each showing bundle/HTML size diff
 - [ ] Opened/merged counts logged in the weekly metrics snapshot
 
@@ -30,3 +31,5 @@ Direct path to the target user and to the "5 distinct external people" kill crit
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Started
+- [2026-10-12] docs/outreach/target-repos.md: 20 repos ranked by App Router, icon SVG count, activity and stars, from four reproducible gh code searches on @svgr/webpack in Next configs; two starter templates flagged first. Criteria 3-4 (PRs, counts) wait for v0.1.0 on npm.

@@ -29,3 +29,4 @@ npm provenance, changelog, GitHub release. Needs an explicit go from the maintai
 ## Progress Log
 
 - [2026-10-07] Created
+- [2026-10-12] Prepared (commit pending review): .github/workflows/release.yml (Changesets version PR, publish through npm trusted publishing with NPM_CONFIG_PROVENANCE, GitHub releases) and docs/release.md with the one-time npm setup (create org svgworm, first publish by hand, trusted publisher per package on release.yml, disable tokens) and the post-release checks. Criteria 1-4 need the maintainer: the go, the npm org and trusted publisher config, the first run, and the launch date.
