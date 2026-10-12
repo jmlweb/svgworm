@@ -2,12 +2,16 @@ name: Release
 
 # ADR-0009: Changesets keeps a "Version Packages" PR open on `next`. Merging it publishes
 # both packages through npm trusted publishing (OIDC, no stored token) and creates the
-# GitHub releases. The npm side (org, trusted publisher per package pointing at this file)
-# is set up by hand before the first release: see docs/release.md.
+# GitHub releases. The npm side (org, trusted publisher per package pointing at this file
+# and the `npm-publish` environment) is set up by hand before the first release: see
+# docs/release.md.
 #
-# This job can mint an npm token and push to the repo, so every action is pinned to a commit
-# (Dependabot bumps them) and the toolchain is pinned to a major, and the same checks CI runs
-# gate the publish.
+# Three jobs with the least privilege each needs (2026-10-13 security review):
+#   check    builds and tests with a read-only token, and decides which of the next two runs;
+#   version  opens or updates the Version PR while changesets are pending;
+#   publish  runs only with no pending changesets, inside the `npm-publish` environment
+#            (required reviewer, `next` only), and is the only job that can mint an npm token.
+# Every action is pinned to a commit (Dependabot bumps them) and the toolchain to a major.
 on:
   push:
     branches: [next]
@@ -17,16 +21,43 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+  contents: read
 
 jobs:
-  release:
-    name: Version PR or publish
+  check:
+    name: Build and test
     runs-on: ubuntu-latest
     # Forks have no npm trusted publisher and must not open version PRs.
     if: github.repository == 'jmlweb/svgworm'
+    outputs:
+      pending-changesets: ${{ steps.changesets.outputs.pending }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm check:packages
+      - name: Pending changesets?
+        id: changesets
+        run: |
+          count=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)
+          if [ "$count" -gt 0 ]; then echo "pending=true" >> "$GITHUB_OUTPUT"; else echo "pending=false" >> "$GITHUB_OUTPUT"; fi
+          echo "$count pending changeset(s)"
+
+  version:
+    name: Version PR
+    needs: check
+    if: needs.check.outputs.pending-changesets == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -36,23 +67,47 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # Only the changesets CLI is needed here; no lifecycle script of any package runs.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Open or update the Version PR
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          commit-message: 'chore(release): version packages'
+          pr-title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish to npm
+    needs: check
+    if: needs.check.outputs.pending-changesets == 'false'
+    runs-on: ubuntu-latest
+    # Waits for the maintainer's approval (Actions → Review deployments) before anything
+    # below runs; the npm trusted publisher is bound to this environment name.
+    environment: npm-publish
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
           registry-url: https://registry.npmjs.org
       # Trusted publishing needs npm >= 11.5.1 (the Node 24 runner ships a newer one; this
       # keeps it true if the runner image changes, without following an unpinned `latest`).
       - run: npm install -g npm@11
       - run: npm --version
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm build
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: pnpm check:packages
-      - name: Version packages or publish
+      - name: Publish
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           publish-script: pnpm changeset publish
-          commit-message: 'chore(release): version packages'
-          pr-title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Belt and braces (ADR-0009): provenance is automatic under trusted publishing,

@@ -9,10 +9,13 @@ How a version of `svgworm` and `@svgworm/react` reaches npm. Decided in [ADR-000
 
 ## Every release
 
-The `Release` workflow (`.github/workflows/release.yml`) runs on every push to `next`:
+The `Release` workflow (`.github/workflows/release.yml`) runs on every push to `next`, in three jobs:
 
-- With pending changesets, it opens or updates the **"chore(release): version packages"** PR. That PR bumps both `package.json` versions, writes `CHANGELOG.md` per package and deletes the changesets. Review the changelog like code.
-- When that PR is merged, the same workflow publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog.
+- **check** builds, type-checks, tests and runs `check:packages` with a read-only token, then counts the pending changesets.
+- **version** (pending changesets) opens or updates the **"chore(release): version packages"** PR. That PR bumps both `package.json` versions, writes `CHANGELOG.md` per package and deletes the changesets. Review the changelog like code.
+- **publish** (no pending changesets, so right after that PR is merged) runs inside the **`npm-publish` GitHub environment**: it waits until the maintainer approves the deployment (Actions → the run → *Review deployments*), and only `next` may deploy to it. It is the only job with `id-token: write`. It publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog. A run with nothing new to publish is a no-op, so approving it is harmless; rejecting it is how to hold a release.
+
+The environment was created on 2026-10-13 (`gh api PUT repos/jmlweb/svgworm/environments/npm-publish`, required reviewer `jmlweb`, custom branch policy `next`). Recreate it with the same name if the repo is moved.
 
 After it finishes:
 
@@ -32,7 +35,7 @@ Trusted publishing is configured per package on npmjs.com, and the form lives on
    cd ../react && npm publish --access public --provenance=false
    ```
    Do this with the real `0.1.0` versions (merge the version PR first, with the publish step expected to fail), or publish a `0.0.0` placeholder and let the workflow publish `0.1.0` right after.
-3. **Add a trusted publisher** on each package: Settings → Trusted publishing → GitHub Actions, organization `jmlweb`, repository `svgworm`, workflow filename `release.yml`, no environment. Allow `npm publish` and `npm dist-tag` for the publisher. The `repository.url` in both `package.json` files already points at `git+https://github.com/jmlweb/svgworm.git`. The configuration expires if the first publish does not happen within 2 days.
+3. **Add a trusted publisher** on each package: Settings → Trusted publishing → GitHub Actions, organization `jmlweb`, repository `svgworm`, workflow filename `release.yml`, environment `npm-publish` (the token is only minted inside that environment, so binding the publisher to it rejects a token from any other job). Allow `npm publish` and `npm dist-tag` for the publisher. The `repository.url` in both `package.json` files already points at `git+https://github.com/jmlweb/svgworm.git`. The configuration expires if the first publish does not happen within 2 days.
 4. After the first trusted publish succeeds, **disable token publishing** on both packages ("Require two-factor authentication and disallow tokens") so trusted publishing is the only path.
 5. **Record the launch date** of `0.1.0` in `docs/traction.md` and in TSK-018. It starts the 12-week kill-criteria clock ([ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)); the review is on launch + 84 days.
 
@@ -40,5 +43,5 @@ Pre-releases (if ever needed) use Changesets pre mode with the `next` dist-tag: 
 
 ## Open items
 
-- `pnpm changeset publish` calls `npm publish` for each package. The Node 24 runner's npm is upgraded to `latest` in the workflow to satisfy the npm ≥ 11.5.1 requirement of trusted publishing. If the first publish fails on OIDC, switch the `publish` input to a script that runs `pnpm pack` and `npm publish <tgz>` per package (ADR-0009, "Publish command").
+- `pnpm changeset publish` calls `npm publish` for each package. The Node 24 runner's npm is pinned to the `11` major in the workflow to satisfy the npm ≥ 11.5.1 requirement of trusted publishing. If the first publish fails on OIDC, switch the `publish` input to a script that runs `pnpm pack` and `npm publish <tgz>` per package (ADR-0009, "Publish command").
 - The `svgworm` and `@svgworm/react` names were free on 2026-10-12 (npm returns 404). Whether the `@svgworm` scope is free is only known when the org is created.
