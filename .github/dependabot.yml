@@ -1,0 +1,13 @@
+# Keeps the commit-pinned actions in release.yml current. npm dependencies are not
+# included: the @jmlweb/* tooling is bumped together by hand (AGENTS.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: 'ci(deps)'
+    groups:
+      actions:
+        patterns: ['*']

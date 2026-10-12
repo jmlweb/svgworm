@@ -4,6 +4,10 @@ name: Release
 # both packages through npm trusted publishing (OIDC, no stored token) and creates the
 # GitHub releases. The npm side (org, trusted publisher per package pointing at this file)
 # is set up by hand before the first release: see docs/release.md.
+#
+# This job can mint an npm token and push to the repo, so every action is pinned to a commit
+# (Dependabot bumps them) and the toolchain is pinned to a major, and the same checks CI runs
+# gate the publish.
 on:
   push:
     branches: [next]
@@ -24,25 +28,27 @@ jobs:
     # Forks have no npm trusted publisher and must not open version PRs.
     if: github.repository == 'jmlweb/svgworm'
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
       # Trusted publishing needs npm >= 11.5.1 (the Node 24 runner ships a newer one; this
-      # keeps it true if the runner image changes).
-      - run: npm install -g npm@latest
+      # keeps it true if the runner image changes, without following an unpinned `latest`).
+      - run: npm install -g npm@11
       - run: npm --version
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
       - run: pnpm check:packages
       - name: Version packages or publish
         id: changesets
-        uses: changesets/action@v2
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           publish-script: pnpm changeset publish
           commit-message: 'chore(release): version packages'
@@ -54,4 +60,6 @@ jobs:
           NPM_CONFIG_PROVENANCE: 'true'
       - name: Published packages
         if: steps.changesets.outputs.published == 'true'
-        run: echo '${{ steps.changesets.outputs.published-packages }}'
+        env:
+          PUBLISHED: ${{ steps.changesets.outputs.published-packages }}
+        run: echo "$PUBLISHED"
