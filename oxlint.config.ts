@@ -60,6 +60,7 @@ export default defineConfig({
     '**/dist/**',
     '**/.next/**',
     'examples/*/svgworm/**',
+    'evals/agent/fixture/**',
     'fixtures/**',
     // Snapshot files hold exact generated output.
     '**/__snapshots__/**',
@@ -83,7 +84,7 @@ export default defineConfig({
     },
     {
       // These scripts and the bin shim import build output that does not exist at lint time.
-      files: ['scripts/**', 'packages/*/bin/**'],
+      files: ['scripts/**', 'packages/*/bin/**', 'evals/**/*.mjs'],
       rules: { 'n/no-missing-import': 'off' },
     },
     {

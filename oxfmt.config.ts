@@ -7,6 +7,7 @@ export default defineConfig({
     '**/dist/**',
     '**/.next/**',
     'examples/*/svgworm/**',
+    'evals/agent/fixture/**',
     'pnpm-lock.yaml',
     'fixtures/**',
     // Generated output samples are byte-exact: formatting would change them.

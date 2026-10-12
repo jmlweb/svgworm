@@ -1,0 +1,1 @@
+Add the icons from `icons/` to `app/page.tsx`: each nav link gets its UI icon before the text, and each "Built with" badge gets its brand icon. Keep the page a Server Component, keep brand icons in their original colors, make UI icons follow the text color, and make sure `pnpm build` passes. Install whatever you need with pnpm. Do not change the README.
