@@ -36,5 +36,5 @@ An unknown name fails type-checking at every size (the consumer carries a `@ts-e
 ## Consequences
 
 - Q-30 is closed; `docs/output-contract.md` drops the "deferred" note, and TSK-021 (multiple sprites) does not need to revisit the type shape.
-- The generated `.d.ts` grows linearly (about 21 bytes per name). At 20,000 names it is 419 KB, which only the type-checker reads.
+- The generated `.d.ts` grows linearly (about 21 bytes per name). At 20,000 names it is 409 KB, which only the type-checker reads.
 - If a user ever reports a slow check, the first suspect is the consumer (number of call sites or a wide `Record<IconName, …>` built from it), not the union. Reopen with a reproduction, not a size.
