@@ -9,7 +9,7 @@
   "scripts": {
     "build": "pnpm --filter \"./packages/*\" build",
     "typecheck": "pnpm -r typecheck",
-    "typecheck:ts7": "pnpm -r exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
+    "typecheck:ts7": "pnpm --filter \"./packages/*\" exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
