@@ -116,3 +116,21 @@ describe('rewriteToCurrentColor', () => {
     expect(classifyIcon(parsed.root).colors).toEqual(['currentColor']);
   });
 });
+
+describe('edge cases (ADR-0013)', () => {
+  it('recolors marker content of a mono icon', () => {
+    const output = rewrite(
+      svg(
+        '<defs><marker id="m" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3 0 6z" fill="#333"/></marker></defs><path d="M3 12h13" fill="none" stroke="#333" stroke-width="2" marker-end="url(#m)"/>',
+      ),
+    );
+    expect(output).toContain('<marker');
+    expect(output.match(/currentColor/g)).toHaveLength(2);
+    expect(output).not.toContain('#333');
+  });
+
+  it('leaves a CSS variable paint alone', () => {
+    const variable = svg('<path fill="var(--icon, #1e1e1e)" d="M0 0h10v10z"/>');
+    expect(rewrite(variable)).toContain('fill="var(--icon, #1e1e1e)"');
+  });
+});

@@ -11,7 +11,7 @@
 
 - Only use icons with an **OSS-compatible license** (MIT, ISC, Apache-2.0, CC0). Record the source and license in `fixtures/LICENSES.md`.
 - Never commit the old `svg/` folder from `main`. It looks like proprietary Flaticon/Freepik assets.
-- The fixture set must cover these cases: mono fill, stroke-only, multicolor, gradients, masks, clipPath, filters, nested `<svg>`, `<style>` blocks, internal id refs, duplicate names in different folders, non-ASCII file names, and invalid SVG.
+- The fixture set must cover these cases: mono fill, stroke-only, multicolor, gradients, masks, clipPath, filters, markers, CSS variable paints, SMIL color animations, nested `<svg>`, `<style>` blocks, internal id refs, duplicate names in different folders, non-ASCII file names, and invalid SVG.
 
 ## Strategy (runner confirmed by ADR-0008)
 

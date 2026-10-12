@@ -26,7 +26,7 @@ Files marked "Iconify" were rebuilt from the package's `icons.json` body, wrappe
 | `internal-refs/flat-color-up-right.svg` | @iconify-json/flat-color-icons 1.2.3, `up-right` (Iconify) | MIT |
 | `duplicates/actions/close.svg` | lucide-static 1.52.0, `icons/x.svg` | ISC |
 | `duplicates/arrows/close.svg` | heroicons 2.2.0, `24/outline/x-mark.svg` | MIT |
-| `mask/knockout.svg`, `mixed-fill-stroke/*`, `nested-svg/*`, `style/unscopable-media.svg`, `non-ascii/*`, `invalid/*`, `viewbox-derived/*` | Written for svgworm | CC0-1.0 |
+| `mask/knockout.svg`, `mixed-fill-stroke/*`, `nested-svg/*`, `style/unscopable-media.svg`, `non-ascii/*`, `invalid/*`, `viewbox-derived/*`, `markers/*`, `css-variables/*`, `animation/*` | Written for svgworm | CC0-1.0 |
 
 ## Copyright notices
 

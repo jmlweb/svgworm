@@ -43,6 +43,6 @@ Principle 6 says color handling is decided per icon. The old prototype set `fill
 
 - Zero-config color handling becomes a concrete differentiator against @neodx/svg's defaults.
 - The core needs inheritance-aware SVG traversal (`<use>`, gradients, filters, masks). The parser and optimizer choice (TSK-009) must support it.
-- Markers, CSS variables, color animations, and text are not covered yet. Until they are, treat them as multicolor.
+- Markers, CSS variables, color animations, and text are not covered yet. Until they are, treat them as multicolor. _Markers, CSS variables and SMIL color animations are covered by [ADR-0013](0013-color-classification-edge-cases.md); text stays open._
 - The rewrite was only checked against resvg. TSK-002 must confirm it in Chromium, Firefox, and WebKit.
 - The output contract draft changes (`color: mono | multicolor`). It isn't accepted yet, so no semver note is needed.

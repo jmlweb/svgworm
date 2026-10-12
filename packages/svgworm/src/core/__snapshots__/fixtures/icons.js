@@ -4,21 +4,42 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.94d3c60e.svg",
-        "url": "/icons/icons.94d3c60e.svg"
+        "file": "icons.9af272b0.svg",
+        "url": "/icons/icons.9af272b0.svg"
       },
       "stack": {
-        "file": "icons.stack.dc0de9ff.svg",
-        "url": "/icons/icons.stack.dc0de9ff.svg"
+        "file": "icons.stack.d2afff96.svg",
+        "url": "/icons/icons.stack.d2afff96.svg"
       }
     }
   },
   "icons": {
+    "animation/pulse-fill": {
+      "sprite": "icons",
+      "id": "i-animation--pulse-fill",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "animation/spin": {
+      "sprite": "icons",
+      "id": "i-animation--spin",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
     "clip-path/fluent-paperclip": {
       "sprite": "icons",
       "id": "i-clip-path--fluent-paperclip",
       "viewBox": "0 0 32 32",
       "color": "mono",
+      "delivery": "use"
+    },
+    "css-variables/themed-fill": {
+      "sprite": "icons",
+      "id": "i-css-variables--themed-fill",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
       "delivery": "use"
     },
     "duplicates/actions/close": {
@@ -69,6 +90,20 @@ export const manifest = {
       "viewBox": "0 0 256 348",
       "color": "mono",
       "delivery": "use"
+    },
+    "markers/arrow-mono": {
+      "sprite": "icons",
+      "id": "i-markers--arrow-mono",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "mask"
+    },
+    "markers/arrow-two-tone": {
+      "sprite": "icons",
+      "id": "i-markers--arrow-two-tone",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "img"
     },
     "mask/knockout": {
       "sprite": "icons",

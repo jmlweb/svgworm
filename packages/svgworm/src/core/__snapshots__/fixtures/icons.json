@@ -1,7 +1,22 @@
 [
   {
+    "name": "animation/pulse-fill",
+    "color": "multicolor",
+    "delivery": "use"
+  },
+  {
+    "name": "animation/spin",
+    "color": "mono",
+    "delivery": "use"
+  },
+  {
     "name": "clip-path/fluent-paperclip",
     "color": "mono",
+    "delivery": "use"
+  },
+  {
+    "name": "css-variables/themed-fill",
+    "color": "multicolor",
     "delivery": "use"
   },
   {
@@ -38,6 +53,16 @@
     "name": "internal-refs/logos-dropmark",
     "color": "mono",
     "delivery": "use"
+  },
+  {
+    "name": "markers/arrow-mono",
+    "color": "mono",
+    "delivery": "mask"
+  },
+  {
+    "name": "markers/arrow-two-tone",
+    "color": "multicolor",
+    "delivery": "img"
   },
   {
     "name": "mask/knockout",

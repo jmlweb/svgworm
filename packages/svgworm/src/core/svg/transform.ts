@@ -1,6 +1,7 @@
 import { ColorMode } from '../config/schema.ts';
 import { DiagnosticCode, type Diagnostic } from '../errors.ts';
 import { classifyIcon, ColorKind } from './color/classify.ts';
+import { describePaintFlag } from './color/paint.ts';
 import { rewriteToCurrentColor } from './color/rewrite.ts';
 import { renameIds } from './ids.ts';
 import {
@@ -130,7 +131,7 @@ export const transformIcon = (input: TransformInput): TransformResult => {
           error: {
             code: DiagnosticCode.FORCED_MONO_UNSAFE,
             file,
-            message: `color "mono" is forced, but the icon has ${classification.flags.join(' and ')} content that cannot follow currentColor`,
+            message: `color "mono" is forced, but the icon has ${classification.flags.map(describePaintFlag).join(' and ')}, which cannot follow currentColor`,
           },
         };
       }

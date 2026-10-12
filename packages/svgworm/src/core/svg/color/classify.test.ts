@@ -295,3 +295,59 @@ describe('fixtures', () => {
     ).toBe(true);
   });
 });
+
+describe('edge cases (ADR-0013)', () => {
+  const marker = (fill: string): string =>
+    `<defs><marker id="m" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3 0 6z" fill="${fill}"/></marker></defs><path d="M3 12h13" fill="none" stroke="#333" stroke-width="2" marker-end="url(#m)"/>`;
+
+  it('counts marker content, from the root state', () => {
+    expect(kindOf(marker('#333'))).toBe('mono');
+    expect(kindOf(marker('#c00'))).toBe('multicolor');
+    // A marker that relies on the default fill paints black, not the stroke color.
+    expect(kindOf(marker('').replace(' fill=""', ''))).toBe('multicolor');
+    expect(classify(fixture('markers/arrow-mono.svg')).kind).toBe('mono');
+    expect(classify(fixture('markers/arrow-two-tone.svg')).kind).toBe(
+      'multicolor',
+    );
+  });
+
+  it('flags a CSS variable paint as themed already (multicolor, never rewritten)', () => {
+    const result = classify(
+      svg('<path fill="var(--icon, #1e1e1e)" d="M0 0h10v10z"/>'),
+    );
+    expect(result.kind).toBe('multicolor');
+    expect(result.flags).toEqual(['variable']);
+    expect(
+      kindOf(
+        '<g color="var(--c)"><path fill="currentColor" d="M0 0h10v10z"/></g>',
+      ),
+    ).toBe('multicolor');
+    expect(classify(fixture('css-variables/themed-fill.svg')).flags).toEqual([
+      'variable',
+    ]);
+  });
+
+  it('flags a SMIL animation of a paint property, not of a transform', () => {
+    expect(
+      classify(
+        svg(
+          '<circle cx="12" cy="12" r="8" fill="#333"><animate attributeName="fill" values="#333;#c00;#333" dur="1s"/></circle>',
+        ),
+      ),
+    ).toMatchObject({ kind: 'multicolor', flags: ['animation'] });
+    expect(
+      kindOf(
+        '<path fill="#333" d="M0 0h10v10z"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="1s"/></path>',
+      ),
+    ).toBe('mono');
+    expect(
+      kindOf(
+        '<path fill="#333" d="M0 0h10v10z"><set attributeName="stroke" to="#c00"/></path>',
+      ),
+    ).toBe('multicolor');
+    expect(classify(fixture('animation/pulse-fill.svg')).kind).toBe(
+      'multicolor',
+    );
+    expect(classify(fixture('animation/spin.svg')).kind).toBe('mono');
+  });
+});

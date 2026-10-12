@@ -17,8 +17,40 @@ export const PaintAttr = {
 } as const;
 export type PaintAttr = (typeof PaintAttr)[keyof typeof PaintAttr];
 
-export const PaintFlag = { IMAGE: 'image', PATTERN: 'pattern' } as const;
+/** Content that can never follow `currentColor`, so the icon stays multicolor (ADR-0004, ADR-0013). */
+export const PaintFlag = {
+  IMAGE: 'image',
+  PATTERN: 'pattern',
+  /** A `var(--…)` paint: the author already made the color themeable. */
+  VARIABLE: 'variable',
+  /** SMIL animates a paint property, so the icon has no single color. */
+  ANIMATION: 'animation',
+} as const;
 export type PaintFlag = (typeof PaintFlag)[keyof typeof PaintFlag];
+
+export const describePaintFlag = (flag: PaintFlag): string => {
+  switch (flag) {
+    case PaintFlag.IMAGE:
+      return 'raster or foreign content';
+    case PaintFlag.PATTERN:
+      return 'a pattern fill';
+    case PaintFlag.VARIABLE:
+      return 'a CSS variable paint';
+    case PaintFlag.ANIMATION:
+      return 'a color animation';
+  }
+};
+
+const MARKER_ATTRIBUTES = [
+  'marker-start',
+  'marker-mid',
+  'marker-end',
+  'marker',
+];
+const ANIMATION_ELEMENTS = new Set(['animate', 'set', 'animateColor']);
+const ANIMATED_PAINT = new Set<string>([...Object.values(PaintAttr), 'color']);
+
+const isVariable = (value: string): boolean => /\bvar\(/i.test(value);
 
 /** One effective paint value. `node` is null for the SVG default (a black fill). */
 export type PaintSite = {
@@ -138,6 +170,10 @@ export const collectPaints = (root: XastRoot): PaintAnalysis => {
     state: State,
   ): void => {
     if (isNone(value)) return;
+    if (isVariable(value)) {
+      flags.add(PaintFlag.VARIABLE);
+      return;
+    }
     const id = parseUrlId(value);
     if (id !== undefined) {
       const target = ids.get(id);
@@ -204,6 +240,17 @@ export const collectPaints = (root: XastRoot): PaintAnalysis => {
     });
   };
 
+  // `owner: null` marks the SVG default (black fill), which the rewrite makes explicit.
+  const rootState: State = {
+    fill: { value: 'black', owner: null },
+    stroke: { value: 'none', owner: null },
+    color: CURRENT_COLOR,
+    viaUse: false,
+    fillOpacity: undefined,
+    strokeOpacity: undefined,
+    strokeWidth: undefined,
+  };
+
   const visit = (
     node: XastElement,
     inherited: State,
@@ -218,8 +265,13 @@ export const collectPaints = (root: XastRoot): PaintAnalysis => {
     }
 
     const colorAttr = attrs['color'];
+    if (colorAttr !== undefined && isVariable(colorAttr)) {
+      flags.add(PaintFlag.VARIABLE);
+    }
     const ownColor =
-      colorAttr !== undefined && colorAttr !== 'inherit'
+      colorAttr !== undefined &&
+      colorAttr !== 'inherit' &&
+      !isVariable(colorAttr)
         ? normalizeColor(colorAttr)
         : CURRENT_COLOR;
     const fillAttr = attrs['fill'];
@@ -260,6 +312,25 @@ export const collectPaints = (root: XastRoot): PaintAnalysis => {
       ) {
         resolvePaint(state.stroke, PaintAttr.STROKE, state.stroke.value, state);
       }
+      // Marker content paints too. It inherits from the marker's own ancestors (the root),
+      // not from the shape that references it (SVG 2, "Marker properties"), so it starts from
+      // the root state (ADR-0013).
+      MARKER_ATTRIBUTES.forEach((attribute) => {
+        const value = attrs[attribute];
+        const markerId = value === undefined ? undefined : parseUrlId(value);
+        const marker = markerId === undefined ? undefined : ids.get(markerId);
+        if (
+          markerId !== undefined &&
+          marker?.name === 'marker' &&
+          !useStack.has(markerId)
+        ) {
+          visit(
+            marker,
+            { ...rootState, viaUse: true },
+            new Set([...useStack, markerId]),
+          );
+        }
+      });
     }
 
     if (node.name === 'use') {
@@ -275,22 +346,19 @@ export const collectPaints = (root: XastRoot): PaintAnalysis => {
     });
   };
 
+  // An animated paint has no single value, wherever the animation element sits.
+  walkElements(root, (element) => {
+    const target = element.attributes['attributeName'];
+    if (
+      ANIMATION_ELEMENTS.has(element.name) &&
+      (element.name === 'animateColor' ||
+        (target !== undefined && ANIMATED_PAINT.has(target)))
+    ) {
+      flags.add(PaintFlag.ANIMATION);
+    }
+  });
+
   const svg = root.children.find(isElement);
-  if (svg !== undefined) {
-    // `owner: null` marks the SVG default (black fill), which the rewrite makes explicit.
-    visit(
-      svg,
-      {
-        fill: { value: 'black', owner: null },
-        stroke: { value: 'none', owner: null },
-        color: CURRENT_COLOR,
-        viaUse: false,
-        fillOpacity: undefined,
-        strokeOpacity: undefined,
-        strokeWidth: undefined,
-      },
-      new Set(),
-    );
-  }
+  if (svg !== undefined) visit(svg, rootState, new Set());
   return { sites, flags };
 };
