@@ -1,0 +1,57 @@
+name: Release
+
+# ADR-0009: Changesets keeps a "Version Packages" PR open on `next`. Merging it publishes
+# both packages through npm trusted publishing (OIDC, no stored token) and creates the
+# GitHub releases. The npm side (org, trusted publisher per package pointing at this file)
+# is set up by hand before the first release: see docs/release.md.
+on:
+  push:
+    branches: [next]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Version PR or publish
+    runs-on: ubuntu-latest
+    # Forks have no npm trusted publisher and must not open version PRs.
+    if: github.repository == 'jmlweb/svgworm'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm >= 11.5.1 (the Node 24 runner ships a newer one; this
+      # keeps it true if the runner image changes).
+      - run: npm install -g npm@latest
+      - run: npm --version
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm check:packages
+      - name: Version packages or publish
+        id: changesets
+        uses: changesets/action@v2
+        with:
+          publish: pnpm changeset publish
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Belt and braces (ADR-0009): provenance is automatic under trusted publishing,
+          # and asking for it explicitly costs nothing.
+          NPM_CONFIG_PROVENANCE: 'true'
+      - name: Published packages
+        if: steps.changesets.outputs.published == 'true'
+        run: echo '${{ steps.changesets.outputs.publishedPackages }}'

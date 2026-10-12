@@ -1,0 +1,31 @@
+name: Traction snapshot
+
+# Appends one row of leading indicators and kill-criteria inputs to docs/metrics/traction.jsonl
+# (TSK-033, ADR-0005). GitHub traffic data lives 14 days, so the log is the history.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    if: github.repository == 'jmlweb/svgworm'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/traction-snapshot.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit the row
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/metrics/traction.jsonl
+          git diff --cached --quiet || git commit -m 'chore(metrics): weekly traction snapshot'
+          git push

@@ -1,0 +1,7 @@
+{
+  "$comment": "Facts only a human knows, merged into each traction snapshot (scripts/traction-snapshot.mjs). Keep it current.",
+  "launchDate": null,
+  "starters": [],
+  "targetListPrs": { "opened": 0, "merged": 0 },
+  "agentEval": null
+}
