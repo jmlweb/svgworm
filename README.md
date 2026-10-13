@@ -2,7 +2,7 @@
 
 > Turn a folder of SVG files into type-safe, cacheable SVG sprites. A framework-agnostic CLI with deterministic output, plus a thin React adapter that works in Server Components with zero client JavaScript.
 
-**Status: pre-alpha, v0.1 in progress.** The CLI builds sprites, a manifest and types. The React adapter (`@svgworm/react`) has `createIcon`. Nothing is on npm yet, so the commands below use the repo build until v0.1.0 is published. The previous prototype lives on the `prototype` branch and is kept only as a reference.
+**Status: v0.1.0 on npm since 2026-10-13** ([svgworm](https://www.npmjs.com/package/svgworm), [@svgworm/react](https://www.npmjs.com/package/@svgworm/react)). The CLI builds sprites, a manifest and types, with `check`, `watch` and `init`; the React adapter has `createIcon`. Before 1.0 the output contract and flags can still change in a minor version, and each change is in the [changelog](packages/svgworm/CHANGELOG.md). The previous prototype lives on the `prototype` branch and is kept only as a reference.
 
 ## Why
 
@@ -18,24 +18,16 @@ See [how it compares](docs/comparison.md) with SVGR, @neodx/svg and vite-plugin-
 
 Requires Node `^22.20 || >=24.11`.
 
-The short version, once v0.1.0 is on npm: `pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`. It asks a few questions (or takes flags with `--yes`), writes `svgworm.config.json`, adds `predev` and `prebuild` scripts, and creates `components/icon.tsx`. The steps below are what it sets up.
+The short version: `pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`. It asks a few questions (or takes flags with `--yes`), writes `svgworm.config.json`, adds `predev` and `prebuild` scripts, and creates `components/icon.tsx`. The steps below are what it sets up.
 
 1. Put your SVG files in `icons/`.
 
-2. Install and build the sprite. After the v0.1.0 release:
+2. Install and build the sprite:
 
    ```bash
    pnpm add -D svgworm
    pnpm add @svgworm/react
    pnpm svgworm --source icons
-   ```
-
-   Before it, build from this repo and point the CLI at your folder:
-
-   ```bash
-   git clone https://github.com/jmlweb/svgworm && cd svgworm
-   pnpm install && pnpm build
-   node packages/svgworm/dist/cli/main.js --source fixtures/mono-fill
    ```
 
    This writes the sprite to `public/icons/` and the manifest and types to `svgworm/`:
@@ -158,6 +150,8 @@ It prints stats at the end (icons, sprites, sizes, savings, time). When stdout i
 | [docs/output-contract.md](docs/output-contract.md) | v0.1 contract of what the CLI generates           |
 | [docs/open-questions.md](docs/open-questions.md)   | Unresolved questions that feed the spikes         |
 | [docs/adr/](docs/adr/)                             | Architecture Decision Records                     |
+| [docs/release.md](docs/release.md)                 | How a version reaches npm, and the one-time setup |
+| [docs/traction.md](docs/traction.md)               | Adoption plan and the 12-week kill criteria       |
 | [llms.txt](llms.txt)                               | Summary for AI agents                             |
 
 ## For AI agents

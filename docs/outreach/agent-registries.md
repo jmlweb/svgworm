@@ -1,6 +1,6 @@
 # Agent discoverability submissions (TSK-031)
 
-What to submit, where, and the exact text. Both work best once `svgworm@0.1.0` is on npm, because Context7 and skill registries rank by what agents can install. The maintainer submits; nothing here publishes on its own.
+What to submit, where, and the exact text. `svgworm@0.1.0` has been on npm since 2026-10-13, which both need, because Context7 and skill registries rank by what agents can install. The maintainer submits; nothing here publishes on its own.
 
 ## 1. Context7
 

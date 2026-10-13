@@ -56,7 +56,7 @@ So the rewrite replaces each paint value on the element that declares it, freeze
 
 This is the core of [svgworm](https://github.com/jmlweb/svgworm), a CLI that turns a folder of SVGs into a hashed sprite plus a manifest and TypeScript types, with a React Server Component `Icon` that ships zero client JavaScript. Color is decided per icon with the rules above, and it can be overridden per glob when you know better.
 
-It is pre-release. The classification spike, the browser rendering tests (gradients and masks do not render through an external `<use>` in WebKit, so those icons take a different path), and an honest [comparison with SVGR and @neodx/svg](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md) are all in the repo. If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
+Version 0.1.0 is on npm (`pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`). The classification spike, the browser rendering tests (gradients and masks do not render through an external `<use>` in WebKit, so those icons take a different path), and an honest [comparison with SVGR and @neodx/svg](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md) are all in the repo. If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
 
 ---
 
@@ -76,4 +76,4 @@ The example app in `examples/next-app-router` renders row 3 already; rows 1 and 
 2. Ground truth by rendering, not by reading the file. Classifier: static analysis of effective fill/stroke, gradients included.
 3. 99.98% agreement. Zero multicolor icons recolored. 21,667 mono rewrites, all pixel-identical in the new color.
 4. The trap: `fill="currentColor"` on the root breaks masks. Mask luminance follows the text color and the shape disappears. Rewrite per element, freeze masks.
-5. This is what svgworm does by default, in a Next.js Server Component with zero client JS. Pre-release, numbers and code: [repo link]. Post: [link].
+5. This is what svgworm does by default, in a Next.js Server Component with zero client JS. v0.1.0 is on npm; numbers and code: [repo link]. Post: [link].

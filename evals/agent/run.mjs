@@ -4,7 +4,7 @@
 //   node evals/agent/run.mjs --mode unprompted  the agent is only asked to add icons
 //
 // Options: --local (install svgworm and @svgworm/react from this repo's packages/ instead of
-// npm; required until v0.1.0 is published), --model <id>, --max-turns <n> (default 40),
+// npm, to evaluate unreleased changes), --model <id>, --max-turns <n> (default 40),
 // --budget <usd> (default 3), --keep (leave the temp folder), --dry-run (prepare only).
 //
 // It copies the fixture app to a temp folder, runs Claude Code in print mode with a limited
@@ -50,7 +50,7 @@ const workDir = await mkdtemp(join(tmpdir(), `svgworm-eval-${values.mode}-`));
 await cp(join(here, 'fixture'), workDir, { recursive: true });
 
 if (values.local) {
-  // Pre-release: make `pnpm add -D svgworm` resolve to the repo build. Requires `pnpm build`.
+  // Make `pnpm add -D svgworm` resolve to the repo build instead of npm. Requires `pnpm build`.
   const pkgPath = join(workDir, 'package.json');
   const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
   pkg.pnpm = {

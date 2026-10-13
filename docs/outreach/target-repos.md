@@ -1,6 +1,6 @@
 # Target repositories for migration PRs
 
-Public Next.js repos with their own SVG icon folder, for the direct-PR track of [traction.md](../traction.md) (TSK-030). PRs wait for v0.1.0 on npm. Each PR must show the diff in client JS and HTML size, answer the repo's own conventions, and disclose that we maintain svgworm.
+Public Next.js repos with their own SVG icon folder, for the direct-PR track of [traction.md](../traction.md) (TSK-030). v0.1.0 has been on npm since 2026-10-13, so the PRs can start. Each PR must show the diff in client JS and HTML size, answer the repo's own conventions, and disclose that we maintain svgworm.
 
 Built on 2026-10-12. Re-run the queries before opening PRs: repos move, and some will have migrated or gone quiet.
 

@@ -16,4 +16,4 @@ The icon is `aria-hidden` unless you pass `title` or `label`. Size, `className` 
 
 Quick start and docs: <https://github.com/jmlweb/svgworm#readme>.
 
-Pre-alpha: v0.1 in progress.
+Status: 0.1.x, versioned together with `svgworm`. The props can still change in a minor version before 1.0; see the changelog.

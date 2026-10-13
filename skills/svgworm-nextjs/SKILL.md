@@ -72,7 +72,7 @@ Facts an agent should rely on:
 
 ## Config
 
-`svgworm.config.json` (optional, JSON Schema at `svgworm/schema.json` once published):
+`svgworm.config.json` (optional, JSON Schema at `https://unpkg.com/svgworm/svgworm.schema.json`, also exported as `svgworm/schema.json`):
 
 ```json
 {

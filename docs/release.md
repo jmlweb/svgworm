@@ -25,9 +25,13 @@ After it finishes:
 2. Smoke test from a clean folder: `pnpm add -D svgworm@x.y.z @svgworm/react@x.y.z`, run `svgworm init --yes`, `svgworm`, and build the Next.js example against the published versions.
 3. Check real Safari and iOS by hand on the example (Playwright's WebKit is not Safari; `testing.md`).
 
-## One-time setup before v0.1.0 (maintainer, needs npm login)
+## One-time setup (maintainer, needs npm login)
 
-Trusted publishing is configured per package on npmjs.com, and the form lives on an existing package's settings page. The npm docs do not say whether an unpublished package can get a trusted publisher, so the safe order is:
+Status on 2026-10-13: steps 1, 2 and 5 are done (org created, both packages published by hand at 0.1.0 and approved out of npm's staging, launch date recorded). Steps 3 and 4 are still open; until they are done, the publish job will fail at `npm publish` and the next release needs a manual publish again.
+
+Lessons from the first publish (LRN-032): run `npm publish --dry-run` first and read every `npm warn publish` line (npm 11.6 dropped a `bin` path that started with `./`); a brand-new package may be staged by the registry, which shows up as a public `0.0.0-stage` placeholder until the real version is approved on npmjs.com with 2FA; and a shell that cannot prompt needs `--otp=<code>`.
+
+Trusted publishing is configured per package on npmjs.com, and the form lives on an existing package's settings page, so the order is:
 
 1. **Create the npm org `svgworm`** so the `@svgworm` scope exists.
 2. **First publish by hand**, once, with 2FA, so both packages exist:
@@ -46,4 +50,5 @@ Pre-releases (if ever needed) use Changesets pre mode with the `next` dist-tag: 
 ## Open items
 
 - `pnpm changeset publish` calls `npm publish` for each package. The Node 24 runner's npm is pinned to the `11` major in the workflow to satisfy the npm ≥ 11.5.1 requirement of trusted publishing. If the first publish fails on OIDC, switch the `publish` input to a script that runs `pnpm pack` and `npm publish <tgz>` per package (ADR-0009, "Publish command").
-- The `svgworm` and `@svgworm/react` names were free on 2026-10-12 (npm returns 404). Whether the `@svgworm` scope is free is only known when the org is created.
+- The registry's staging left a public `0.0.0-stage` placeholder version on both packages. Deprecate them once (`npm deprecate svgworm@0.0.0-stage "staging placeholder"`, same for `@svgworm/react`), with 2FA, so `npm view` and the package pages stop listing them as real versions.
+- The hand-published 0.1.0 tarballs have no provenance attestation. The first workflow release will, and the README provenance badge check above applies from then on.

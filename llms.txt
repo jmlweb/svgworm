@@ -1,6 +1,6 @@
 # svgworm
 
-> CLI that turns a folder of SVG files into type-safe, content-hashed SVG sprites, a manifest and TypeScript types. A thin React adapter (@svgworm/react) renders icons in Server Components with zero client JavaScript. Status: pre-alpha, v0.1 in progress, not yet on npm.
+> CLI that turns a folder of SVG files into type-safe, content-hashed SVG sprites, a manifest and TypeScript types. A thin React adapter (@svgworm/react) renders icons in Server Components with zero client JavaScript. Status: v0.1.0 on npm since 2026-10-13 (`svgworm`, `@svgworm/react`); flags and output can still change in a minor before 1.0.
 
 Use it when a Next.js App Router (or any) app has its own folder of SVG icons and needs: no client JS, icon names checked at compile time, correct colors per icon (mono follows currentColor, multicolor is kept), gradients/masks/filters that render in Chromium, Firefox and WebKit, and byte-identical output on every OS.
 
@@ -23,7 +23,7 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 - Flags: `--config <file>`, `--source <dir>` (repeatable), `--out-dir <dir>`, `--public-path <path>`, `--module-dir <dir>`, `--flatten`, `--json`. Flags override the config file. `--out-dir` needs `--public-path`.
 - `--json` prints one JSON document on stdout and nothing else.
 - Exit codes: 0 built or check up to date; 1 invalid SVG, name collision or I/O failure (nothing is written), or stale output from `check`; 2 usage or config error, or no SVG files found.
-- Config file `svgworm.config.json` has a JSON Schema: https://raw.githubusercontent.com/jmlweb/svgworm/main/packages/svgworm/svgworm.schema.json (`svgworm/schema.json` once published).
+- Config file `svgworm.config.json` has a JSON Schema: https://unpkg.com/svgworm/svgworm.schema.json (also importable as `svgworm/schema.json`). Use it as `"$schema"` in the config file.
 
 ## Docs
 

@@ -1,6 +1,6 @@
 # Launch plan for v0.1.0 (draft)
 
-TSK-019. Everything here waits for `svgworm@0.1.0` on npm ([release.md](../release.md)). The pre-launch post ([posts/per-icon-color.md](../posts/per-icon-color.md), TSK-028) goes out first, so launch day links to it instead of explaining the color result again.
+TSK-019. `svgworm@0.1.0` has been on npm since 2026-10-13 ([release.md](../release.md)), so everything here can start. The pre-launch post ([posts/per-icon-color.md](../posts/per-icon-color.md), TSK-028) goes out first, so launch day links to it instead of explaining the color result again.
 
 ## Launch post
 
@@ -13,7 +13,7 @@ Structure (each claim links to its spike or the example):
 3. The two results: per-icon color (31k icons, 99.98%, zero recolored; link the pre-launch post) and gradients/masks that render in Chromium, Firefox and WebKit through the stack file ([TSK-002](../../spikes/TSK-002-external-use/RESULTS.md), [TSK-004](../../spikes/TSK-004-sprite-url/RESULTS.md)).
 4. The Turbopack comparison with @neodx/svg, pointing at the upstream issues we opened ([neodx-issues.md](neodx-issues.md)) and at [comparison.md](../comparison.md), including where neodx or SVGR is the better pick.
 5. Zero client JS, proven: the example's chunk check ([examples/next-app-router](../../examples/next-app-router)).
-6. What it does not do (several sprites, inline sprite, incremental watch, other frameworks) and the kill criteria, in the open: we review adoption after 12 weeks.
+6. What it does not do (several sprites, inline sprite, other frameworks) and the kill criteria, in the open: we review adoption on 2027-01-05, 12 weeks after publish.
 
 ## Submissions (launch week)
 
