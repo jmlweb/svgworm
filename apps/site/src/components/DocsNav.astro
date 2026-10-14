@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Props = {
+  readonly current: string;
+  readonly docs: readonly CollectionEntry<'docs'>[];
+};
+
+const { current, docs } = Astro.props;
+const REPO = 'https://github.com/jmlweb/svgworm';
+---
+
+<nav aria-label="Documentation" class="docs-nav">
+  <p class="docs-nav-title">Docs</p>
+  <ul>
+    {
+      docs.map((doc) => (
+        <li>
+          <a
+            aria-current={current === `/docs/${doc.id}/` ? 'page' : undefined}
+            href={`/docs/${doc.id}/`}
+          >
+            {doc.data.title}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="docs-nav-title">Reference</p>
+  <ul>
+    <li><a href={`${REPO}/blob/main/docs/output-contract.md`}>Output contract</a></li>
+    <li><a href="/llms.txt">llms.txt</a></li>
+    <li><a href={`${REPO}/tree/main/docs/adr`}>Decisions (ADRs)</a></li>
+  </ul>
+</nav>

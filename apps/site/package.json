@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@astrojs/sitemap": "3.7.4",
     "@svgworm/react": "workspace:*",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

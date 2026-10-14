@@ -6,15 +6,12 @@ import Install from './Install.astro';
 import Soil from './Soil.astro';
 
 type Props = {
-  readonly logoLight: string;
-  readonly logoDark: string;
   readonly spriteBytes: number;
 };
 
-const { logoLight, logoDark, spriteBytes } = Astro.props;
+const { spriteBytes } = Astro.props;
 
 const REPO = 'https://github.com/jmlweb/svgworm';
-const docs = (path: string) => `${REPO}/blob/main/${path}`;
 
 // The page shows the real sprite it was built with, so the samples are the live output.
 const spriteUrl = manifest.sprites.icons?.sprite?.url ?? '/icons/icons.svg';
@@ -56,24 +53,6 @@ const suggestions = ['terminal', 'shield-check', 'server'] as const;
 const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${terminalId}"/></svg>`;
 ---
 
-<a class="skip-link" href="#content">Skip to content</a>
-<header class="site-header">
-  <div class="wrap header-row">
-    <a aria-label="svgworm home" class="brand" href="/">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset={logoDark} />
-        <img alt="svgworm" height="40" src={logoLight} width="180" />
-      </picture>
-    </a>
-    <nav aria-label="Project links">
-      <a href={docs('docs/nextjs.md')}>Docs</a>
-      <a href={docs('docs/comparison.md')}>Compare</a>
-      <a class="nav-npm" href="https://www.npmjs.com/package/svgworm">npm</a>
-      <a class="nav-cta" href={REPO}>GitHub</a>
-    </nav>
-  </div>
-</header>
-
 <main id="content">
   <section class="hero">
     <div class="wrap hero-grid">
@@ -94,10 +73,10 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
         </p>
         <Install />
         <div class="actions">
-          <a class="button" href={docs('README.md#get-started')}>
+          <a class="button" href="/docs/nextjs/">
             Get started <Icon name="arrow-right" />
           </a>
-          <a class="button button-ghost" href={docs('docs/nextjs.md')}>
+          <a class="button button-ghost" href="/docs/nextjs/">
             <Icon name="book-open" /> Next.js guide
           </a>
         </div>
@@ -254,7 +233,7 @@ pnpm svgworm init</code></pre>
       </ol>
       <p class="more">
         Caching, <code>basePath</code> and manual setup are in the{' '}
-        <a href={docs('docs/nextjs.md')}>Next.js guide</a>. A complete app lives
+        <a href="/docs/nextjs/">Next.js guide</a>. A complete app lives
         in{' '}
         <a href={`${REPO}/tree/main/examples/next-app-router`}>
           examples/next-app-router
@@ -334,7 +313,7 @@ pnpm svgworm init</code></pre>
         <p>
           Everything works without a prompt: flags, <code>--json</code>, stable
           exit codes, a JSON Schema for the config, and{' '}
-          <a href={`${REPO}/blob/main/llms.txt`}>llms.txt</a>. The agent skill
+          <a href="/llms.txt">llms.txt</a>. The agent skill
           installs svgworm in a Next.js app and fixes every error code.
         </p>
       </div>
@@ -359,7 +338,7 @@ pnpm svgworm init</code></pre>
       </p>
       <Install />
       <div class="actions">
-        <a class="button" href={docs('README.md#get-started')}>
+        <a class="button" href="/docs/nextjs/">
           Get started <Icon name="arrow-right" />
         </a>
         <a class="button button-ghost" href={REPO}>
@@ -369,27 +348,3 @@ pnpm svgworm init</code></pre>
     </div>
   </section>
 </main>
-
-<footer class="site-footer">
-  <div class="wrap footer-row">
-    <img
-      alt=""
-      class="footer-mark"
-      height="32"
-      src="/favicon.svg"
-      width="32"
-    />
-    <p>
-      MIT licensed. Icons on this page are from{' '}
-      <a href="https://lucide.dev">Lucide</a> (ISC) and{' '}
-      <a href="https://github.com/microsoft/fluentui-emoji">Fluent Emoji</a> (MIT).
-    </p>
-    <nav aria-label="Docs">
-      <a href="https://www.npmjs.com/package/svgworm">npm</a>
-      <a href={docs('docs/cli.md')}>CLI</a>
-      <a href={docs('docs/config.md')}>Config</a>
-      <a href={docs('docs/output-contract.md')}>Output contract</a>
-      <a href={`${REPO}/tree/main/docs/adr`}>Decisions</a>
-    </nav>
-  </div>
-</footer>

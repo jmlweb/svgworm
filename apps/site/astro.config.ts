@@ -1,3 +1,4 @@
+import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
 // No @astrojs/react: Astro always emits a renderer's client entrypoint, which would put
@@ -8,4 +9,5 @@ export default defineConfig({
   output: 'static',
   // Inline the small stylesheet: one request fewer.
   build: { inlineStylesheets: 'always' },
+  integrations: [sitemap()],
 });
