@@ -36,7 +36,8 @@
     "Run `svgworm init --yes` to set a project up non-interactively; add `--agents-md` for an AGENTS.md section.",
     "Create the component once in a Server Component file with `createIcon(manifest)` from `@svgworm/react`, importing `manifest` from the generated `svgworm/icons.js`.",
     "Run `svgworm` in `predev` and `prebuild`, and `svgworm check` in CI; `check` exits 1 when the committed output is stale.",
-    "The sprite must be served from the same origin as the page; with a Next.js `basePath`, pass it in `--public-path`.",
+    "In an Astro project `svgworm init` writes a React-free `Icon.astro`; import it in `.astro` files and render `<Icon name=\"…\" />`.",
+    "The sprite must be served from the same origin as the page; with a Next.js `basePath` or an Astro `base`, include it in `--public-path`.",
     "Use `--json` for machine-readable output. Exit codes: 0 success, 1 invalid SVG, name collision, I/O failure or stale output, 2 usage or config error."
   ]
 }

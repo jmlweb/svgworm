@@ -77,7 +77,7 @@ export const Nav = () => (
 > [!TIP]
 > The icon is `aria-hidden` unless you pass `title` or `label`.
 
-Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](docs/nextjs.md). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
+Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.astro`, see the [Astro guide](docs/astro.md). Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](docs/nextjs.md). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
 
 ## How it compares
 
@@ -93,6 +93,7 @@ The full [comparison](docs/comparison.md) has spike numbers and says where each 
 ## Docs
 
 - 🧭 [Next.js guide](docs/nextjs.md): manual setup, caching for a year, `basePath`
+- 🚀 [Astro guide](docs/astro.md): the generated `Icon.astro`, caching, `base`
 - ⌨️ [CLI](docs/cli.md): commands, flags, exit codes, `check` in CI, `watch`
 - ⚙️ [Config](docs/config.md): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
 - 📦 [Output contract](docs/output-contract.md): exact shape of the generated files
@@ -105,6 +106,8 @@ Read [llms.txt](llms.txt). Everything is non-interactive: flags, `--json`, stabl
 ```bash
 npx skills add jmlweb/svgworm --skill svgworm-nextjs
 ```
+
+For an Astro site, use `--skill svgworm-astro`.
 
 ## Status
 

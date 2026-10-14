@@ -8,7 +8,7 @@ Requires Node ^22.20 || >=24.11. Package manager: pnpm.
 
 ## How to use it
 
-Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section in AGENTS.md). It writes `svgworm.config.json`, `predev`/`prebuild` scripts and `components/icon.tsx`, prints the install commands, and never overwrites a file that differs. Manual steps:
+Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section in AGENTS.md). It detects React/Next.js or Astro (`--framework <react|astro>` overrides; Astro wins when both are dependencies) and writes `svgworm.config.json`, `predev`/`prebuild` scripts and the component (`components/icon.tsx`, or a React-free `components/Icon.astro` for Astro), prints the install commands, and never overwrites a file that differs. Manual steps:
 
 1. Put SVG files in a folder, for example `icons/`.
 2. Run `svgworm --source icons`. It writes `public/icons/icons.<hash>.svg` (and `icons.stack.<hash>.svg` when an icon needs it) and, in `svgworm/`, `icons.js`, `icons.d.ts` and `manifest.json`.
@@ -19,7 +19,7 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 
 ## Non-interactive use
 
-- Commands: `build` (default), `check` (exit 1 if the committed output is stale, writes nothing), `watch` (rebuild on change), `init` (project setup). All take the config flags below; `init` also takes `--component-file <path>`, `--no-component`, `--no-scripts`, `--agents-md`, `--yes`, and prompts only on an interactive terminal.
+- Commands: `build` (default), `check` (exit 1 if the committed output is stale, writes nothing), `watch` (rebuild on change), `init` (project setup). All take the config flags below; `init` also takes `--framework <react|astro>`, `--component-file <path>`, `--no-component`, `--no-scripts`, `--agents-md`, `--yes`, and prompts only on an interactive terminal.
 - Flags: `--config <file>`, `--source <dir>` (repeatable), `--out-dir <dir>`, `--public-path <path>`, `--module-dir <dir>`, `--flatten`, `--json`. Flags override the config file. `--out-dir` needs `--public-path`.
 - `--json` prints one JSON document on stdout and nothing else.
 - Exit codes: 0 built or check up to date; 1 invalid SVG, name collision or I/O failure (nothing is written), or stale output from `check`; 2 usage or config error, or no SVG files found.
@@ -32,6 +32,8 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 - [CLI reference](https://github.com/jmlweb/svgworm/blob/main/docs/cli.md): commands, flags, exit codes
 - [Config reference](https://github.com/jmlweb/svgworm/blob/main/docs/config.md): `svgworm.config.json` keys
 - [Next.js setup](https://github.com/jmlweb/svgworm/blob/main/docs/nextjs.md): manual steps, caching headers, basePath
+- [Astro setup](https://github.com/jmlweb/svgworm/blob/main/docs/astro.md): the generated Icon.astro, caching headers, base
+- [Astro agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-astro/SKILL.md): step-by-step setup in an Astro app (install: `npx skills add jmlweb/svgworm --skill svgworm-astro`)
 - [Agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-nextjs/SKILL.md): step-by-step setup in a Next.js app and a fix for every error code (install: `npx skills add jmlweb/svgworm --skill svgworm-nextjs`)
 - [Next.js example](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router): runnable App Router app with Turbopack and a zero-client-JS check
 - [Comparison](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md): svgworm vs SVGR, @neodx/svg, vite-plugin-icons-spritesheet, with spike numbers and when each is better

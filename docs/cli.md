@@ -6,7 +6,7 @@ One command builds everything. The others check, watch, and set a project up.
 svgworm [build] [options]    Write the sprite, manifest and types (default)
 svgworm check [options]      Exit 1 if the committed output is stale. Writes nothing (CI)
 svgworm watch [options]      Build, then rebuild on every change in the source folders
-svgworm init [options]       Set a project up: config, predev/prebuild scripts, Icon wiring
+svgworm init [options]       Set a project up: config, predev/prebuild scripts, Icon wiring (React or Astro)
 
   --config <file>         Config file. Default: svgworm.config.json (optional)
   --source <dir>          Folder with the SVG files. Repeat for several folders
@@ -40,11 +40,14 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 
 | Flag                      | Effect                                                    |
 | ------------------------- | --------------------------------------------------------- |
-| `--component-file <path>` | Where to create the `Icon` component                      |
+| `--framework <name>`      | `react` or `astro`. Default: detected from the dependencies; Astro wins when both are present (a terminal asks) |
+| `--component-file <path>` | Where to create the `Icon` component. The extension must match the framework (`.tsx`/`.jsx` or `.astro`), or `init` exits 2 |
 | `--no-component`          | Skip the component                                        |
 | `--no-scripts`            | Skip the `predev` and `prebuild` scripts                  |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents  |
 | `--yes`                   | Accept every default without asking                       |
+
+`init` reports the framework it chose and why (`flag` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro guide](astro.md).
 
 It never overwrites a file that differs from what it would write, so re-running it is safe.
 

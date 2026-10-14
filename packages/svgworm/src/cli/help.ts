@@ -27,9 +27,10 @@ Options:
 Flags override the config file. --out-dir needs --public-path.
 
 Init options:
-  --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx
-                          (src/components/icon.tsx when src/ exists)
-  --no-component          Skip the Icon wiring (default: written when react or next is a dependency)
+  --framework <name>      react or astro. Default: detected from the dependencies (astro wins when both)
+  --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx or Icon.astro
+                          (under src/components/ when src/ exists)
+  --no-component          Skip the Icon wiring (default: written when react, next or astro is a dependency)
   --no-scripts            Do not add predev and prebuild scripts to package.json
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents
   -y, --yes               Take the defaults and flags without asking

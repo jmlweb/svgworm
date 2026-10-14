@@ -93,14 +93,14 @@ Backlog lives in `.backlog/`. Always use the flowstate skills; never edit index 
 - `docs/vision.md`: why and for whom
 - `docs/viability.md`: feasibility, risks, prototype lessons, competitors
 - `docs/requirements.md`: what (user stories)
-- `docs/cli.md`, `docs/config.md`, `docs/nextjs.md`: CLI reference, config keys, manual Next.js setup (the README links to them)
+- `docs/cli.md`, `docs/config.md`, `docs/nextjs.md`, `docs/astro.md`: CLI reference, config keys, manual Next.js setup, Astro setup with the generated `Icon.astro` (the README links to them)
 - `docs/output-contract.md`: the core/adapter boundary (generated files)
 - `docs/comparison.md`: honest comparison with SVGR, @neodx/svg and others (spike numbers)
 - `docs/traction.md`: how we get users and AI agents to adopt it (human and agent tracks, metrics)
 - `docs/release.md`: release checklist and the one-time npm trusted-publishing setup
 - `docs/metrics/`: weekly traction snapshots (`traction.jsonl`), `manual.json` for human-known facts, kill-criteria review via `scripts/traction-snapshot.mjs --review`
 - `docs/outreach/`: target repo list, upstream issue drafts, launch plan; `docs/posts/`: blog post drafts
-- `skills/svgworm-nextjs/SKILL.md`: the agent skill that sets svgworm up in a Next.js app
+- `skills/svgworm-nextjs/SKILL.md`, `skills/svgworm-astro/SKILL.md`: the agent skills that set svgworm up in a Next.js or an Astro app
 - `llms.txt`: summary for AI agents (keep in sync with the README get started, `docs/cli.md` and `docs/config.md`)
 - `docs/open-questions.md`: unknowns; each one should map to a task
 - `docs/adr/`: decisions, numbered and immutable once accepted (supersede, don't edit)
