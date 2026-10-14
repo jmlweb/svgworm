@@ -475,10 +475,13 @@ const a11y =
   accessibleName === undefined
     ? ({ 'aria-hidden': true } as const)
     : ({ role: 'img' } as const);
+// A bare number is pixels, as in React's style prop.
+const length = (value: string | number | null): string =>
+  typeof value === 'number' ? \`\${value}px\` : (value ?? '');
 const userStyle = typeof style === 'string' ? style : '';
 const maskStyle =
   icon.delivery === 'mask'
-    ? \`display:inline-block;width:\${width};height:\${height};background-color:currentColor;mask:url("\${fileUrl('stack')}") center / contain no-repeat;\${userStyle}\`
+    ? \`display:inline-block;width:\${length(width)};height:\${length(height)};background-color:currentColor;mask:url("\${fileUrl('stack')}") center / contain no-repeat;\${userStyle}\`
     : undefined;
 ---
 {

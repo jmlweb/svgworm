@@ -393,6 +393,8 @@ describe('planInit: Astro', () => {
     expect(content).toContain("'aria-hidden': true");
     expect(content).toContain("delivery === 'img'");
     expect(content).toContain("delivery === 'mask'");
+    // A bare number is pixels in the mask style, as in React (found by the site conformance test).
+    expect(content).toContain('px');
   });
 
   it('adds predev and prebuild scripts and never overwrites a different Icon.astro', () => {
