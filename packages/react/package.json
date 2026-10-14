@@ -4,6 +4,7 @@
   "description": "React Server Component adapter for svgworm sprites.",
   "license": "MIT",
   "author": "svgworm contributors",
+  "homepage": "https://svgworm.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jmlweb/svgworm.git",

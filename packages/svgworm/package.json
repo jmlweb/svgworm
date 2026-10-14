@@ -4,6 +4,7 @@
   "description": "Turn a folder of SVG files into type-safe, cacheable SVG sprites.",
   "license": "MIT",
   "author": "svgworm contributors",
+  "homepage": "https://svgworm.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jmlweb/svgworm.git",
