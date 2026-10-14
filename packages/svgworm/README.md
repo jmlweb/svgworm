@@ -11,10 +11,7 @@ pnpm svgworm init        # config, predev/prebuild scripts, Icon component
 pnpm svgworm             # write the sprite, manifest and types
 ```
 
-```text
-icons/home.svg  ──▶  public/icons/icons.<hash>.svg   hashed sprite, cached by the browser
-                     svgworm/icons.d.ts              icon names as types
-```
+![svgworm turns a folder of SVG files into a hashed sprite, a manifest and types](https://raw.githubusercontent.com/jmlweb/svgworm/main/docs/assets/pipeline.svg)
 
 Pair it with [`@svgworm/react`](https://github.com/jmlweb/svgworm/tree/main/packages/react) for a Server Component `Icon` where a wrong name is a type error.
 

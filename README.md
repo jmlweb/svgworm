@@ -7,10 +7,7 @@ Turn a folder of SVG files into type-safe, cacheable SVG sprites. Zero client Ja
 [![CI](https://github.com/jmlweb/svgworm/actions/workflows/ci.yml/badge.svg)](https://github.com/jmlweb/svgworm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/npm/l/svgworm)](LICENSE)
 
-```text
-icons/home.svg     ──▶  svgworm  ──▶  public/icons/icons.<hash>.svg   hashed sprite, cached by the browser
-                                      svgworm/icons.d.ts              icon names as types
-```
+![svgworm turns a folder of SVG files into a hashed sprite, a manifest and types](docs/assets/pipeline.svg)
 
 ```tsx
 <Icon name="home" />   // <svg><use href="/icons/icons.f84bac71.svg#i-home"/></svg>
