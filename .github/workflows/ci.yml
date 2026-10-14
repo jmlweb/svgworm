@@ -127,6 +127,22 @@ jobs:
       - run: pnpm build
       - run: pnpm example:check
 
+  # The landing page (ADR-0016): committed svgworm output current, Astro build, then no
+  # client JS in dist/ and every icon from the hashed sprite. Deploys live in site.yml.
+  site:
+    name: Site (Astro, zero client JS)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm site:check
+
   commitlint:
     name: Conventional Commits
     if: github.event_name == 'pull_request'
