@@ -5,7 +5,7 @@ How svgworm gets real users and gets picked up by AI agents and tools. Adoption 
 ## Starting point
 
 - Repo is public: <https://github.com/jmlweb/svgworm>.
-- Channels: a personal blog (jmlweb.es) and a modest social following. No community presence yet, so the plan cannot rely on a big launch spike.
+- Channels: LinkedIn and X (jmlweb.es has no blog) and a modest social following. No community presence yet, so the plan cannot rely on a big launch spike.
 - Target user ([ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)): Next.js App Router teams with their own icon set exported from design tools. They don't search for "sprite generator". They hit a symptom: bloated bundles, multicolor icons going black, gradients blank in SSR, a Turbopack plugin that fails.
 - v0.1.0 was published on 2026-10-13, six weeks ahead of the 2026-11-26 target. The 12-week clock runs; the kill-criteria review is on 2027-01-05 (`node scripts/traction-snapshot.mjs --review`).
 
@@ -21,7 +21,7 @@ How svgworm gets real users and gets picked up by AI agents and tools. Adoption 
 
 ### Pre-launch (before 2026-10-13; the post and the target list are drafted, the upstream issues are open)
 
-- **Build in public:** one blog post on the color-classification result (31,390 icons, 99.98% agreement with rendering, zero multicolor icons recolored). It works before any code ships, and it attracts the target user's symptom. Cross-post a short thread with one before/after image.
+- **Build in public:** one blog post on the color-classification result (31,390 icons, 99.98% agreement with rendering, zero multicolor icons recolored). It works before any code ships, and it attracts the target user's symptom. Cross-post a short thread with one before/after image. It slipped past the launch and is published as a LinkedIn article plus an X thread (TSK-028).
 - **Upstream first:** open fair, reproducible issues on @neodx/svg for what the TSK-007 spike found (Turbopack failure, SSR blanks, NFD ids). It builds goodwill and makes our comparison credible.
 - **Target list:** about 20 public Next.js App Router repos or design systems with a custom SVG icon folder (GitHub code search: `next.config` plus `icons/*.svg`, or SVGR in the dependencies). Rank by fit: App Router, many icons, hardcoded colors, active maintainers.
 
