@@ -1,10 +1,15 @@
 # Next.js App Router setup
 
-`svgworm init` does steps 2 to 4 for you. This page is what it sets up, plus the parts it cannot do. Requires Node `^22.20 || >=24.11`.
+> [!TIP]
+> `svgworm init` does steps 2 to 4 for you. This page shows what it sets up, plus the parts it cannot do.
 
-1. Put your SVG files in `icons/`.
+Requires Node `^22.20 || >=24.11`.
 
-2. Install and build the sprite:
+## Steps
+
+1. **Put your SVG files in `icons/`.**
+
+2. **Install and build the sprite:**
 
    ```bash
    pnpm add -D svgworm
@@ -21,7 +26,7 @@
    svgworm/manifest.json           same manifest, for scripts and templates
    ```
 
-3. Create the component once, in a Server Component file:
+3. **Create the component once, in a Server Component file:**
 
    ```tsx
    // components/icon.tsx
@@ -32,13 +37,13 @@
    export const Icon = createIcon(manifest);
    ```
 
-4. Run the CLI before `dev` and `build`:
+4. **Run the CLI before `dev` and `build`:**
 
    ```json
    { "scripts": { "predev": "svgworm", "prebuild": "svgworm" } }
    ```
 
-5. Use it anywhere on the server:
+5. **Use it anywhere on the server:**
 
    ```tsx
    <Icon name="home" />
@@ -50,7 +55,7 @@
 
 ## Cache for a year
 
-Next serves `public/` with `max-age=0`, and the file names are content-hashed, so a long cache is safe:
+Next serves `public/` with `max-age=0`. The file names are content-hashed, so a long cache is safe:
 
 ```ts
 // next.config.ts
@@ -68,7 +73,8 @@ export default {
 
 ## basePath
 
-With a `basePath` of `/docs`, set `--public-path /docs/icons`. Next does not add `basePath` to a raw `href`.
+> [!IMPORTANT]
+> Next does not add `basePath` to a raw `href`. With a `basePath` of `/docs`, set `--public-path /docs/icons`.
 
 ## Working example
 

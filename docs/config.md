@@ -1,6 +1,6 @@
 # Config
 
-`svgworm.config.json` is optional. It has a [JSON Schema](../packages/svgworm/svgworm.schema.json), published as `svgworm/schema.json`:
+`svgworm.config.json` is optional: every key except `sources` has a default, and CLI flags can replace the file entirely. It has a [JSON Schema](../packages/svgworm/svgworm.schema.json), published as `svgworm/schema.json`:
 
 ```json
 {
@@ -19,4 +19,5 @@
 | `flatten`    | `false`        | Drop folder names from icon names                                                                                    |
 | `color`      | `[]`           | Per-icon overrides. `match` is a glob on the icon name; `color` is `auto`, `mono` or `preserve`. The last match wins |
 
-CLI flags override these keys. See the [CLI reference](cli.md).
+> [!TIP]
+> CLI flags override these keys. See the [CLI reference](cli.md).

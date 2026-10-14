@@ -1,6 +1,6 @@
 # svgworm compared with other SVG icon tools
 
-An honest comparison. For each tool it says what it does well and when to pick it instead of svgworm. Numbers come from the spikes in this repo, and each one links to its source. Where we did not test a tool ourselves, the page says so.
+An honest comparison 🤝. For each tool it says what it does well and when to pick it instead of svgworm. Numbers come from the spikes in this repo, and each one links to its source. Where we did not test a tool ourselves, the page says so.
 
 Versions, dates and download counts come from npm on 2026-10-08 ([viability.md](viability.md#competitive-landscape)).
 
@@ -16,13 +16,14 @@ Versions, dates and download counts come from npm on 2026-10-08 ([viability.md](
 
 ## What svgworm does differently
 
-- **Per-icon color.** Each icon is classified as mono or multicolor. Mono icons follow `currentColor`; multicolor icons keep their colors. In [TSK-003](../spikes/TSK-003-color-classification/RESULTS.md) the classifier agreed with rendering on 99.98% of 31,390 icons and recolored no multicolor icon.
-- **Gradients, masks and filters render in every engine.** WebKit resolves no `url(#…)` reference inside an external `<use>` sprite ([TSK-002](../spikes/TSK-002-external-use/RESULTS.md)): gradient, mask and filter icons come out blank there. svgworm puts those icons in a second "stack" file and delivers them as `<img>` (multicolor) or a CSS mask (mono). [TSK-004](../spikes/TSK-004-sprite-url/RESULTS.md) renders all of them in Chromium, Firefox and WebKit with JavaScript disabled.
-- **No bundler plugin.** It is a CLI that writes files, so it works the same under Turbopack, webpack and Vite.
-- **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](../spikes/TSK-006-icon-naming/RESULTS.md)).
-- **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
+- 🎨 **Per-icon color.** Each icon is classified as mono or multicolor. Mono icons follow `currentColor`; multicolor icons keep their colors. In [TSK-003](../spikes/TSK-003-color-classification/RESULTS.md) the classifier agreed with rendering on 99.98% of 31,390 icons and recolored no multicolor icon.
+- 🌈 **Gradients, masks and filters render in every engine.** WebKit resolves no `url(#…)` reference inside an external `<use>` sprite ([TSK-002](../spikes/TSK-002-external-use/RESULTS.md)): gradient, mask and filter icons come out blank there. svgworm puts those icons in a second "stack" file and delivers them as `<img>` (multicolor) or a CSS mask (mono). [TSK-004](../spikes/TSK-004-sprite-url/RESULTS.md) renders all of them in Chromium, Firefox and WebKit with JavaScript disabled.
+- 🧩 **No bundler plugin.** It is a CLI that writes files, so it works the same under Turbopack, webpack and Vite.
+- 🔁 **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](../spikes/TSK-006-icon-naming/RESULTS.md)).
+- 🚨 **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
 
-What it does **not** do yet (v0.1): several sprites, an inline sprite, and frameworks other than React. See the [backlog notes in AGENTS.md](../AGENTS.md) and [open-questions.md](open-questions.md).
+> [!NOTE]
+> What it does **not** do yet (v0.1): several sprites, an inline sprite, and frameworks other than React. See [open-questions.md](open-questions.md).
 
 ## @neodx/svg
 
@@ -40,7 +41,8 @@ We tested version 1.1.1 in Next.js 16.4 with Turbopack ([TSK-007](../spikes/TSK-
 | Gradient and mask icons                | Blank in SSR with the default `inline: 'auto'`; a 20-line workaround fixes it. Reported: [neodx#187](https://github.com/secundant/neodx/issues/187) |
 | NFC vs NFD file name                   | Different id and sprite hash. Reported: [neodx#188](https://github.com/secundant/neodx/issues/188)  |
 
-The three findings were reported upstream on 2026-10-12 before this page was published; if they get fixed, this table must change.
+> [!NOTE]
+> The three findings were reported upstream on 2026-10-12 before this page was published. If they get fixed, this table must change.
 
 **Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. Its weekly downloads are small (about 2k), so expect fewer answers online.
 
@@ -82,4 +84,4 @@ Every spike has a script and a results file. Run them yourself:
 | neodx in Next 16 + Turbopack                | [spikes/TSK-007-neodx-next](../spikes/TSK-007-neodx-next/RESULTS.md) |
 | Naming and Unicode                          | [spikes/TSK-006-icon-naming](../spikes/TSK-006-icon-naming/RESULTS.md) |
 
-Found a mistake, or a tool we describe unfairly? Open an issue. We correct this page.
+Found a mistake, or a tool we describe unfairly? [Open an issue](https://github.com/jmlweb/svgworm/issues) and we will correct this page.

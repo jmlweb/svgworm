@@ -1,5 +1,7 @@
 # CLI reference
 
+One command builds everything. The others check, watch, and set a project up.
+
 ```text
 svgworm [build] [options]    Write the sprite, manifest and types (default)
 svgworm check [options]      Exit 1 if the committed output is stale. Writes nothing (CI)
@@ -15,7 +17,10 @@ svgworm init [options]       Set a project up: config, predev/prebuild scripts, 
   --json                  Print one JSON document on stdout and nothing else
 ```
 
-Flags override the config file. `--out-dir` needs `--public-path`. The same options are available as [config keys](config.md).
+Flags override the config file. The same options are available as [config keys](config.md).
+
+> [!IMPORTANT]
+> `--out-dir` needs `--public-path`.
 
 ## Exit codes
 
@@ -31,7 +36,17 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 
 ## init
 
-`svgworm init` prompts on a terminal and takes flags everywhere else: `--component-file <path>`, `--no-component`, `--no-scripts`, `--agents-md` (adds a short svgworm section to `AGENTS.md` for AI agents) and `--yes`. It never overwrites a file that differs from what it would write, so re-running it is safe.
+`svgworm init` prompts on a terminal and takes flags everywhere else:
+
+| Flag                      | Effect                                                    |
+| ------------------------- | --------------------------------------------------------- |
+| `--component-file <path>` | Where to create the `Icon` component                      |
+| `--no-component`          | Skip the component                                        |
+| `--no-scripts`            | Skip the `predev` and `prebuild` scripts                  |
+| `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents  |
+| `--yes`                   | Accept every default without asking                       |
+
+It never overwrites a file that differs from what it would write, so re-running it is safe.
 
 ## check
 
@@ -39,4 +54,7 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 
 ## watch
 
-`svgworm watch` rebuilds after each change in a source folder and re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). `fs.watch` can miss events on network file systems and container bind mounts; run `svgworm` by hand there. With `--json`, `watch` prints one document per build.
+`svgworm watch` rebuilds after each change in a source folder and re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). With `--json`, `watch` prints one document per build.
+
+> [!WARNING]
+> `fs.watch` can miss events on network file systems and container bind mounts. Run `svgworm` by hand there.
