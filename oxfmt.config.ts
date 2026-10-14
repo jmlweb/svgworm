@@ -7,6 +7,10 @@ export default defineConfig({
     '**/dist/**',
     '**/.next/**',
     'examples/*/svgworm/**',
+    'apps/*/svgworm/**',
+    '**/.astro/**',
+    // Oxfmt cannot format Astro components; astro check type-checks them.
+    '**/*.astro',
     'evals/agent/fixture/**',
     'pnpm-lock.yaml',
     'fixtures/**',

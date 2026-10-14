@@ -60,6 +60,8 @@ export default defineConfig({
     '**/dist/**',
     '**/.next/**',
     'examples/*/svgworm/**',
+    'apps/*/svgworm/**',
+    '**/.astro/**',
     'evals/agent/fixture/**',
     'fixtures/**',
     // Snapshot files hold exact generated output.
