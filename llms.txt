@@ -27,6 +27,7 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 
 ## Docs
 
+- [Website](https://svgworm.jmlweb.workers.dev): landing page, rendered with svgworm itself (zero client JS, one hashed sprite)
 - [README](https://github.com/jmlweb/svgworm/blob/main/README.md): overview and get started
 - [CLI reference](https://github.com/jmlweb/svgworm/blob/main/docs/cli.md): commands, flags, exit codes
 - [Config reference](https://github.com/jmlweb/svgworm/blob/main/docs/config.md): `svgworm.config.json` keys
