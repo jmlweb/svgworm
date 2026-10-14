@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 220" role="img" aria-labelledby="t d">
+  <title id="t">How svgworm works</title>
+  <desc id="d">A folder of SVG files goes through the svgworm CLI and produces a hashed sprite, a manifest and TypeScript types.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; fill: #1f2328; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .core { fill: #0969da; }
+    .arrow { stroke: #59636e; stroke-width: 1.5; fill: none; }
+    .head { fill: #59636e; }
+    .title { font-size: 15px; font-weight: 600; }
+    .sub { font-size: 12.5px; fill: #59636e; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+    .sub.onaccent, .title.onaccent { fill: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #e6edf3; }
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #30363d; }
+      .core { fill: #1f6feb; }
+      .arrow { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .sub { fill: #9198a1; }
+    }
+  </style>
+  <rect class="bg" width="760" height="220"/>
+
+  <rect class="box" x="20" y="70" width="190" height="80" rx="10"/>
+  <text class="title" x="115" y="102" text-anchor="middle">Your SVG files</text>
+  <text class="mono sub" x="115" y="126" text-anchor="middle">icons/**/*.svg</text>
+
+  <path class="arrow" d="M210 110 H268"/>
+  <path class="head" d="M268 104 L280 110 L268 116 Z"/>
+
+  <rect class="core" x="280" y="70" width="150" height="80" rx="10"/>
+  <text class="title onaccent" x="355" y="102" text-anchor="middle">svgworm</text>
+  <text class="sub onaccent" x="355" y="126" text-anchor="middle">classify · optimize · hash</text>
+
+  <path class="arrow" d="M430 110 H452 V42 H468"/>
+  <path class="arrow" d="M430 110 H468"/>
+  <path class="arrow" d="M430 110 H452 V178 H468"/>
+  <path class="head" d="M468 36 L480 42 L468 48 Z"/>
+  <path class="head" d="M468 104 L480 110 L468 116 Z"/>
+  <path class="head" d="M468 172 L480 178 L468 184 Z"/>
+
+  <rect class="box" x="480" y="14" width="260" height="56" rx="10"/>
+  <text class="mono" x="496" y="38">icons.&lt;hash&gt;.svg</text>
+  <text class="sub" x="496" y="57">Sprite. The browser caches it.</text>
+
+  <rect class="box" x="480" y="82" width="260" height="56" rx="10"/>
+  <text class="mono" x="496" y="106">icons.js · manifest.json</text>
+  <text class="sub" x="496" y="125">Manifest. Data only.</text>
+
+  <rect class="box" x="480" y="150" width="260" height="56" rx="10"/>
+  <text class="mono" x="496" y="174">icons.d.ts</text>
+  <text class="sub" x="496" y="193">Types. A wrong icon name fails tsc.</text>
+</svg>
