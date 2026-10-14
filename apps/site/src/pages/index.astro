@@ -5,11 +5,9 @@ import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import process from 'node:process';
 import { URL } from 'node:url';
-import { createElement } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 
 import { manifest } from '../../svgworm/icons.js';
-import { Landing } from '../components/landing';
+import Landing from '../components/Landing.astro';
 import '../styles/global.css';
 
 // The real sprite size, so the stats on the page are this build's numbers.
@@ -17,9 +15,6 @@ const spriteUrl = manifest.sprites.icons?.sprite?.url;
 const spriteBytes = spriteUrl
   ? statSync(join(process.cwd(), 'public', spriteUrl)).size
   : 0;
-
-// Static markup at build time, the way a Server Component renders: no hydration, no JS.
-const landing = renderToStaticMarkup(createElement(Landing, { logoLight, logoDark, spriteBytes }));
 
 const title = 'svgworm: type-safe SVG sprites with zero client JS';
 // Link previews need absolute URLs. og.png is rendered from og/og.html.
@@ -66,6 +61,6 @@ const description =
     />
   </head>
   <body>
-    <Fragment set:html={landing} />
+    <Landing logoDark={logoDark} logoLight={logoLight} spriteBytes={spriteBytes} />
   </body>
 </html>

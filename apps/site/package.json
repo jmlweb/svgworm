@@ -2,7 +2,7 @@
   "name": "svgworm-site",
   "version": "0.0.0",
   "private": true,
-  "description": "The svgworm landing page: Astro, icons from a hashed svgworm sprite through @svgworm/react, zero client JavaScript.",
+  "description": "The svgworm landing page: Astro, icons from a hashed svgworm sprite through the generated Icon.astro, zero client JavaScript.",
   "type": "module",
   "engines": {
     "node": "^22.20.0 || >=24.11.0"
@@ -16,20 +16,20 @@
     "check:output": "node scripts/check-output.mjs",
     "typecheck": "astro check",
     "cf:deploy": "wrangler deploy",
-    "cf:preview": "wrangler versions upload"
-  },
-  "dependencies": {
-    "@svgworm/react": "workspace:*",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "cf:preview": "wrangler versions upload",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@svgworm/react": "workspace:*",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "astro": "7.3.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "svgworm": "workspace:*",
     "typescript": "6.0.3",
+    "vitest": "5.0.1",
     "wrangler": "4.144.0"
   }
 }

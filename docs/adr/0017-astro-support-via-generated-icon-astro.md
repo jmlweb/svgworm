@@ -1,6 +1,6 @@
 # 0017. Astro support through an init-generated Icon.astro
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-15
 - **Task:** TSK-037
 - **Resolves:** Q-21 for Astro (Vite stays in TSK-024)
@@ -33,11 +33,13 @@ Option 1. `svgworm init` generates `src/components/Icon.astro` (or `components/I
 
 - ADR-0016 and LRN-033: the `@astrojs/react` client entrypoint leaks a React runtime into a static build.
 - Astro docs (Context7, `/withastro/docs`): component props typing with `HTMLAttributes` from `astro/types`; `public/` files are copied untouched and referenced by URL path; `experimental_AstroContainer.renderToString` renders a component for tests.
-- ADR-0010: the default `public/icons` and `/icons` already match Astro's `public/` convention. To be confirmed with a throwaway build that sets `base` (the docs do not say `public/` URLs get `base` added).
+- ADR-0010: the default `public/icons` and `/icons` already match Astro's `public/` convention. 
+- Throwaway build of `apps/site` with `base: '/docs'` (2026-10-15, Astro 7.3.5): `public/` is copied to the `dist/` root and the sprite URLs svgworm wrote (`/icons/icons.<hash>.svg#…`) are left as they are, so with `base` they 404 (`/docs/icons/…` is where the host serves the file). `publicPath` must include `base`, like Next.js `basePath` in LRN-018. `init` therefore does not parse `astro.config.*` and says so in its next steps.
 
 ## Consequences
 
 - The Astro path costs one `init` run and no extra dependency.
+- A conformance test caught a real drift while this was built: a numeric `width` in the `mask` style was missing its `px`. The test belongs to the template's definition of done.
 - The template and `createIcon` must change together; the conformance test fails on drift.
 - `apps/site` can drop React and `react-dom` once it uses the generated component. ADR-0016's `react-dom/server` note gets this follow-up.
 - No `examples/astro`: `apps/site` is the Astro proof, gated by `site:check`, and holds the conformance test.

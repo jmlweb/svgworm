@@ -1,0 +1,9 @@
+---
+const installCommand = 'pnpm add -D svgworm && pnpm add @svgworm/react';
+---
+
+{/* No copy button: it would need client JS. One click selects the whole command instead. */}
+<p class="install">
+  <span aria-hidden="true" class="t-prompt">$</span>
+  <code>{installCommand}</code>
+</p>

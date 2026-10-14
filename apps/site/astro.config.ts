@@ -1,7 +1,8 @@
 import { defineConfig } from 'astro/config';
 
 // No @astrojs/react: Astro always emits a renderer's client entrypoint, which would put
-// React's client runtime in dist/ (ADR-0016). The page renders React with react-dom/server.
+// React's client runtime in dist/ (ADR-0016, LRN-033). Icons come from the generated
+// src/components/Icon.astro (ADR-0017), so the page needs no React at all.
 export default defineConfig({
   site: 'https://svgworm.com',
   output: 'static',

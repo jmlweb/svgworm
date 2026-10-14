@@ -1,3 +1,5 @@
 /dist/
 /.astro/
 /.wrangler/
+
+tests/.generated/

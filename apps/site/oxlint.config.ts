@@ -4,6 +4,8 @@ import { defineConfig } from 'oxlint';
 // Nested config: the site renders React to static HTML, it is not a Node package.
 export default defineConfig({
   extends: [reactConfig],
+  // Astro.props and friends exist in the frontmatter of every .astro file.
+  globals: { Astro: 'readonly' },
   ignorePatterns: ['dist/**', '.astro/**', 'svgworm/**', 'public/**'],
   overrides: [
     {

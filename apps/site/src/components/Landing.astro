@@ -1,0 +1,395 @@
+---
+import { manifest } from '../../svgworm/icons.js';
+import type { IconName } from '../../svgworm/icons.js';
+import Icon from './Icon.astro';
+import Install from './Install.astro';
+import Soil from './Soil.astro';
+
+type Props = {
+  readonly logoLight: string;
+  readonly logoDark: string;
+  readonly spriteBytes: number;
+};
+
+const { logoLight, logoDark, spriteBytes } = Astro.props;
+
+const REPO = 'https://github.com/jmlweb/svgworm';
+const docs = (path: string) => `${REPO}/blob/main/${path}`;
+
+// The page shows the real sprite it was built with, so the samples are the live output.
+const spriteUrl = manifest.sprites.icons?.sprite?.url ?? '/icons/icons.svg';
+const iconNames = Object.keys(manifest.icons) as IconName[];
+const monoIcons = iconNames.filter(
+  (name) => manifest.icons[name].color === 'mono',
+);
+const multicolorIcons = iconNames.filter(
+  (name) => manifest.icons[name].color === 'multicolor',
+);
+const countDelivery = (delivery: 'use' | 'img' | 'mask') =>
+  iconNames.filter((name) => manifest.icons[name].delivery === delivery).length;
+const terminalId = manifest.icons.terminal.id;
+
+const formatKib = (bytes: number) => `${(bytes / 1024).toFixed(1)} KiB`;
+
+type Feature = {
+  readonly icon: IconName;
+  readonly title: string;
+  readonly body: string;
+};
+
+// Two tiles fill the bento's second row next to the tall tile. Caching is in the stats band.
+const features: readonly Feature[] = [
+  {
+    icon: 'layers',
+    title: 'Right colors, per icon',
+    body: 'Mono icons follow currentColor, multicolor icons keep their colors. Gradients, masks and filters render in Chromium, Firefox and WebKit.',
+  },
+  {
+    icon: 'git-branch',
+    title: 'Plain files, no plugin',
+    body: 'A CLI that writes static files, byte-identical on Linux, macOS and Windows. Turbopack, webpack and Vite need no plugin, and svgworm check fails CI when the output is stale.',
+  },
+];
+
+const swatches = ['#933a43', '#b07a52', '#3d7a5c', '#3b5f9a'] as const;
+const suggestions = ['terminal', 'shield-check', 'server'] as const;
+const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${terminalId}"/></svg>`;
+---
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a aria-label="svgworm home" class="brand" href="/">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset={logoDark} />
+        <img alt="svgworm" height="40" src={logoLight} width="180" />
+      </picture>
+    </a>
+    <nav aria-label="Project links">
+      <a href={docs('docs/nextjs.md')}>Docs</a>
+      <a href={docs('docs/comparison.md')}>Compare</a>
+      <a class="nav-npm" href="https://www.npmjs.com/package/svgworm">npm</a>
+      <a class="nav-cta" href={REPO}>GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">
+          <span class="dot"></span> v0.1 on npm · MIT · Node 22.20+
+        </p>
+        <h1>
+          One sprite.
+          <br />
+          <span class="squiggle">Zero client JS.</span>
+        </h1>
+        <p class="lede">
+          svgworm digs through your folder of SVG files and leaves one
+          type-safe, content-hashed sprite behind. Render it from React Server
+          Components in the Next.js App Router, and ship no icon code to the
+          browser.
+        </p>
+        <Install />
+        <div class="actions">
+          <a class="button" href={docs('README.md#get-started')}>
+            Get started <Icon name="arrow-right" />
+          </a>
+          <a class="button button-ghost" href={docs('docs/nextjs.md')}>
+            <Icon name="book-open" /> Next.js guide
+          </a>
+        </div>
+      </div>
+
+      <figure aria-label="svgworm build output" class="terminal">
+        <div class="terminal-bar">
+          <span></span>
+          <span></span>
+          <span></span>
+          <code>~/my-app</code>
+        </div>
+        <pre><code><span class="t-prompt">$</span> pnpm svgworm
+<span class="t-ok">svgworm: build done</span>
+  icons     <span class="t-num">{iconNames.length}</span> ({monoIcons.length} mono, {multicolorIcons.length} multicolor)
+  delivery  use {countDelivery('use')}, img {countDelivery('img')}, mask {countDelivery('mask')}
+  output    <span class="t-num">{formatKib(spriteBytes)}</span>
+  write     <span class="t-path">public{spriteUrl}</span>
+
+<span class="t-prompt">$</span> pnpm tsc
+<span class="t-err">error</span> TS2322: Type '"termnial"' is not assignable to type 'IconName'.</code></pre>
+      </figure>
+    </div>
+  </section>
+
+  <Soil />
+
+  <section aria-label="This page in numbers" class="stats">
+    <div class="wrap stats-grid">
+      <div>
+        <strong>0 B</strong>
+        <span>JavaScript on this page</span>
+      </div>
+      <div>
+        <strong>1</strong>
+        <span>request for all {iconNames.length} icons</span>
+      </div>
+      <div>
+        <strong>{formatKib(spriteBytes)}</strong>
+        <span>the whole sprite</span>
+      </div>
+      <div>
+        <strong>1 year</strong>
+        <span>immutable browser cache</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="why" class="section">
+    <div class="wrap">
+      <p class="kicker">Why svgworm</p>
+      <h2 id="why">Icons that stay out of your bundle.</h2>
+      <div class="bento">
+        <article class="tile tile-wide">
+          <div class="tile-head">
+            <span class="badge"><Icon name="zap" /></span>
+            <h3>Rendered on the server</h3>
+          </div>
+          <p>
+            Each icon is a tiny <code>&lt;use href&gt;</code> into one hashed sprite.
+            The browser fetches the sprite once and keeps it.
+          </p>
+          <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
+<span class="c-comment">{terminalComment}</span></code></pre>
+        </article>
+        <article class="tile tile-tall">
+          <div class="tile-head">
+            <span class="badge"><Icon name="shield-check" /></span>
+            <h3>Type-safe names</h3>
+          </div>
+          <p>
+            The generated types list every icon. A typo fails <code>tsc</code>,
+            not production.
+          </p>
+          <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span></code></pre>
+          <div aria-hidden="true" class="suggest">
+            <p class="suggest-input">
+              <span class="c-tag">&lt;Icon</span>
+              <span class="c-attr">name</span>=<span class="c-str">"te</span
+              ><span class="caret"></span>
+            </p>
+            <ul>
+              {
+                suggestions.map((name, index) => (
+                  <li class={index === 0 ? 'active' : undefined}>
+                    <Icon name={name} />
+                    <code>{name}</code>
+                    <small>IconName</small>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <ul class="checks">
+            <li><Icon name="check" /> Autocomplete in your editor</li>
+            <li><Icon name="check" /> Checked with TypeScript 6 and 7</li>
+            <li><Icon name="check" /> Clear errors for collisions</li>
+          </ul>
+        </article>
+        {
+          features.map((feature) => (
+            <article class="tile">
+              <div class="tile-head">
+                <span class="badge">
+                  <Icon name={feature.icon} />
+                </span>
+                <h3>{feature.title}</h3>
+              </div>
+              <p>{feature.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="start" class="section section-raised">
+    <div class="wrap">
+      <p class="kicker">Get started in Next.js</p>
+      <h2 id="start">Three steps, no bundler config.</h2>
+      <ol class="steps">
+        <li>
+          <h3>Install and set up</h3>
+          <p>
+            <code>init</code> writes the config, the <code>predev</code>/<code
+              >prebuild</code
+            > scripts and the component.
+          </p>
+          <pre class="code"><code>pnpm add -D svgworm
+pnpm add @svgworm/react
+pnpm svgworm init</code></pre>
+        </li>
+        <li>
+          <h3>Drop SVGs in icons/</h3>
+          <p>
+            Each run writes a hashed sprite to <code>public/icons/</code> and a typed
+            manifest to <code>svgworm/</code>.
+          </p>
+          <pre class="code"><code>icons/
+├── home.svg
+├── search.svg
+└── brand/logo.svg</code></pre>
+        </li>
+        <li>
+          <h3>Render in a Server Component</h3>
+          <p>
+            Decorative by default. Pass <code>title</code> or <code>label</code> for
+            an accessible name.
+          </p>
+          <pre class="code"><code><span class="c-attr">import</span> {'{ Icon }'} <span class="c-attr">from</span> <span class="c-str">'@/components/icon'</span><span>;</span>
+
+<span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-attr">title</span>=<span class="c-str">"Go home"</span> <span class="c-tag">/&gt;</span></code></pre>
+        </li>
+      </ol>
+      <p class="more">
+        Caching, <code>basePath</code> and manual setup are in the{' '}
+        <a href={docs('docs/nextjs.md')}>Next.js guide</a>. A complete app lives
+        in{' '}
+        <a href={`${REPO}/tree/main/examples/next-app-router`}>
+          examples/next-app-router
+        </a>
+        .
+      </p>
+    </div>
+  </section>
+
+  <section aria-labelledby="proof" class="section section-dark">
+    <div class="wrap">
+      <p class="kicker">This page is the demo</p>
+      <h2 id="proof">Every icon here is one sprite.</h2>
+      <p class="section-lede">
+        <code>{spriteUrl}</code>, rendered by the generated <code>Icon.astro</code
+        > at build time and served with <code>Cache-Control: immutable</code>.
+        Open your network panel: no JavaScript, one SVG.
+      </p>
+      <div class="showcase-group">
+        <h3>
+          Multicolor <small>{multicolorIcons.length} icons, colors kept</small>
+        </h3>
+        <ul
+          aria-label="Multicolor icons from the sprite"
+          class="showcase showcase-multi"
+        >
+          {
+            multicolorIcons.map((name) => (
+              <li>
+                <Icon height={48} name={name} width={48} />
+                <code>{name}</code>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="showcase-group">
+        <h3>
+          Mono <small>{monoIcons.length} icons, follow currentColor</small>
+        </h3>
+        <ul aria-label="Mono icons from the sprite" class="showcase">
+          {
+            monoIcons.map((name) => (
+              <li>
+                <Icon height={32} name={name} width={32} />
+                <code>{name}</code>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="color-demo">
+        <p>
+          Same sprite, same <code>&lt;use href&gt;</code>, decided per icon.
+          Change the text color: the mono folder follows it, the multicolor
+          snail keeps its own colors.
+        </p>
+        <div class="swatches">
+          {
+            swatches.map((color) => (
+              <span style={`color:${color}`}>
+                <Icon height={36} name="folder-open" width={36} />
+                <Icon height={36} name="emoji/snail" width={36} />
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="agents" class="section">
+    <div class="wrap agents">
+      <div>
+        <p class="kicker">Built for AI agents too</p>
+        <h2 id="agents">Your agent can set it up.</h2>
+        <p>
+          Everything works without a prompt: flags, <code>--json</code>, stable
+          exit codes, a JSON Schema for the config, and{' '}
+          <a href={`${REPO}/blob/main/llms.txt`}>llms.txt</a>. The agent skill
+          installs svgworm in a Next.js app and fixes every error code.
+        </p>
+      </div>
+      <figure class="terminal terminal-small">
+        <div class="terminal-bar">
+          <span></span>
+          <span></span>
+          <span></span>
+          <Icon name="terminal" />
+        </div>
+        <pre><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs</code></pre>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="try" class="section section-raised cta">
+    <div class="wrap cta-inner">
+      <h2 id="try">Point it at your icon folder.</h2>
+      <p>
+        Two packages, one <code>init</code>, and your icons ship as one cached
+        file.
+      </p>
+      <Install />
+      <div class="actions">
+        <a class="button" href={docs('README.md#get-started')}>
+          Get started <Icon name="arrow-right" />
+        </a>
+        <a class="button button-ghost" href={REPO}>
+          <Icon name="git-branch" /> Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <img
+      alt=""
+      class="footer-mark"
+      height="32"
+      src="/favicon.svg"
+      width="32"
+    />
+    <p>
+      MIT licensed. Icons on this page are from{' '}
+      <a href="https://lucide.dev">Lucide</a> (ISC) and{' '}
+      <a href="https://github.com/microsoft/fluentui-emoji">Fluent Emoji</a> (MIT).
+    </p>
+    <nav aria-label="Docs">
+      <a href="https://www.npmjs.com/package/svgworm">npm</a>
+      <a href={docs('docs/cli.md')}>CLI</a>
+      <a href={docs('docs/config.md')}>Config</a>
+      <a href={docs('docs/output-contract.md')}>Output contract</a>
+      <a href={`${REPO}/tree/main/docs/adr`}>Decisions</a>
+    </nav>
+  </div>
+</footer>
