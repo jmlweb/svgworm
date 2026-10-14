@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 10 |
-| Active | 4 |
+| Pending | 9 |
+| Active | 5 |
 | Blocked | 0 |
 | Complete | 24 |
 
@@ -15,6 +15,7 @@
 - TSK-028: Pre-launch post: per-icon color result (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-031: Agent discoverability: Context7, agent skill, AGENTS.md snippet (P2)
+- TSK-037: First-class Astro support with a generated Icon.astro (P2)
 
 ## Pending Tasks
 
@@ -28,7 +29,6 @@
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
-| TSK-037 | First-class Astro support with a generated Icon.astro | P2 |  | 2026-10-14 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | P2 | docs, site, discoverability | 2026-10-14 |
 
 ## Recently Completed

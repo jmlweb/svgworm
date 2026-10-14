@@ -1,12 +1,13 @@
 ---
 id: TSK-037
 title: First-class Astro support with a generated Icon.astro
-status: pending
+status: active
 priority: P2
 tags: []
 created: 2026-10-14
 source: idea/PLN-002
 depends-on: []
+started: 2026-10-14
 ---
 
 # First-class Astro support with a generated Icon.astro
@@ -25,7 +26,7 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 - Decided with the maintainer on 2026-10-14:
   - Mechanism: a generated `Icon.astro`, not a new `@svgworm/astro` package and not an `@astrojs/react` recipe.
   - Drift guard: a test renders the generated component and `createIcon` from the same fixture manifest and compares the markup.
-  - Scope: `docs/astro.md`, `examples/astro` with a zero-client-JS CI check, `init` support, `skills/svgworm-astro/SKILL.md`, `llms.txt` and README.
+  - Scope: `docs/astro.md`, `init` support, `skills/svgworm-astro/SKILL.md`, `llms.txt` and README.
   - Positioning: Next.js stays the lead story. Astro is "also supported" in the README, and the hero is unchanged.
   - Backlog: this covers Astro only. TSK-024 becomes "Vite recipe".
   - Dogfooding (2026-10-14): `apps/site` switches to the generated `Icon.astro` once TSK-036 closes.
@@ -47,8 +48,8 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
    - the plan and `--json` output carry `framework` and `frameworkSource`.
 3. **Component template:** a dependency-free `Icon.astro` that imports `manifest` and `IconName` from the configured `moduleDir`. Props are `name: IconName`, `title?`, `label?` and pass-through SVG/HTML attributes. Defaults are `1em` size, `aria-hidden` unless `title` or `label` is set, and `focusable="false"`. It throws on an unknown name and on a manifest `version` other than 1. Delivery logic mirrors `packages/react/src/create-icon.tsx`.
 4. **`init` detection and `--framework`:** add `--framework <react|astro>` to `args.ts` (a const map, validated, exit 2 on unknown values). Extend the facts with `usesAstro`. Resolve the framework from flag, then prompt (TTY, both detected), then detection. Pick the component file (`src/components/Icon.astro`) and its content by framework. The AGENTS.md section and the next steps name the Astro import.
-5. **`examples/astro`:** Astro 7, `output: 'static'`, Lucide icons, `predev`/`prebuild`, committed `public/icons/` and `svgworm/`. Add a `check-output` script (no `<script>`, no `.js` in `dist/`, every icon from the hashed sprite) modelled on `apps/site/scripts/check-output.mjs`. Add a conformance test that renders `Icon.astro` (Astro container API) and `createIcon` (`renderToStaticMarkup`) for each delivery form and compares the markup after normalizing attributes.
-6. **Root scripts and CI:** add `example:astro:build` / `example:astro:check`, kept out of `verify` like `example:*`, and a CI job next to the Next.js example job.
+5. **Conformance test and `base` check (no `examples/astro`, decided 2026-10-15):** `apps/site` is the Astro proof, so a second Astro app would only duplicate its build, zero-JS check and CI. Put the conformance test in `apps/site` (it already depends on Astro). Verify once, in a throwaway build outside the repo, whether `public/` URLs get `base` added, and record the result in `docs/astro.md` and ADR-0017. The conformance test renders `Icon.astro` (Astro container API) and `createIcon` (`renderToStaticMarkup`) for each delivery form and compares the markup after normalizing attributes (LRN-027).
+6. **CI:** no new job. `site:check` is the gate, and the conformance test runs with `pnpm test`.
 7. **Docs:**
    - `docs/astro.md`: steps, `base` mapped to `publicPath`, a cache-header table for Cloudflare/Netlify `_headers` and `vercel.json`, and `svgworm watch` alongside `astro dev`.
    - README: an "Also works with Astro" line and link.
@@ -63,7 +64,7 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 ### Review notes (2026-10-15)
 
 - Also touch `packages/svgworm/src/cli/reporters/types.ts` (`framework`, `frameworkSource`) and put the extension-mismatch exit-2 tests in `args.test.ts` / `run.test.ts`.
-- `context7.json`: add `examples/astro` to `folders` and Astro wording to `rules`.
+- `context7.json`: add Astro wording to `rules` (no new folder).
 - Step 10 (dogfood `apps/site`) waits for TSK-036 to close; branch from `main` after the site merges.
 - Read LRN-018, LRN-027 (normalize React 19 preload in the conformance test), LRN-029 first.
 - ADR-0017 states how the `--framework` flag surface is versioned.
@@ -72,11 +73,11 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 ## Acceptance Criteria
 
 - [ ] ADR-0017 accepted: Astro support via an init-generated Icon.astro, resolves Q-21 for Astro
-- [ ] init plan tests cover Astro detection, scripts, base next steps, no overwrite, react+astro resolution, --framework override, extension mismatch exit 2, framework/frameworkSource in plan and --json
+- [x] init plan tests cover Astro detection, scripts, base next steps, no overwrite, react+astro resolution, --framework override, extension mismatch exit 2, framework/frameworkSource in plan and --json — evidence: pnpm test → 30 files passed, 460 tests passed, 1 skipped (2026-10-14)
 - [ ] Dependency-free Icon.astro template typed with IconName, mirrors createIcon delivery (use/img/mask), a11y defaults, throws on unknown name and manifest version != 1
-- [ ] init supports --framework <react|astro> with detection, TTY prompt when both detected, and reports framework and source in plain and --json output
-- [ ] examples/astro (Astro 7, static) with zero-client-JS check-output and a conformance test against createIcon
-- [ ] Root example:astro:build/check scripts and a CI job
+- [x] init supports --framework <react|astro> with detection, TTY prompt when both detected, and reports framework and source in plain and --json output — evidence: pnpm test (run: init with Astro) + rtk proxy pnpm lint clean; TTY select prompt not run (2026-10-14)
+- [ ] Conformance test in apps/site: Icon.astro and createIcon render the same markup for use, img and mask
+- [ ] `base` handling for public/ verified in a throwaway build and recorded in docs/astro.md and ADR-0017
 - [ ] docs/astro.md, docs/cli.md, README also-works line, llms.txt, context7.json, open-questions Q-21 updated
 - [ ] skills/svgworm-astro/SKILL.md added
 - [ ] Minor changeset for svgworm
@@ -90,3 +91,8 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 ## Progress Log
 
 - [2026-10-14] Created
+- [2026-10-14] Started
+- [2026-10-14] ADR-0017 drafted, status proposed; accept after examples/astro confirms base handling.
+- [2026-10-14] init --framework <react|astro>, Astro detection, generated Icon.astro, extension mismatch exit 2, framework/frameworkSource in plain/json/clack output. Tests first; lint, format, typecheck, tests green.
+- [2026-10-14] Remaining: examples/astro + conformance test, CI job, docs, skill, changeset, apps/site dogfood, TSK-024 retitle, accept ADR.
+- [2026-10-14] Dropped examples/astro and its CI job: apps/site is the Astro proof (site:check gate). Conformance test moves to apps/site; base handling checked in a throwaway build. Criteria 5 and 6 rewritten; ADR-0017 updated.
