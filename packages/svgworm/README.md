@@ -1,4 +1,4 @@
-# 🪱 svgworm
+<h1><img alt="svgworm" src="https://raw.githubusercontent.com/jmlweb/svgworm/main/docs/assets/logo.svg" width="300"></h1>
 
 **Turn a folder of SVG files into type-safe, content-hashed SVG sprites, a manifest and TypeScript types.** Zero client JavaScript, deterministic output, per-icon color handling.
 

@@ -1,4 +1,6 @@
-# 🪱 @svgworm/react
+<img alt="svgworm" src="https://raw.githubusercontent.com/jmlweb/svgworm/main/docs/assets/logo.svg" width="200">
+
+# @svgworm/react
 
 **React Server Component `Icon` for [svgworm](https://github.com/jmlweb/svgworm) sprites.** No hooks, no `'use client'`, zero client JavaScript, icon names checked at compile time.
 
