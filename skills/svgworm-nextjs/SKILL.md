@@ -44,9 +44,14 @@ Facts an agent should rely on:
    ```tsx
    import { Icon } from '@/components/icon';
 
-   <Icon name="home" />
-   <Icon name="social/github" width={24} height={24} />
-   <Icon name="home" title="Go home" />   // accessible name; otherwise aria-hidden
+   export const Nav = () => (
+     <nav>
+       <Icon name="home" />
+       <Icon name="social/github" width={24} height={24} />
+       {/* title gives an accessible name; otherwise aria-hidden */}
+       <Icon name="home" title="Go home" />
+     </nav>
+   );
    ```
 
    Size and color are plain SVG props or CSS (`color`, `width`, `height`, `className`, `style`).

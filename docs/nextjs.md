@@ -46,9 +46,15 @@ Requires Node `^22.20 || >=24.11`.
 5. **Use it anywhere on the server:**
 
    ```tsx
-   <Icon name="home" />
-   <Icon name="brand/sunset" width={32} height={32} />
-   <Icon name="home" title="Go home" />
+   import { Icon } from '@/components/icon';
+
+   export const Nav = () => (
+     <nav>
+       <Icon name="home" />
+       <Icon name="brand/sunset" width={32} height={32} />
+       <Icon name="home" title="Go home" />
+     </nav>
+   );
    ```
 
    The icon is `aria-hidden` unless you pass `title` or `label`.

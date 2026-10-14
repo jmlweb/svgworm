@@ -15,8 +15,8 @@ Zero client JavaScript, deterministic output, and a React adapter for Server Com
 </div>
 
 ```tsx
-<Icon name="home" />   // <svg><use href="/icons/icons.f84bac71.svg#i-home"/></svg>
-<Icon name="nope" />   // type error: "nope" is not an icon name
+const home = <Icon name="home" />; // <svg><use href="/icons/icons.f84bac71.svg#i-home"/></svg>
+const nope = <Icon name="nope" />; // type error: "nope" is not an icon name
 ```
 
 ## Why
@@ -58,8 +58,12 @@ svgworm: build done
 ```tsx
 import { Icon } from '@/components/icon';
 
-<Icon name="home" />
-<Icon name="home" title="Go home" width={32} height={32} />
+export const Nav = () => (
+  <nav>
+    <Icon name="home" />
+    <Icon name="home" title="Go home" width={32} height={32} />
+  </nav>
+);
 ```
 
 > [!TIP]
