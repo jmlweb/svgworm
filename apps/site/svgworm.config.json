@@ -1,0 +1,4 @@
+{
+  "$schema": "../../packages/svgworm/svgworm.schema.json",
+  "sources": ["icons"]
+}

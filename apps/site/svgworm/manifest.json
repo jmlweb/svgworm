@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "sprites": {
+    "icons": {
+      "sprite": {
+        "file": "icons.7ced95d4.svg",
+        "url": "/icons/icons.7ced95d4.svg"
+      },
+      "stack": null
+    }
+  },
+  "icons": {
+    "arrow-right": {
+      "sprite": "icons",
+      "id": "i-arrow-right",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "book-open": {
+      "sprite": "icons",
+      "id": "i-book-open",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "check": {
+      "sprite": "icons",
+      "id": "i-check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "emoji/carrot": {
+      "sprite": "icons",
+      "id": "i-emoji--carrot",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "emoji/mushroom": {
+      "sprite": "icons",
+      "id": "i-emoji--mushroom",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "emoji/rock": {
+      "sprite": "icons",
+      "id": "i-emoji--rock",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "emoji/seedling": {
+      "sprite": "icons",
+      "id": "i-emoji--seedling",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "emoji/snail": {
+      "sprite": "icons",
+      "id": "i-emoji--snail",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "emoji/worm": {
+      "sprite": "icons",
+      "id": "i-emoji--worm",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "file-code": {
+      "sprite": "icons",
+      "id": "i-file-code",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "folder-open": {
+      "sprite": "icons",
+      "id": "i-folder-open",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "gauge": {
+      "sprite": "icons",
+      "id": "i-gauge",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "git-branch": {
+      "sprite": "icons",
+      "id": "i-git-branch",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "layers": {
+      "sprite": "icons",
+      "id": "i-layers",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "package": {
+      "sprite": "icons",
+      "id": "i-package",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "server": {
+      "sprite": "icons",
+      "id": "i-server",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "shield-check": {
+      "sprite": "icons",
+      "id": "i-shield-check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "terminal": {
+      "sprite": "icons",
+      "id": "i-terminal",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "zap": {
+      "sprite": "icons",
+      "id": "i-zap",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    }
+  }
+}

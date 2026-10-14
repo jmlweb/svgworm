@@ -1,0 +1,12 @@
+// Assets-only Worker (ADR-0016): no script, Cloudflare serves dist/ and applies public/_headers.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "svgworm",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+  },
+  "workers_dev": true,
+  // Every same-repo PR uploads a version with --preview-alias pr-<number>.
+  "preview_urls": true,
+}
