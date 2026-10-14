@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 9 |
+| Pending | 10 |
 | Active | 4 |
 | Blocked | 0 |
 | Complete | 24 |
@@ -29,6 +29,7 @@
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | P2 |  | 2026-10-14 |
+| TSK-038 | Docs on the website: render user docs from docs/, slim the README | P2 | docs, site, discoverability | 2026-10-14 |
 
 ## Recently Completed
 
