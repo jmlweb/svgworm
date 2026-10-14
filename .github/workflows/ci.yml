@@ -163,7 +163,8 @@ jobs:
 
   changeset:
     name: Changeset reminder
-    if: github.event_name == 'pull_request'
+    # The release PR deletes the changesets, so the check would always fail there.
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
     # Warning only: not every PR is user-facing (ADR-0009).
     continue-on-error: true
