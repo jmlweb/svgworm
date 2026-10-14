@@ -27,7 +27,7 @@ After it finishes:
 
 ## One-time setup (maintainer, needs npm login)
 
-Status on 2026-10-13: steps 1, 2 and 5 are done (org created, both packages published by hand at 0.1.0 and approved out of npm's staging, launch date recorded). Steps 3 and 4 are still open; until they are done, the publish job will fail at `npm publish` and the next release needs a manual publish again.
+Status on 2026-10-14: steps 1, 2, 3 and 5 are done (org created; both packages published by hand at 0.1.0 and approved out of npm's staging; trusted publishers configured with `npx npm@12 trust github … --env npm-publish --allow-publish`, verified with `npm trust list`; launch date recorded). Step 4 (disallow tokens) is still open and has no CLI.
 
 Lessons from the first publish (LRN-032): run `npm publish --dry-run` first and read every `npm warn publish` line (npm 11.6 dropped a `bin` path that started with `./`); a brand-new package may be staged by the registry, which shows up as a public `0.0.0-stage` placeholder until the real version is approved on npmjs.com with 2FA; and a shell that cannot prompt needs `--otp=<code>`.
 
