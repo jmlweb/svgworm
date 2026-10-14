@@ -16,6 +16,8 @@ Zero client JavaScript, deterministic output, and a React adapter for Server Com
 [![CI](https://github.com/jmlweb/svgworm/actions/workflows/ci.yml/badge.svg)](https://github.com/jmlweb/svgworm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/npm/l/svgworm)](LICENSE)
 
+**[svgworm.jmlweb.workers.dev](https://svgworm.jmlweb.workers.dev)**
+
 ![svgworm turns a folder of SVG files into a hashed sprite, a manifest and types](docs/assets/pipeline.svg)
 
 </div>
