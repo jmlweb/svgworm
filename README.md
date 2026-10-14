@@ -77,7 +77,7 @@ export const Nav = () => (
 > [!TIP]
 > The icon is `aria-hidden` unless you pass `title` or `label`.
 
-Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.astro`, see the [Astro guide](docs/astro.md). Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](docs/nextjs.md). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
+Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.astro`, see the [Astro guide](https://svgworm.com/docs/astro/). Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](https://svgworm.com/docs/nextjs/). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
 
 ## How it compares
 
@@ -88,16 +88,16 @@ Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.a
 | Need several sprites or a webpack/Vite plugin today            | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
 | Use Vite and all your icons are single-color                   | [vite-plugin-icons-spritesheet](https://github.com/forge42dev/vite-plugin-icons-spritesheet) |
 
-The full [comparison](docs/comparison.md) has spike numbers and says where each tool is the better choice.
+The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers and says where each tool is the better choice.
 
 ## Docs
 
-- 🧭 [Next.js guide](docs/nextjs.md): manual setup, caching for a year, `basePath`
-- 🚀 [Astro guide](docs/astro.md): the generated `Icon.astro`, caching, `base`
-- ⌨️ [CLI](docs/cli.md): commands, flags, exit codes, `check` in CI, `watch`
-- ⚙️ [Config](docs/config.md): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
+- 🧭 [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
+- 🚀 [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
+- ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`
+- ⚙️ [Config](https://svgworm.com/docs/config/): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
 - 📦 [Output contract](docs/output-contract.md): exact shape of the generated files
-- ⚖️ [Comparison](docs/comparison.md): SVGR, @neodx/svg and others, with the numbers behind each claim
+- ⚖️ [Comparison](https://svgworm.com/docs/comparison/): SVGR, @neodx/svg and others, with the numbers behind each claim
 
 ## For AI agents
 

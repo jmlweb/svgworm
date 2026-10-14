@@ -21,6 +21,6 @@ export const Icon = createIcon(manifest);
 ## Docs
 
 - 🚀 [Get started](https://github.com/jmlweb/svgworm#get-started)
-- 🧭 [Next.js setup, caching and `basePath`](https://github.com/jmlweb/svgworm/blob/main/docs/nextjs.md)
+- 🧭 [Next.js setup, caching and `basePath`](https://svgworm.com/docs/nextjs/)
 
 > **Status:** 0.1.x, versioned together with `svgworm`. The props can still change in a minor version before 1.0; see the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/react/CHANGELOG.md).

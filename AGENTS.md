@@ -12,7 +12,7 @@ Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viab
 
 `svgworm@0.1.0` and `@svgworm/react@0.1.0` have been on npm since 2026-10-13 ([docs/release.md](docs/release.md)). Until the kill-criteria review on 2027-01-05 ([ADR-0005](docs/adr/0005-build-standalone-with-kill-criteria.md), `node scripts/traction-snapshot.mjs --review`) the work is adoption ([docs/traction.md](docs/traction.md), `docs/outreach/`) plus fixes; every user-facing change needs a changeset, and the output contract may still change in a minor before 1.0 with an ADR.
 
-- **The stack is decided** in [ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6 strict ESM, `tsc`, Vitest, svgo 4, `node:util.parseArgs`, @clack/prompts, and a JSON config validated with zod. It is a pnpm workspace with `svgworm` (core + CLI) and `@svgworm/react` in `packages/` (published), the Next.js example in `examples/` (documented usage), and the landing page in `apps/site` (deployed; Astro on Cloudflare Workers static assets, [ADR-0016](docs/adr/0016-project-site-astro-on-cloudflare-workers.md)). Lint and format are Oxlint and Oxfmt on the shared `@jmlweb/*` configs, which supersede ADR-0008's ESLint + Prettier row ([ADR-0011](docs/adr/0011-oxc-lint-format-and-shared-tooling-configs.md)). Release and license are in [ADR-0009](docs/adr/0009-license-versioning-and-release.md).
+- **The stack is decided** in [ADR-0008](docs/adr/0008-tech-stack-and-package-layout.md): Node `^22.20 || >=24.11`, TypeScript 6 strict ESM, `tsc`, Vitest, svgo 4, `node:util.parseArgs`, @clack/prompts, and a JSON config validated with zod. It is a pnpm workspace with `svgworm` (core + CLI) and `@svgworm/react` in `packages/` (published), the Next.js example in `examples/` (documented usage), and the landing page and docs in `apps/site` (deployed; Astro on Cloudflare Workers static assets, [ADR-0016](docs/adr/0016-project-site-astro-on-cloudflare-workers.md), docs in [ADR-0018](docs/adr/0018-user-docs-on-the-site-rendered-from-docs.md)). Lint and format are Oxlint and Oxfmt on the shared `@jmlweb/*` configs, which supersede ADR-0008's ESLint + Prettier row ([ADR-0011](docs/adr/0011-oxc-lint-format-and-shared-tooling-configs.md)). Release and license are in [ADR-0009](docs/adr/0009-license-versioning-and-release.md).
 - **The walking skeleton is in place (TSK-011).** `svgworm` compiles a folder of SVGs into a hashed sprite, a stack file, a manifest module, and types, through `src/core` (pure `compile`, plus `build` for the file system) and a thin CLI in `src/cli` (`build`, `check`, `watch`, `init`; plain, `--json`, and clack reporters; exit codes 0, 1, 2). `@svgworm/react` exports `createIcon(manifest)` (TSK-012), and `examples/next-app-router` is the documented Next.js 16 path with a zero-client-JS check (TSK-016). Spikes may still produce throwaway prototypes under `spikes/<task-id>-<slug>/`. A prototype is evidence, not product code.
 - **No new tool, library, or runtime choices without an ADR** in `docs/adr/` (see `.claude/rules/decisions.md`). Runtime dependencies are capped by ADR-0008's budget.
 - The old prototype on the `prototype` branch (formerly `main`) is reference material only. Port *ideas*, not code. `main` is the default and release branch.
@@ -93,15 +93,14 @@ Backlog lives in `.backlog/`. Always use the flowstate skills; never edit index 
 - `docs/vision.md`: why and for whom
 - `docs/viability.md`: feasibility, risks, prototype lessons, competitors
 - `docs/requirements.md`: what (user stories)
-- `docs/cli.md`, `docs/config.md`, `docs/nextjs.md`, `docs/astro.md`: CLI reference, config keys, manual Next.js setup, Astro setup with the generated `Icon.astro` (the README links to them)
+- `apps/site/src/content/docs/` (`nextjs`, `astro`, `cli`, `config`, `comparison`): the user docs, published at https://svgworm.com/docs (ADR-0018). The README, `llms.txt` and the package READMEs link to the site. The same-named files in `docs/` are one-sentence stubs so old links keep working; edit the site files
 - `docs/output-contract.md`: the core/adapter boundary (generated files)
-- `docs/comparison.md`: honest comparison with SVGR, @neodx/svg and others (spike numbers)
 - `docs/traction.md`: how we get users and AI agents to adopt it (human and agent tracks, metrics)
 - `docs/release.md`: release checklist and the one-time npm trusted-publishing setup
 - `docs/metrics/`: weekly traction snapshots (`traction.jsonl`), `manual.json` for human-known facts, kill-criteria review via `scripts/traction-snapshot.mjs --review`
 - `docs/outreach/`: target repo list, upstream issue drafts, launch plan; `docs/posts/`: blog post drafts
 - `skills/svgworm-nextjs/SKILL.md`, `skills/svgworm-astro/SKILL.md`: the agent skills that set svgworm up in a Next.js or an Astro app
-- `llms.txt`: summary for AI agents (keep in sync with the README get started, `docs/cli.md` and `docs/config.md`)
+- `llms.txt`: summary for AI agents (keep in sync with the README get started and the site's `cli` and `config` docs; the site serves it at `/llms.txt` and builds `/llms-full.txt` from it)
 - `docs/open-questions.md`: unknowns; each one should map to a task
 - `docs/adr/`: decisions, numbered and immutable once accepted (supersede, don't edit)
 - `.claude/rules/`: focused rules for architecture, decisions, and testing

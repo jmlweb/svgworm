@@ -27,16 +27,18 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 
 ## Docs
 
-- [Website](https://svgworm.com): landing page, rendered with svgworm itself (every icon from one hashed sprite)
+The full docs as one text file: [llms-full.txt](https://svgworm.com/llms-full.txt).
+
+- [Website](https://svgworm.com): landing page and docs, rendered with svgworm itself (every icon from one hashed sprite)
 - [README](https://github.com/jmlweb/svgworm/blob/main/README.md): overview and get started
-- [CLI reference](https://github.com/jmlweb/svgworm/blob/main/docs/cli.md): commands, flags, exit codes
-- [Config reference](https://github.com/jmlweb/svgworm/blob/main/docs/config.md): `svgworm.config.json` keys
-- [Next.js setup](https://github.com/jmlweb/svgworm/blob/main/docs/nextjs.md): manual steps, caching headers, basePath
-- [Astro setup](https://github.com/jmlweb/svgworm/blob/main/docs/astro.md): the generated Icon.astro, caching headers, base
+- [CLI reference](https://svgworm.com/docs/cli/): commands, flags, exit codes
+- [Config reference](https://svgworm.com/docs/config/): `svgworm.config.json` keys
+- [Next.js setup](https://svgworm.com/docs/nextjs/): manual steps, caching headers, basePath
+- [Astro setup](https://svgworm.com/docs/astro/): the generated Icon.astro, caching headers, base
 - [Astro agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-astro/SKILL.md): step-by-step setup in an Astro app (install: `npx skills add jmlweb/svgworm --skill svgworm-astro`)
 - [Agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-nextjs/SKILL.md): step-by-step setup in a Next.js app and a fix for every error code (install: `npx skills add jmlweb/svgworm --skill svgworm-nextjs`)
 - [Next.js example](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router): runnable App Router app with Turbopack and a zero-client-JS check
-- [Comparison](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md): svgworm vs SVGR, @neodx/svg, vite-plugin-icons-spritesheet, with spike numbers and when each is better
+- [Comparison](https://svgworm.com/docs/comparison/): svgworm vs SVGR, @neodx/svg, vite-plugin-icons-spritesheet, with spike numbers and when each is better
 - [Output contract](https://github.com/jmlweb/svgworm/blob/main/docs/output-contract.md): exact shape of the generated files and manifest
 - [Vision](https://github.com/jmlweb/svgworm/blob/main/docs/vision.md)
 - [Decisions (ADRs)](https://github.com/jmlweb/svgworm/tree/main/docs/adr)

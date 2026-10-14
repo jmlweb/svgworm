@@ -5,6 +5,7 @@
   "branch": "main",
   "folders": [
     "docs",
+    "apps/site/src/content/docs",
     "skills",
     "examples/next-app-router",
     "packages/svgworm",
@@ -16,7 +17,8 @@
     "docs/outreach",
     "docs/posts",
     "docs/samples",
-    "src",
+    "packages/svgworm/src",
+    "packages/react/src",
     "dist",
     "node_modules",
     ".next"
