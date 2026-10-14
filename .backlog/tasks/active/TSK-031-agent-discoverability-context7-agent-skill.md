@@ -19,7 +19,7 @@ Agent track items 2-3 of docs/traction.md. Complements llms.txt and JSON Schema 
 
 ## Acceptance Criteria
 
-- [ ] Docs submitted to Context7 and a query returns current svgworm usage
+- [x] Docs submitted to Context7 and a query returns current svgworm usage — evidence: context7 query-docs /jmlweb/svgworm "set up svgworm in a Next.js app" (2026-10-14) → returns svgworm init --yes, createIcon(manifest), svgworm check (2026-10-14)
 - [x] SKILL.md in the repo teaches an agent to set up svgworm in a Next.js app
 - [ ] Skill listed in at least one public skill registry
 - [x] svgworm init can add a short svgworm section to the project AGENTS.md (opt-in, non-interactive flag available)
@@ -39,3 +39,6 @@ Agent track items 2-3 of docs/traction.md. Complements llms.txt and JSON Schema 
 - [2026-10-14] context7.json committed at repo root (scope: user docs, skill, Next example, package READMEs; 5 agent rules). Context7 resolve-library-id svgworm still finds nothing: not submitted yet.
 - [2026-10-14] Registries checked: skills.sh lists a skill after its first `npx skills add` install (`npx skills add jmlweb/svgworm --list` finds svgworm-nextjs; `skills find svgworm` empty). VoltAgent rejects brand-new skills, JackyST0 needs 64 stars, heilcheng stale since 2026-04.
 - [2026-10-14] Install command added to README "For AI agents" and llms.txt; docs/outreach/agent-registries.md updated. Remaining: maintainer submits Context7 and runs one skills.sh install.
+- [2026-10-14] Maintainer submitted the repo to Context7 and ran one skills.sh install. Context7 serves /jmlweb/svgworm by ID: query-docs returns svgworm init, createIcon(manifest) and svgworm check (criterion 1). resolve-library-id "svgworm" does not find it yet (search lag).
+- [2026-10-14] Context7 indexed docs/adr and docs/outreach despite context7.json excludeFolders; recheck after the next refresh, or claim the library to edit settings.
+- [2026-10-14] skills.sh: `npx skills find svgworm` and https://skills.sh/api/search?q=svgworm still return 0 (Algolia index lag); criterion 3 stays open until it lists jmlweb/svgworm@svgworm-nextjs.
