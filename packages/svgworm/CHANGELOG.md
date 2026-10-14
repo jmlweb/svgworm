@@ -1,5 +1,17 @@
 # svgworm
 
+## 0.2.0
+
+### Minor Changes
+
+- 531bf15: `svgworm init` supports Astro: it detects an `astro` dependency and writes a dependency-free `Icon.astro` that renders the same markup as `@svgworm/react`, with no client JavaScript. The new `--framework <react|astro>` flag overrides detection (Astro wins when both are dependencies), a `--component-file` whose extension does not match the framework exits with code 2, and plain and `--json` output report `framework` and `frameworkSource`.
+
+### Patch Changes
+
+- 636c0db: The npm package pages link to the new website, https://svgworm.com.
+- 8624f2e: The README on npm and GitHub now leads with an example and a short get-started; the CLI, config and Next.js reference moved to `docs/`.
+- a9abc37: The package READMEs on npm describe the released 0.1 instead of a pre-alpha.
+
 ## 0.1.0
 
 ### Minor Changes
