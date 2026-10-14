@@ -79,4 +79,4 @@ pnpm astro build
 
 ## Working example
 
-The [project site](../apps/site) is an Astro 7 static site that renders every icon through the generated `Icon.astro`. CI checks it for zero client JS, and a test renders `Icon.astro` and `createIcon` from the same manifest and compares the markup.
+The [project site](../apps/site) is an Astro 7 static site that renders every icon through the generated `Icon.astro`. CI checks that every icon comes from the hashed sprite (the site itself may use client JS; only what svgworm generates must not need it), and a test renders `Icon.astro` and `createIcon` from the same manifest and compares the markup.

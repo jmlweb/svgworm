@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Proves the site's claims after `astro build` (TSK-036, ADR-0016):
-//   1. no client JS: no <script> tag in any page and no .js/.mjs file anywhere in dist/;
-//   2. the icons come from the hashed sprite: every <use href> points at a sprite in the
+//   1. the icons come from the hashed sprite: every <use href> points at a sprite in the
 //      manifest, the sprite file is in dist/, and every icon in the manifest is used;
-//   3. _headers serves /icons/* immutable.
+//   2. _headers serves /icons/* immutable.
+// The site itself may ship client JS; only its icons must need none (they are `<use>` refs).
 // Exit 1 with every problem found. Same approach as the Next.js example's check.
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
@@ -30,9 +30,6 @@ const files = entries
 
 const problems = [];
 
-const scripts = files.filter((file) => /\.(?:c|m)?js$/.test(file));
-for (const file of scripts) problems.push(`JavaScript file in dist: ${file}`);
-
 const pages = files.filter((file) => file.endsWith('.html'));
 if (pages.length === 0) problems.push('no HTML page in dist');
 
@@ -44,7 +41,6 @@ const spriteUrls = new Map(
 const usedIds = new Set();
 for (const page of pages) {
   const html = await readFile(join(dist, page), 'utf8');
-  if (/<script\b/i.test(html)) problems.push(`<script> tag in ${page}`);
   for (const [, url, id] of html.matchAll(/<use href="([^"#]+)#([^"]+)"/g)) {
     if (!spriteUrls.has(url)) problems.push(`${page}: unknown sprite ${url}`);
     usedIds.add(`${url}#${id}`);
@@ -75,5 +71,5 @@ if (problems.length > 0) {
 }
 console.log(
   `checked ${String(files.length)} file(s) and ${String(pages.length)} page(s): ` +
-    `no client JS, ${String(usedIds.size)} icon(s) from the hashed sprite, immutable /icons/*`,
+    `${String(usedIds.size)} icon(s) from the hashed sprite, immutable /icons/*`,
 );

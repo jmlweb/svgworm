@@ -43,7 +43,7 @@ README after the change: hero, type-error snippet, Why, 3-step get started, shor
 ### Risks and notes
 
 - GitHub alerts (`> [!TIP]`) and relative `.md` links need a build-time transform. A remark plugin would be a new dev dependency of `apps/site`: decide in ADR-0018 and ask the maintainer before adding it.
-- `site:check` must keep zero client JS on every page and check every new page, not just the landing page.
+- Client JS is allowed on the site (search, copy buttons, etc.); only what svgworm generates must not need it. `site:check` must check every new page, not just the landing page: every icon from the hashed sprite.
 - Coordinate with TSK-037: it ports `landing.tsx` to `.astro` and adds `docs/astro.md`. Whichever lands second adapts.
 - Use the design system artifact (CLAUDE.local.md) for page styling.
 
@@ -53,7 +53,7 @@ README after the change: hero, type-error snippet, Why, 3-step get started, shor
 - [ ] The site builds one page per user doc from docs/*.md (nextjs, cli, config, comparison, output-contract, posts/per-icon-color), with a check that fails when a listed doc has no page; GitHub alerts and relative .md links render correctly
 - [ ] /llms.txt and a generated /llms-full.txt are served from the site, and llms.txt links point to site URLs
 - [ ] README keeps hero, type-error snippet, Why, get started and the short comparison table; its Docs section links to the site; repo docs/ files stay the single source and lose no content
-- [ ] pnpm site:check passes with zero client JS on every page; every page has a title, description and sitemap entry
+- [ ] pnpm site:check passes on every page (icons from the hashed sprite; site client JS allowed); every page has a title, description and sitemap entry
 - [ ] Docs made stale are updated: AGENTS.md docs map, apps/site README, docs/traction.md, skill and context7.json links where needed
 
 ## Notes

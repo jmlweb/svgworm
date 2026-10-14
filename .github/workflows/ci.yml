@@ -127,10 +127,10 @@ jobs:
       - run: pnpm build
       - run: pnpm example:check
 
-  # The landing page (ADR-0016): committed svgworm output current, Astro build, then no
-  # client JS in dist/ and every icon from the hashed sprite. Deploys live in site.yml.
+  # The landing page (ADR-0016): committed svgworm output current, Astro build, then
+  # every icon from the hashed sprite. Deploys live in site.yml.
   site:
-    name: Site (Astro, zero client JS)
+    name: Site (Astro, icons from the hashed sprite)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

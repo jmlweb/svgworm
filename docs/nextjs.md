@@ -84,4 +84,4 @@ export default {
 
 ## Working example
 
-[examples/next-app-router](../examples/next-app-router) is a complete app with these steps, built with Turbopack and checked for zero client JS in CI.
+[examples/next-app-router](../examples/next-app-router) is a complete app with these steps, built with Turbopack and checked in CI for no icon code in client chunks.

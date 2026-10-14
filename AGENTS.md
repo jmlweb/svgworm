@@ -19,7 +19,7 @@ Full context: [docs/vision.md](docs/vision.md) and [docs/viability.md](docs/viab
 
 ## Product principles (non-negotiable unless an ADR changes them)
 
-1. **Zero-JS by default.** The default delivery is an external sprite file referenced via `<use href>`. An inline sprite is opt-in.
+1. **Zero-JS by default.** The default delivery is an external sprite file referenced via `<use href>`. An inline sprite is opt-in. This binds what svgworm *generates* (sprites, manifest, types, adapter components): they must never need client JS to render an icon. It does not bind the project's own surfaces: the website (`apps/site`), the examples and tooling may use client-side JS freely.
 2. **Deterministic output.** The same input gives byte-identical output on every OS and every run. No dependence on crawl order, timestamps, or locale.
 3. **Agnostic core, thin adapters.** The core knows nothing about React or any other framework. Adapters only consume the output contract.
 4. **Types are the product.** Icon names must be checked at compile time, and an invalid name must be a type error.
@@ -50,7 +50,7 @@ Requires Node `^22.20 || >=24.11` and pnpm (pinned by `packageManager`; use Core
 | `pnpm check:packages` | publint and Are the Types Wrong on each package (run `pnpm build` first) |
 | `pnpm determinism:fingerprint` | Fingerprint `fixtures/**/*.svg` with the built core (run `pnpm build` first). CI requires identical output on Linux, macOS, and Windows |
 | `pnpm example:build` / `pnpm example:check` | Build the Next.js 16 example in `examples/next-app-router` with Turbopack, or check it: committed svgworm output current, then build, then no icon code in client chunks (run `pnpm build` first) |
-| `pnpm site:build` / `pnpm site:check` | Build the landing page in `apps/site` with Astro, or check it: committed svgworm output current, then build, then no client JS in `dist/` and every icon from the hashed sprite (run `pnpm build` first) |
+| `pnpm site:build` / `pnpm site:check` | Build the landing page in `apps/site` with Astro, or check it: committed svgworm output current, then build, then every icon from the hashed sprite (run `pnpm build` first) |
 | `pnpm verify` | Everything above that CI runs on one OS, except the Next.js example |
 | `pnpm changeset` | Record a changeset for a user-facing change |
 
