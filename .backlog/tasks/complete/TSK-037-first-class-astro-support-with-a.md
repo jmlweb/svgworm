@@ -1,13 +1,14 @@
 ---
 id: TSK-037
 title: First-class Astro support with a generated Icon.astro
-status: active
+status: complete
 priority: P2
 tags: []
 created: 2026-10-14
 source: idea/PLN-002
 depends-on: []
 started: 2026-10-14
+completed: 2026-10-14
 ---
 
 # First-class Astro support with a generated Icon.astro
@@ -101,3 +102,5 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 - [2026-10-14] Throwaway build with base /docs: publicPath must include base. ADR-0017 accepted, Q-21 resolved for Astro.
 - [2026-10-14] Remaining: docs/astro.md (incl. base result), README line, llms.txt, docs/cli.md, context7.json, skill, changeset wording, TSK-024 retitle.
 - [2026-10-14] Docs, skill, changeset and TSK-024 retitle done (2d8cc48). All 11 criteria met; ready for complete-task.
+- [2026-10-14] Completed with unproven criteria 4: TTY select prompt for react+astro not tested; non-TTY path proven, follow-up to be tracked
+- [2026-10-14] Completed
