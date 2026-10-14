@@ -1,6 +1,12 @@
 <div align="center">
 
-<h1><img alt="svgworm" src="docs/assets/logo.svg" width="360"></h1>
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo-light.svg">
+    <img alt="svgworm" src="docs/assets/logo.svg" width="360">
+  </picture>
+</h1>
 
 **Turn a folder of SVG files into type-safe, cacheable SVG sprites.**<br>
 Zero client JavaScript, deterministic output, and a React adapter for Server Components.
