@@ -77,12 +77,12 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 - [x] Dependency-free Icon.astro template typed with IconName, mirrors createIcon delivery (use/img/mask), a11y defaults, throws on unknown name and manifest version != 1 — evidence: pnpm vitest run --project site → 12 passed (Icon.astro vs createIcon) (2026-10-14)
 - [x] init supports --framework <react|astro> with detection, TTY prompt when both detected, and reports framework and source in plain and --json output — evidence: pnpm test (run: init with Astro) + rtk proxy pnpm lint clean; TTY select prompt not run (2026-10-14)
 - [x] Conformance test in apps/site: Icon.astro and createIcon render the same markup for use, img and mask — evidence: pnpm vitest run --project site → 12 passed (2026-10-14)
-- [ ] `base` handling for public/ verified in a throwaway build and recorded in docs/astro.md and ADR-0017
-- [ ] docs/astro.md, docs/cli.md, README also-works line, llms.txt, context7.json, open-questions Q-21 updated
-- [ ] skills/svgworm-astro/SKILL.md added
-- [ ] Minor changeset for svgworm
+- [x] `base` handling for public/ verified in a throwaway build and recorded in docs/astro.md and ADR-0017 — evidence: manual: base section in docs/astro.md and ADR-0017 Evidence (2026-10-14)
+- [x] docs/astro.md, docs/cli.md, README also-works line, llms.txt, context7.json, open-questions Q-21 updated — evidence: commits 2d8cc48 and 73307d9; pnpm test, lint, format:check, check:packages green (2026-10-14)
+- [x] skills/svgworm-astro/SKILL.md added — evidence: commit 2d8cc48 adds skills/svgworm-astro/SKILL.md (2026-10-14)
+- [x] Minor changeset for svgworm — evidence: .changeset/init-astro-framework.md (svgworm minor) (2026-10-14)
 - [x] apps/site dogfoods the generated Icon.astro and drops React deps, site:check green (after TSK-036) — evidence: pnpm site:check → no client JS, 19 icon(s) from the hashed sprite; pnpm typecheck 0 errors (2026-10-14)
-- [ ] TSK-024 retitled to Vite recipe
+- [x] TSK-024 retitled to Vite recipe — evidence: flowstate task-update TSK-024 --set title; frontmatter reads Vite recipe (2026-10-14)
 
 ## Notes
 
@@ -100,3 +100,4 @@ Make svgworm as easy to set up in Astro as it is in Next.js. `svgworm init` dete
 - [2026-10-14] Conformance test found a bug: numeric width/height in the mask style lacked px. Fixed (f8a2e42).
 - [2026-10-14] Throwaway build with base /docs: publicPath must include base. ADR-0017 accepted, Q-21 resolved for Astro.
 - [2026-10-14] Remaining: docs/astro.md (incl. base result), README line, llms.txt, docs/cli.md, context7.json, skill, changeset wording, TSK-024 retitle.
+- [2026-10-14] Docs, skill, changeset and TSK-024 retitle done (2d8cc48). All 11 criteria met; ready for complete-task.
