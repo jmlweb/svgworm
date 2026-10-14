@@ -25,6 +25,7 @@ type Feature = {
   readonly body: string;
 };
 
+// Two tiles fill the bento's second row next to the tall tile. Caching is in the stats band.
 const features: readonly Feature[] = [
   {
     icon: 'layers',
@@ -32,21 +33,23 @@ const features: readonly Feature[] = [
     body: 'Mono icons follow currentColor, multicolor icons keep their colors. Gradients, masks and filters render in Chromium, Firefox and WebKit.',
   },
   {
-    icon: 'package',
-    title: 'No bundler plugin',
-    body: 'A CLI that writes files. Turbopack, webpack and Vite all just see static assets.',
-  },
-  {
     icon: 'git-branch',
-    title: 'Deterministic',
-    body: 'Byte-identical output on Linux, macOS and Windows. svgworm check fails CI when it is stale.',
-  },
-  {
-    icon: 'gauge',
-    title: 'Cacheable for a year',
-    body: 'File names are content hashes, so the sprite is served immutable. Change an icon, get a new URL.',
+    title: 'Plain files, no plugin',
+    body: 'A CLI that writes static files, byte-identical on Linux, macOS and Windows. Turbopack, webpack and Vite need no plugin, and svgworm check fails CI when the output is stale.',
   },
 ];
+
+const installCommand = 'pnpm add -D svgworm && pnpm add @svgworm/react';
+
+// No copy button: it would need client JS. One click selects the whole command instead.
+const Install = () => (
+  <p className="install">
+    <span aria-hidden="true" className="t-prompt">
+      $
+    </span>
+    <code>{installCommand}</code>
+  </p>
+);
 
 type Pebble = {
   readonly icon: IconName;
@@ -58,12 +61,12 @@ type Pebble = {
 
 // Icons buried in the soil band, in percent of the band. They come from the sprite too.
 const pebbles: readonly Pebble[] = [
-  { icon: 'folder-open', x: 8, y: 62, size: 30, tilt: -12 },
-  { icon: 'file-code', x: 22, y: 82, size: 26, tilt: 9 },
-  { icon: 'server', x: 63, y: 74, size: 28, tilt: -6 },
-  { icon: 'package', x: 78, y: 58, size: 32, tilt: 14 },
-  { icon: 'layers', x: 91, y: 84, size: 26, tilt: -10 },
-  { icon: 'zap', x: 45, y: 88, size: 22, tilt: 18 },
+  { icon: 'folder-open', x: 9, y: 70, size: 26, tilt: -12 },
+  { icon: 'file-code', x: 24, y: 84, size: 22, tilt: 9 },
+  { icon: 'server', x: 64, y: 80, size: 24, tilt: -6 },
+  { icon: 'package', x: 79, y: 66, size: 26, tilt: 14 },
+  { icon: 'layers', x: 92, y: 86, size: 22, tilt: -10 },
+  { icon: 'zap', x: 46, y: 90, size: 20, tilt: 18 },
 ];
 
 const swatches = ['#933a43', '#b07a52', '#3d7a5c', '#3b5f9a'] as const;
@@ -74,38 +77,34 @@ const Soil = () => (
       className="soil-art"
       focusable="false"
       preserveAspectRatio="xMidYMin slice"
-      viewBox="0 0 1440 320"
+      viewBox="0 0 1440 210"
     >
       <path
         className="stratum stratum-1"
-        d="M0 40 C 240 8, 480 72, 720 40 S 1200 8, 1440 44 V320 H0Z"
+        d="M0 26 C 240 5, 480 47, 720 26 S 1200 5, 1440 29 V210 H0Z"
       />
       <path
         className="stratum stratum-2"
-        d="M0 112 C 300 82, 540 146, 820 108 S 1250 84, 1440 118 V320 H0Z"
+        d="M0 73 C 300 53, 540 95, 820 70 S 1250 55, 1440 77 V210 H0Z"
       />
       <path
         className="stratum stratum-3"
-        d="M0 196 C 280 172, 620 226, 900 190 S 1270 164, 1440 200 V320 H0Z"
-      />
-      <path
-        className="tunnel"
-        d="M-20 168 C 120 128, 220 200, 340 160 S 520 120, 600 158"
+        d="M0 140 C 280 125, 620 160, 900 136 S 1270 118, 1440 142 V210 H0Z"
       />
       <g className="worm">
         <path
           className="worm-body"
-          d="M420 158 C 470 122, 520 196, 580 158 S 680 122, 730 152"
+          d="M420 104 C 470 76, 520 132, 580 104 S 680 76, 730 100"
           pathLength="100"
         />
         <path
           className="worm-rings"
-          d="M420 158 C 470 122, 520 196, 580 158 S 680 122, 730 152"
+          d="M420 104 C 470 76, 520 132, 580 104 S 680 76, 730 100"
           pathLength="100"
         />
         <path
           className="worm-saddle"
-          d="M420 158 C 470 122, 520 196, 580 158 S 680 122, 730 152"
+          d="M420 104 C 470 76, 520 132, 580 104 S 680 76, 730 100"
           pathLength="100"
         />
       </g>
@@ -148,7 +147,9 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
         <nav aria-label="Project links">
           <a href={docs('docs/nextjs.md')}>Docs</a>
           <a href={docs('docs/comparison.md')}>Compare</a>
-          <a href="https://www.npmjs.com/package/svgworm">npm</a>
+          <a className="nav-npm" href="https://www.npmjs.com/package/svgworm">
+            npm
+          </a>
           <a className="nav-cta" href={REPO}>
             GitHub
           </a>
@@ -174,6 +175,7 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
               Server Components in the Next.js App Router, and ship no icon code
               to the browser.
             </p>
+            <Install />
             <div className="actions">
               <a className="button" href={docs('README.md#get-started')}>
                 Get started <Icon name="arrow-right" />
@@ -229,11 +231,11 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
           </div>
           <div>
             <strong>1</strong>
-            <span>sprite request for every icon</span>
+            <span>request for all {iconNames.length} icons</span>
           </div>
           <div>
             <strong>{formatKib(spriteBytes)}</strong>
-            <span>for all {iconNames.length} icons</span>
+            <span>the whole sprite</span>
           </div>
           <div>
             <strong>1 year</strong>
@@ -252,12 +254,11 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
                 <span className="badge">
                   <Icon name="zap" />
                 </span>
-                <h3>Zero client JS</h3>
+                <h3>Rendered on the server</h3>
               </div>
               <p>
-                Each icon renders on the server as a tiny{' '}
-                <code>&lt;use href&gt;</code>. The browser fetches one hashed
-                sprite and keeps it.
+                Each icon is a tiny <code>&lt;use href&gt;</code> into one
+                hashed sprite. The browser fetches the sprite once and keeps it.
               </p>
               <pre className="code">
                 <code>
@@ -343,7 +344,7 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
       <section aria-labelledby="start" className="section section-raised">
         <div className="wrap">
           <p className="kicker">Get started in Next.js</p>
-          <h2 id="start">Three steps, no config.</h2>
+          <h2 id="start">Three steps, no bundler config.</h2>
           <ol className="steps">
             <li>
               <h3>Install and set up</h3>
@@ -379,6 +380,11 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
               </p>
               <pre className="code">
                 <code>
+                  <span className="c-attr">import</span> {'{ Icon }'}{' '}
+                  <span className="c-attr">from</span>{' '}
+                  <span className="c-str">&apos;@/components/icon&apos;</span>
+                  <span>;</span>
+                  {'\n\n'}
                   <span className="c-tag">&lt;Icon</span>{' '}
                   <span className="c-attr">name</span>=
                   <span className="c-str">&quot;home&quot;</span>{' '}
@@ -487,6 +493,25 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
           </figure>
         </div>
       </section>
+
+      <section aria-labelledby="try" className="section section-raised cta">
+        <div className="wrap cta-inner">
+          <h2 id="try">Point it at your icon folder.</h2>
+          <p>
+            Two packages, one <code>init</code>, and your icons ship as one
+            cached file.
+          </p>
+          <Install />
+          <div className="actions">
+            <a className="button" href={docs('README.md#get-started')}>
+              Get started <Icon name="arrow-right" />
+            </a>
+            <a className="button button-ghost" href={REPO}>
+              <Icon name="git-branch" /> Star on GitHub
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer className="site-footer">
@@ -505,6 +530,7 @@ export const Landing = ({ logoLight, logoDark, spriteBytes }: LandingProps) => (
           (MIT).
         </p>
         <nav aria-label="Docs">
+          <a href="https://www.npmjs.com/package/svgworm">npm</a>
           <a href={docs('docs/cli.md')}>CLI</a>
           <a href={docs('docs/config.md')}>Config</a>
           <a href={docs('docs/output-contract.md')}>Output contract</a>

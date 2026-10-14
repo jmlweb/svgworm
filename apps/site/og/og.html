@@ -1,0 +1,150 @@
+<!doctype html>
+<!--
+  Source of public/og.png (1200x630), the link preview image. Render it with any Chrome:
+    chrome --headless --hide-scrollbars --window-size=1200,630 \
+      --screenshot=public/og.png og/og.html
+  (run from apps/site; the fonts and the logo load through relative file:// paths)
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>svgworm og image</title>
+    <style>
+      @font-face {
+        font-family: 'Bricolage Grotesque';
+        font-weight: 200 800;
+        src: url('../public/fonts/bricolage-grotesque-latin-opsz-normal.woff2')
+          format('woff2-variations');
+      }
+
+      @font-face {
+        font-family: 'Instrument Sans';
+        font-weight: 400 700;
+        src: url('../public/fonts/instrument-sans-latin-wght-normal.woff2')
+          format('woff2-variations');
+      }
+
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-weight: 100 800;
+        src: url('../public/fonts/jetbrains-mono-latin-wght-normal.woff2')
+          format('woff2-variations');
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #f5eee3;
+        color: #33211a;
+      }
+
+      .card {
+        position: relative;
+        box-sizing: border-box;
+        height: 630px;
+        padding: 64px 80px 0;
+      }
+
+      .logo {
+        display: block;
+        width: 220px;
+        height: auto;
+      }
+
+      h1 {
+        margin: 48px 0 28px;
+        font:
+          800 104px/0.92 'Bricolage Grotesque',
+          sans-serif;
+        letter-spacing: -0.04em;
+        font-variation-settings: 'opsz' 96;
+      }
+
+      h1 span {
+        padding-bottom: 0.08em;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10'%3E%3Cpath d='M0 6 Q 5 1 10 6 T 20 6 T 30 6 T 40 6' fill='none' stroke='%23de8f8a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
+          0 100% / 48px 12px repeat-x;
+        color: #933a43;
+      }
+
+      p {
+        margin: 0;
+        color: #6e4530;
+        font:
+          500 30px/1.3 'Instrument Sans',
+          sans-serif;
+      }
+
+      code {
+        display: table;
+        margin-top: 22px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        background: #1f1510;
+        color: #eadbc4;
+        font:
+          500 24px 'JetBrains Mono',
+          monospace;
+      }
+
+      .soil {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 120px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img
+        alt="svgworm"
+        class="logo"
+        src="../../../docs/assets/logo-light.svg"
+      />
+      <h1>One sprite.<br /><span>Zero client JS.</span></h1>
+      <p>
+        Type-safe SVG sprites for React Server Components.
+        <code>pnpm add -D svgworm</code>
+      </p>
+      <svg class="soil" preserveAspectRatio="none" viewBox="0 0 1200 120">
+        <path
+          d="M0 22 C 200 4, 400 40, 600 22 S 1000 4, 1200 24 V120 H0Z"
+          fill="#33211a"
+        />
+        <path
+          d="M0 62 C 250 46, 450 80, 680 58 S 1040 46, 1200 64 V120 H0Z"
+          fill="#6e4530"
+        />
+        <path
+          d="M0 100 C 230 88, 520 116, 750 96 S 1060 84, 1200 102 V120 H0Z"
+          fill="#8a5a3c"
+        />
+        <g fill="none" stroke-width="18">
+          <path
+            d="M820 78 C 860 54, 900 100, 950 78 S 1030 56, 1070 74"
+            pathLength="100"
+            stroke="#de8f8a"
+            stroke-linecap="round"
+          />
+          <path
+            d="M820 78 C 860 54, 900 100, 950 78 S 1030 56, 1070 74"
+            pathLength="100"
+            stroke="rgb(147 58 67 / 0.35)"
+            stroke-dasharray="0.6 3.4"
+          />
+          <path
+            d="M820 78 C 860 54, 900 100, 950 78 S 1030 56, 1070 74"
+            pathLength="100"
+            stroke="#b85c5e"
+            stroke-dasharray="0 26 9 100"
+          />
+        </g>
+      </svg>
+    </div>
+  </body>
+</html>

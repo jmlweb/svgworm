@@ -10,16 +10,17 @@ pnpm site:check                   # svgworm check, build, then the output check
 pnpm --filter svgworm-site dev    # svgworm, then astro dev
 ```
 
-| File | Role |
-|------|------|
-| `src/pages/index.astro` | The page shell. Renders `Landing` with `react-dom/server`, so no React reaches the client |
-| `src/components/landing.tsx` | The page content |
-| `src/components/icon.tsx` | `createIcon(manifest)`, as in a Next.js app |
-| `icons/` | Lucide SVGs (ISC, mono) and Fluent Emoji Flat SVGs in `icons/emoji/` (MIT, multicolor), see `LICENSES.md` |
-| `public/icons/`, `svgworm/` | Generated output, committed so `svgworm check` fails CI when an icon changes without a rebuild |
-| `public/_headers` | `Cache-Control: public, max-age=31536000, immutable` for `/icons/*` and `/fonts/*` |
-| `scripts/check-output.mjs` | Fails on a `<script>` tag or a `.js` file in `dist/`, an unknown or unused sprite icon, or a missing cache rule |
-| `wrangler.jsonc` | The assets-only Worker `svgworm`, with preview URLs on |
+| File                          | Role                                                                                                                                                                                                                          |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/index.astro`       | The page shell. Renders `Landing` with `react-dom/server`, so no React reaches the client                                                                                                                                     |
+| `src/components/landing.tsx`  | The page content                                                                                                                                                                                                              |
+| `src/components/icon.tsx`     | `createIcon(manifest)`, as in a Next.js app                                                                                                                                                                                   |
+| `icons/`                      | Lucide SVGs (ISC, mono) and Fluent Emoji Flat SVGs in `icons/emoji/` (MIT, multicolor), see `LICENSES.md`                                                                                                                     |
+| `public/icons/`, `svgworm/`   | Generated output, committed so `svgworm check` fails CI when an icon changes without a rebuild                                                                                                                                |
+| `public/_headers`             | `Cache-Control: public, max-age=31536000, immutable` for `/icons/*` and `/fonts/*`                                                                                                                                            |
+| `og/og.html`, `public/og.png` | The link preview image (1200×630) and its source. After changing `og.html`, re-render it from `apps/site` with any Chrome: `chrome --headless --hide-scrollbars --window-size=1200,630 --screenshot=public/og.png og/og.html` |
+| `scripts/check-output.mjs`    | Fails on a `<script>` tag or a `.js` file in `dist/`, an unknown or unused sprite icon, or a missing cache rule                                                                                                               |
+| `wrangler.jsonc`              | The assets-only Worker `svgworm`, with preview URLs on                                                                                                                                                                        |
 
 There is no `@astrojs/react`: Astro always emits a renderer's client entrypoint into `dist/`, even when no component hydrates.
 

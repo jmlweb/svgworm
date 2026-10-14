@@ -347,7 +347,6 @@ pre {
   background: var(--term-bg);
   color: var(--term-ink);
   box-shadow: var(--shadow);
-  transform: rotate(1.2deg);
 }
 
 .terminal-bar {
@@ -389,10 +388,6 @@ pre {
   line-height: 1.7;
 }
 
-.terminal-small {
-  transform: rotate(-1deg);
-}
-
 .t-prompt {
   color: var(--worm);
 }
@@ -418,7 +413,7 @@ pre {
 
 .soil {
   position: relative;
-  height: clamp(180px, 24vw, 320px);
+  height: clamp(120px, 14.6vw, 210px);
   margin-top: calc(-1 * var(--space-12));
   overflow: hidden;
 }
@@ -456,13 +451,6 @@ pre {
   }
 }
 
-.tunnel {
-  fill: none;
-  stroke: rgb(0 0 0 / 0.28);
-  stroke-width: 30;
-  stroke-linecap: round;
-}
-
 .worm-body,
 .worm-rings,
 .worm-saddle {
@@ -490,7 +478,7 @@ pre {
 
 .worm {
   animation: wiggle 3.2s ease-in-out infinite;
-  transform-origin: 575px 158px;
+  transform-origin: 575px 104px;
 }
 
 @keyframes crawl {
@@ -509,10 +497,7 @@ pre {
   position: absolute;
   display: grid;
   place-items: center;
-  padding: 10px;
-  border-radius: 40%;
-  background: rgb(234 219 196 / 0.08);
-  color: rgb(234 219 196 / 0.55);
+  color: rgb(234 219 196 / 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -893,11 +878,6 @@ pre {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .terminal,
-  .terminal-small {
-    transform: none;
-  }
-
   .bento,
   .steps {
     grid-template-columns: minmax(0, 1fr);
@@ -1095,4 +1075,90 @@ h1 {
   gap: var(--space-2);
   grid-auto-flow: column;
   padding-inline: var(--space-3);
+}
+
+/* Install command: no copy button (that needs JS), one click selects it all. */
+.install {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 var(--space-6);
+  padding: 10px var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--term-bg);
+  color: var(--term-ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.install code {
+  overflow-x: auto;
+  padding: 0;
+  background: none;
+  white-space: nowrap;
+  user-select: all;
+}
+
+/* Closing call to action. */
+.cta-inner {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.cta-inner h2 {
+  margin-bottom: var(--space-4);
+}
+
+.cta-inner > p:not(.install) {
+  margin: 0 0 var(--space-8);
+  color: var(--ink-muted);
+  font-size: 18px;
+}
+
+.cta .actions {
+  justify-content: center;
+}
+
+@media (max-width: 560px) {
+  .terminal pre {
+    padding: var(--space-4);
+    font-size: 12px;
+  }
+
+  .install {
+    font-size: 12px;
+  }
+
+  /* Three icons per row instead of two: the demo stays a grid, not a long list. */
+  .showcase {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .showcase li {
+    padding: var(--space-4) var(--space-1);
+  }
+
+  .showcase code {
+    font-size: 11px;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  /* The header fits on one row; npm stays in the footer. */
+  .brand img {
+    width: 120px;
+  }
+
+  .site-header nav {
+    gap: var(--space-4);
+    font-size: 14px;
+  }
+
+  .site-header .nav-npm {
+    display: none;
+  }
 }
