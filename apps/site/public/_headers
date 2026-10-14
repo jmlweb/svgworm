@@ -6,3 +6,6 @@
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Astro hashes everything under _astro/ (logo SVGs), so the same rule is safe there.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
