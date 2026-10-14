@@ -21,6 +21,7 @@ SVG sources ─▶ core (parse, normalize, id, optimize, classify color, assembl
 
 - `packages/svgworm`: core in `src/core`, CLI in `src/cli`. `src/core` must not import `src/cli`, `@clack/prompts`, or `react`, and must not write to stdout. It reports progress through an event callback. A lint rule enforces this.
 - `packages/react` (`@svgworm/react`): zero dependencies, `react` as a peer only, and no import from `svgworm`.
+- `apps/site` (private, ADR-0016): the landing page. It consumes the output contract like any user and is never published.
 - At most 3 direct runtime dependencies in `svgworm`: svgo, zod, @clack/prompts. Prefer `node:` built-ins (`util.parseArgs`, `util.styleText`, `fs.glob`, `path.matchesGlob`, `fs.watch`, `crypto`).
 - Sort with a code-unit comparator, never `localeCompare`. Convert `\` to `/` in every path from `fs.glob` before using it.
 
