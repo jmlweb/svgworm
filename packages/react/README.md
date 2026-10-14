@@ -14,6 +14,6 @@ export const Icon = createIcon(manifest);
 
 The icon is `aria-hidden` unless you pass `title` or `label`. Size, `className` and `style` are standard props. Peer dependency: `react` ^19.
 
-Quick start and docs: <https://github.com/jmlweb/svgworm#readme>.
+Get started: <https://github.com/jmlweb/svgworm#get-started>. Next.js setup, caching and `basePath`: [docs/nextjs.md](https://github.com/jmlweb/svgworm/blob/main/docs/nextjs.md).
 
 Status: 0.1.x, versioned together with `svgworm`. The props can still change in a minor version before 1.0; see the changelog.
