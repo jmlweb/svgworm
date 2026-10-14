@@ -158,6 +158,10 @@ It prints stats at the end (icons, sprites, sizes, savings, time). When stdout i
 
 Read [llms.txt](llms.txt). Everything is non-interactive: flags, `--json`, stable exit codes, and a JSON Schema for the config. The agent skill in [skills/svgworm-nextjs/SKILL.md](skills/svgworm-nextjs/SKILL.md) walks an agent through setting svgworm up in a Next.js app and fixing each error code.
 
+```bash
+npx skills add jmlweb/svgworm --skill svgworm-nextjs
+```
+
 ## Working on this project
 
 Read [AGENTS.md](AGENTS.md). The backlog is managed with flowstate in [`.backlog/`](.backlog/).

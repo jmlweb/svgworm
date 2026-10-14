@@ -1,0 +1,42 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "svgworm",
+  "description": "CLI that compiles a folder of SVG files into content-hashed SVG sprites, a manifest module and TypeScript types, plus @svgworm/react, a React Server Component adapter that renders the icons with zero client JavaScript.",
+  "branch": "main",
+  "folders": [
+    "docs",
+    "skills",
+    "examples/next-app-router",
+    "packages/svgworm",
+    "packages/react"
+  ],
+  "excludeFolders": [
+    "docs/adr",
+    "docs/metrics",
+    "docs/outreach",
+    "docs/posts",
+    "docs/samples",
+    "src",
+    "dist",
+    "node_modules",
+    ".next"
+  ],
+  "excludeFiles": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "open-questions.md",
+    "release.md",
+    "requirements.md",
+    "traction.md",
+    "viability.md"
+  ],
+  "rules": [
+    "Run `svgworm init --yes` to set a project up non-interactively; add `--agents-md` for an AGENTS.md section.",
+    "Create the component once in a Server Component file with `createIcon(manifest)` from `@svgworm/react`, importing `manifest` from the generated `svgworm/icons.js`.",
+    "Run `svgworm` in `predev` and `prebuild`, and `svgworm check` in CI; `check` exits 1 when the committed output is stale.",
+    "The sprite must be served from the same origin as the page; with a Next.js `basePath`, pass it in `--public-path`.",
+    "Use `--json` for machine-readable output. Exit codes: 0 success, 1 invalid SVG, name collision, I/O failure or stale output, 2 usage or config error."
+  ]
+}

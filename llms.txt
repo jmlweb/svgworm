@@ -28,7 +28,7 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 ## Docs
 
 - [README](https://github.com/jmlweb/svgworm/blob/main/README.md): quick start, CLI, config
-- [Agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-nextjs/SKILL.md): step-by-step setup in a Next.js app and a fix for every error code
+- [Agent skill](https://github.com/jmlweb/svgworm/blob/main/skills/svgworm-nextjs/SKILL.md): step-by-step setup in a Next.js app and a fix for every error code (install: `npx skills add jmlweb/svgworm --skill svgworm-nextjs`)
 - [Next.js example](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router): runnable App Router app with Turbopack and a zero-client-JS check
 - [Comparison](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md): svgworm vs SVGR, @neodx/svg, vite-plugin-icons-spritesheet, with spike numbers and when each is better
 - [Output contract](https://github.com/jmlweb/svgworm/blob/main/docs/output-contract.md): exact shape of the generated files and manifest

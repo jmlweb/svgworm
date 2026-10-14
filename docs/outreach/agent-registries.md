@@ -8,22 +8,7 @@ Context7 indexes a public repository's docs so agents that use its MCP server ge
 
 1. Open <https://context7.com/add-library> (or the "Add library" button on context7.com) and submit `https://github.com/jmlweb/svgworm`.
 2. The repo already has what the indexer prefers: `README.md` with copy-pasteable examples, `llms.txt`, `docs/` in Markdown, and a `skills/svgworm-nextjs/SKILL.md`. If the form asks for a docs folder, give `docs`; if it asks for a title, use `svgworm`.
-3. Optional, if Context7 asks for a config: add `context7.json` at the repo root:
-
-   ```json
-   {
-     "projectTitle": "svgworm",
-     "description": "CLI that turns a folder of SVG files into type-safe, content-hashed SVG sprites with a React Server Component adapter (zero client JS).",
-     "folders": ["docs", "skills", "examples/next-app-router"],
-     "excludeFolders": ["docs/samples", "docs/metrics", "docs/outreach", "docs/posts", "spikes", ".backlog"],
-     "rules": [
-       "Run `svgworm init --yes` to set a project up non-interactively.",
-       "Sprites must be same-origin; publicPath starts with / and includes the Next basePath.",
-       "Use `svgworm check` in CI; it exits 1 when the committed output is stale."
-     ]
-   }
-   ```
-
+3. `context7.json` at the repo root ([schema](https://context7.com/docs/library-owners.md)) is committed. It limits indexing to the user-facing docs (`docs` without ADRs, metrics, outreach, posts and samples; `skills`; the Next.js example; the package READMEs), excludes contributor files such as `AGENTS.md` and the changelogs, and gives agents five usage rules. Context7 reviews `projectTitle` and `description` before using them and rejects promotional text, so keep both factual. As of 2026-10-14, `resolve-library-id svgworm` finds nothing: the library is not submitted yet.
 4. Verify after indexing: in an agent with the Context7 MCP server, run `resolve-library-id` for `svgworm`, then `query-docs` with "set up svgworm in a Next.js app". The answer must mention `svgworm init`, `createIcon(manifest)` and `svgworm check`. Record the date in TSK-031 (criterion 1).
 
 ## 2. Skill registries
@@ -34,15 +19,31 @@ The skill is `skills/svgworm-nextjs/SKILL.md` (Agent Skills format: frontmatter 
 npx skills add jmlweb/svgworm --skill svgworm-nextjs
 ```
 
-Submit it to at least one public registry (criterion 3):
+Registries checked on 2026-10-14 (criterion 3):
 
-| Registry | How | Text |
-|----------|-----|------|
-| skills.sh (Vercel's `skills` CLI directory) | The directory lists any public repo with a `skills/*/SKILL.md`; usage counts come from `npx skills add`. Nothing to submit; it appears once people install it. Link the install command from the README | n/a |
-| awesome-agent-skills style lists (GitHub) | Open a PR adding one line under the frontend or tooling section | `- [svgworm-nextjs](https://github.com/jmlweb/svgworm/tree/main/skills/svgworm-nextjs) - Set up svgworm in a Next.js App Router app: SVG folder to a type-safe sprite rendered by a Server Component with zero client JS; fixes for every error code.` |
-| Claude Code plugin marketplaces (`claude plugin marketplace add`) | Only if the maintainer wants a plugin wrapper; a plain skill is enough for the kill criteria | skip for now |
+| Registry | How it lists a skill | Fits now? |
+|----------|----------------------|-----------|
+| [skills.sh](https://skills.sh) (Vercel's `skills` CLI directory) | No submission. A skill appears in `npx skills find` once someone installs it with `npx skills add` (listed skills with 2 installs show up). `npx skills add jmlweb/svgworm --list` already finds `svgworm-nextjs`; `npx skills find svgworm` returns nothing yet | Yes: one real install lists it |
+| [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) (~36k stars) | PR titled `Add skill: jmlweb/svgworm-nextjs`, one line at the end of the matching Community Skills subcategory, description of 10 words or fewer | Not yet: its CONTRIBUTING rejects brand-new skills without community usage |
+| [JackyST0/awesome-agent-skills](https://github.com/JackyST0/awesome-agent-skills) | PR updating `README.md` and `README_ZH.md` | Not yet: needs 64 GitHub stars for community entries |
+| [heilcheng/awesome-agent-skills](https://github.com/heilcheng/awesome-agent-skills) | PR to `README.md`, no usage bar | Low value: no push since 2026-04 |
+| Claude Code plugin marketplaces | A plugin wrapper | Skip; a plain skill is enough for the kill criteria |
 
-After listing, add the install command to the README "For AI agents" section and record the registry and date in TSK-031.
+Listing on skills.sh: run the install once in a throwaway directory (it registers the install; the skill files land in that directory only):
+
+```bash
+cd "$(mktemp -d)" && npx skills add jmlweb/svgworm --skill svgworm-nextjs
+```
+
+Then `npx skills find svgworm` should list `jmlweb/svgworm@svgworm-nextjs`. Skill installs are not a traction metric, so the maintainer's own install does not distort the kill-criteria review.
+
+Line for VoltAgent once the skill has users (10 words or fewer):
+
+```markdown
+- **[jmlweb/svgworm-nextjs](https://github.com/jmlweb/svgworm/tree/main/skills/svgworm-nextjs)** - Type-safe SVG sprite icons in Next.js, zero client JS
+```
+
+The install command is in the README "For AI agents" section and in `llms.txt`. After listing, record the registry and date in TSK-031.
 
 ## 3. Already done
 
