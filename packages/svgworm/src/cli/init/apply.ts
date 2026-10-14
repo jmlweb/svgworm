@@ -4,10 +4,10 @@ import { dirname, join } from 'node:path';
 
 import { InitStatus, type InitAction, type InitPlan } from './plan.ts';
 
-export type InitResult = {
-  readonly actions: readonly InitAction[];
-  readonly nextSteps: readonly string[];
-};
+export type InitResult = Pick<
+  InitPlan,
+  'framework' | 'frameworkSource' | 'actions' | 'nextSteps'
+>;
 
 const hasCode = (error: unknown, code: string): boolean =>
   error instanceof Error && 'code' in error && error.code === code;
@@ -77,5 +77,10 @@ export const applyInit = async (
   for (const action of plan.actions) {
     actions.push(await applyOne(cwd, action));
   }
-  return { actions, nextSteps: plan.nextSteps };
+  return {
+    framework: plan.framework,
+    frameworkSource: plan.frameworkSource,
+    actions,
+    nextSteps: plan.nextSteps,
+  };
 };

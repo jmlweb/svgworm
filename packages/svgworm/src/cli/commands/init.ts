@@ -3,6 +3,7 @@ import type { CliIo } from '../io.ts';
 import { ExitCode } from '../exit-codes.ts';
 import { applyInit } from '../init/apply.ts';
 import {
+  frameworkProblem,
   inspectProject,
   planInit,
   validateInitOptions,
@@ -30,10 +31,19 @@ export const runInitCommand = async (
       return ExitCode.USAGE;
     }
     const facts = await inspectProject(io.cwd, options);
+    const flagFramework = frameworkProblem(options, facts);
+    if (flagFramework !== undefined) {
+      reporter.fatal(flagFramework, FatalCode.USAGE);
+      return ExitCode.USAGE;
+    }
     const answered = isInteractive
       ? await askInitOptions(options, facts)
       : options;
-    const issues = validateInitOptions(answered, io.cwd);
+    const mismatch = frameworkProblem(answered, facts);
+    const issues = [
+      ...validateInitOptions(answered, io.cwd),
+      ...(mismatch === undefined ? [] : [mismatch]),
+    ];
     if (issues.length > 0) {
       reporter.fatal(issues.join('\n'), FatalCode.USAGE);
       return ExitCode.USAGE;

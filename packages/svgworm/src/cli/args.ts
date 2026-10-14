@@ -4,7 +4,7 @@ import type { ConfigOverrides } from '../core/api.ts';
 import type { InitOptions } from './init/plan.ts';
 
 import { DEFAULT_CONFIG_FILE } from '../core/config/resolve.ts';
-import { defaultInitOptions } from './init/plan.ts';
+import { defaultInitOptions, Framework } from './init/plan.ts';
 
 export const Command = {
   BUILD: 'build',
@@ -51,6 +51,7 @@ const OPTIONS = {
   version: { type: 'boolean', short: 'v' },
   // init only
   'component-file': { type: 'string' },
+  framework: { type: 'string' },
   component: { type: 'boolean' },
   scripts: { type: 'boolean' },
   'agents-md': { type: 'boolean' },
@@ -59,11 +60,17 @@ const OPTIONS = {
 
 const INIT_ONLY = [
   'component-file',
+  'framework',
   'component',
   'scripts',
   'agents-md',
   'yes',
 ] as const;
+
+const FRAMEWORKS: readonly string[] = Object.values(Framework);
+
+const isFramework = (value: string): value is Framework =>
+  FRAMEWORKS.includes(value);
 
 const isCommand = (value: string): value is Command => COMMANDS.includes(value);
 
@@ -96,6 +103,12 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
     const flatten = values.flatten;
 
     if (command === Command.INIT) {
+      const framework = values.framework;
+      if (framework !== undefined && !isFramework(framework)) {
+        return usageError(
+          `--framework must be one of: ${FRAMEWORKS.join(', ')} (got "${framework}")`,
+        );
+      }
       const defaults = defaultInitOptions();
       return {
         kind: 'init',
@@ -108,6 +121,7 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
           publicPath,
           moduleDir,
           flatten,
+          framework,
           addScripts: values.scripts ?? defaults.addScripts,
           addComponent: values.component,
           componentFile: values['component-file'],

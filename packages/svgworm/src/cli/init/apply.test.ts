@@ -23,6 +23,8 @@ afterEach(async () => {
 });
 
 const plan = (actions: InitPlan['actions']): InitPlan => ({
+  framework: undefined,
+  frameworkSource: undefined,
   actions,
   nextSteps: [],
 });

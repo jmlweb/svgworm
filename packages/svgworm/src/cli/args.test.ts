@@ -93,4 +93,25 @@ describe('parseCliArgs', () => {
       isJson: true,
     });
   });
+
+  it('parses --framework for init and rejects unknown values', () => {
+    expect(parseCliArgs(['init', '--framework', 'astro'])).toMatchObject({
+      kind: 'init',
+      options: { framework: 'astro' },
+    });
+    expect(parseCliArgs(['init'])).toMatchObject({
+      options: { framework: undefined },
+    });
+    expect(parseCliArgs(['init', '--framework', 'vue'])).toMatchObject({
+      kind: 'usage-error',
+      message: expect.stringContaining('--framework') as string,
+    });
+  });
+
+  it('rejects --framework on other commands', () => {
+    expect(parseCliArgs(['build', '--framework', 'astro'])).toMatchObject({
+      kind: 'usage-error',
+      message: '--framework only applies to "svgworm init"',
+    });
+  });
 });

@@ -89,6 +89,11 @@ export const createPlainReporter = (io: CliIo): Reporter => {
             : `init ${action.path} ${action.status} (${action.reason})`,
         );
       });
+      if (result.framework !== undefined) {
+        out(
+          `init framework ${result.framework} (${result.frameworkSource ?? 'detected'})`,
+        );
+      }
       out(style('green', 'svgworm: init done'));
       out('Next steps:');
       result.nextSteps.forEach((step, index) => {

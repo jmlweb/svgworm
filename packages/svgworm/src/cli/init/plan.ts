@@ -7,6 +7,13 @@ import {
 } from '../../core/config/resolve.ts';
 import { ConfigError } from '../../core/errors.ts';
 
+export const Framework = { REACT: 'react', ASTRO: 'astro' } as const;
+export type Framework = (typeof Framework)[keyof typeof Framework];
+
+export const FrameworkSource = { FLAG: 'flag', DETECTED: 'detected' } as const;
+export type FrameworkSource =
+  (typeof FrameworkSource)[keyof typeof FrameworkSource];
+
 /** What `init` was asked to set up. Every field has a default, so no flag is required (R-56). */
 export type InitOptions = {
   readonly configFile: string;
@@ -17,9 +24,11 @@ export type InitOptions = {
   readonly flatten: boolean | undefined;
   /** Add `predev` and `prebuild` scripts to package.json. */
   readonly addScripts: boolean;
-  /** Write the `createIcon` wiring. `undefined` means "when the project uses React". */
+  /** `--framework`. `undefined` means "detect it from the dependencies" (ADR-0017). */
+  readonly framework: Framework | undefined;
+  /** Write the icon component. `undefined` means "when a supported framework is found". */
   readonly addComponent: boolean | undefined;
-  /** Where the wiring goes. `undefined` picks `src/components/icon.tsx` or `components/icon.tsx`. */
+  /** Where the wiring goes. `undefined` picks `icon.tsx` or `Icon.astro` under `src/components/` or `components/`. */
   readonly componentFile: string | undefined;
   /** Append a svgworm section to AGENTS.md (opt-in, TSK-031). */
   readonly addAgentsMd: boolean;
@@ -48,6 +57,7 @@ export type ProjectFacts = {
   /** Parsed package.json, or `undefined` when missing or not a JSON object. */
   readonly packageJson: PackageJson | undefined;
   readonly usesReact: boolean;
+  readonly usesAstro: boolean;
   readonly hasSrcFolder: boolean;
   readonly packageManager: PackageManager;
   readonly existing: Readonly<Record<string, string>>;
@@ -74,6 +84,9 @@ export type InitAction = {
 };
 
 export type InitPlan = {
+  /** The framework the component was planned for; `undefined` when none applies. */
+  readonly framework: Framework | undefined;
+  readonly frameworkSource: FrameworkSource | undefined;
   readonly actions: readonly InitAction[];
   readonly nextSteps: readonly string[];
 };
@@ -91,6 +104,7 @@ export const defaultInitOptions = (): InitOptions => ({
   publicPath: undefined,
   moduleDir: undefined,
   flatten: undefined,
+  framework: undefined,
   addScripts: true,
   addComponent: undefined,
   componentFile: undefined,
@@ -165,14 +179,56 @@ const detectPackageManager = (
   return PackageManager.NPM;
 };
 
+type FrameworkFacts = Pick<ProjectFacts, 'usesReact' | 'usesAstro'>;
+
+/** Flag first, then the dependencies. Astro wins when both are present: the choice is reported, never silent. */
+export const resolveFramework = (
+  options: InitOptions,
+  facts: FrameworkFacts,
+): {
+  readonly framework: Framework | undefined;
+  readonly source: FrameworkSource | undefined;
+} => {
+  if (options.framework !== undefined) {
+    return { framework: options.framework, source: FrameworkSource.FLAG };
+  }
+  if (facts.usesAstro) {
+    return { framework: Framework.ASTRO, source: FrameworkSource.DETECTED };
+  }
+  if (facts.usesReact) {
+    return { framework: Framework.REACT, source: FrameworkSource.DETECTED };
+  }
+  return { framework: undefined, source: undefined };
+};
+
+const COMPONENT_EXTENSION = {
+  [Framework.REACT]: /\.[jt]sx$/,
+  [Framework.ASTRO]: /\.astro$/,
+} as const;
+
+/** `--component-file` must carry the extension of the framework `init` writes for. */
+export const frameworkProblem = (
+  options: InitOptions,
+  facts: FrameworkFacts,
+): string | undefined => {
+  const { framework } = resolveFramework(options, facts);
+  const file = options.componentFile;
+  if (framework === undefined || file === undefined) return undefined;
+  if (COMPONENT_EXTENSION[framework].test(file)) return undefined;
+  return `--component-file "${file}" does not match the ${framework} component (${framework === Framework.ASTRO ? '.astro' : '.tsx or .jsx'})`;
+};
+
 export const componentFileFor = (
   options: InitOptions,
   hasSrcFolder: boolean,
-): string =>
-  toPosix(
+  framework: Framework | undefined,
+): string => {
+  const name = framework === Framework.ASTRO ? 'Icon.astro' : 'icon.tsx';
+  return toPosix(
     options.componentFile ??
-      (hasSrcFolder ? 'src/components/icon.tsx' : 'components/icon.tsx'),
+      (hasSrcFolder ? `src/components/${name}` : `components/${name}`),
   );
+};
 
 /** Reads everything `planInit` needs. The only I/O before the plan is shown. */
 export const inspectProject = async (
@@ -185,7 +241,13 @@ export const inspectProject = async (
     packageText === undefined ? undefined : parsePackageJson(packageText);
   const deps = dependencyNames(packageJson);
   const hasSrcFolder = await isDirectory(join(cwd, 'src'));
-  const componentFile = componentFileFor(options, hasSrcFolder);
+  const usesReact = deps.has('react') || deps.has('next');
+  const usesAstro = deps.has('astro');
+  const componentFile = componentFileFor(
+    options,
+    hasSrcFolder,
+    resolveFramework(options, { usesReact, usesAstro }).framework,
+  );
   const existing: Record<string, string> = {};
   for (const path of [options.configFile, componentFile, 'AGENTS.md']) {
     const text = await readText(join(cwd, path));
@@ -194,7 +256,8 @@ export const inspectProject = async (
   return {
     hasPackageJson: packageText !== undefined,
     packageJson,
-    usesReact: deps.has('react') || deps.has('next'),
+    usesReact,
+    usesAstro,
     hasSrcFolder,
     packageManager: detectPackageManager(names, packageJson),
     existing,
@@ -327,6 +390,126 @@ const componentContent = (componentFile: string, moduleDir: string): string => {
     `export type { IconName } from '${specifier}';`,
     '',
   ].join('\n');
+};
+
+const astroComponentContent = (
+  componentFile: string,
+  moduleDir: string,
+): string => {
+  const target = toPosix(
+    relative(dirname(componentFile), join(moduleDir, 'icons.js')),
+  );
+  const specifier = target.startsWith('.') ? target : `./${target}`;
+  return `---
+// Generated by \`svgworm init\`. Renders the same markup as \`createIcon\` from @svgworm/react,
+// with no client JavaScript. Keep the delivery logic in step with that adapter.
+import type { HTMLAttributes } from 'astro/types';
+
+import type { IconName } from '${specifier}';
+import { manifest } from '${specifier}';
+
+interface Props extends Omit<HTMLAttributes<'svg'>, 'title' | 'name'> {
+  name: IconName;
+  /** Accessible name rendered as a <title>; makes the icon non-decorative. */
+  title?: string;
+  /** Accessible name as aria-label; makes the icon non-decorative. */
+  label?: string;
+}
+
+type ManifestFile = { readonly url: string };
+type ManifestIcon = {
+  readonly sprite: string;
+  readonly id: string;
+  readonly viewBox: string;
+  readonly delivery: 'use' | 'img' | 'mask';
+};
+type IconManifest = {
+  readonly version: number;
+  readonly sprites: Readonly<
+    Record<
+      string,
+      {
+        readonly sprite: ManifestFile | null;
+        readonly stack: ManifestFile | null;
+      }
+    >
+  >;
+  readonly icons: Readonly<Record<string, ManifestIcon>>;
+};
+
+const { icons, sprites, version } = manifest as IconManifest;
+if (version !== 1) {
+  throw new Error(
+    \`Unsupported svgworm manifest version \${String(version)}; this component reads version 1. Update svgworm and run it again.\`,
+  );
+}
+
+const {
+  name,
+  title,
+  label,
+  width = '1em',
+  height = '1em',
+  style,
+  ...rest
+} = Astro.props;
+
+// An own property only: a runtime name such as "constructor" must not find Object.prototype.
+const icon = Object.hasOwn(icons, name) ? icons[name] : undefined;
+if (!icon) {
+  throw new Error(\`Unknown icon "\${name}". It is not in the svgworm manifest.\`);
+}
+
+const fileUrl = (kind: 'sprite' | 'stack'): string => {
+  const file = sprites[icon.sprite]?.[kind];
+  if (!file) {
+    throw new Error(
+      \`Icon "\${name}" needs the \${kind} file of "\${icon.sprite}", but the manifest has none. Run svgworm again.\`,
+    );
+  }
+  return \`\${file.url}#\${icon.id}\`;
+};
+
+const accessibleName = title ?? label;
+const a11y =
+  accessibleName === undefined
+    ? ({ 'aria-hidden': true } as const)
+    : ({ role: 'img' } as const);
+const userStyle = typeof style === 'string' ? style : '';
+const maskStyle =
+  icon.delivery === 'mask'
+    ? \`display:inline-block;width:\${width};height:\${height};background-color:currentColor;mask:url("\${fileUrl('stack')}") center / contain no-repeat;\${userStyle}\`
+    : undefined;
+---
+{
+  icon.delivery === 'img' ? (
+    <img
+      {...rest}
+      alt={accessibleName ?? ''}
+      height={height}
+      src={fileUrl('stack')}
+      style={style}
+      width={width}
+    />
+  ) : icon.delivery === 'mask' ? (
+    <span {...rest} {...a11y} aria-label={accessibleName} style={maskStyle} />
+  ) : (
+    <svg
+      focusable="false"
+      height={height}
+      viewBox={icon.viewBox}
+      width={width}
+      {...a11y}
+      aria-label={label}
+      style={style}
+      {...rest}
+    >
+      {title === undefined ? null : <title>{title}</title>}
+      <use href={fileUrl('sprite')} />
+    </svg>
+  )
+}
+`;
 };
 
 const agentsSection = (
@@ -472,8 +655,16 @@ export const planInit = (
   facts: ProjectFacts,
 ): InitPlan => {
   const configPath = toPosix(options.configFile);
-  const addComponent = options.addComponent ?? facts.usesReact;
-  const componentFile = componentFileFor(options, facts.hasSrcFolder);
+  const { framework, source: frameworkSource } = resolveFramework(
+    options,
+    facts,
+  );
+  const addComponent = options.addComponent ?? framework !== undefined;
+  const componentFile = componentFileFor(
+    options,
+    facts.hasSrcFolder,
+    framework,
+  );
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
   const command = buildCommand(options);
 
@@ -490,7 +681,9 @@ export const planInit = (
     actions.push(
       planFile(
         componentFile,
-        componentContent(componentFile, moduleDir),
+        framework === Framework.ASTRO
+          ? astroComponentContent(componentFile, moduleDir)
+          : componentContent(componentFile, moduleDir),
         facts.existing[componentFile],
       ),
     );
@@ -499,7 +692,7 @@ export const planInit = (
       path: componentFile,
       status: InitStatus.SKIPPED,
       reason:
-        'no react or next dependency found; pass --component to write it anyway',
+        'no react, next or astro dependency found; pass --component to write it anyway',
     });
   }
   if (options.addAgentsMd) {
@@ -519,7 +712,9 @@ export const planInit = (
   const install = installCommand(facts.packageManager).filter((line, index) =>
     index === 0
       ? !deps.has('svgworm')
-      : addComponent && !deps.has('@svgworm/react'),
+      : addComponent &&
+        framework !== Framework.ASTRO &&
+        !deps.has('@svgworm/react'),
   );
   const runner =
     facts.packageManager === PackageManager.NPM ? 'npx' : facts.packageManager;
@@ -530,12 +725,17 @@ export const planInit = (
   const nextSteps = [
     ...install.map((line) => `Install: ${line}`),
     `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`,
-    ...(addComponent
+    ...(addComponent && framework === Framework.ASTRO
       ? [
-          `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render <Icon name="…" />`,
+          `In an .astro file, import Icon from the path of ${componentFile} and render <Icon name="…" />`,
+          'If astro.config sets "base", write the sprites under it: run init with --public-path <base>/icons (or set publicPath in the config)',
         ]
-      : []),
+      : addComponent
+        ? [
+            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render <Icon name="…" />`,
+          ]
+        : []),
     `In CI, run: ${runner} svgworm check${configFlag}`,
   ];
-  return { actions, nextSteps };
+  return { framework, frameworkSource, actions, nextSteps };
 };

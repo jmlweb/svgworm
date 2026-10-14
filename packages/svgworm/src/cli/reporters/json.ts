@@ -66,6 +66,8 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     initialized: (result) => {
       print({
         ok: true,
+        framework: result.framework ?? null,
+        frameworkSource: result.frameworkSource ?? null,
         actions: result.actions,
         nextSteps: result.nextSteps,
         warnings: [],

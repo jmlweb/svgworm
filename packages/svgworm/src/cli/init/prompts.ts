@@ -1,9 +1,9 @@
-import { confirm, isCancel, text } from '@clack/prompts';
+import { confirm, isCancel, select, text } from '@clack/prompts';
 
 import type { InitOptions, ProjectFacts } from './plan.ts';
 
 import { normalizePublicPath } from '../../core/config/schema.ts';
-import { componentFileFor } from './plan.ts';
+import { componentFileFor, Framework, resolveFramework } from './plan.ts';
 
 /** Thrown when the user cancels a prompt; the command maps it to exit 2 with no files written. */
 export class InitCancelledError extends Error {
@@ -62,10 +62,26 @@ export const askInitOptions = async (
       initialValue: options.addScripts,
     }),
   );
+  // Only a real ambiguity is asked: no flag, and both frameworks are dependencies.
+  const framework =
+    options.framework === undefined && facts.usesReact && facts.usesAstro
+      ? orCancel(
+          await select({
+            message:
+              'Both react and astro are dependencies. Which one renders icons?',
+            options: [
+              { value: Framework.ASTRO, label: 'Astro (Icon.astro)' },
+              { value: Framework.REACT, label: 'React (Server Component)' },
+            ],
+            initialValue: Framework.ASTRO,
+          }),
+        )
+      : options.framework;
+  const resolved = resolveFramework({ ...options, framework }, facts).framework;
   const addComponent = orCancel(
     await confirm({
-      message: `Write the React Server Component wiring (${componentFileFor(options, facts.hasSrcFolder)})?`,
-      initialValue: options.addComponent ?? facts.usesReact,
+      message: `Write the ${resolved === Framework.ASTRO ? 'Astro' : 'React Server Component'} wiring (${componentFileFor(options, facts.hasSrcFolder, resolved)})?`,
+      initialValue: options.addComponent ?? resolved !== undefined,
     }),
   );
   const addAgentsMd = orCancel(
@@ -82,6 +98,7 @@ export const askInitOptions = async (
     ...(publicPath !== '/icons' && options.outDir === undefined
       ? { outDir: 'public/icons' }
       : {}),
+    framework,
     addScripts,
     addComponent,
     addAgentsMd,

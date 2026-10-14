@@ -113,6 +113,11 @@ export const createClackReporter = (io: CliIo): Reporter => {
         if (action.status === 'skipped') log.warn(line);
         else log.success(line);
       });
+      if (result.framework !== undefined) {
+        log.info(
+          `framework: ${result.framework} (${result.frameworkSource ?? 'detected'})`,
+        );
+      }
       note(
         result.nextSteps
           .map((step, index) => `${String(index + 1)}. ${step}`)

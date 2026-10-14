@@ -394,7 +394,7 @@ describe('run: init (R-56)', () => {
     await put('package.json', '{ "name": "api" }\n');
     const skipped = await exec(['init']);
     expect(skipped.stdout).toContain(
-      'init components/icon.tsx skipped (no react or next dependency',
+      'init components/icon.tsx skipped (no react, next or astro dependency',
     );
     const forced = await exec([
       'init',
@@ -404,5 +404,59 @@ describe('run: init (R-56)', () => {
     ]);
     expect(forced.stdout).toContain('init ui/icon.tsx created');
     expect(await exists('ui/icon.tsx')).toBe(true);
+  });
+  describe('with Astro', () => {
+    const astroPackage = JSON.stringify({
+      name: 'site',
+      dependencies: { astro: '7.0.0' },
+    });
+
+    it('writes Icon.astro and reports the detected framework in plain and --json output', async () => {
+      await put('package.json', astroPackage);
+      const plain = await exec(['init']);
+      expect(plain.code).toBe(ExitCode.OK);
+      expect(plain.stdout).toContain('init components/Icon.astro created');
+      expect(plain.stdout).toContain('init framework astro (detected)');
+      expect(await exists('components/Icon.astro')).toBe(true);
+
+      const json = await exec(['init', '--json']);
+      expect(JSON.parse(json.stdout)).toMatchObject({
+        ok: true,
+        framework: 'astro',
+        frameworkSource: 'detected',
+      });
+    });
+
+    it('lets --framework override detection and reports it as a flag', async () => {
+      await put(
+        'package.json',
+        JSON.stringify({ dependencies: { astro: '7.0.0', react: '19.3.0' } }),
+      );
+      const { code, stdout } = await exec(['init', '--framework', 'react']);
+      expect(code).toBe(ExitCode.OK);
+      expect(stdout).toContain('init framework react (flag)');
+      expect(await exists('components/icon.tsx')).toBe(true);
+      expect(await exists('components/Icon.astro')).toBe(false);
+    });
+
+    it.each([
+      [
+        ['--framework', 'astro', '--component-file', 'ui/icon.tsx'],
+        'ui/icon.tsx',
+      ],
+      [
+        ['--framework', 'react', '--component-file', 'ui/Icon.astro'],
+        'ui/Icon.astro',
+      ],
+    ])(
+      'exits 2 and writes nothing for a mismatched component file %j',
+      async (flags, file) => {
+        await put('package.json', astroPackage);
+        const { code, stderr } = await exec(['init', ...flags]);
+        expect(code).toBe(ExitCode.USAGE);
+        expect(stderr).toContain(file);
+        expect(await exists('svgworm.config.json')).toBe(false);
+      },
+    );
   });
 });

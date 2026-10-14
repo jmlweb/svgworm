@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   defaultInitOptions,
+  Framework,
+  frameworkProblem,
+  FrameworkSource,
   InitStatus,
   PackageManager,
   planInit,
@@ -13,6 +16,7 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   hasPackageJson: overrides.packageJson !== undefined,
   packageJson: undefined,
   usesReact: false,
+  usesAstro: false,
   hasSrcFolder: false,
   packageManager: PackageManager.NPM,
   existing: {},
@@ -346,6 +350,162 @@ describe('planInit', () => {
       'Import { Icon } from components/icon in a Server Component and render <Icon name="…" />',
       'In CI, run: pnpm svgworm check',
     ]);
+  });
+});
+
+describe('planInit: Astro', () => {
+  const astroPkg = pkg({
+    name: 'site',
+    dependencies: { astro: '^7.0.0' },
+    scripts: { build: 'astro build' },
+  });
+
+  it('writes Icon.astro for an astro dependency, under src/ when it exists', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesAstro: true, hasSrcFolder: true, packageJson: astroPkg }),
+    );
+    expect(plan.framework).toBe(Framework.ASTRO);
+    expect(plan.frameworkSource).toBe(FrameworkSource.DETECTED);
+    const action = statusOf(plan, 'src/components/Icon.astro');
+    expect(action?.status).toBe(InitStatus.CREATED);
+    expect(action?.content).toContain(
+      "import { manifest } from '../../svgworm/icons.js';",
+    );
+    expect(action?.content).toContain(
+      "import type { IconName } from '../../svgworm/icons.js';",
+    );
+    expect(action?.content).toContain('name: IconName');
+    expect(action?.content).not.toMatch(/import .*react|client:|<script/i);
+  });
+
+  it('mirrors the createIcon contract: version check, unknown name, a11y defaults', () => {
+    const content =
+      statusOf(
+        planInit(defaultInitOptions(), facts({ usesAstro: true })),
+        'components/Icon.astro',
+      )?.content ?? '';
+    expect(content).toContain('!== 1');
+    expect(content).toContain('Object.hasOwn(');
+    expect(content).toContain('Unknown icon');
+    expect(content).toContain("'1em'");
+    expect(content).toContain('focusable="false"');
+    expect(content).toContain("'aria-hidden': true");
+    expect(content).toContain("delivery === 'img'");
+    expect(content).toContain("delivery === 'mask'");
+  });
+
+  it('adds predev and prebuild scripts and never overwrites a different Icon.astro', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        usesAstro: true,
+        packageJson: astroPkg,
+        existing: { 'components/Icon.astro': '<svg />' },
+      }),
+    );
+    expect(statusOf(plan, 'package.json')?.status).toBe(InitStatus.UPDATED);
+    expect(statusOf(plan, 'components/Icon.astro')?.status).toBe(
+      InitStatus.SKIPPED,
+    );
+  });
+
+  it('names the Astro import and the base hint in the next steps, and installs no React adapter', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesAstro: true, hasSrcFolder: true }),
+    );
+    const steps = plan.nextSteps.join('\n');
+    expect(steps).toContain('src/components/Icon.astro');
+    expect(steps).toContain('--public-path <base>/icons');
+    expect(steps).not.toContain('@svgworm/react');
+  });
+
+  it('picks Astro when react and astro are both dependencies, and says it was detected', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesReact: true, usesAstro: true }),
+    );
+    expect(plan.framework).toBe(Framework.ASTRO);
+    expect(plan.frameworkSource).toBe(FrameworkSource.DETECTED);
+    expect(statusOf(plan, 'components/Icon.astro')?.status).toBe(
+      InitStatus.CREATED,
+    );
+  });
+
+  it('lets --framework react override detection', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), framework: Framework.REACT },
+      facts({ usesReact: true, usesAstro: true }),
+    );
+    expect(plan.framework).toBe(Framework.REACT);
+    expect(plan.frameworkSource).toBe(FrameworkSource.FLAG);
+    expect(statusOf(plan, 'components/icon.tsx')?.status).toBe(
+      InitStatus.CREATED,
+    );
+    expect(statusOf(plan, 'components/Icon.astro')).toBeUndefined();
+  });
+
+  it('reports the framework of a React project and none for a bare one', () => {
+    const react = planInit(defaultInitOptions(), facts({ usesReact: true }));
+    expect(react.framework).toBe(Framework.REACT);
+    expect(react.frameworkSource).toBe(FrameworkSource.DETECTED);
+    const bare = planInit(defaultInitOptions(), facts());
+    expect(bare.framework).toBeUndefined();
+    expect(bare.frameworkSource).toBeUndefined();
+  });
+
+  it('writes Astro wiring on --framework astro even without the dependency', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), framework: Framework.ASTRO },
+      facts(),
+    );
+    expect(plan.frameworkSource).toBe(FrameworkSource.FLAG);
+    expect(statusOf(plan, 'components/Icon.astro')?.status).toBe(
+      InitStatus.CREATED,
+    );
+  });
+});
+
+describe('frameworkProblem', () => {
+  it.each([
+    [Framework.ASTRO, 'ui/icon.tsx'],
+    [Framework.ASTRO, 'ui/icon.jsx'],
+    [Framework.REACT, 'ui/Icon.astro'],
+  ])('rejects --framework %s with --component-file %s', (framework, file) => {
+    expect(
+      frameworkProblem(
+        { ...defaultInitOptions(), framework, componentFile: file },
+        facts(),
+      ),
+    ).toContain(file);
+  });
+
+  it('checks the detected framework too', () => {
+    expect(
+      frameworkProblem(
+        { ...defaultInitOptions(), componentFile: 'ui/icon.tsx' },
+        facts({ usesAstro: true }),
+      ),
+    ).toContain('ui/icon.tsx');
+  });
+
+  it('accepts matching and absent files', () => {
+    expect(
+      frameworkProblem(
+        { ...defaultInitOptions(), componentFile: 'ui/Icon.astro' },
+        facts({ usesAstro: true }),
+      ),
+    ).toBeUndefined();
+    expect(
+      frameworkProblem(defaultInitOptions(), facts({ usesAstro: true })),
+    ).toBeUndefined();
+    expect(
+      frameworkProblem(
+        { ...defaultInitOptions(), componentFile: 'ui/anything.ts' },
+        facts(),
+      ),
+    ).toBeUndefined();
   });
 });
 
