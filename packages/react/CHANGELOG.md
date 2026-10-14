@@ -1,5 +1,13 @@
 # @svgworm/react
 
+## 0.2.0
+
+### Patch Changes
+
+- 636c0db: The npm package pages link to the new website, https://svgworm.com.
+- 8624f2e: The README on npm and GitHub now leads with an example and a short get-started; the CLI, config and Next.js reference moved to `docs/`.
+- a9abc37: The package READMEs on npm describe the released 0.1 instead of a pre-alpha.
+
 ## 0.1.0
 
 ### Minor Changes
