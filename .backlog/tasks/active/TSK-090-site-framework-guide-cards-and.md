@@ -1,12 +1,13 @@
 ---
 id: TSK-090
 title: Site: framework guide cards and help links
-status: pending
+status: active
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-007
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: framework guide cards and help links
@@ -46,12 +47,12 @@ Help visitors find their next step, following rea.tools' target-guide and help-l
 
 ## Acceptance Criteria
 
-- [ ] GuideCards.astro shows Next.js, Vite and Astro cards with a sprite icon, one line each, and links to the docs page (and example where one exists)
-- [ ] Astro card links astro.md; apps/site linked only if labeled this site
-- [ ] Cards mounted after #start, one row on desktop
-- [ ] SiteFooter links Troubleshooting, GitHub issues and GitHub Discussions; no new HelpRow section
-- [ ] #try CTA copy names Vite, consistent with TSK-089
-- [ ] Linked example paths are verified (check-output.mjs) or only docs pages are linked
+- [x] GuideCards.astro shows Next.js, Vite and Astro cards with a sprite icon, one line each, and links to the docs page (and example where one exists)
+- [x] Astro card links astro.md; apps/site linked only if labeled this site
+- [x] Cards mounted after #start, one row on desktop
+- [x] SiteFooter links Troubleshooting, GitHub issues and GitHub Discussions; no new HelpRow section
+- [x] #try CTA copy names Vite, consistent with TSK-089
+- [x] Linked example paths are verified (check-output.mjs) or only docs pages are linked
 - [ ] pnpm site:check passes; keyboard focus, light/dark and phone width checked
 
 ## Notes
@@ -61,3 +62,5 @@ Help visitors find their next step, following rea.tools' target-guide and help-l
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Added GuideCards.astro (after #start), footer help links, example-path check in check-output.mjs; #try CTA already named Vite. site:check passes. Left: visual check (focus, light/dark, phone).
