@@ -67,6 +67,12 @@ The file names are content-hashed, so a long cache is safe. Astro does not set c
 | Cloudflare, Netlify | `public/_headers` | `/icons/*` then `  Cache-Control: public, max-age=31536000, immutable`                                                                  |
 | Vercel              | `vercel.json`     | `{ "headers": [{ "source": "/icons/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }] }` |
 
+## Performance notes
+
+- **One sprite, every page.** All icons live in one sprite, so the first visit downloads the whole set once, then the long cache serves every other page from disk. That is fine at tens of KiB (this site's sprite is 10.7 KiB for 21 icons, about 0.5 KiB per optimized icon). With a thousand icons the sprite is the biggest asset on the page, and only the icons you use belong in the source folder. Several sprites per project are planned ([open question Q-22](https://github.com/jmlweb/svgworm/blob/main/docs/open-questions.md)).
+- **The stack file is one fetch per cold load** when it is served with the `immutable` header above, in Chromium, Firefox and WebKit. WebKit fetches it twice only when a mask icon asks for it while the fetch for an `<img>` icon is still in flight. Earlier notes of 2 to 3 requests were mostly cache hits ([ADR-0019](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0019-sprite-preload-not-recommended.md), measured in [TSK-039](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-039-sprite-preload/results/matrix.md)).
+- **Do not add `<link rel="preload">` for the sprite.** A `<use>` fetch is `same-origin`, and no preload has that mode, so the hint never feeds it from the preload cache. With the preload still in flight, Playwright WebKit 26 downloads the sprite twice (real Safari not checked), and without a long cache every engine does. Chromium and WebKit start the `<use>` fetch at parse time anyway. Details and the browser matrix: [ADR-0019](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0019-sprite-preload-not-recommended.md), [TSK-039 matrix](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-039-sprite-preload/results/matrix.md). `Icon.astro` emits no preload either.
+
 ## base
 
 <aside class="alert alert-important">

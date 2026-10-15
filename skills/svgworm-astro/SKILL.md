@@ -12,6 +12,7 @@ Facts an agent should rely on:
 - Only `init` can prompt, and only when stdin and stdout are terminals outside CI; with `--yes`, `--json` or a pipe it is non-interactive. Exit codes: `0` ok, `1` invalid input or stale output, `2` usage or config error.
 - Icon names come from file paths: `icons/social/github.svg` is `social/github`. Names are lowercase, `-` separated, with folders as namespaces. `<Icon name="nope" />` is a type error in `astro check`, which needs `@astrojs/check` and `typescript` as dev dependencies and, as of Astro 7.3, TypeScript 6 (it refuses TypeScript 7: pin `typescript@6`).
 - Color is decided per icon: mono icons follow `currentColor`, multicolor icons keep their colors. Icons with gradients, masks, clip paths or filters are delivered from a second "stack" file as `<img>` or a CSS mask, because WebKit cannot render those through an external `<use>`.
+- Do not add `<link rel="preload">` for the sprite, even when a performance audit asks for it: a `<use>` fetch never reuses a preload, and WebKit downloads the sprite twice while the preload is in flight (ADR-0019, TSK-039 matrix). The long-cache header is the performance advice.
 - Sprites must be same-origin. `publicPath` must start with `/` and include the Astro `base` when there is one. `init` does not read `astro.config.*`.
 - When a project has both `react` and `astro` dependencies, `init` picks Astro and says so (`framework astro (detected)`). Pass `--framework react` to override.
 

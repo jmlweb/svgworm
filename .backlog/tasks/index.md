@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 29 |
+| Pending | 28 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 45 |
+| Complete | 46 |
 
 ## Active Tasks
 
@@ -26,7 +26,6 @@
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
-| TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | P3 | docs, performance, cli | 2026-10-14 |
 | TSK-048 | Site layout polish: code wrapping, docs table, mobile hero | P3 | site, design, mobile | 2026-10-15 |
 | TSK-049 | Zero-JS interactivity: Next/Astro install toggle and live color demo | P3 | site, ux | 2026-10-15 |
 | TSK-050 | Landing copy: state the pain and surface the comparison | P3 | site, copy | 2026-10-15 |
@@ -56,9 +55,9 @@
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
+| TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | 2026-10-15 |
 | TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | 2026-10-15 |
 | TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | 2026-10-15 |
 | TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | 2026-10-15 |
 | TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | 2026-10-15 |
-| TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |

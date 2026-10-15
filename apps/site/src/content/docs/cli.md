@@ -46,7 +46,7 @@ Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgwor
 
 ## Output
 
-At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time). When stdout is not a terminal, or with `--json`, the output is plain and stable, so scripts and AI agents can read it.
+At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time). `savings` is the source bytes minus the sprite and stack bytes, before gzip or Brotli: an optimizer figure that says how much svgo and the sprite took out of your files, not what the browser transfers. A negative value is normal for a handful of tiny icons, because each symbol carries an id and a viewBox. When stdout is not a terminal, or with `--json`, the output is plain and stable, so scripts and AI agents can read it.
 
 The plain output lists the files written or removed, the warnings and errors, and the summary. It does not list every icon: with a large set that was thousands of lines per CI run. Pass `--verbose` to get one `icon <name> <color> <delivery>` line per icon. `--json` always includes every icon.
 
