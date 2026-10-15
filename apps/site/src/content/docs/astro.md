@@ -44,6 +44,8 @@ Requires Node `^22.20 || >=24.11` and Astro 7.
 
    Names come from the file paths: `home` is `icons/home.svg` and `brand/sunset` is `icons/brand/sunset.svg`, lower-cased with `-` between words. `name` is typed from the generated `IconName`, so a typo fails `astro check`. The icon is `aria-hidden` unless you pass `title` or `label`.
 
+For `astro check` to run at all, the project needs `@astrojs/check` and `typescript` as dev dependencies (`pnpm add -D @astrojs/check typescript`). As of Astro 7.3, `astro check` supports TypeScript 6 only: with TypeScript 7 it stops with `astro check does not currently support TypeScript 7.0`. Pin `typescript@6` until Astro adds support. The generated types themselves work with both.
+
 `Icon.astro` is your file. `init` never overwrites it. To refresh it after upgrading svgworm, delete it and run `svgworm init` again.
 
 ## Set up by hand

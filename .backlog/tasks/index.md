@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 30 |
+| Pending | 29 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 44 |
+| Complete | 45 |
 
 ## Active Tasks
 
@@ -34,7 +34,6 @@
 | TSK-052 | Site security headers and the CSS inlining decision | P4 | site, security, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
 | TSK-059 | Spike: select icons from icon packages (include/exclude) | P2 | spike, config, output-contract, adr, dx | 2026-10-15 |
-| TSK-063 | Docs: Astro type-check prerequisites | P3 | docs, astro | 2026-10-15 |
 | TSK-064 | Naming: split camelCase/PascalCase file names into kebab-case | P4 | naming, output-contract, adr | 2026-10-15 |
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |
