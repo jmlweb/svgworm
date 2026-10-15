@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 16 |
+| Pending | 15 |
 | Active | 0 |
 | Blocked | 2 |
-| Complete | 62 |
+| Complete | 63 |
 
 ## Active Tasks
 
@@ -28,7 +28,6 @@
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
 | TSK-077 | Landing: before/after demo, SVG folder to sprite to typed icon | P2 | site, landing, adoption | 2026-10-15 |
 | TSK-078 | Landing: lede says the problem first, visible stats caption | P2 | site, landing, copy | 2026-10-15 |

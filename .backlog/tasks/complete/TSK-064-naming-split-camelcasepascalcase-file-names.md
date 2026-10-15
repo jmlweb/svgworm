@@ -26,6 +26,7 @@ Dogfooding 0.2.1: `ArrowRight.svg` becomes `arrowright`. Figma and many designer
 
 ## Learnings
 
+- LRN-043: pnpm verify does not catch stale committed example or site output
 ## Progress Log
 
 - [2026-10-15] Created

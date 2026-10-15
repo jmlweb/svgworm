@@ -46,3 +46,4 @@
 | LRN-040 | Plain svgworm needs sources from a config file; manual setup docs must pass --source | docs, cli, config, onboarding | active | 2026-10-15 |
 | LRN-041 | Yarn 2+ silently skips pre/post scripts; detect Berry and prefix dev/build | package-managers, yarn, init, cli | active | 2026-10-15 |
 | LRN-042 | pnpm installs packages as symlinks: stat the source root, lstat only inside | pnpm, symlink, discover, sources, node_modules | active | 2026-10-15 |
+| LRN-043 | pnpm verify does not catch stale committed example or site output | testing, ci, example, output | active | 2026-10-15 |
