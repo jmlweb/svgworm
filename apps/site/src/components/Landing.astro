@@ -68,6 +68,48 @@ const swatchStyle = swatches
   )
   .join('');
 const suggestions = ['terminal'] as const;
+
+// The curated before/after demo (TSK-077). The names are real icons of this site's icons/ folder:
+// building fails if one is renamed or removed, so the file tree cannot drift from the sprite.
+const demoNames = [
+  'check',
+  'folder-open',
+  'terminal',
+  'emoji/snail',
+] as const satisfies readonly IconName[];
+const demoMissing = demoNames.filter((name) => !(name in manifest.icons));
+if (demoMissing.length > 0) {
+  throw new Error(`demo: not in the sprite: ${demoMissing.join(', ')}`);
+}
+const demoFolders = [
+  ...new Set(
+    demoNames
+      .filter((name) => name.includes('/'))
+      .map((name) => name.split('/')[0] ?? name),
+  ),
+];
+const demoTree = [
+  'icons/',
+  ...demoNames
+    .filter((name) => !name.includes('/'))
+    .map((name) => `├── ${name}.svg`),
+  ...demoFolders.flatMap((folder, index) => {
+    const isLast = index === demoFolders.length - 1;
+    const files = demoNames.filter((name) => name.startsWith(`${folder}/`));
+    return [
+      `${isLast ? '└' : '├'}── ${folder}/`,
+      ...files.map(
+        (name, fileIndex) =>
+          `${isLast ? ' ' : '│'}   ${fileIndex === files.length - 1 ? '└' : '├'}── ${name.slice(folder.length + 1)}.svg`,
+      ),
+    ];
+  }),
+].join('\n');
+const typeSample = [
+  'type IconName =',
+  ...iconNames.slice(0, 3).map((name) => `  | "${name}"`),
+  '  | …',
+].join('\n');
 const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`;
 ---
 
@@ -145,6 +187,59 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
       These numbers are from this page's own build: the sprite it loads and the
       headers it is served with.
     </p>
+  </section>
+
+  <section aria-labelledby="demo" class="section section-raised">
+    <div class="wrap">
+      <p class="kicker">From folder to typed icon</p>
+      <h2 id="demo">What svgworm does to your SVG files.</h2>
+      <p class="section-lede">
+        A curated demo, not a live build: the compiler does not run in your
+        browser. The file names are this site's own <code>icons/</code> folder,
+        and the icons in step 3 are drawn from this page's real sprite.
+      </p>
+      <ol class="steps demo-steps">
+        <li>
+          <h3>Your SVG files</h3>
+          <p>One file per icon, in any folders you like.</p>
+          <pre aria-label="Source SVG files" class="code" role="region" tabindex="0"><code>{demoTree}</code></pre>
+        </li>
+        <li>
+          <h3>One sprite and a type</h3>
+          <p>
+            <code>svgworm</code> writes a hashed sprite and the icon names as a
+            type. A wrong name fails <code>tsc</code>.
+          </p>
+          <pre aria-label="Generated files" class="code" role="region" tabindex="0"><code><span class="c-comment">// generated</span>
+public{spriteUrl}
+svgworm/icons.d.ts
+
+<span class="c-comment">// svgworm/icons.d.ts</span>
+{typeSample}</code></pre>
+          <pre aria-label="Typed icon usage" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
+<span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span>
+<span class="c-comment">// error TS2322: "termnial" is
+// not assignable to IconName</span></code></pre>
+        </li>
+        <li>
+          <h3>Rendered from the sprite</h3>
+          <p>
+            Each icon is a <code>&lt;use href&gt;</code> into
+            <code>{spriteUrl}</code>. No icon code reaches the browser.
+          </p>
+          <div class="demo-icons">
+            {
+              demoNames.map((name) => (
+                <span class="demo-icon">
+                  <Icon height={40} name={name} width={40} />
+                  <code set:html={breakable(name)} />
+                </span>
+              ))
+            }
+          </div>
+        </li>
+      </ol>
+    </div>
   </section>
 
   <section aria-labelledby="why" class="section">
