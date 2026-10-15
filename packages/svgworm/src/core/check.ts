@@ -33,7 +33,12 @@ export type IconDiff = {
 
 export type CheckOutcome = CompileSuccess & {
   readonly upToDate: boolean;
-  /** Expected files first, in write order, then stale sprites. Empty when up to date. */
+  /**
+   * Every file a build would write or remove: expected files first, in write order, then
+   * stale sprites. Empty when up to date.
+   */
+  readonly differences: readonly CheckEntry[];
+  /** @deprecated The same list as `differences`; removed in the next minor. */
   readonly stale: readonly CheckEntry[];
   readonly iconDiff: IconDiff;
 };
@@ -156,6 +161,7 @@ export const check = async (
   return {
     ...compiled,
     upToDate: entries.length === 0,
+    differences: entries,
     stale: entries,
     iconDiff: diffNames(
       before,

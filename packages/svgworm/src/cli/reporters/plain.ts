@@ -55,7 +55,7 @@ export const createPlainReporter = (io: CliIo): Reporter => {
       });
     },
     checked: (result) => {
-      result.stale.forEach((entry) => {
+      result.differences.forEach((entry) => {
         out(`check ${entry.path} ${entry.status}`);
       });
       if (result.upToDate) {

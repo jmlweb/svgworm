@@ -40,8 +40,11 @@ describe('check', () => {
     const result = await check(config());
     if (!result.ok) throw new Error(JSON.stringify(result.errors));
     expect(result.upToDate).toBe(false);
+    // `stale` is the deprecated name of the same list (RPT-005).
+    // oxlint-disable-next-line typescript/no-deprecated
+    expect(result.stale).toBe(result.differences);
     expect(
-      result.stale.map((entry) => [hashless(entry.path), entry.status]),
+      result.differences.map((entry) => [hashless(entry.path), entry.status]),
     ).toEqual([
       ['public/icons/icons.H.svg', CheckStatus.MISSING],
       ['svgworm/icons.js', CheckStatus.MISSING],
@@ -58,7 +61,7 @@ describe('check', () => {
     const result = await check(config(), (event) => events.push(event));
     if (!result.ok) throw new Error(JSON.stringify(result.errors));
     expect(result.upToDate).toBe(true);
-    expect(result.stale).toEqual([]);
+    expect(result.differences).toEqual([]);
     expect(result.iconDiff).toEqual({ added: [], removed: [] });
     expect(events.map((event) => event.type)).not.toContain('write');
     expect(events.at(-1)?.type).toBe('done');
@@ -74,7 +77,7 @@ describe('check', () => {
     if (!result.ok) throw new Error(JSON.stringify(result.errors));
     expect(result.upToDate).toBe(false);
     expect(
-      result.stale.map((entry) => [hashless(entry.path), entry.status]),
+      result.differences.map((entry) => [hashless(entry.path), entry.status]),
     ).toEqual([
       ['public/icons/icons.H.svg', CheckStatus.MISSING],
       ['svgworm/icons.js', CheckStatus.CHANGED],
@@ -93,7 +96,7 @@ describe('check', () => {
     await put('svgworm/manifest.json', 'not json');
     const result = await check(config());
     if (!result.ok) throw new Error(JSON.stringify(result.errors));
-    expect(result.stale.map((entry) => entry.path)).toEqual([
+    expect(result.differences.map((entry) => entry.path)).toEqual([
       'svgworm/manifest.json',
     ]);
     expect(result.iconDiff).toEqual({ added: ['home'], removed: [] });

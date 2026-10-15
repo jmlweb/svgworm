@@ -39,7 +39,9 @@ export const createJsonReporter = (io: CliIo): Reporter => {
       print({
         ok: result.upToDate,
         upToDate: result.upToDate,
-        stale: result.stale,
+        differences: result.differences,
+        // Deprecated alias of `differences`, kept for one minor.
+        stale: result.differences,
         iconDiff: result.iconDiff,
         stats: result.stats,
         icons: result.icons,

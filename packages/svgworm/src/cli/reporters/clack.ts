@@ -78,7 +78,7 @@ export const createClackReporter = (io: CliIo): Reporter => {
         outro(`Output is up to date (${String(result.files.length)} files)`);
         return;
       }
-      result.stale.forEach((entry) => {
+      result.differences.forEach((entry) => {
         log.error(`${entry.status.padEnd(7)} ${entry.path}`);
       });
       outro(describeStale(result));

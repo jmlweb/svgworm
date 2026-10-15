@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 37 |
+| Pending | 36 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 37 |
+| Complete | 38 |
 
 ## Active Tasks
 
@@ -28,7 +28,6 @@
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | P3 | docs, performance, cli | 2026-10-14 |
 | TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | P4 |  | 2026-10-15 |
-| TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | P4 |  | 2026-10-15 |
 | TSK-048 | Site layout polish: code wrapping, docs table, mobile hero | P3 | site, design, mobile | 2026-10-15 |
 | TSK-049 | Zero-JS interactivity: Next/Astro install toggle and live color demo | P3 | site, ux | 2026-10-15 |
 | TSK-050 | Landing copy: state the pain and surface the comparison | P3 | site, copy | 2026-10-15 |
@@ -67,6 +66,6 @@
 | TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | 2026-10-15 |
 | TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | 2026-10-15 |
+| TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | 2026-10-15 |
 | TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |
 | TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
-| TSK-054 | Init: first run works before any icon exists | 2026-10-15 |

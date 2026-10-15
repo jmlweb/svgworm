@@ -72,6 +72,8 @@ Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scrip
 
 `svgworm check` compiles the icons and compares the result with the files on disk. It writes nothing. Run it in CI to fail the build when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed.
 
+With `--json`, the document has `ok` and `upToDate` (both `true` only when nothing would change), `differences` (every file a build would write or remove, as `{ "path", "status" }` with `status` one of `missing`, `changed` or `stale`), `iconDiff` (`added` and `removed` icon names), plus the `stats`, `icons`, `warnings` and `errors` of a build. `stale` is a deprecated alias of `differences`, kept until the next minor.
+
 ## watch
 
 `svgworm watch` rebuilds after each change in a source folder and re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). With `--json`, `watch` prints one document per build.

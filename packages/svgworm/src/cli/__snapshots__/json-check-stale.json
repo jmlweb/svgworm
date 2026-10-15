@@ -1,6 +1,28 @@
 {
   "ok": false,
   "upToDate": false,
+  "differences": [
+    {
+      "path": "public/icons/icons.6d36e3d0.svg",
+      "status": "missing"
+    },
+    {
+      "path": "svgworm/icons.js",
+      "status": "changed"
+    },
+    {
+      "path": "svgworm/icons.d.ts",
+      "status": "changed"
+    },
+    {
+      "path": "svgworm/manifest.json",
+      "status": "changed"
+    },
+    {
+      "path": "public/icons/icons.d907d82b.svg",
+      "status": "stale"
+    }
+  ],
   "stale": [
     {
       "path": "public/icons/icons.6d36e3d0.svg",

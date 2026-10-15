@@ -221,6 +221,7 @@ describe('run: check (R-31)', () => {
     expect(JSON.parse(fresh.stdout)).toMatchObject({
       ok: true,
       upToDate: true,
+      differences: [],
       stale: [],
     });
   });
