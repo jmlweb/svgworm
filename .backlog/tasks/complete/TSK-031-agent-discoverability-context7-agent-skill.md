@@ -1,13 +1,14 @@
 ---
 id: TSK-031
 title: Agent discoverability: Context7, agent skill, AGENTS.md snippet
-status: active
+status: complete
 priority: P2
 tags: [traction, agents, discovery]
 created: 2026-10-07
 source: manual
 depends-on: [TSK-017, TSK-015]
 started: 2026-10-12
+completed: 2026-10-15
 ---
 
 # Agent discoverability: Context7, agent skill, AGENTS.md snippet
@@ -20,14 +21,15 @@ Agent track items 2-3 of docs/traction.md. Complements llms.txt and JSON Schema 
 ## Acceptance Criteria
 
 - [x] Docs submitted to Context7 and a query returns current svgworm usage — evidence: context7 query-docs /jmlweb/svgworm "set up svgworm in a Next.js app" (2026-10-14) → returns svgworm init --yes, createIcon(manifest), svgworm check (2026-10-14)
-- [x] SKILL.md in the repo teaches an agent to set up svgworm in a Next.js app
-- [ ] Skill listed in at least one public skill registry
-- [x] svgworm init can add a short svgworm section to the project AGENTS.md (opt-in, non-interactive flag available)
+- [x] SKILL.md in the repo teaches an agent to set up svgworm in a Next.js app — evidence: skills/svgworm-nextjs/SKILL.md present with name/description frontmatter; Context7 query-docs serves it as a source (2026-10-15) (2026-10-15)
+- [x] Skill listed in at least one public skill registry — evidence: curl https://skills.sh/api/search?q=svgworm → jmlweb/svgworm/svgworm-nextjs, 1 install (2026-10-15) (2026-10-15)
+- [x] svgworm init can add a short svgworm section to the project AGENTS.md (opt-in, non-interactive flag available) — evidence: vitest run src/cli (init plan/apply tests for --agents-md) → 103 passed, 0 failed (2026-10-15) (2026-10-15)
 
 ## Notes
 
 ## Learnings
 
+- LRN-038: skills.sh lists a skill only after an install and an index crawl
 ## Progress Log
 
 - [2026-10-07] Created
@@ -42,3 +44,5 @@ Agent track items 2-3 of docs/traction.md. Complements llms.txt and JSON Schema 
 - [2026-10-14] Maintainer submitted the repo to Context7 and ran one skills.sh install. Context7 serves /jmlweb/svgworm by ID: query-docs returns svgworm init, createIcon(manifest) and svgworm check (criterion 1). resolve-library-id "svgworm" does not find it yet (search lag).
 - [2026-10-14] Context7 indexed docs/adr and docs/outreach despite context7.json excludeFolders; recheck after the next refresh, or claim the library to edit settings.
 - [2026-10-14] skills.sh: `npx skills find svgworm` and https://skills.sh/api/search?q=svgworm still return 0 (Algolia index lag); criterion 3 stays open until it lists jmlweb/svgworm@svgworm-nextjs.
+- [2026-10-15] skills.sh now lists jmlweb/svgworm/svgworm-nextjs (criterion 3). svgworm-astro (commit 2d8cc48) not indexed yet; maintainer ran one install, listing expected after the next crawl. Context7 query-docs /jmlweb/svgworm re-run: returns install, init --yes, createIcon, cache headers.
+- [2026-10-15] Completed

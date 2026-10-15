@@ -41,3 +41,5 @@
 | LRN-035 | changeset status skips private packages, so site-only PRs need no changeset | changesets, monorepo, release | active | 2026-10-14 |
 | LRN-036 | Astro 7 needs a new package for any Markdown plugin; context7.json excludes match by name | astro, markdown, dependencies, context7, site | active | 2026-10-14 |
 | LRN-037 | LinkedIn article publish dialog replaces a separate share post | traction, content, linkedin | active | 2026-10-15 |
+| LRN-038 | skills.sh lists a skill only after an install and an index crawl | agents, discovery, skills, traction | active | 2026-10-15 |
+| LRN-039 | Preload can't match a <use> fetch, and Playwright WebKit/Firefox contexts fake cold-cache results | browser, sprite, delivery, performance, playwright, testing, webkit | active | 2026-10-15 |
