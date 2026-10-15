@@ -10,7 +10,7 @@ One command builds everything. The others check, watch, and set a project up.
 svgworm [build] [options]    Write the sprite, manifest and types (default)
 svgworm check [options]      Exit 1 if the committed output is stale. Writes nothing (CI)
 svgworm watch [options]      Build, then rebuild on every change in the source folders
-svgworm init [options]       Set a project up: config, predev/prebuild scripts, Icon wiring (React or Astro)
+svgworm init [options]       Set a project up: config, predev/prebuild scripts, Icon wiring (React or Astro), first build
 
   --config <file>         Config file. Default: svgworm.config.json (optional)
   --source <dir>          Folder with the SVG files. Repeat for several folders
@@ -59,6 +59,8 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
 `init` reports the framework it chose and why (`flag` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).
+
+When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons. Then it builds once from the config on disk, so the manifest and types exist before the app first imports them; `--json` reports it as `build`. If that build fails, `init` keeps the files it wrote and exits like `svgworm` would (1 for invalid icons, 2 for a setup problem).
 
 It never overwrites a file that differs from what it would write, so re-running it is safe.
 

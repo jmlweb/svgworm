@@ -144,3 +144,28 @@ describe('check reporters', () => {
     );
   });
 });
+
+describe('init reporters', () => {
+  // A fresh React app with no icons yet: the first run adds the sample and builds it.
+  beforeEach(async () => {
+    await rm(join(root, 'icons'), { recursive: true });
+    await writeFile(
+      join(root, 'package.json'),
+      '{ "name": "app", "dependencies": { "react": "19.3.0" } }\n',
+    );
+  });
+
+  it('plain: one line per file, the first build, then the next steps', async () => {
+    const { code, stdout, stderr } = await exec(['init']);
+    expect(code).toBe(0);
+    expect(stderr).toBe('');
+    await expect(stdout).toMatchFileSnapshot(`${snapshots}plain-init.txt`);
+  });
+
+  it('json: one document with the actions and the first build', async () => {
+    const { code, stdout, stderr } = await exec(['init', '--json']);
+    expect(code).toBe(0);
+    expect(stderr).toBe('');
+    await expect(stdout).toMatchFileSnapshot(`${snapshots}json-init.json`);
+  });
+});

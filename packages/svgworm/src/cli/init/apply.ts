@@ -2,12 +2,17 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
+import type { FirstBuild } from './first-build.ts';
+
 import { InitStatus, type InitAction, type InitPlan } from './plan.ts';
 
 export type InitResult = Pick<
   InitPlan,
   'framework' | 'frameworkSource' | 'actions' | 'nextSteps'
 >;
+
+/** What `init` reports: the files it looked at, then the first build. */
+export type InitReport = InitResult & { readonly build: FirstBuild };
 
 const hasCode = (error: unknown, code: string): boolean =>
   error instanceof Error && 'code' in error && error.code === code;

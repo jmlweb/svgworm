@@ -2,6 +2,7 @@ import type { CliIo } from '../io.ts';
 
 import { ExitCode } from '../exit-codes.ts';
 import { applyInit } from '../init/apply.ts';
+import { exitCodeForFirstBuild, runFirstBuild } from '../init/first-build.ts';
 import {
   frameworkProblem,
   inspectProject,
@@ -13,9 +14,10 @@ import { askInitOptions, InitCancelledError } from '../init/prompts.ts';
 import { FatalCode, type Reporter } from '../reporters/types.ts';
 
 /**
- * Sets a project up: config file, predev/prebuild scripts, the Icon wiring and, on request,
- * an AGENTS.md section. Prompts only on an interactive terminal; flags drive it otherwise
- * (R-56). Re-running is idempotent.
+ * Sets a project up: config file, predev/prebuild scripts, the Icon wiring, a sample icon when
+ * the sources are empty and, on request, an AGENTS.md section. Then it builds once, so the app
+ * runs and type-checks before the user adds an icon. Prompts only on an interactive terminal;
+ * flags drive it otherwise (R-56). Re-running is idempotent.
  */
 export const runInitCommand = async (
   options: InitOptions,
@@ -53,8 +55,10 @@ export const runInitCommand = async (
       answered,
       isInteractive ? await inspectProject(io.cwd, answered) : facts,
     );
-    reporter.initialized(await applyInit(io.cwd, plan));
-    return ExitCode.OK;
+    const applied = await applyInit(io.cwd, plan);
+    const build = await runFirstBuild(io.cwd, answered.configFile);
+    reporter.initialized({ ...applied, build });
+    return exitCodeForFirstBuild(build);
   } catch (error) {
     if (error instanceof InitCancelledError) {
       reporter.fatal(error.message, FatalCode.USAGE);

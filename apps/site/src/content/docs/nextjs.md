@@ -18,9 +18,9 @@ Requires Node `^22.20 || >=24.11`.
    pnpm svgworm init
    ```
 
-   `init` writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists). With `--yes` it asks nothing. It never overwrites a file that differs, so re-running it is safe. See the [CLI reference](/docs/cli/#init) for every flag.
+   `init` writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists). If `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`, then it builds once so the app runs and type-checks right away. With `--yes` it asks nothing. It never overwrites a file that differs, so re-running it is safe. See the [CLI reference](/docs/cli/#init) for every flag.
 
-2. **Put your SVG files in `icons/` and build:**
+2. **Put your SVG files in `icons/` (delete the sample) and build:**
 
    ```bash
    pnpm svgworm

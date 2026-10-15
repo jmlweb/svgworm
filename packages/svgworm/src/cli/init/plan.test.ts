@@ -11,6 +11,7 @@ import {
   validateInitOptions,
   type ProjectFacts,
 } from './plan.ts';
+import { SAMPLE_ICON_SVG } from './sample-icon.ts';
 
 const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   hasPackageJson: overrides.packageJson !== undefined,
@@ -20,6 +21,7 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   hasSrcFolder: false,
   packageManager: PackageManager.NPM,
   existing: {},
+  sourcesHaveIcons: true,
   ...overrides,
 });
 
@@ -508,6 +510,46 @@ describe('frameworkProblem', () => {
         facts(),
       ),
     ).toBeUndefined();
+  });
+});
+
+describe('planInit: sample icon', () => {
+  it('adds a sample icon to the first source when no source has an SVG yet', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), sources: ['assets/icons/', 'brand'] },
+      facts({ usesReact: true, sourcesHaveIcons: false }),
+    );
+    expect(statusOf(plan, 'assets/icons/svgworm.svg')).toMatchObject({
+      status: InitStatus.CREATED,
+      content: SAMPLE_ICON_SVG,
+    });
+    expect(plan.nextSteps).toContain(
+      'Replace the sample assets/icons/svgworm.svg with your own SVG files; svgworm runs before dev and build (or run: npx svgworm)',
+    );
+    expect(plan.nextSteps.join('\n')).toContain('<Icon name="svgworm" />');
+  });
+
+  it('adds no sample when a source already has an SVG', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesReact: true, sourcesHaveIcons: true }),
+    );
+    expect(statusOf(plan, 'icons/svgworm.svg')).toBeUndefined();
+    expect(plan.nextSteps.join('\n')).toContain('<Icon name="…" />');
+  });
+
+  it('adds no sample when the existing config differs, since it may point elsewhere', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        sourcesHaveIcons: false,
+        existing: { 'svgworm.config.json': '{ "sources": ["svg"] }\n' },
+      }),
+    );
+    expect(statusOf(plan, 'svgworm.config.json')?.status).toBe(
+      InitStatus.SKIPPED,
+    );
+    expect(statusOf(plan, 'icons/svgworm.svg')).toBeUndefined();
   });
 });
 

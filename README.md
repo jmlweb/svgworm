@@ -47,11 +47,11 @@ pnpm add @svgworm/react
 pnpm svgworm init
 ```
 
-`init` asks a few questions (or takes `--yes`), writes `svgworm.config.json`, adds `predev` and `prebuild` scripts, and creates `components/icon.tsx`.
+`init` asks a few questions (or takes `--yes`), writes `svgworm.config.json`, adds `predev` and `prebuild` scripts, and creates `components/icon.tsx`. When `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`. Then it builds once, so the app runs and type-checks before you add an icon.
 
 **2. Add your icons and build**
 
-Put SVG files in `icons/` and run `pnpm svgworm`. The build prints what it did:
+Put SVG files in `icons/` (delete the sample) and run `pnpm svgworm`. The build prints what it did:
 
 ```text
 svgworm: build done

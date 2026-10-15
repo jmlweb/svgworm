@@ -27,7 +27,7 @@ Requires Node `^22.20 || >=24.11` and Astro 7.
    pnpm svgworm init
    ```
 
-   `init` sees the `astro` dependency and writes `svgworm.config.json`, the `predev`/`prebuild` scripts and `src/components/Icon.astro`. With `--yes` it asks nothing. Use `--framework astro` when the project has no `astro` dependency yet.
+   `init` sees the `astro` dependency and writes `svgworm.config.json`, the `predev`/`prebuild` scripts and `src/components/Icon.astro`, then builds once. If `icons/` is still empty, it adds a sample `icons/svgworm.svg` so the first build works; delete it once you have your own icons. With `--yes` it asks nothing. Use `--framework astro` when the project has no `astro` dependency yet.
 
 3. **Build the sprite:**
 

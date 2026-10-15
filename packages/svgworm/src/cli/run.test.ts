@@ -324,8 +324,62 @@ describe('run: init (R-56)', () => {
     expect(await readFile(join(root, 'AGENTS.md'), 'utf8')).toBe(before.agents);
   });
 
+  it('leaves a project that builds before the user has any icon', async () => {
+    await put(
+      'package.json',
+      '{ "name": "app", "dependencies": { "react": "19.3.0" } }\n',
+    );
+    const first = await exec(['init']);
+    expect(first.code).toBe(ExitCode.OK);
+    expect(first.stdout).toContain('init icons/svgworm.svg created');
+    expect(first.stdout).toContain('init build 1 icon(s)');
+    expect(await exists('svgworm/icons.js')).toBe(true);
+    expect(await exists('svgworm/icons.d.ts')).toBe(true);
+    // What the predev and prebuild hooks run.
+    expect((await exec([])).code).toBe(ExitCode.OK);
+    expect((await exec(['check'])).code).toBe(ExitCode.OK);
+
+    const output = await readdir(join(root, 'svgworm'));
+    const second = await exec(['init']);
+    expect(second.code).toBe(ExitCode.OK);
+    expect(second.stdout).not.toContain('icons/svgworm.svg');
+    expect(await readdir(join(root, 'svgworm'))).toEqual(output);
+  });
+
+  it('adds no sample to a folder that has icons, and builds them', async () => {
+    await put('icons/nested/home.svg');
+    const { code, stdout } = await exec(['init']);
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout).not.toContain('svgworm.svg');
+    expect(await exists('icons/svgworm.svg')).toBe(false);
+    expect(await readFile(join(root, 'svgworm/icons.d.ts'), 'utf8')).toContain(
+      '"nested/home"',
+    );
+  });
+
+  it('exits 1 with the errors when the first build fails, keeping what it wrote', async () => {
+    await put('icons/broken.svg', '<svg');
+    const plain = await exec(['init']);
+    expect(plain.code).toBe(ExitCode.FAILED);
+    expect(plain.stdout).toContain('init svgworm.config.json created');
+    expect(plain.stderr).toContain('icons/broken.svg');
+    expect(plain.stderr).toContain(
+      'svgworm: init done, but the first build failed',
+    );
+    expect(await exists('svgworm/icons.js')).toBe(false);
+
+    const json = await exec(['init', '--json']);
+    expect(json.code).toBe(ExitCode.FAILED);
+    expect(JSON.parse(json.stdout)).toMatchObject({
+      ok: false,
+      build: { ok: false },
+      errors: [{ file: 'icons/broken.svg' }],
+    });
+  });
+
   it('never overwrites a file with different content', async () => {
     await put('svgworm.config.json', '{ "sources": ["svg"] }\n');
+    await put('svg/home.svg');
     const { code, stdout } = await exec(['init']);
     expect(code).toBe(ExitCode.OK);
     expect(stdout).toContain(
@@ -347,6 +401,7 @@ describe('run: init (R-56)', () => {
     const document = JSON.parse(stdout) as {
       ok: boolean;
       actions: { path: string; status: string }[];
+      build: unknown;
       nextSteps: string[];
     };
     expect(document.ok).toBe(true);
@@ -354,8 +409,10 @@ describe('run: init (R-56)', () => {
       document.actions.map((action) => [action.path, action.status]),
     ).toEqual([
       ['svgworm.config.json', 'created'],
+      ['icons/svgworm.svg', 'created'],
       ['components/icon.tsx', 'skipped'],
     ]);
+    expect(document.build).toMatchObject({ ok: true, icons: 1 });
     expect(document.nextSteps.length).toBeGreaterThan(0);
   });
 

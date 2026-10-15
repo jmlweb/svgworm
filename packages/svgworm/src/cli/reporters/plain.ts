@@ -9,7 +9,9 @@ import {
   summaryRows,
 } from './format.ts';
 
-const describe = (diagnostic: Diagnostic): string =>
+const describe = (
+  diagnostic: Pick<Diagnostic, 'file' | 'message'> & { readonly code: string },
+): string =>
   diagnostic.file === ''
     ? `[${diagnostic.code}] ${diagnostic.message}`
     : `[${diagnostic.code}] ${diagnostic.file}: ${diagnostic.message}`;
@@ -94,7 +96,22 @@ export const createPlainReporter = (io: CliIo): Reporter => {
           `init framework ${result.framework} (${result.frameworkSource ?? 'detected'})`,
         );
       }
-      out(style('green', 'svgworm: init done'));
+      result.build.warnings.forEach((warning) => {
+        err(`${style('yellow', 'warning')} ${describe(warning)}`);
+      });
+      if (result.build.ok) {
+        out(
+          `init build ${String(result.build.icons)} icon(s), ${String(result.build.written.length)} file(s) written`,
+        );
+        out(style('green', 'svgworm: init done'));
+      } else {
+        result.build.errors.forEach((error) => {
+          err(`${style('red', 'error')} ${describe(error)}`);
+        });
+        err(
+          `${style('red', 'svgworm:')} init done, but the first build failed with ${String(result.build.errors.length)} error(s); fix them and run svgworm`,
+        );
+      }
       out('Next steps:');
       result.nextSteps.forEach((step, index) => {
         out(`  ${String(index + 1)}. ${step}`);

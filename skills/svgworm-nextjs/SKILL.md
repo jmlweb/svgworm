@@ -23,7 +23,7 @@ Facts an agent should rely on:
    # npm install -D svgworm && npm install @svgworm/react
    ```
 
-2. **Run init.** It writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates the Icon wiring (`components/icon.tsx`, or `src/components/icon.tsx` when `src/` exists). Pass `--source <dir>` if the icons are not in `icons/`. It never overwrites a file that differs, and re-running it is safe.
+2. **Run init.** It writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates the Icon wiring (`components/icon.tsx`, or `src/components/icon.tsx` when `src/` exists). Pass `--source <dir>` if the icons are not in `icons/`. When no source folder has an SVG, it adds a sample `icons/svgworm.svg` (icon name `svgworm`). Then it builds once, so the manifest and types exist right away; it exits 1 if that build fails. It never overwrites a file that differs, and re-running it is safe.
 
    ```bash
    pnpm svgworm init --yes --agents-md
@@ -31,7 +31,7 @@ Facts an agent should rely on:
 
    `--agents-md` appends a short, marked svgworm section to the project's `AGENTS.md` so later agents know where icons live.
 
-3. **Build once** so the manifest and types exist before type-checking:
+3. **Add the icons and rebuild.** Put the SVG files in `icons/`, delete the sample `icons/svgworm.svg` if init added one, and build again so the manifest and types match before type-checking:
 
    ```bash
    pnpm svgworm            # or: pnpm svgworm --json

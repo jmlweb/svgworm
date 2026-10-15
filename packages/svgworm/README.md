@@ -7,7 +7,7 @@
 
 ```bash
 pnpm add -D svgworm
-pnpm svgworm init        # config, predev/prebuild scripts, Icon component
+pnpm svgworm init        # config, predev/prebuild scripts, Icon component, first build
 pnpm svgworm             # write the sprite, manifest and types
 ```
 

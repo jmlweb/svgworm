@@ -5,7 +5,9 @@ import {
   DEFAULT_CONFIG_FILE,
   resolveConfig,
 } from '../../core/config/resolve.ts';
+import { discoverSvgFiles } from '../../core/discover.ts';
 import { ConfigError } from '../../core/errors.ts';
+import { SAMPLE_ICON_NAME, SAMPLE_ICON_SVG } from './sample-icon.ts';
 
 export const Framework = { REACT: 'react', ASTRO: 'astro' } as const;
 export type Framework = (typeof Framework)[keyof typeof Framework];
@@ -61,6 +63,8 @@ export type ProjectFacts = {
   readonly hasSrcFolder: boolean;
   readonly packageManager: PackageManager;
   readonly existing: Readonly<Record<string, string>>;
+  /** Some source folder already holds an SVG that `build` would read. */
+  readonly sourcesHaveIcons: boolean;
 };
 
 export const InitStatus = {
@@ -230,6 +234,21 @@ export const componentFileFor = (
   );
 };
 
+// Same walk as `build`, so "has icons" agrees with what the build will find. A missing folder is empty.
+const hasIcons = async (
+  cwd: string,
+  sources: readonly string[],
+): Promise<boolean> => {
+  for (const source of sources) {
+    try {
+      if ((await discoverSvgFiles(cwd, [source])).files.length > 0) return true;
+    } catch (error) {
+      if (!(error instanceof ConfigError)) throw error;
+    }
+  }
+  return false;
+};
+
 /** Reads everything `planInit` needs. The only I/O before the plan is shown. */
 export const inspectProject = async (
   cwd: string,
@@ -261,6 +280,7 @@ export const inspectProject = async (
     hasSrcFolder,
     packageManager: detectPackageManager(names, packageJson),
     existing,
+    sourcesHaveIcons: await hasIcons(cwd, options.sources),
   };
 };
 
@@ -671,14 +691,28 @@ export const planInit = (
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
   const command = buildCommand(options);
 
-  const actions: InitAction[] = [
-    planFile(
-      configPath,
-      configContent(options),
-      facts.existing[configPath],
-      sameJson,
-    ),
-  ];
+  const configAction = planFile(
+    configPath,
+    configContent(options),
+    facts.existing[configPath],
+    sameJson,
+  );
+  // A config that differs may name other folders, so a sample could land where no build reads it.
+  const samplePath =
+    !facts.sourcesHaveIcons && configAction.status !== InitStatus.SKIPPED
+      ? posix.join(
+          toPosix(options.sources[0] ?? DEFAULT_SOURCE),
+          `${SAMPLE_ICON_NAME}.svg`,
+        )
+      : undefined;
+  const actions: InitAction[] = [configAction];
+  if (samplePath !== undefined) {
+    actions.push({
+      path: samplePath,
+      status: InitStatus.CREATED,
+      content: SAMPLE_ICON_SVG,
+    });
+  }
   if (options.addScripts) actions.push(planScripts(facts, command));
   if (addComponent) {
     actions.push(
@@ -725,17 +759,20 @@ export const planInit = (
     options.configFile === DEFAULT_CONFIG_FILE
       ? ''
       : ` --config ${options.configFile}`;
+  const iconExample = `<Icon name="${samplePath === undefined ? '…' : SAMPLE_ICON_NAME}" />`;
   const nextSteps = [
     ...install.map((line) => `Install: ${line}`),
-    `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`,
+    samplePath === undefined
+      ? `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`
+      : `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${configFlag})`,
     ...(addComponent && framework === Framework.ASTRO
       ? [
-          `In an .astro file, import Icon from the path of ${componentFile} and render <Icon name="…" />`,
+          `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,
           'If astro.config sets "base", write the sprites under it: run init with --public-path <base>/icons (or set publicPath in the config)',
         ]
       : addComponent
         ? [
-            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render <Icon name="…" />`,
+            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render ${iconExample}`,
           ]
         : []),
     `In CI, run: ${runner} svgworm check${configFlag}`,

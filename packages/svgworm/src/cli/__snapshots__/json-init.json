@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "framework": "react",
+  "frameworkSource": "detected",
+  "actions": [
+    {
+      "path": "svgworm.config.json",
+      "status": "created"
+    },
+    {
+      "path": "icons/svgworm.svg",
+      "status": "created"
+    },
+    {
+      "path": "package.json",
+      "status": "updated"
+    },
+    {
+      "path": "components/icon.tsx",
+      "status": "created"
+    }
+  ],
+  "build": {
+    "ok": true,
+    "icons": 1,
+    "written": [
+      "public/icons/icons.1f1ab2b4.svg",
+      "svgworm/icons.js",
+      "svgworm/icons.d.ts",
+      "svgworm/manifest.json"
+    ]
+  },
+  "nextSteps": [
+    "Install: npm install -D svgworm",
+    "Install: npm install @svgworm/react",
+    "Replace the sample icons/svgworm.svg with your own SVG files; svgworm runs before dev and build (or run: npx svgworm)",
+    "Import { Icon } from components/icon in a Server Component and render <Icon name=\"svgworm\" />",
+    "In CI, run: npx svgworm check"
+  ],
+  "warnings": [],
+  "errors": []
+}

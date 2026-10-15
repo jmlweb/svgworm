@@ -118,13 +118,33 @@ export const createClackReporter = (io: CliIo): Reporter => {
           `framework: ${result.framework} (${result.frameworkSource ?? 'detected'})`,
         );
       }
+      result.build.warnings.forEach((warning) => {
+        log.warn(`${warning.file}: ${warning.message}`);
+      });
+      if (result.build.ok) {
+        log.success(
+          `Built ${String(result.build.icons)} icons, wrote ${String(result.build.written.length)} files`,
+        );
+      } else {
+        result.build.errors.forEach((error) => {
+          log.error(
+            error.file === ''
+              ? error.message
+              : `${error.file}: ${error.message}`,
+          );
+        });
+      }
       note(
         result.nextSteps
           .map((step, index) => `${String(index + 1)}. ${step}`)
           .join('\n'),
         'Next steps',
       );
-      outro('svgworm is set up');
+      outro(
+        result.build.ok
+          ? 'svgworm is set up'
+          : `svgworm is set up, but the first build failed with ${String(result.build.errors.length)} error(s)`,
+      );
     },
   };
 };
