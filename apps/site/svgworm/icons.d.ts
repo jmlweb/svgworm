@@ -19,6 +19,7 @@ export type IconName =
   | "play"
   | "server"
   | "shield-check"
+  | "star"
   | "terminal"
   | "zap";
 

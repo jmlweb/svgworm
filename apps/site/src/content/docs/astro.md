@@ -124,7 +124,7 @@ pnpm astro build
 
 This website is an Astro 7 static site that renders every icon through the generated `Icon.astro` ([source](https://github.com/jmlweb/svgworm/tree/main/apps/site)). CI checks that every icon comes from the hashed sprite, and a test checks that `Icon.astro` and the React `Icon` render the same markup from the same manifest.
 
-## Next
+## Next steps
 
 - [Icon component](/docs/icon/): every prop, the markup per delivery, sizing and coloring with CSS.
 - [How it works](/docs/how-it-works/): the sprite, the stack, delivery forms, the manifest and determinism.

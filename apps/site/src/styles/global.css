@@ -959,11 +959,16 @@ pre {
   }
 }
 
-/* Code wraps instead of being cut off at the card edge. */
+/* Code scrolls sideways instead of wrapping: a wrapped `</svg>` or `/>` reads as a mistake. */
 .terminal pre,
 .code {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Landing copy: an inline token such as --json or Cache-Control: immutable never breaks inside. */
+.landing :not(pre) > code {
+  white-space: nowrap;
 }
 
 h1 {
@@ -1190,10 +1195,6 @@ h1 {
     font-size: 12px;
   }
 
-  .install {
-    font-size: 12px;
-  }
-
   /* Three icons per row instead of two: the demo stays a grid, not a long list. */
   .showcase {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1204,10 +1205,10 @@ h1 {
     padding: var(--space-4) var(--space-1);
   }
 
+  /* Names break only at the <wbr> after a folder slash, never inside a word. */
   .showcase code {
     font-size: 11px;
     text-align: center;
-    overflow-wrap: anywhere;
   }
 
   /* The header fits on one row; npm stays in the footer. */
@@ -1221,6 +1222,14 @@ h1 {
   }
 
   .site-header .nav-npm {
+    display: none;
+  }
+}
+
+/* Below 640px the hero terminal pushed the proof section far down; the stats band carries the
+   same numbers, so the terminal goes and the copy comes first. */
+@media (max-width: 640px) {
+  .hero .terminal {
     display: none;
   }
 }

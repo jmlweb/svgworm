@@ -4,8 +4,8 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.3668e769.svg",
-        "url": "/icons/icons.3668e769.svg"
+        "file": "icons.f291e640.svg",
+        "url": "/icons/icons.f291e640.svg"
       },
       "stack": null
     }
@@ -140,6 +140,13 @@ export const manifest = {
     "shield-check": {
       "sprite": "icons",
       "id": "i-shield-check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "star": {
+      "sprite": "icons",
+      "id": "i-star",
       "viewBox": "0 0 24 24",
       "color": "mono",
       "delivery": "use"

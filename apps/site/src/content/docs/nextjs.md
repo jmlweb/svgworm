@@ -178,7 +178,7 @@ pnpm next build
 
 [examples/next-app-router](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router) is a complete app with these steps. CI builds it with Turbopack and checks that no icon code ends up in client chunks.
 
-## Next
+## Next steps
 
 - [Icon component](/docs/icon/): every prop, the markup per delivery, sizing and coloring with CSS.
 - [How it works](/docs/how-it-works/): the sprite, the stack, delivery forms, the manifest and determinism.

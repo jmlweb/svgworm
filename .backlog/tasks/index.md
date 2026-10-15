@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 22 |
+| Pending | 21 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 52 |
+| Complete | 53 |
 
 ## Active Tasks
 
@@ -26,7 +26,6 @@
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
-| TSK-048 | Site layout polish: code wrapping, docs table, mobile hero | P3 | site, design, mobile | 2026-10-15 |
 | TSK-049 | Zero-JS interactivity: Next/Astro install toggle and live color demo | P3 | site, ux | 2026-10-15 |
 | TSK-050 | Landing copy: state the pain and surface the comparison | P3 | site, copy | 2026-10-15 |
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
