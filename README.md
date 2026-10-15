@@ -9,7 +9,7 @@
 </h1>
 
 **Turn a folder of SVG files into type-safe, cacheable SVG sprites.**<br>
-Zero client JavaScript, deterministic output, and a React adapter for Server Components.
+Zero client JavaScript, deterministic output, and adapters for Next.js Server Components and Astro.
 
 [![npm](https://img.shields.io/npm/v/svgworm?label=svgworm)](https://www.npmjs.com/package/svgworm)
 [![npm](https://img.shields.io/npm/v/@svgworm/react?label=%40svgworm%2Freact)](https://www.npmjs.com/package/@svgworm/react)

@@ -1,6 +1,6 @@
 # svgworm
 
-> CLI that turns a folder of SVG files into type-safe, content-hashed SVG sprites, a manifest and TypeScript types. A thin React adapter (@svgworm/react) renders icons in Server Components with zero client JavaScript. Status: 0.x on npm since 2026-10-13 (`svgworm`, `@svgworm/react`); flags and output can still change in a minor before 1.0.
+> CLI that turns a folder of SVG files into type-safe, content-hashed SVG sprites, a manifest and TypeScript types. Icons render with zero client JavaScript in Next.js Server Components (@svgworm/react) or Astro (a generated Icon.astro). Status: 0.x on npm since 2026-10-13 (`svgworm`, `@svgworm/react`); flags and output can still change in a minor before 1.0.
 
 Use it when a Next.js App Router (or any) app has its own folder of SVG icons and needs: no client JS, icon names checked at compile time, correct colors per icon (mono follows currentColor, multicolor is kept), gradients/masks/filters that render in Chromium, Firefox and WebKit, and byte-identical output on every OS.
 
