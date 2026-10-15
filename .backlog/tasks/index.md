@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 3 |
+| Pending | 6 |
 | Active | 2 |
 | Blocked | 2 |
 | Complete | 83 |
@@ -23,6 +23,9 @@
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
+| TSK-091 | @svgworm/vite plugin: rebuild the sprite during vite dev | P3 | vite, adapter, dx, competitors, adr | 2026-10-15 |
+| TSK-092 | Vue and Svelte icon components through init --framework | P3 | init, adapter, vue, svelte, solid, competitors, adr | 2026-10-15 |
+| TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | P3 | migration, svgr, codemod, docs, cli, competitors | 2026-10-15 |
 
 ## Recently Completed
 
