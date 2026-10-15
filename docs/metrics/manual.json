@@ -5,6 +5,11 @@
   "targetListPrs": { "opened": 0, "merged": 0 },
   "agentEval": null,
   "posts": [
-    { "slug": "per-icon-color", "draft": "docs/posts/per-icon-color.md", "published": "2026-10-15", "channels": ["linkedin-article", "linkedin-post", "x-thread"] }
+    {
+      "slug": "per-icon-color",
+      "draft": "docs/posts/per-icon-color.md",
+      "published": "2026-10-15",
+      "channels": ["linkedin-article", "linkedin-post", "x-thread"]
+    }
   ]
 }
