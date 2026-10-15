@@ -5,6 +5,7 @@ import type { InitOptions } from './init/plan.ts';
 
 import { DEFAULT_CONFIG_FILE } from '../core/config/resolve.ts';
 import { defaultInitOptions, Framework } from './init/plan.ts';
+import { didYouMean, suggestClosest } from './suggest.ts';
 
 export const Command = {
   BUILD: 'build',
@@ -76,6 +77,28 @@ const isFramework = (value: string): value is Framework =>
   FRAMEWORKS.includes(value);
 
 const isCommand = (value: string): value is Command => COMMANDS.includes(value);
+
+const KNOWN_FLAGS: readonly string[] = Object.entries(OPTIONS).flatMap(
+  ([name, option]) => [
+    `--${name}`,
+    ...('short' in option ? [`-${option.short}`] : []),
+  ],
+);
+
+/** parseArgs explains positionals at length; a typo wants the nearest flag instead. */
+const describeParseError = (error: unknown): string => {
+  if (!(error instanceof Error)) return String(error);
+  if ('code' in error && error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
+    const flag = /'(-[^']+)'/.exec(error.message)?.[1];
+    if (flag !== undefined) {
+      return `unknown flag "${flag}".${didYouMean(suggestClosest(flag, KNOWN_FLAGS))}`.replace(
+        /\.$/,
+        '',
+      );
+    }
+  }
+  return error.message;
+};
 
 export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
   const isJson = argv.includes('--json');
@@ -155,6 +178,6 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
       },
     };
   } catch (error) {
-    return usageError(error instanceof Error ? error.message : String(error));
+    return usageError(describeParseError(error));
   }
 };

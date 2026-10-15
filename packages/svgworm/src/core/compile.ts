@@ -146,6 +146,7 @@ export const compile = (
           ? []
           : [{ name: entry.name, path: entry.file }],
       ),
+      { flatten: options.flatten },
     ),
   );
 

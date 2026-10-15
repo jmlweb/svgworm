@@ -127,6 +127,15 @@ describe('failing loudly', () => {
     );
   });
 
+  it('suggests the closest names for an unknown one', () => {
+    expect(() => render(<Icon name={'hom' as never} />)).toThrow(
+      'Unknown icon "hom". It is not in the svgworm manifest. Did you mean "home"?',
+    );
+    expect(() => render(<Icon name={'zzzzzzzz' as never} />)).toThrow(
+      /manifest\.$/,
+    );
+  });
+
   it('treats prototype keys from untyped runtime names as unknown icons', () => {
     for (const name of ['constructor', 'toString', '__proto__']) {
       expect(() => render(<Icon name={name as never} />)).toThrow(

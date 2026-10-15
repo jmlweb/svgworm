@@ -18,8 +18,26 @@ describe('findCollisions', () => {
       file: 'icons/a/close.svg',
     });
     expect(errors[0]?.message).toBe(
-      'name "close" is produced by 3 files: icons/a/close.svg, icons/b/close.svg, other/close.svg',
+      'name "close" is produced by 3 files: icons/a/close.svg, icons/b/close.svg, other/close.svg. Fix: rename one of the files or folders',
     );
+  });
+
+  it('says to turn flatten off when the files sit in different folders', () => {
+    const [error] = findCollisions(entries, { flatten: true });
+    expect(error?.message).toMatch(
+      /Fix: rename one of the files, or turn flatten off so the folder names stay in the icon names$/,
+    );
+  });
+
+  it('says to rename when the files sit in the same folder', () => {
+    const [error] = findCollisions(
+      [
+        { name: 'arrow-left', path: 'icons/arrow_left.svg' },
+        { name: 'arrow-left', path: 'icons/arrow-left.svg' },
+      ],
+      { flatten: true },
+    );
+    expect(error?.message).toMatch(/Fix: rename one of the files$/);
   });
 
   it('does not depend on input order', () => {

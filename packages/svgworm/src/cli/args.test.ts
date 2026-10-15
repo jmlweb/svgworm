@@ -96,6 +96,16 @@ describe('parseCliArgs', () => {
     expect(parseCliArgs(argv).kind).toBe('usage-error');
   });
 
+  it('suggests the closest flag for an unknown one', () => {
+    expect(parseCliArgs(['--sources', 'icons'])).toMatchObject({
+      kind: 'usage-error',
+      message: 'unknown flag "--sources". Did you mean "--source"?',
+    });
+    expect(parseCliArgs(['--bogus'])).toMatchObject({
+      message: 'unknown flag "--bogus"',
+    });
+  });
+
   it('remembers --json on a usage error so the reporter can honor it', () => {
     expect(parseCliArgs(['--json', '--bogus'])).toMatchObject({
       kind: 'usage-error',

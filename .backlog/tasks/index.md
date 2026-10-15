@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 34 |
+| Pending | 33 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 40 |
+| Complete | 41 |
 
 ## Active Tasks
 
@@ -37,7 +37,6 @@
 | TSK-058 | Docs + init: client components, Vite/plain React, framework-neutral wording | P2 | docs, react, vite, init, zero-js | 2026-10-15 |
 | TSK-059 | Spike: select icons from icon packages (include/exclude) | P2 | spike, config, output-contract, adr, dx | 2026-10-15 |
 | TSK-060 | Init: monorepo sources, re-init flags, prompt labels | P3 | init, monorepo, cli, dx | 2026-10-15 |
-| TSK-062 | Actionable errors: did-you-mean and fix hints | P3 | cli, errors, react, dx | 2026-10-15 |
 | TSK-063 | Docs: Astro type-check prerequisites | P3 | docs, astro | 2026-10-15 |
 | TSK-064 | Naming: split camelCase/PascalCase file names into kebab-case | P4 | naming, output-contract, adr | 2026-10-15 |
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |

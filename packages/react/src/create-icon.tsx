@@ -43,6 +43,8 @@ export type IconProps<Name extends string> = Omit<
   readonly label?: string;
 };
 
+import { didYouMean, suggestClosest } from './suggest.js';
+
 export class SvgwormReactError extends Error {
   override readonly name = 'SvgwormReactError';
 }
@@ -88,7 +90,7 @@ export const createIcon = <const M extends IconManifest>(
       : undefined;
     if (!icon) {
       throw new SvgwormReactError(
-        `Unknown icon "${name}". It is not in the svgworm manifest.`,
+        `Unknown icon "${name}". It is not in the svgworm manifest.${didYouMean(suggestClosest(name, Object.keys(manifest.icons)))}`,
       );
     }
 

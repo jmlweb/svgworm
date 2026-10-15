@@ -33,7 +33,11 @@ export const parseSvgTree = (text: string): ParseResult => {
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : String(error),
+      // svgo names the document "<input>"; the diagnostic already names the file.
+      message: (error instanceof Error ? error.message : String(error)).replace(
+        /^<input>:(\d+):(\d+): /,
+        'line $1, column $2: ',
+      ),
     };
   }
   return captured === undefined
