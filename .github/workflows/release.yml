@@ -73,9 +73,9 @@ jobs:
         with:
           commit-message: 'chore(release): version packages'
           pr-title: 'chore(release): version packages'
-        env:
           # A PAT, not GITHUB_TOKEN: pushes and PRs made with GITHUB_TOKEN do not trigger CI.
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          # The action rejects a custom token passed through the GITHUB_TOKEN env instead.
+          github-token: ${{ secrets.RELEASE_PAT }}
       # Merges only after the required checks pass. Without required checks `--auto` fails
       # instead of merging an untested PR.
       # Looked up by branch: the action leaves `pullRequestNumber` empty when the PR exists
