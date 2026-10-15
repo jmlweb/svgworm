@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 20 |
+| Pending | 21 |
 | Active | 2 |
 | Blocked | 0 |
 | Complete | 30 |
@@ -38,6 +38,7 @@
 | TSK-050 | Landing copy: state the pain and surface the comparison | P3 | site, copy | 2026-10-15 |
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-052 | Site security headers and the CSS inlining decision | P4 | site, security, performance | 2026-10-15 |
+| TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
 
 ## Recently Completed
 

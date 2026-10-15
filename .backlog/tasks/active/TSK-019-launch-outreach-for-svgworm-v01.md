@@ -31,3 +31,4 @@ A post built on the 31k-icon color result and the Turbopack comparison. A short 
 - [2026-10-07] Created
 - [2026-10-12] Started
 - [2026-10-12] docs/outreach/launch.md: launch post outline, channel list with notes, starters shortlist with an angle per template (criterion 2). Post text and launch date wait for v0.1.0.- [2026-10-13] Unblocked: svgworm@0.1.0 and @svgworm/react@0.1.0 are on npm (TSK-018 complete). The npm-dependent criteria can start.
+- [2026-10-15] Newsletter submissions (This Week in React, React Status, JavaScript Weekly, Bytes) moved to TSK-053.
