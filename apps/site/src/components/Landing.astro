@@ -253,6 +253,13 @@ svgworm/icons.d.ts
         browser.{' '}
         <a href="/docs/comparison/">How it compares with SVGR and @neodx/svg</a>.
       </p>
+      <p class="section-lede">
+        Measured with the same 20 Lucide icons in Next.js 16: on a server page
+        svgworm adds no client JS while lucide-react still ships a chunk, and in
+        a client component it adds the least. The gap is 1 to 3 KiB gzip at
+        this size.{' '}
+        <a href="/docs/comparison/#client-js-measured">Method and numbers</a>.
+      </p>
       <div class="bento">
         <article class="tile tile-wide">
           <div class="tile-head">
