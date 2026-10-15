@@ -1,0 +1,7 @@
+/node_modules
+/.next/
+/icons/
+/public/icons/
+/svgworm/
+next-env.d.ts
+*.tsbuildinfo

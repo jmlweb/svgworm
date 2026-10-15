@@ -1,0 +1,279 @@
+{
+  "measuredAt": "2026-10-15T14:39:34.432Z",
+  "node": "v24.13.0",
+  "platform": "darwin-arm64",
+  "browser": "chromium 145.0.7632.6",
+  "dependencies": {
+    "@svgr/webpack": "8.1.0",
+    "@svgworm/react": "file:../../packages/react",
+    "lucide-react": "1.50.0",
+    "lucide-static": "1.50.0",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "svgworm": "file:../../packages/svgworm",
+    "@types/node": "22.20.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "playwright": "1.58.2",
+    "typescript": "6.0.3"
+  },
+  "rows": [
+    {
+      "route": "/baseline",
+      "variant": "baseline",
+      "where": "no icons",
+      "svgElements": 0,
+      "renderedHtmlBytes": 4809,
+      "html": {
+        "raw": 4739,
+        "gzip": 1519
+      },
+      "clientJs": {
+        "raw": 453522,
+        "gzip": 133267,
+        "requests": 5
+      },
+      "spriteFiles": {
+        "raw": 0,
+        "gzip": 0,
+        "requests": 0
+      },
+      "otherRequests": 0,
+      "totalRequests": 6,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 0,
+        "clientJsGzip": 0,
+        "htmlRaw": 0,
+        "htmlGzip": 0
+      }
+    },
+    {
+      "route": "/svgworm",
+      "variant": "svgworm",
+      "where": "server",
+      "svgElements": 20,
+      "renderedHtmlBytes": 13890,
+      "html": {
+        "raw": 13820,
+        "gzip": 2092
+      },
+      "clientJs": {
+        "raw": 453522,
+        "gzip": 133267,
+        "requests": 5
+      },
+      "spriteFiles": {
+        "raw": 5461,
+        "gzip": 1200,
+        "requests": 1
+      },
+      "otherRequests": 0,
+      "totalRequests": 7,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 0,
+        "clientJsGzip": 0,
+        "htmlRaw": 9081,
+        "htmlGzip": 573
+      }
+    },
+    {
+      "route": "/svgworm-client",
+      "variant": "svgworm",
+      "where": "client",
+      "svgElements": 20,
+      "renderedHtmlBytes": 8290,
+      "html": {
+        "raw": 8220,
+        "gzip": 1823
+      },
+      "clientJs": {
+        "raw": 457772,
+        "gzip": 134808,
+        "requests": 6
+      },
+      "spriteFiles": {
+        "raw": 5461,
+        "gzip": 1200,
+        "requests": 1
+      },
+      "otherRequests": 0,
+      "totalRequests": 8,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/3vmp238d7rght.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 4250,
+        "clientJsGzip": 1541,
+        "htmlRaw": 3481,
+        "htmlGzip": 304
+      }
+    },
+    {
+      "route": "/lucide",
+      "variant": "lucide-react",
+      "where": "server",
+      "svgElements": 20,
+      "renderedHtmlBytes": 20530,
+      "html": {
+        "raw": 20460,
+        "gzip": 3800
+      },
+      "clientJs": {
+        "raw": 456035,
+        "gzip": 134475,
+        "requests": 6
+      },
+      "spriteFiles": {
+        "raw": 0,
+        "gzip": 0,
+        "requests": 0
+      },
+      "otherRequests": 0,
+      "totalRequests": 7,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/0iliigftgejhm.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 2513,
+        "clientJsGzip": 1208,
+        "htmlRaw": 15721,
+        "htmlGzip": 2281
+      }
+    },
+    {
+      "route": "/lucide-client",
+      "variant": "lucide-react",
+      "where": "client",
+      "svgElements": 20,
+      "renderedHtmlBytes": 12947,
+      "html": {
+        "raw": 12877,
+        "gzip": 2863
+      },
+      "clientJs": {
+        "raw": 461419,
+        "gzip": 136607,
+        "requests": 6
+      },
+      "spriteFiles": {
+        "raw": 0,
+        "gzip": 0,
+        "requests": 0
+      },
+      "otherRequests": 0,
+      "totalRequests": 7,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/44pj-2g03ud9f.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 7897,
+        "clientJsGzip": 3340,
+        "htmlRaw": 8138,
+        "htmlGzip": 1344
+      }
+    },
+    {
+      "route": "/svgr",
+      "variant": "SVGR",
+      "where": "server",
+      "svgElements": 20,
+      "renderedHtmlBytes": 22958,
+      "html": {
+        "raw": 22888,
+        "gzip": 3568
+      },
+      "clientJs": {
+        "raw": 453522,
+        "gzip": 133267,
+        "requests": 5
+      },
+      "spriteFiles": {
+        "raw": 0,
+        "gzip": 0,
+        "requests": 0
+      },
+      "otherRequests": 0,
+      "totalRequests": 6,
+      "scriptUrls": [
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 0,
+        "clientJsGzip": 0,
+        "htmlRaw": 18149,
+        "htmlGzip": 2049
+      }
+    },
+    {
+      "route": "/svgr-client",
+      "variant": "SVGR",
+      "where": "client",
+      "svgElements": 20,
+      "renderedHtmlBytes": 12777,
+      "html": {
+        "raw": 12707,
+        "gzip": 2952
+      },
+      "clientJs": {
+        "raw": 464067,
+        "gzip": 135409,
+        "requests": 6
+      },
+      "spriteFiles": {
+        "raw": 0,
+        "gzip": 0,
+        "requests": 0
+      },
+      "otherRequests": 0,
+      "totalRequests": 7,
+      "scriptUrls": [
+        "/_next/static/chunks/096byu37fk234.js",
+        "/_next/static/chunks/0ia64m28g4ac_.js",
+        "/_next/static/chunks/1j_b9p-fr0wmf.js",
+        "/_next/static/chunks/2mggxbpzpwans.js",
+        "/_next/static/chunks/39xt798yhjt7n.js",
+        "/_next/static/chunks/turbopack-2hk8cu6pyg151.js"
+      ],
+      "overBaseline": {
+        "clientJsRaw": 10545,
+        "clientJsGzip": 2142,
+        "htmlRaw": 7968,
+        "htmlGzip": 1433
+      }
+    }
+  ]
+}

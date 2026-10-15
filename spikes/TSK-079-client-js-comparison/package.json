@@ -1,0 +1,29 @@
+{
+  "name": "tsk-079-client-js-comparison",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TSK-079: the same 20 Lucide icons rendered with svgworm, lucide-react and SVGR in a Next.js 16 App Router app, with the client JS measured.",
+  "scripts": {
+    "measure": "node src/measure.mjs",
+    "prepare-icons": "node src/prepare-icons.mjs"
+  },
+  "dependencies": {
+    "@svgr/webpack": "8.1.0",
+    "@svgworm/react": "file:../../packages/react",
+    "lucide-react": "1.50.0",
+    "lucide-static": "1.50.0",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "svgworm": "file:../../packages/svgworm"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "playwright": "1.58.2",
+    "typescript": "6.0.3"
+  },
+  "packageManager": "pnpm@10.26.2"
+}
