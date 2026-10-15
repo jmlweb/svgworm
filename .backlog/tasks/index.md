@@ -5,16 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 8 |
-| Active | 4 |
+| Active | 2 |
 | Blocked | 2 |
-| Complete | 67 |
+| Complete | 69 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
-- TSK-024: Vite recipe (P4)
 - TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
-- TSK-051: Site font weight and font caching (P3)
 - TSK-067: Opt-in cross-origin (CDN) sprites via a minimal injecting loader (P3)
 - TSK-080: Site audit: accessibility, mobile layout, Core Web Vitals (P3)
 
@@ -37,6 +35,7 @@
 |----|-------|-----------|
 | TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |
 | TSK-022 | Inline sprite output | 2026-10-15 |
+| TSK-024 | Vite recipe | 2026-10-15 |
 | TSK-025 | Alias map for icon name collisions | 2026-10-15 |
 | TSK-026 | CSS-variable multicolor mode | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
@@ -44,4 +43,3 @@
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | 2026-10-15 |
-| TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
