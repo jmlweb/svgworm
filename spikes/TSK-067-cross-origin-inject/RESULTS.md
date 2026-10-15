@@ -31,4 +31,4 @@ Full matrix: [results/matrix.md](results/matrix.md).
 
 Real Safari and iOS (Playwright WebKit is not Safari); a real CDN and HTTP/2 multiplexing; Next.js client navigation (the RSC payload does not touch `<body>` children it did not render, which the React case suggests but does not prove).
 
-Decision: [ADR-0027](../../docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md).
+Decisions: [ADR-0027](../../docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md), loader security model in [ADR-0028](../../docs/adr/0028-inject-loader-keeps-only-svg-content.md).

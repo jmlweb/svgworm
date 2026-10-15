@@ -33,7 +33,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 - Each icon is a nested `<svg id="<iconId>" viewBox="…">`, shown only when it is the URL `:target`. One generated `:target` rule is the only `<style>` in the file
 - Named `<group>.stack.<hash>.svg`, same hash rule and `outDir` as the sprite. Not written when no icon needs it ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 
-### 1c. Loader file (`crossOrigin: "inject"` only, [ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md))
+### 1c. Loader file (`crossOrigin: "inject"` only, [ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md), security model in [ADR-0028](adr/0028-inject-loader-keeps-only-svg-content.md))
 
 - Named `<group>.loader.<hash>.js`, same hash rule and `outDir` as the sprite, LF, no dependencies. Written only with `crossOrigin: "inject"` and only when some icon has `delivery: use`, after the sprite and stack and before the module
 - The sprite URL and the sprite's `integrity` are baked in. It fetches the sprite with `mode: "cors"`, `credentials: "omit"` and `integrity`, parses it with `DOMParser` as `image/svg+xml`, keeps only SVG-namespace elements (minus `script`, `foreignObject`, `style`, `a`, and SMIL that animates a link or a handler), removes `on*` and URL-loading attributes, script schemes, and any `href` or `url()` that leaves the sprite, and prepends it to `<body>` once (hidden, `aria-hidden`, marked `data-svgworm="<integrity>"`), putting it back when a router replaces `<body>`. On failure it injects nothing and logs `svgworm: sprite not loaded from <url>: <reason>`

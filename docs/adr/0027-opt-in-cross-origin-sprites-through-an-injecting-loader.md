@@ -1,6 +1,6 @@
 # 0027. Opt-in cross-origin sprites through an injecting loader
 
-- **Status:** accepted
+- **Status:** superseded by [0028](0028-inject-loader-keeps-only-svg-content.md) (loader security model and evidence)
 - **Date:** 2026-10-15
 - **Task:** TSK-067 (plan PLN-003)
 - **Resolves:** Q-02; qualifies principle 1 in AGENTS.md; extends the output contract ([ADR-0012](0012-output-contract-v0.1.md)) with a version 2 manifest for this mode only
