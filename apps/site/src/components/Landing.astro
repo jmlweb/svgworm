@@ -105,7 +105,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <span></span>
           <code>~/my-app</code>
         </div>
-        <pre><code><span class="t-prompt">$</span> pnpm svgworm
+        <pre aria-label="Build output" role="region" tabindex="0"><code><span class="t-prompt">$</span> pnpm svgworm
 <span class="t-ok">svgworm: build done</span>
   icons     <span class="t-num">{iconNames.length}</span> ({monoIcons.length} mono, {multicolorIcons.length} multicolor)
   delivery  use {countDelivery('use')}, img {countDelivery('img')}, mask {countDelivery('mask')}
@@ -162,7 +162,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
             Each icon is a tiny <code>&lt;use href&gt;</code> into one hashed sprite.
             The browser fetches the sprite once and keeps it.
           </p>
-          <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
+          <pre aria-label="Icon usage and generated markup" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
 <span class="c-comment">{terminalComment}</span></code></pre>
         </article>
         <article class="tile tile-tall">
@@ -174,7 +174,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
             The generated types list every icon. A typo fails <code>tsc</code>,
             not production.
           </p>
-          <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span></code></pre>
+          <pre aria-label="Icon usage with a misspelled name" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span></code></pre>
           <div aria-hidden="true" class="suggest">
             <p class="suggest-input">
               <span class="c-tag">&lt;Icon</span>{' '}
@@ -229,7 +229,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
             > scripts and the component, then builds once so the app runs before
             you add an icon.
           </p>
-          <pre class="code"><code>pnpm add -D svgworm
+          <pre aria-label="Install commands" class="code" role="region" tabindex="0"><code>pnpm add -D svgworm
 pnpm add @svgworm/react
 pnpm svgworm init</code></pre>
         </li>
@@ -240,7 +240,7 @@ pnpm svgworm init</code></pre>
             manifest to <code>svgworm/</code>. <code>predev</code> and
             <code>prebuild</code> run it for you.
           </p>
-          <pre class="code"><code>icons/
+          <pre aria-label="Icons folder and build command" class="code" role="region" tabindex="0"><code>icons/
 ├── home.svg
 ├── search.svg
 └── brand/logo.svg
@@ -253,7 +253,7 @@ pnpm svgworm</code></pre>
             Decorative by default. Pass <code>title</code> or <code>label</code> for
             an accessible name.
           </p>
-          <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-tag">/&gt;</span>
+          <pre aria-label="Icon usage in a Server Component" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-tag">/&gt;</span>
 <span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-attr">title</span>=<span class="c-str">"Home"</span> <span class="c-tag">/&gt;</span></code></pre>
         </li>
       </ol>
@@ -363,7 +363,7 @@ pnpm svgworm</code></pre>
           <span></span>
           <Icon name="terminal" />
         </div>
-        <pre><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
+        <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
 <span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
       </figure>
     </div>

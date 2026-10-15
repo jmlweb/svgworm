@@ -1554,6 +1554,30 @@ h1 {
   font-size: 13.5px;
 }
 
+/* A table wider than the column scrolls inside its focusable wrapper (added in the docs page),
+   not the page. */
+.table-scroll {
+  margin-block: 0 var(--space-4);
+  overflow-x: auto;
+}
+
+.table-scroll table {
+  margin: 0;
+}
+
+/* Scrollable regions are keyboard stops (TSK-084). Code and terminals are dark in both themes,
+   so their ring is the light worm tone, drawn inside because .terminal clips its overflow. */
+.table-scroll:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+pre[tabindex='0']:focus-visible,
+.install code[tabindex='0']:focus-visible {
+  outline: 2px solid var(--worm);
+  outline-offset: -4px;
+}
+
 .prose table {
   width: 100%;
   border-collapse: collapse;
@@ -1966,12 +1990,6 @@ h1 {
 
   .docs-menu-body {
     padding: var(--space-4) var(--space-2) 0;
-  }
-
-  /* A table wider than the phone scrolls inside itself instead of widening the page. */
-  .prose table {
-    display: block;
-    overflow-x: auto;
   }
 
   .docs-nav ul {

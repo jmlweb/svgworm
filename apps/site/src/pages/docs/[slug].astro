@@ -39,10 +39,33 @@ const rendered = entry.rendered?.html;
 if (rendered === undefined) {
   throw new Error(`docs: "${entry.id}" has no rendered HTML`);
 }
-const html = rendered.replace(
+const withAnchors = rendered.replace(
   /<h([23]) id="([^"]+)">([\s\S]*?)<\/h\1>/g,
   (_, level: string, id: string, inner: string) =>
     `<h${level} id="${id}">${inner}<a class="heading-anchor" href="#${id}" aria-label="Link to this section">#</a></h${level}>`,
+);
+
+// Tables (TSK-084): a table wider than the column scrolls inside a focusable, named region, so a
+// keyboard user can scroll it. The name is the section the table sits in.
+const plainText = (markup: string) =>
+  markup
+    .replace(/<a class="heading-anchor"[\s\S]*?<\/a>/g, '')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+const seen = new Map<string, number>();
+const html = withAnchors.replace(
+  /<table[\s\S]*?<\/table>/g,
+  (table: string, offset: number) => {
+    const before = [
+      ...withAnchors.slice(0, offset).matchAll(/<h[23] [^>]*>([\s\S]*?)<\/h[23]>/g),
+    ].at(-1);
+    const section = before ? plainText(before[1] ?? '') : entry.data.title;
+    // Region names must be unique on a page: a second table in a section gets a number.
+    const count = (seen.get(section) ?? 0) + 1;
+    seen.set(section, count);
+    const name = count === 1 ? section : `${section} (${String(count)})`;
+    return `<div aria-label="Table: ${name.replaceAll('"', '&quot;')}" class="table-scroll" role="region" tabindex="0">${table}</div>`;
+  },
 );
 ---
 

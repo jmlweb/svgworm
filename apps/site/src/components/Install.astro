@@ -5,6 +5,8 @@ type Props = {
 };
 
 const { id } = Astro.props;
+// Two instances on the landing page: region names must differ.
+const where = id === 'hero' ? 'Install command' : 'Install command, second copy';
 const commands = {
   next: 'pnpm add -D svgworm && pnpm add @svgworm/react',
   astro: 'pnpm add -D svgworm',
@@ -30,10 +32,10 @@ const commands = {
   </fieldset>
   <p class="install install-next">
     <span aria-hidden="true" class="t-prompt">$</span>
-    <code>{commands.next}</code>
+    <code aria-label={`${where} for Next.js`} role="region" tabindex="0">{commands.next}</code>
   </p>
   <p class="install install-astro">
     <span aria-hidden="true" class="t-prompt">$</span>
-    <code>{commands.astro}</code>
+    <code aria-label={`${where} for Astro`} role="region" tabindex="0">{commands.astro}</code>
   </p>
 </div>
