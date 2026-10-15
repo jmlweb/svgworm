@@ -77,8 +77,8 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
           <a class="button" href="/docs/nextjs/">
             Get started <Icon name="arrow-right" />
           </a>
-          <a class="button button-ghost" href="/docs/astro/">
-            <Icon name="book-open" /> Astro guide
+          <a class="button button-ghost" href={REPO}>
+            <Icon name="git-branch" /> Star on GitHub
           </a>
         </div>
       </div>
@@ -109,11 +109,11 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
     <div class="wrap stats-grid">
       <div>
         <strong>0 B</strong>
-        <span>JavaScript on this page</span>
+        <span>JavaScript for icons</span>
       </div>
       <div>
-        <strong>1</strong>
-        <span>request for all {iconNames.length} icons</span>
+        <strong>1 request</strong>
+        <span>for all {iconNames.length} icons</span>
       </div>
       <div>
         <strong>{formatKib(spriteBytes)}</strong>
@@ -254,7 +254,7 @@ pnpm svgworm</code></pre>
       <p class="section-lede">
         <code>{spriteUrl}</code>, rendered by the generated <code>Icon.astro</code
         > at build time and served with <code>Cache-Control: immutable</code>.
-        Open your network panel: no JavaScript, one icon sprite.
+        Open your network panel: one icon sprite and no JavaScript to render it.
       </p>
       <div class="showcase-group">
         <h3>
