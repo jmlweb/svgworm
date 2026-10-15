@@ -35,7 +35,7 @@
     "Install: npm install @svgworm/react",
     "Replace the sample icons/svgworm.svg with your own SVG files; svgworm runs before dev and build (or run: npx svgworm)",
     "Import { Icon } from components/icon in a component and render <Icon name=\"svgworm\" />",
-    "In CI, run: npx svgworm check"
+    "Commit public/icons/ and svgworm/ and run in CI: npx svgworm check (or add both folders to .gitignore and rely on the scripts that run svgworm)"
   ],
   "warnings": [],
   "errors": []

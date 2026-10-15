@@ -193,7 +193,7 @@ describe('planInit', () => {
       prebuild: 'svgworm --config config/svgworm.json',
     });
     expect(plan.nextSteps.at(-1)).toBe(
-      'In CI, run: npx svgworm check --config config/svgworm.json',
+      'Commit public/icons/ and svgworm/ and run in CI: npx svgworm check --config config/svgworm.json (or add both folders to .gitignore and rely on the scripts that run svgworm)',
     );
     expect(statusOf(plan, 'AGENTS.md')?.content).toContain(
       '`svgworm --config config/svgworm.json`',
@@ -357,7 +357,7 @@ describe('planInit', () => {
       'Install: pnpm add @svgworm/react',
       'Put SVG files in icons/ and run: pnpm svgworm',
       'Import { Icon } from components/icon in a component and render <Icon name="…" />',
-      'In CI, run: pnpm svgworm check',
+      'Commit public/icons/ and svgworm/ and run in CI: pnpm svgworm check (or add both folders to .gitignore and rely on the scripts that run svgworm)',
     ]);
   });
 });

@@ -13,9 +13,9 @@ Requires Node `^22.20 || >=24.11`.
 1. **Install and set up:**
 
    ```bash
-   pnpm add -D svgworm
-   pnpm add @svgworm/react
-   pnpm svgworm init
+   pnpm add -D svgworm && pnpm add @svgworm/react && pnpm svgworm init
+   # npm:  npm install -D svgworm && npm install @svgworm/react && npx svgworm init
+   # yarn: yarn add -D svgworm && yarn add @svgworm/react && yarn svgworm init
    ```
 
    `init` writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists). If `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`, then it builds once so the app runs and type-checks right away. With `--yes` it asks nothing. It never overwrites a file that differs, so re-running it is safe. See the [CLI reference](/docs/cli/#init) for every flag.
@@ -49,7 +49,7 @@ Requires Node `^22.20 || >=24.11`.
    );
    ```
 
-   The icon is `aria-hidden` unless you pass `title` or `label`. An unknown `name` is a type error.
+   Names come from the file paths: `home` is `icons/home.svg` and `brand/sunset` is `icons/brand/sunset.svg`, lower-cased with `-` between words. The icon is `aria-hidden` unless you pass `title` or `label`. An unknown `name` is a type error, so an editor lists every valid name.
 
 ## Set up by hand
 
@@ -121,6 +121,13 @@ Next does not add `basePath` to the sprite URLs svgworm writes. With a `basePath
 </aside>
 
 Next serves `public/` under the `basePath`, so the sprite lives at `/docs/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s.
+
+## What to commit
+
+Two choices. Pick one and stick with it:
+
+- **Commit `public/icons/` and `svgworm/`** and run `svgworm check` in CI. Every checkout type-checks without a build step, reviews show icon changes as diffs of the sprite and the manifest, and CI fails when someone edits an icon and forgets to rebuild.
+- **Ignore both folders** (`public/icons/` and `svgworm/` in `.gitignore`) and rely on the `predev` and `prebuild` scripts. Less noise in reviews, but anything that runs before `next build`, such as `tsc` or ESLint in CI, must run `svgworm` first or it will not find `svgworm/icons.d.ts`.
 
 ## CI
 

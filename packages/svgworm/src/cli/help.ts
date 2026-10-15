@@ -31,6 +31,7 @@ Init options:
   --framework <name>      react or astro. Default: detected from the dependencies (astro wins when both)
   --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx or Icon.astro
                           (under src/components/ when src/ exists)
+  --component             Write the Icon wiring even when no framework dependency is found
   --no-component          Skip the Icon wiring (default: written when react, next or astro is a dependency)
   --no-scripts            Do not run svgworm from package.json scripts (predev/prebuild, or dev/build on Yarn 2+)
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents

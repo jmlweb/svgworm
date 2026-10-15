@@ -28,6 +28,7 @@ Facts an agent should rely on:
 
    ```bash
    pnpm svgworm init --yes --agents-md
+   # npx svgworm init --yes --agents-md
    ```
 
    `--agents-md` appends a short, marked svgworm section to the project's `AGENTS.md` so later agents know where icons live. With `--json`, the output carries `framework` and `frameworkSource` (`flag`, `prompt` or `detected`).
@@ -35,7 +36,7 @@ Facts an agent should rely on:
 3. **Add the icons and rebuild.** Put the SVG files in `icons/`, delete the sample `icons/svgworm.svg` if init added one, and build again so the manifest and types match before `astro check`:
 
    ```bash
-   pnpm svgworm            # or: pnpm svgworm --json
+   pnpm svgworm            # or: pnpm svgworm --json; with npm: npx svgworm
    ```
 
    Output: `public/icons/icons.<hash>.svg` (and `icons.stack.<hash>.svg` when needed), `svgworm/icons.js`, `svgworm/icons.d.ts`, `svgworm/manifest.json`.

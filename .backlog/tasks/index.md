@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 32 |
+| Pending | 31 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 42 |
+| Complete | 43 |
 
 ## Active Tasks
 
@@ -33,7 +33,6 @@
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-052 | Site security headers and the CSS inlining decision | P4 | site, security, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-057 | Docs: package-manager-neutral commands and what to commit | P2 | docs, onboarding, llms, agents | 2026-10-15 |
 | TSK-058 | Docs + init: client components, Vite/plain React, framework-neutral wording | P2 | docs, react, vite, init, zero-js | 2026-10-15 |
 | TSK-059 | Spike: select icons from icon packages (include/exclude) | P2 | spike, config, output-contract, adr, dx | 2026-10-15 |
 | TSK-063 | Docs: Astro type-check prerequisites | P3 | docs, astro | 2026-10-15 |

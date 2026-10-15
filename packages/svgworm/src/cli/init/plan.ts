@@ -1000,6 +1000,7 @@ export const planInit = (
   const runner =
     facts.packageManager === PackageManager.NPM ? 'npx' : facts.packageManager;
   const flag = configFlag(options);
+  const outDir = options.outDir ?? 'public/icons';
   const iconExample = `<Icon name="${samplePath === undefined ? '…' : SAMPLE_ICON_NAME}" />`;
   const nextSteps = [
     ...install.map((line) => `Install: ${line}`),
@@ -1018,7 +1019,7 @@ export const planInit = (
             `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a ${facts.usesNext ? 'Server Component' : 'component'} and render ${iconExample}`,
           ]
         : []),
-    `In CI, run: ${runner} svgworm check${flag}`,
+    `Commit ${outDir}/ and ${moduleDir}/ and run in CI: ${runner} svgworm check${flag} (or add both folders to .gitignore and rely on the scripts that run svgworm)`,
   ];
   return { framework, frameworkSource, actions, nextSteps };
 };

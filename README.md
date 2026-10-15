@@ -42,16 +42,15 @@ Requires Node `^22.20 || >=24.11`. The example uses Next.js App Router.
 **1. Install and set up**
 
 ```bash
-pnpm add -D svgworm
-pnpm add @svgworm/react
-pnpm svgworm init
+pnpm add -D svgworm && pnpm add @svgworm/react && pnpm svgworm init
+# npm: npm install -D svgworm && npm install @svgworm/react && npx svgworm init
 ```
 
 `init` asks a few questions (or takes `--yes`), writes `svgworm.config.json`, adds `predev` and `prebuild` scripts, and creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists). When `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`. Then it builds once, so the app runs and type-checks before you add an icon.
 
 **2. Add your icons and build**
 
-Put SVG files in `icons/` (delete the sample) and run `pnpm svgworm`. The build prints what it did (abridged):
+Put SVG files in `icons/` (delete the sample) and run `pnpm svgworm` (or `npx svgworm`). The build prints what it did (abridged):
 
 ```text
 svgworm: build done
@@ -75,7 +74,9 @@ export const Nav = () => (
 ```
 
 > [!TIP]
-> The icon is `aria-hidden` unless you pass `title` or `label`.
+> Names come from the file paths: `home` is `icons/home.svg`, lower-cased with `-` between words, and a wrong name is a type error. The icon is `aria-hidden` unless you pass `title` or `label`.
+
+Commit `public/icons/` and `svgworm/` and run `svgworm check` in CI, or ignore both folders and rely on the `predev`/`prebuild` scripts. The [Next.js guide](https://svgworm.com/docs/nextjs/#what-to-commit) weighs the two.
 
 Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.astro`, see the [Astro guide](https://svgworm.com/docs/astro/). Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](https://svgworm.com/docs/nextjs/). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
 

@@ -14,9 +14,14 @@ export const Icon = createIcon(manifest);
 // <Icon name="home" /> or <Icon name="home" title="Go home" width={32} height={32} />
 ```
 
+- `name` is checked against the manifest: `home` is `icons/home.svg`, `brand/sunset` is `icons/brand/sunset.svg`. A wrong name is a type error.
 - The icon is `aria-hidden` unless you pass `title` or `label`.
 - Size, `className` and `style` are standard props.
 - Peer dependency: `react` ^19.
+
+```bash
+pnpm add -D svgworm && pnpm add @svgworm/react   # npm install -D svgworm && npm install @svgworm/react
+```
 
 ## Docs
 

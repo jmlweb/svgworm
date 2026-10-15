@@ -4,7 +4,7 @@
 
 Use it when a Next.js App Router (or any) app has its own folder of SVG icons and needs: no client JS, icon names checked at compile time, correct colors per icon (mono follows currentColor, multicolor is kept), gradients/masks/filters that render in Chromium, Firefox and WebKit, and byte-identical output on every OS.
 
-Requires Node ^22.20 || >=24.11. Package manager: pnpm.
+Requires Node ^22.20 || >=24.11. Any package manager: `pnpm add -D svgworm` or `npm install -D svgworm` (plus `@svgworm/react` as a dependency for React and Next.js), then `pnpm svgworm` or `npx svgworm`. The examples use pnpm.
 
 ## How to use it
 
@@ -16,10 +16,11 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 4. Render `<Icon name="home" />`. The icon is aria-hidden unless `title` or `label` is passed. An invalid name is a type error.
 5. Run `svgworm --source icons` in `predev` and `prebuild` (on Yarn 2+, which never runs pre scripts, prefix `dev` and `build` instead: `svgworm --source icons && next build`) (or put `sources` in `svgworm.config.json` and run plain `svgworm`). In CI, `svgworm check` exits 1 when the committed output is stale. `svgworm watch` rebuilds on every change.
 6. Optional: serve `/icons/:file*` with `Cache-Control: public, max-age=31536000, immutable`. With a Next `basePath`, set `--public-path` to include it.
+7. Commit `public/icons/` and `svgworm/` and run `svgworm check` in CI, or add both folders to `.gitignore` and rely on the `predev`/`prebuild` scripts (then run `svgworm` before any `tsc` or `astro check` step in CI).
 
 ## Non-interactive use
 
-- Commands: `build` (default), `check` (exit 1 if the committed output is stale, writes nothing), `watch` (rebuild on change), `init` (project setup). All take the config flags below; `init` also takes `--framework <react|astro>`, `--component-file <path>`, `--no-component`, `--no-scripts`, `--agents-md`, `--yes`, and prompts only on an interactive terminal.
+- Commands: `build` (default), `check` (exit 1 if the committed output is stale, writes nothing), `watch` (rebuild on change), `init` (project setup). All take the config flags below; `init` also takes `--framework <react|astro>`, `--component-file <path>`, `--component` / `--no-component`, `--no-scripts`, `--agents-md`, `--yes`, and prompts only on an interactive terminal.
 - Flags: `--config <file>`, `--source <dir>` (repeatable), `--out-dir <dir>`, `--public-path <path>`, `--module-dir <dir>`, `--flatten`, `--json`, `--verbose` (one plain line per icon; off by default). Flags override the config file. `--out-dir` needs `--public-path`, because svgworm cannot guess the URL a custom folder is served from.
 - `--json` prints one JSON document on stdout and nothing else. `check --json` adds `upToDate`, `differences` (`{ path, status: "missing" | "changed" | "stale" }` per file a build would write or remove; `stale` is a deprecated alias of this list) and `iconDiff` (`added`, `removed`).
 - Exit codes: 0 built or check up to date; 1 invalid SVG, name collision or I/O failure (nothing is written), or stale output from `check`; 2 usage or config error, or no SVG files found.

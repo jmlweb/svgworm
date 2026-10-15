@@ -6,10 +6,12 @@
 [![License: MIT](https://img.shields.io/npm/l/svgworm)](https://github.com/jmlweb/svgworm/blob/main/LICENSE)
 
 ```bash
-pnpm add -D svgworm
-pnpm svgworm init        # config, predev/prebuild scripts, Icon component, first build
+pnpm add -D svgworm && pnpm add @svgworm/react   # npm install -D svgworm && npm install @svgworm/react
+pnpm svgworm init        # config, predev/prebuild scripts, Icon component, first build (npx svgworm init)
 pnpm svgworm             # write the sprite, manifest and types
 ```
+
+`@svgworm/react` is only for React and Next.js; an Astro project needs just `svgworm`.
 
 ![svgworm turns a folder of SVG files into a hashed sprite, a manifest and types](https://raw.githubusercontent.com/jmlweb/svgworm/main/docs/assets/pipeline.svg)
 

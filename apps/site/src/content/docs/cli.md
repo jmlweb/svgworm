@@ -26,6 +26,8 @@ svgworm init [options]       Set a project up: config, predev/prebuild scripts, 
 
 Flags override the config file. The same options are available as [config keys](/docs/config/).
 
+Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgworm` or `bunx svgworm`. The pages here write `pnpm svgworm`; the command is the same with any of them.
+
 <aside class="alert alert-important">
 
 <p class="alert-title">Important</p>
@@ -56,6 +58,7 @@ The plain output lists the files written or removed, the warnings and errors, an
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `--framework <name>`      | `react` or `astro`. Default: detected from the dependencies; Astro wins when both are present (a terminal asks)             |
 | `--component-file <path>` | Where to create the `Icon` component. The extension must match the framework (`.tsx`/`.jsx` or `.astro`), or `init` exits 2 |
+| `--component`             | Write the component even when `react`, `next` or `astro` is not a dependency yet                                            |
 | `--no-component`          | Skip the component                                                                                                          |
 | `--no-scripts`            | Leave the package.json scripts alone (`predev` and `prebuild`, or `dev` and `build` on Yarn 2+)                             |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
