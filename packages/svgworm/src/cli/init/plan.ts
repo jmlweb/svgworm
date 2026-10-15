@@ -433,11 +433,19 @@ const RUNS_SVGWORM = /(?:^|[\s&|;(])svgworm(?=$|[\s&|;)])/;
 // starts `b` without waiting. Pipes, redirects such as `2>&1` and `&&` chains keep their meaning.
 const UNSAFE_TO_PREFIX = /\|\||;|\n|(?<![&>])&(?![&>])/;
 
+/**
+ * The `--config` flag for scripts and next steps: empty for the default file. The path is
+ * interpolated into a shell line, which is why `pathProblem` rejects spaces and shell
+ * characters.
+ */
+const configFlag = (options: InitOptions): string =>
+  options.configFile === DEFAULT_CONFIG_FILE
+    ? ''
+    : ` --config ${options.configFile}`;
+
 /** The build command the scripts and docs should run: plain, or with the custom config file. */
 const buildCommand = (options: InitOptions): string =>
-  options.configFile === DEFAULT_CONFIG_FILE
-    ? 'svgworm'
-    : `svgworm --config ${options.configFile}`;
+  `svgworm${configFlag(options)}`;
 
 type ScriptsPlan = {
   readonly action: InitAction;
@@ -786,9 +794,12 @@ const PATH_OPTIONS = [
   ['--module-dir', (options: InitOptions) => options.moduleDir],
 ] as const;
 
+// The path ends up unquoted in package.json scripts and in the printed commands.
+const UNSAFE_IN_PATH = /[\s`'"\\$&|;<>()*?#!~]/;
+
 const pathProblem = (cwd: string, value: string): string | undefined => {
-  if (/[\n\r`'"\\]/.test(value)) {
-    return 'must not contain quotes, backticks, backslashes or line breaks';
+  if (UNSAFE_IN_PATH.test(value)) {
+    return 'must not contain spaces, quotes, backticks, backslashes, shell characters or line breaks';
   }
   if (isAbsolute(value)) return 'must be relative to the project folder';
   const inside = relative(resolve(cwd), resolve(cwd, value));
@@ -930,18 +941,15 @@ export const planInit = (
   );
   const runner =
     facts.packageManager === PackageManager.NPM ? 'npx' : facts.packageManager;
-  const configFlag =
-    options.configFile === DEFAULT_CONFIG_FILE
-      ? ''
-      : ` --config ${options.configFile}`;
+  const flag = configFlag(options);
   const iconExample = `<Icon name="${samplePath === undefined ? '…' : SAMPLE_ICON_NAME}" />`;
   const nextSteps = [
     ...install.map((line) => `Install: ${line}`),
     samplePath === undefined
-      ? `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`
+      ? `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${flag}`
       : runsBeforeDevAndBuild
-        ? `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${configFlag})`
-        : `Replace the sample ${samplePath} with your own SVG files and run: ${runner} svgworm${configFlag}`,
+        ? `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${flag})`
+        : `Replace the sample ${samplePath} with your own SVG files and run: ${runner} svgworm${flag}`,
     ...(addComponent && framework === Framework.ASTRO
       ? [
           `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,
@@ -952,7 +960,7 @@ export const planInit = (
             `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render ${iconExample}`,
           ]
         : []),
-    `In CI, run: ${runner} svgworm check${configFlag}`,
+    `In CI, run: ${runner} svgworm check${flag}`,
   ];
   return { framework, frameworkSource, actions, nextSteps };
 };

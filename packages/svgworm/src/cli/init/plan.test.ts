@@ -603,6 +603,10 @@ describe('validateInitOptions', () => {
     ],
     [{ sources: ["ic'ons"] }, '--source', 'quotes'],
     [{ moduleDir: 'a`b' }, '--module-dir', 'quotes'],
+    // Scripts and next steps interpolate the path into a shell line without quoting it.
+    [{ configFile: 'my icons.json' }, '--config', 'spaces'],
+    [{ sources: ['icons;rm'] }, '--source', 'shell'],
+    [{ outDir: 'public/$x', publicPath: '/x' }, '--out-dir', 'shell'],
   ])('rejects %j', (overrides, flag, word) => {
     const issues = validateInitOptions(
       { ...defaultInitOptions(), ...overrides },

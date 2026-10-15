@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 39 |
+| Pending | 38 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 35 |
+| Complete | 36 |
 
 ## Active Tasks
 
@@ -29,7 +29,6 @@
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | P3 | docs, performance, cli | 2026-10-14 |
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | P4 |  | 2026-10-15 |
 | TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | P4 |  | 2026-10-15 |
-| TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | P4 |  | 2026-10-15 |
 | TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | P4 |  | 2026-10-15 |
 | TSK-048 | Site layout polish: code wrapping, docs table, mobile hero | P3 | site, design, mobile | 2026-10-15 |
 | TSK-049 | Zero-JS interactivity: Next/Astro install toggle and live color demo | P3 | site, ux | 2026-10-15 |
@@ -67,8 +66,8 @@
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
 | TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
+| TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | 2026-10-15 |
 | TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |
 | TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
 | TSK-054 | Init: first run works before any icon exists | 2026-10-15 |
 | TSK-055 | Build hooks for Yarn 2+ (pre/post scripts never run) | 2026-10-15 |
-| TSK-056 | Clear error when no config and no --source | 2026-10-15 |
