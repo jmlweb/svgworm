@@ -1,0 +1,33 @@
+name: Bug report
+description: Something in svgworm or @svgworm/react does not work as documented.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: The smallest SVG, config, and command that show the problem. A link to a repo is best.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: json
+    attributes:
+      label: JSON output
+      description: Output of the same command with `--json`, if it is a build or check problem.
+      render: json
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: svgworm, @svgworm/react, Node, OS, and framework (Next.js or Astro) versions.
+      placeholder: svgworm 0.2.1, Node 24.11, macOS 26, Next.js 16.0
+    validations:
+      required: true
