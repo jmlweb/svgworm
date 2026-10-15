@@ -126,23 +126,26 @@ export const configSchema = z
   .strictObject({
     $schema: z.string().optional(),
     sources: z
-      .array(z.union([z.string().min(1), sourceObjectSchema]))
-      .min(1)
+      .union([
+        z.string().min(1),
+        z.array(z.union([z.string().min(1), sourceObjectSchema])).min(1),
+      ])
+      .optional()
       .describe(
-        'Folders that contain the SVG files, relative to the config: a path, or { "dir", "include", "exclude" } to pick files by glob (for example from an icon package in node_modules).',
+        'Folders that contain the SVG files, relative to the config: a path, or { "dir", "include", "exclude" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default "icons".',
       ),
     outDir: z
       .string()
       .min(1)
       .optional()
       .describe(
-        'Where sprite files are written. Default "public/icons". Needs publicPath when set.',
+        'Where sprite files are written. Default "public/icons". Needs publicPath when set, except under public/, where publicPath is derived (public/sprites gives /sprites).',
       ),
     publicPath: z
       .string()
       .optional()
       .describe(
-        'URL path the sprites are served from, same-origin. Default "/icons". An https:// URL needs "crossOrigin": "inject".',
+        'URL path the sprites are served from, same-origin. Default "/icons", or derived from an outDir under public/. An https:// URL needs "crossOrigin": "inject".',
       ),
     moduleDir: z
       .string()

@@ -15,12 +15,16 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     stdout: { write: () => undefined },
   });
   let warnings: Diagnostic[] = [];
+  let sourcesDefaulted = false;
   const print = (document: unknown): void => {
     io.stdout.write(`${JSON.stringify(document, null, 2)}\n`);
     warnings = [];
   };
 
   return {
+    usingDefaultSource: () => {
+      sourcesDefaulted = true;
+    },
     onEvent: (event) => {
       if (event.type === 'warning') warnings.push(event.diagnostic);
       diagnostics.onEvent(event);
@@ -28,6 +32,7 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     succeed: (result: BuildSuccess) => {
       print({
         ok: true,
+        sourcesDefaulted,
         stats: result.stats,
         icons: result.icons,
         warnings: result.warnings,
@@ -38,6 +43,7 @@ export const createJsonReporter = (io: CliIo): Reporter => {
       diagnostics.checked(result);
       print({
         ok: result.upToDate,
+        sourcesDefaulted,
         upToDate: result.upToDate,
         differences: result.differences,
         // Deprecated alias of `differences`, kept for one minor.
@@ -51,12 +57,20 @@ export const createJsonReporter = (io: CliIo): Reporter => {
     },
     fail: (errors) => {
       diagnostics.fail(errors);
-      print({ ok: false, stats: null, icons: [], warnings, errors });
+      print({
+        ok: false,
+        sourcesDefaulted,
+        stats: null,
+        icons: [],
+        warnings,
+        errors,
+      });
     },
     fatal: (message: string, code: FatalCode) => {
       diagnostics.fatal(message, code);
       print({
         ok: false,
+        sourcesDefaulted,
         stats: null,
         icons: [],
         warnings,

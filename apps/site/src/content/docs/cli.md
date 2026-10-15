@@ -20,7 +20,7 @@ svgworm [build | check | watch | init] [options]
 | Option                 | Meaning                                                                    |
 | ---------------------- | -------------------------------------------------------------------------- |
 | `--config <file>`      | Config file. Default: `svgworm.config.json` (optional)                     |
-| `--source <dir>`       | Folder with the SVG files. Repeat for several folders                      |
+| `--source <dir>`       | Folder with the SVG files. Repeat for several folders. Default: `icons`    |
 | `--out-dir <dir>`      | Where sprite files are written. Default: `public/icons`                    |
 | `--public-path <path>` | URL path the sprites are served from. Default: `/icons`                    |
 | `--module-dir <dir>`   | Where the manifest and types are written. Default: `svgworm`               |
@@ -39,7 +39,7 @@ Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgwor
 
 <p class="alert-title">Important</p>
 
-`--out-dir` needs `--public-path`. svgworm cannot guess the URL a custom folder is served from, and **a wrong URL breaks every icon**.
+`--out-dir` needs `--public-path`, unless it is under `public/`: `--out-dir public/sprites` gives `/sprites`. svgworm cannot guess the URL of any other folder, and **a wrong URL breaks every icon**. A `basePath` or `base` is never added, so include it in `--public-path` yourself.
 
 </aside>
 
@@ -74,6 +74,7 @@ The plain output lists the files written or removed, the warnings and errors, an
 ```json
 {
   "ok": true,
+  "sourcesDefaulted": false,
   "stats": {
     "icons": 4,
     "mono": 3,
@@ -100,9 +101,11 @@ The plain output lists the files written or removed, the warnings and errors, an
 }
 ```
 
+`sourcesDefaulted` is `true` when no `sources` were set and svgworm read the default `icons/` folder. The plain output prints `svgworm: using default source icons/` in that case.
+
 `icons` lists every icon in name order, with the manifest fields (`name`, `id`, `viewBox`, `color`, `delivery`) plus the source `file`.
 
-On a failed build the document is `{ "ok": false, "stats": null, "icons": [], "warnings": [...], "errors": [...] }` and **nothing is written**.
+On a failed build the document is `{ "ok": false, "sourcesDefaulted": false, "stats": null, "icons": [], "warnings": [...], "errors": [...] }` and **nothing is written**.
 
 ### check document
 
@@ -111,6 +114,7 @@ The build document plus three fields:
 ```json
 {
   "ok": false,
+  "sourcesDefaulted": false,
   "upToDate": false,
   "differences": [
     { "path": "public/icons/icons.6d36e3d0.svg", "status": "missing" },

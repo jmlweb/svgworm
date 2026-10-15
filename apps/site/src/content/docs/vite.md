@@ -76,10 +76,10 @@ Without `init`, do its part yourself after installing the two packages:
 1. **Build the sprite** from your icon folder:
 
    ```bash
-   pnpm svgworm --source icons
+   pnpm svgworm
    ```
 
-   Without a config file, pass `--source` on every run, or create `svgworm.config.json` (see [Config](/docs/config/)).
+   With no config file, svgworm reads the `icons/` folder. For another folder, pass `--source <dir>` on every run, or create `svgworm.config.json` (see [Config](/docs/config/)).
 
 2. **Create the component once:**
 
@@ -97,13 +97,13 @@ Without `init`, do its part yourself after installing the two packages:
    ```json
    {
      "scripts": {
-       "predev": "svgworm --source icons",
-       "prebuild": "svgworm --source icons"
+       "predev": "svgworm",
+       "prebuild": "svgworm"
      }
    }
    ```
 
-   **Yarn 2+ never runs `pre` scripts.** With it, put the command in front of the scripts instead: `"dev": "svgworm --source icons && vite"` and `"build": "svgworm --source icons && vite build"`.
+   **Yarn 2+ never runs `pre` scripts.** With it, put the command in front of the scripts instead: `"dev": "svgworm && vite"` and `"build": "svgworm && vite build"`.
 
 ## Cache for a year
 

@@ -68,6 +68,22 @@ describe('run: exit codes', () => {
     expect(await exists('svgworm/manifest.json')).toBe(true);
   });
 
+  it('builds from ./icons with no config and no --source', async () => {
+    await put('icons/home.svg');
+    const { code, stdout, stderr } = await exec([]);
+    expect(code).toBe(ExitCode.OK);
+    expect(stderr).toBe('');
+    expect(stdout).toContain('svgworm: using default source icons/');
+    expect(await exists('svgworm/manifest.json')).toBe(true);
+  });
+
+  it('exits 2 with no config, no --source and no ./icons', async () => {
+    const { code, stdout, stderr } = await exec([]);
+    expect(code).toBe(ExitCode.USAGE);
+    expect(stdout).toBe('');
+    expect(stderr).toContain('no default icons/ folder');
+  });
+
   it('exits 0 for --help and --version', async () => {
     expect((await exec(['--help'])).stdout).toContain('Exit codes:');
     expect((await exec(['--version'])).stdout).toMatch(/^\d+\.\d+\.\d+/);
@@ -113,7 +129,6 @@ describe('run: exit codes', () => {
     ['an unknown flag', ['--bogus']],
     ['an unknown command', ['deploy']],
     ['a missing source folder', ['--source', 'missing']],
-    ['no sources at all', []],
     [
       '--out-dir without --public-path',
       ['--source', 'icons', '--out-dir', 'x'],
@@ -269,6 +284,20 @@ describe('run: watch (R-30)', () => {
     const { code, stdout } = await pending;
     expect(code).toBe(ExitCode.OK);
     expect(stdout).toContain('svgworm: build done');
+    expect(stdout).toContain('svgworm: watching icons for changes');
+  });
+
+  it('watches the default source with no config and no --source', async () => {
+    await put('icons/home.svg');
+    const controller = new AbortController();
+    const pending = exec(['watch'], controller.signal);
+    await vi.waitFor(async () => {
+      expect(await exists('svgworm/manifest.json')).toBe(true);
+    });
+    controller.abort();
+    const { code, stdout } = await pending;
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout).toContain('svgworm: using default source icons/');
     expect(stdout).toContain('svgworm: watching icons for changes');
   });
 

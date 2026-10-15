@@ -1,2 +1,2 @@
-svgworm: no svgworm.config.json found in <cwd>
+svgworm: no svgworm.config.json found in <cwd> and no default icons/ folder
   run "svgworm init" to create one, or pass --source <dir>

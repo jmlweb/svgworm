@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "sourcesDefaulted": true,
+  "stats": {
+    "icons": 4,
+    "mono": 3,
+    "multicolor": 1,
+    "delivery": {
+      "use": 2,
+      "img": 1,
+      "mask": 1
+    },
+    "sourceBytes": 820,
+    "spriteBytes": 289,
+    "stackBytes": 661,
+    "savingsBytes": -130,
+    "durationMs": 0
+  },
+  "icons": [
+    {
+      "name": "brand/sunset",
+      "id": "i-brand--sunset",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "img",
+      "file": "icons/brand/sunset.svg"
+    },
+    {
+      "name": "café",
+      "id": "i-caf_e9_",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "mask",
+      "file": "icons/café.svg"
+    },
+    {
+      "name": "home",
+      "id": "i-home",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use",
+      "file": "icons/home.svg"
+    },
+    {
+      "name": "ui/check",
+      "id": "i-ui--check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use",
+      "file": "icons/ui/check.svg"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

@@ -15,7 +15,7 @@ Commands:
 
 Options:
   --config <file>         Config file. Default: svgworm.config.json (optional)
-  --source <dir>          Folder with the SVG files. Repeat for several folders
+  --source <dir>          Folder with the SVG files. Repeat for several folders. Default: icons
   --out-dir <dir>         Where sprite files are written. Default: public/icons
   --public-path <path>    URL path the sprites are served from. Default: /icons
   --module-dir <dir>      Where the manifest and types are written. Default: svgworm
@@ -27,7 +27,8 @@ Options:
   -h, --help              Show this help
   -v, --version           Show the version
 
-Flags override the config file. --out-dir needs --public-path.
+Flags override the config file. --out-dir needs --public-path, unless it is under public/
+(public/sprites gives /sprites).
 
 Init options:
   --framework <name>      react or astro. Default: detected from the dependencies (astro wins when both)
@@ -46,8 +47,8 @@ Exit codes:
   2  usage or config error, or no SVG files found
 
 Example:
-  svgworm --source icons
-  svgworm --source icons --out-dir public/sprites --public-path /sprites --json
+  svgworm
+  svgworm --source assets/svg --out-dir static/sprites --public-path /sprites --json
   svgworm check --json
   svgworm init --source icons --agents-md --yes
 

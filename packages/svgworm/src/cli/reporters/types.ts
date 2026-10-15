@@ -19,6 +19,8 @@ export type FatalCode = (typeof FatalCode)[keyof typeof FatalCode];
  */
 export type Reporter = {
   readonly onEvent: BuildEventHandler;
+  /** `sources` was not set, so this folder is read (ADR-0029). Called before the first event. */
+  readonly usingDefaultSource: (dir: string) => void;
   readonly succeed: (result: BuildSuccess) => void;
   /** `check` compiled fine; the result says whether the output on disk is current. */
   readonly checked: (result: CheckOutcome) => void;

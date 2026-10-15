@@ -1,12 +1,14 @@
 ---
 id: TSK-088
 title: Zero-config defaults: optional sources and publicPath derived from outDir
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-10-15
 source: idea/PLN-004
 depends-on: []
+started: 2026-10-15
+completed: 2026-10-15
 ---
 
 # Zero-config defaults: optional sources and publicPath derived from outDir
@@ -70,17 +72,17 @@ Lower the entry barrier without adding keys, flags or config formats:
 
 ## Acceptance Criteria
 
-- [ ] ADR-0029 written and accepted: default sources icons, string shorthand, publicPath derived from public/ outDir, supersedes ADR-0010 never-a-guess clause
-- [ ] Tests written first in resolve.test.ts and schema.test.ts cover default source, string shorthand, publicPath derivation (incl. ./public/x, trailing slash, Windows backslash, public alone, publicity/x non-match), explicit publicPath wins, non-public outDir still errors
-- [ ] sources optional and accepts a string in schema.ts; derivation lives in resolveConfig
-- [ ] loadConfig builds from ./icons with no config and no --source; errors with reworded message (keeping found-above hint) when ./icons is missing
-- [ ] ResolvedConfig exposes the default-source fact; plain reporter prints a notice and JSON adds a stable field; non-TTY snapshots updated
-- [ ] init reuses the shared DEFAULT_SOURCE
-- [ ] watch uses the default source (tested)
-- [ ] svgworm.schema.json regenerated
-- [ ] Docs updated: site config/cli/nextjs/vite, llms.txt, READMEs, both skills, help.ts, LRN-040; basePath/base warning kept
-- [ ] Minor changeset for svgworm
-- [ ] pnpm verify, typecheck:ts7, example, vite, site and determinism checks pass with unchanged output
+- [x] ADR-0029 written and accepted: default sources icons, string shorthand, publicPath derived from public/ outDir, supersedes ADR-0010 never-a-guess clause — evidence: docs/adr/0029 written, status accepted; 0010 status points to it (2026-10-15)
+- [x] Tests written first in resolve.test.ts and schema.test.ts cover default source, string shorthand, publicPath derivation (incl. ./public/x, trailing slash, Windows backslash, public alone, publicity/x non-match), explicit publicPath wins, non-public outDir still errors — evidence: resolve.test.ts and schema.test.ts cases added first; pnpm test → exit 0 (2026-10-15)
+- [x] sources optional and accepts a string in schema.ts; derivation lives in resolveConfig — evidence: schema.ts sources optional string|array; derivePublicPath in resolve.ts (2026-10-15)
+- [x] loadConfig builds from ./icons with no config and no --source; errors with reworded message (keeping found-above hint) when ./icons is missing — evidence: loadConfig tests: ./icons builds, missing icons errors with found-one-above hint (2026-10-15)
+- [x] ResolvedConfig exposes the default-source fact; plain reporter prints a notice and JSON adds a stable field; non-TTY snapshots updated — evidence: reporters.test.ts snapshots plain-default-source.txt, json-default-source.json; pnpm test → exit 0 (2026-10-15)
+- [x] init reuses the shared DEFAULT_SOURCE — evidence: init/plan.ts imports DEFAULT_SOURCE from resolve.ts (2026-10-15)
+- [x] watch uses the default source (tested) — evidence: run.test.ts watch default source test passes (2026-10-15)
+- [x] svgworm.schema.json regenerated — evidence: pnpm schema:generate; svgworm.schema.json updated, schema test passes (2026-10-15)
+- [x] Docs updated: site config/cli/nextjs/vite, llms.txt, READMEs, both skills, help.ts, LRN-040; basePath/base warning kept — evidence: site config/cli/nextjs/vite/troubleshooting, llms.txt, both skills, help.ts, LRN-040 edited; README/package READMEs use init and needed no change (2026-10-15)
+- [x] Minor changeset for svgworm — evidence: .changeset/zero-config-defaults.md minor svgworm (2026-10-15)
+- [x] pnpm verify, typecheck:ts7, example, vite, site and determinism checks pass with unchanged output — evidence: pnpm verify, typecheck:ts7, determinism:fingerprint, example:check, example:vite:check, site:check → all exit 0 (2026-10-15) (2026-10-15)
 
 ## Notes
 
@@ -89,3 +91,6 @@ Lower the entry barrier without adding keys, flags or config formats:
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Implemented ADR-0029, tests, docs, changeset; all checks pass
+- [2026-10-15] Completed

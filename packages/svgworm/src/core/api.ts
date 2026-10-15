@@ -20,7 +20,7 @@ export type {
   OutputFile,
   SourceInput,
 } from './compile.ts';
-export { loadConfig, resolveConfig } from './config/resolve.ts';
+export { DEFAULT_SOURCE, loadConfig, resolveConfig } from './config/resolve.ts';
 export type { ConfigOverrides, ResolvedConfig } from './config/resolve.ts';
 export {
   ColorMode,

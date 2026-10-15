@@ -4,7 +4,7 @@ description: Every svgworm.config.json key and its default, per-icon color overr
 order: 6
 ---
 
-`svgworm.config.json` is optional. Every key except `sources` has a default, and CLI flags can replace the file entirely.
+`svgworm.config.json` is optional. Every key has a default, and CLI flags can replace the file entirely. With no file, svgworm reads the `icons/` folder and prints `svgworm: using default source icons/`.
 
 Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/svgworm.schema.json) to get **autocomplete and validation in your editor**. The package also exports it as `svgworm/schema.json`.
 
@@ -18,9 +18,9 @@ Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main
 
 | Key          | Default        | Meaning                                                                                         |
 | ------------ | -------------- | ----------------------------------------------------------------------------------------------- |
-| `sources`    | required       | Folders with the SVG files: a path, or `{ "dir", "include", "exclude" }` to pick files by glob  |
-| `outDir`     | `public/icons` | Where sprite files go. Needs `publicPath` when set                                              |
-| `publicPath` | `/icons`       | Same-origin URL path the sprites are served from                                                |
+| `sources`    | `icons`        | Folders with the SVG files: a path, or `{ "dir", "include", "exclude" }` to pick files by glob. One folder may be a plain string |
+| `outDir`     | `public/icons` | Where sprite files go. `publicPath` is derived when it is under `public/` (`public/sprites` gives `/sprites`), otherwise required |
+| `publicPath` | `/icons`       | Same-origin URL path the sprites are served from. Add a Next `basePath` or an Astro/Vite `base` by hand |
 | `moduleDir`  | `svgworm`      | Where the manifest and types go                                                                 |
 | `flatten`    | `false`        | Drop folder names from icon names                                                               |
 | `color`      | `[]`           | Per-icon color overrides (see [Color overrides](#color-overrides)). The last matching rule wins |

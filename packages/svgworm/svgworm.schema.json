@@ -6,54 +6,64 @@
       "type": "string"
     },
     "sources": {
-      "minItems": 1,
-      "type": "array",
-      "items": {
-        "anyOf": [
-          {
-            "type": "string",
-            "minLength": 1
-          },
-          {
-            "type": "object",
-            "properties": {
-              "dir": {
+      "description": "Folders that contain the SVG files, relative to the config: a path, or { \"dir\", \"include\", \"exclude\" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default \"icons\".",
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
                 "type": "string",
-                "minLength": 1,
-                "description": "Folder with the SVG files, relative to the config. It may point into node_modules."
+                "minLength": 1
               },
-              "include": {
-                "description": "Only files that match one of these globs are icons. Default: every .svg file. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
-                "minItems": 1,
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "exclude": {
-                "description": "Files to leave out, applied after include. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
+              {
+                "type": "object",
+                "properties": {
+                  "dir": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Folder with the SVG files, relative to the config. It may point into node_modules."
+                  },
+                  "include": {
+                    "description": "Only files that match one of these globs are icons. Default: every .svg file. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "exclude": {
+                    "description": "Files to leave out, applied after include. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "dir"
+                ],
+                "additionalProperties": false
               }
-            },
-            "required": ["dir"],
-            "additionalProperties": false
+            ]
           }
-        ]
-      },
-      "description": "Folders that contain the SVG files, relative to the config: a path, or { \"dir\", \"include\", \"exclude\" } to pick files by glob (for example from an icon package in node_modules)."
+        }
+      ]
     },
     "outDir": {
-      "description": "Where sprite files are written. Default \"public/icons\". Needs publicPath when set.",
+      "description": "Where sprite files are written. Default \"public/icons\". Needs publicPath when set, except under public/, where publicPath is derived (public/sprites gives /sprites).",
       "type": "string",
       "minLength": 1
     },
     "publicPath": {
-      "description": "URL path the sprites are served from, same-origin. Default \"/icons\". An https:// URL needs \"crossOrigin\": \"inject\".",
+      "description": "URL path the sprites are served from, same-origin. Default \"/icons\", or derived from an outDir under public/. An https:// URL needs \"crossOrigin\": \"inject\".",
       "type": "string"
     },
     "moduleDir": {
@@ -78,20 +88,29 @@
           },
           "color": {
             "type": "string",
-            "enum": ["auto", "mono", "preserve"],
+            "enum": [
+              "auto",
+              "mono",
+              "preserve"
+            ],
             "description": "\"auto\" classifies the icon, \"mono\" forces currentColor, \"preserve\" keeps the colors."
           }
         },
-        "required": ["match", "color"],
+        "required": [
+          "match",
+          "color"
+        ],
         "additionalProperties": false
       }
     },
     "crossOrigin": {
       "description": "Default \"none\": sprites are served same-origin with zero client JS. \"inject\" allows an https:// publicPath on another origin (a CDN) and emits a small loader script that fetches the sprite with CORS and integrity and injects it (ADR-0027). Icons need JS in that mode.",
       "type": "string",
-      "enum": ["none", "inject"]
+      "enum": [
+        "none",
+        "inject"
+      ]
     }
   },
-  "required": ["sources"],
   "additionalProperties": false
 }

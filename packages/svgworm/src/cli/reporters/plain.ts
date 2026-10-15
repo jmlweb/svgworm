@@ -31,6 +31,9 @@ export const createPlainReporter = (
   const err = (line: string): void => void io.stderr.write(`${line}\n`);
 
   return {
+    usingDefaultSource: (dir) => {
+      out(`svgworm: using default source ${dir}/`);
+    },
     onEvent: (event) => {
       switch (event.type) {
         case 'start':

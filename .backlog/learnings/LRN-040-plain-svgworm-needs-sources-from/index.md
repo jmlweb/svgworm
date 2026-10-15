@@ -18,3 +18,5 @@ TSK-047 rewrote the Next.js guide. The old manual steps built with `svgworm --so
 ## Application
 
 Any doc, skill or llms.txt line that shows plain `svgworm` must either come after `init` or a config file with `sources`, or pass `--source <dir>`. When you edit setup docs, check that each command in it can run alone.
+
+Update (TSK-088, ADR-0029): `sources` now defaults to `icons`, so plain `svgworm` works when `./icons` exists. The rule still holds for any other folder: show `--source <dir>` or a config file with `sources`. Docs that show plain `svgworm` must say it reads `icons/`.

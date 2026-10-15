@@ -1,6 +1,7 @@
 import {
   build,
   ConfigError,
+  DEFAULT_SOURCE,
   DiagnosticCode,
   loadConfig,
   type ConfigOverrides,
@@ -39,6 +40,9 @@ export const withConfig = async (
         ? {}
         : { configFile: input.configFile }),
     });
+    if (config.isDefaultSources) {
+      reporter.usingDefaultSource(DEFAULT_SOURCE);
+    }
     return await action(config);
   } catch (error) {
     if (error instanceof ConfigError) {

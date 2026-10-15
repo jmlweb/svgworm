@@ -1,0 +1,14 @@
+svgworm: using default source icons/
+svgworm: reading 4 SVG file(s)
+write public/icons/icons.d907d82b.svg (289 B)
+write public/icons/icons.stack.91bff0b3.svg (661 B)
+write svgworm/icons.js (983 B)
+write svgworm/icons.d.ts (719 B)
+write svgworm/manifest.json (920 B)
+svgworm: build done
+  icons     4 (3 mono, 1 multicolor)
+  delivery  use 2, img 1, mask 1
+  source    820 B
+  output    950 B (sprite 289 B, stack 661 B)
+  savings   -130 B (-15.9%)
+  time      <time>

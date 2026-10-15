@@ -137,6 +137,38 @@ describe('json reporter', () => {
   });
 });
 
+describe('default source notice', () => {
+  it('plain: says the default source is in use', async () => {
+    const { code, stdout, stderr } = await exec([]);
+    expect(code).toBe(0);
+    expect(stderr).toBe('');
+    await expect(stable(stdout)).toMatchFileSnapshot(
+      `${snapshots}plain-default-source.txt`,
+    );
+  });
+
+  it('plain: stays silent when --source is given', async () => {
+    const { stdout } = await exec(['--source', 'icons']);
+    expect(stdout).not.toContain('default source');
+  });
+
+  it('json: flags the default source in the document', async () => {
+    const { stdout } = await exec(['--json']);
+    expect(JSON.parse(stdout)).toMatchObject({
+      ok: true,
+      sourcesDefaulted: true,
+    });
+    await expect(stable(stdout)).toMatchFileSnapshot(
+      `${snapshots}json-default-source.json`,
+    );
+  });
+
+  it('json: sourcesDefaulted is false when --source is given', async () => {
+    const { stdout } = await exec(['--source', 'icons', '--json']);
+    expect(JSON.parse(stdout)).toMatchObject({ sourcesDefaulted: false });
+  });
+});
+
 describe('plain reporter: missing config', () => {
   it('says how to fix it instead of the raw validation issue', async () => {
     await rm(join(root, 'icons'), { recursive: true });

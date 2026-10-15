@@ -138,6 +138,11 @@ describe('configSchema', () => {
     expect(parse({ sources: ['icons'] }).success).toBe(true);
   });
 
+  it('accepts an empty config and a string source', () => {
+    expect(parse({}).success).toBe(true);
+    expect(parse({ sources: 'icons' }).success).toBe(true);
+  });
+
   it('accepts a full config', () => {
     const result = parse({
       $schema: './node_modules/svgworm/config.schema.json',
@@ -152,11 +157,11 @@ describe('configSchema', () => {
   });
 
   it.each([
-    ['no sources', {}],
     ['empty sources', { sources: [] }],
     ['empty source string', { sources: [''] }],
     ['unknown key', { sources: ['a'], outDirr: 'x' }],
-    ['wrong type', { sources: 'icons' }],
+    ['empty sources string', { sources: '' }],
+    ['wrong type', { sources: 42 }],
     [
       'bad color mode',
       { sources: ['a'], color: [{ match: 'a', color: 'red' }] },
@@ -184,12 +189,12 @@ describe('published JSON Schema', () => {
     expect(JSON.parse(committed)).toEqual(getConfigJsonSchema());
   });
 
-  it('accepts a minimal config and rejects unknown keys', () => {
+  it('requires no key and rejects unknown keys', () => {
     const schema = getConfigJsonSchema() as {
-      required: string[];
+      required?: string[];
       additionalProperties: boolean;
     };
-    expect(schema.required).toEqual(['sources']);
+    expect(schema.required ?? []).toEqual([]);
     expect(schema.additionalProperties).toBe(false);
   });
 });

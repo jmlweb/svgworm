@@ -1,6 +1,6 @@
 # 0010. Sprite URL delivery: a generated module and JSON manifest with a configured `publicPath`
 
-- **Status:** accepted
+- **Status:** accepted; its "never a guess" clause for `outDir` without `publicPath` is superseded by [0029](0029-zero-config-default-source-and-derived-public-path.md)
 - **Date:** 2026-10-08
 - **Task:** TSK-004
 - **Resolves:** Q-20, Q-24, Q-05 (field names, v0.1), Q-21 for Next.js App Router and plain HTML. Q-21 for Vite and Astro goes to TSK-024. Q-23 (preload) and Q-25 (inline form) stay deferred past v0.1 ([ADR-0005](0005-build-standalone-with-kill-criteria.md)).

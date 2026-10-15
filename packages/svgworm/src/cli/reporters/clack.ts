@@ -40,6 +40,9 @@ export const createClackReporter = (io: CliIo): Reporter => {
   };
 
   return {
+    usingDefaultSource: (dir) => {
+      log.info(`Using default source ${dir}/`);
+    },
     onEvent: (event) => {
       switch (event.type) {
         case 'start':

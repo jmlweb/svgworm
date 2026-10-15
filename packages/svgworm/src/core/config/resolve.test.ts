@@ -35,7 +35,58 @@ describe('resolveConfig', () => {
       flatten: false,
       color: [],
       crossOrigin: 'none',
+      isDefaultSources: false,
     });
+  });
+
+  it('defaults sources to the icons folder and marks it', () => {
+    const config = resolveConfig({}, cwd);
+    expect(config.sources).toEqual([{ dir: 'icons' }]);
+    expect(config.isDefaultSources).toBe(true);
+  });
+
+  it('accepts a single string as sources', () => {
+    const config = resolveConfig({ sources: 'icons' }, cwd);
+    expect(config.sources).toEqual(
+      resolveConfig({ sources: ['icons'] }, cwd).sources,
+    );
+    expect(config.isDefaultSources).toBe(false);
+  });
+
+  it.each([
+    ['public/sprites', '/sprites'],
+    ['public/a/b', '/a/b'],
+    ['public', ''],
+    ['./public/x/', '/x'],
+    ['public\\x', '/x'],
+    ['public//x', '/x'],
+  ])('derives publicPath from outDir %s', (outDir, expected) => {
+    expect(resolveConfig({ outDir }, cwd).publicPath).toBe(expected);
+  });
+
+  it.each([
+    'publicity/x',
+    'static/sprites',
+    'src/public/x',
+    'public/../x',
+    '../public/x',
+  ])('does not derive publicPath from outDir %s', (outDir) => {
+    const issues = issuesOf(() => resolveConfig({ outDir }, cwd));
+    expect(issues.join('\n')).toMatch(/outDir.*publicPath.*public\//);
+  });
+
+  it('does not derive publicPath from an absolute outDir', () => {
+    const issues = issuesOf(() =>
+      resolveConfig({ outDir: join(cwd, 'public', 'x') }, cwd),
+    );
+    expect(issues.join('\n')).toMatch(/outDir.*publicPath/);
+  });
+
+  it('lets an explicit publicPath win over derivation', () => {
+    expect(
+      resolveConfig({ outDir: 'public/sprites', publicPath: '/cdn/s' }, cwd)
+        .publicPath,
+    ).toBe('/cdn/s');
   });
 
   it('keeps an https publicPath only with crossOrigin inject', () => {
@@ -192,8 +243,48 @@ describe('loadConfig', () => {
     );
   });
 
-  it('fails when no source is configured anywhere', async () => {
+  it('builds from ./icons when there is no config file and no --source', async () => {
+    await mkdir(join(cwd, 'icons'));
+    const config = await loadConfig({ cwd });
+    expect(config.sources).toEqual([{ dir: 'icons' }]);
+    expect(config.isDefaultSources).toBe(true);
+  });
+
+  it('uses the default source when the config file has no sources', async () => {
+    await mkdir(join(cwd, 'icons'));
+    await writeFile(
+      join(cwd, 'svgworm.config.json'),
+      JSON.stringify({ flatten: true }),
+    );
+    const config = await loadConfig({ cwd });
+    expect(config.sources).toEqual([{ dir: 'icons' }]);
+    expect(config.isDefaultSources).toBe(true);
+    expect(config.flatten).toBe(true);
+  });
+
+  it('does not mark --source as the default', async () => {
+    await mkdir(join(cwd, 'icons'));
+    const config = await loadConfig({ cwd, overrides: { sources: ['other'] } });
+    expect(config.isDefaultSources).toBe(false);
+  });
+
+  it('fails when there is no default icons folder either', async () => {
     await expect(loadConfig({ cwd })).rejects.toThrow(ConfigError);
+  });
+
+  it('fails when icons is a file, not a folder', async () => {
+    await writeFile(join(cwd, 'icons'), 'x');
+    await expect(loadConfig({ cwd })).rejects.toThrow(ConfigError);
+  });
+
+  it('names the missing sources of an existing config file', async () => {
+    await writeFile(join(cwd, 'svgworm.config.json'), '{}');
+    const error = await loadConfig({ cwd }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ConfigError);
+    const message = (error as ConfigError).message;
+    expect(message).toContain('svgworm.config.json');
+    expect(message).toMatch(/icons\//);
+    expect(message).toMatch(/--source <dir>/);
   });
 
   it('says what to do when there is no config file and no --source', async () => {
@@ -201,6 +292,7 @@ describe('loadConfig', () => {
     expect(error).toBeInstanceOf(ConfigError);
     const message = (error as ConfigError).message;
     expect(message).toContain(`no svgworm.config.json found in ${cwd}`);
+    expect(message).toMatch(/no default icons\/ folder/);
     expect(message).toMatch(/svgworm init/);
     expect(message).toMatch(/--source <dir>/);
     expect(message).not.toMatch(/expected array/);

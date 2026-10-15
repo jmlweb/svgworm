@@ -4,6 +4,7 @@ import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 
 import {
   DEFAULT_CONFIG_FILE,
+  DEFAULT_SOURCE,
   resolveConfig,
 } from '../../core/config/resolve.ts';
 import { discoverSvgFiles } from '../../core/discover.ts';
@@ -113,7 +114,6 @@ export type InitPlan = {
   readonly nextSteps: readonly string[];
 };
 
-const DEFAULT_SOURCE = 'icons';
 const DEFAULT_MODULE_DIR = 'svgworm';
 const SCHEMA_URL = 'https://unpkg.com/svgworm/svgworm.schema.json';
 const AGENTS_START = '<!-- svgworm:start -->';

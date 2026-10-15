@@ -21,7 +21,7 @@ Still blank everywhere? Open the sprite URL from the manifest in a tab. A 404 me
 **Every icon is missing**, and the network tab shows a 404 for `/icons/icons.<hash>.svg`.
 
 - **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base` and Vite `base` are not added to the URLs svgworm writes. With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](/docs/vite/#base)).
-- **`outDir` and `publicPath` disagree.** A custom `outDir` must be served at `publicPath`. `public/sprites` is served at `/sprites`, so **pass both flags together**. The config refuses `outDir` on its own for this reason.
+- **`outDir` and `publicPath` disagree.** A custom `outDir` must be served at `publicPath`. Under `public/` svgworm derives it (`public/sprites` gives `/sprites`), so pass `publicPath` only to add a mount point. For an `outDir` outside `public/`, **pass both flags together**: the config refuses `outDir` on its own.
 - **The deploy replaced the sprite under cached HTML.** Each build writes a new hashed file and removes the old one. HTML from the previous deploy that a CDN still serves points at a hash that is gone. A tab that already loaded the sprite is fine, because every icon is in that one file.
 
   svgworm keeps only the current sprite on purpose, so the output stays a pure function of your icons ([ADR-0022](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0022-builds-keep-only-the-current-sprite.md)). **Fix it in the deploy:**
