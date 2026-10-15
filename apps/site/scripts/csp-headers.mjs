@@ -38,7 +38,10 @@ if (!headers.includes(PLACEHOLDER)) {
 }
 await writeFile(
   headersPath,
-  headers.replaceAll(PLACEHOLDER, [...hashes].toSorted().join(' ')),
+  headers.replaceAll(
+    PLACEHOLDER,
+    [...hashes].toSorted((a, b) => (a < b ? -1 : 1)).join(' '),
+  ),
 );
 console.log(
   `csp: ${String(hashes.size)} inline script hash(es) from ${String(pages.length)} page(s)`,

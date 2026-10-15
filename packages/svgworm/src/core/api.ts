@@ -23,7 +23,7 @@ export type {
 export { loadConfig, resolveConfig } from './config/resolve.ts';
 export type { ConfigOverrides, ResolvedConfig } from './config/resolve.ts';
 export { ColorMode, getConfigJsonSchema } from './config/schema.ts';
-export type { ColorRule, ConfigInput } from './config/schema.ts';
+export type { ColorRule, ConfigInput, SourceSpec } from './config/schema.ts';
 export { BuildFailedError, ConfigError, DiagnosticCode } from './errors.ts';
 export type { Diagnostic } from './errors.ts';
 export type { BuildEvent, BuildEventHandler, BuildStats } from './events.ts';

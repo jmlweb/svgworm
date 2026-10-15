@@ -42,3 +42,4 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 
 - ✅ **Q-50** Exact differentiators vs current competitor versions (competitor deep-dive) → TSK-007. Resolved by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md)
 - ✅ **Q-51** License (MIT?) and contribution policy → TSK-009. Answered by [ADR-0009](adr/0009-license-versioning-and-release.md): MIT, inbound = outbound with no CLA
+- ✅ **Q-52** How does a user pick a subset of icons from an icon package (`lucide-static`, `@tabler/icons`) without copying files? → TSK-059. Answered by [ADR-0020](adr/0020-select-icons-from-a-source-with-include-and-exclude-globs.md): a `sources` entry may be `{ "dir", "include", "exclude" }` with globs on the path inside `dir`; names are unchanged (the path inside `dir`), so the package folder never enters the name. A per-source name prefix stays open until package-vs-own collisions are reported

@@ -9,10 +9,43 @@
       "minItems": 1,
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dir": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Folder with the SVG files, relative to the config. It may point into node_modules."
+              },
+              "include": {
+                "description": "Only files that match one of these globs are icons. Default: every .svg file. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "exclude": {
+                "description": "Files to leave out, applied after include. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": ["dir"],
+            "additionalProperties": false
+          }
+        ]
       },
-      "description": "Folders that contain the SVG files, relative to the config."
+      "description": "Folders that contain the SVG files, relative to the config: a path, or { \"dir\", \"include\", \"exclude\" } to pick files by glob (for example from an icon package in node_modules)."
     },
     "outDir": {
       "description": "Where sprite files are written. Default \"public/icons\". Needs publicPath when set.",

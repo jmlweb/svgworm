@@ -16,7 +16,7 @@ order: 5
 
 | Key          | Default        | Meaning                                                                                         |
 | ------------ | -------------- | ----------------------------------------------------------------------------------------------- |
-| `sources`    | required       | Folders with the SVG files                                                                      |
+| `sources`    | required       | Folders with the SVG files: a path, or `{ "dir", "include", "exclude" }` to pick files by glob  |
 | `outDir`     | `public/icons` | Where sprite files go. Needs `publicPath` when set                                              |
 | `publicPath` | `/icons`       | Same-origin URL path the sprites are served from                                                |
 | `moduleDir`  | `svgworm`      | Where the manifest and types go                                                                 |
@@ -30,6 +30,31 @@ order: 5
 CLI flags override these keys. See the [CLI reference](/docs/cli/).
 
 </aside>
+
+## Icons from a package
+
+A source can point into `node_modules` and pick files by glob, so an icon set such as [Lucide](https://lucide.dev) or [Tabler](https://tabler.io/icons) is used without copying files or building the whole set:
+
+```json
+{
+  "sources": [
+    "icons",
+    {
+      "dir": "node_modules/lucide-static/icons",
+      "include": ["house.svg", "menu.svg", "arrow-*.svg"],
+      "exclude": ["arrow-big-*.svg"]
+    }
+  ]
+}
+```
+
+- `dir` is the folder, relative to the config. A string entry is the same as `{ "dir": "…" }`.
+- `include` keeps only the files that match one of its globs, `exclude` drops matches after that. Globs are matched against the path inside `dir` with `/` separators and support `*`, `**`, `?`, `[…]` and `{a,b}`: `house.svg`, `arrows/*.svg`, `**/arrow-*.svg`. Without `include`, every `.svg` file counts.
+- Names come from the path inside `dir`, as for any source: `house.svg` is `house`. The package folder is not part of the name, so an icon with the same name in two sources is a [collision](/docs/troubleshooting/#name-collision); rename your own file or exclude the package's.
+- The whole set builds too (`"dir": "node_modules/lucide-static/icons"` alone), but every page then downloads every icon. Pick what you render; see the [performance notes](/docs/nextjs/#performance-notes).
+- `svgworm watch` watches the folder, so a package update rebuilds the sprite. Commit the lockfile so CI resolves the same icons.
+
+The `--source` flag takes paths only; globs need the config file.
 
 ## Color overrides
 

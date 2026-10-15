@@ -9,6 +9,34 @@ import {
 
 const parse = (input: unknown) => configSchema.safeParse(input);
 
+describe('configSchema: sources', () => {
+  it('accepts a folder as a string or as { dir, include, exclude }', () => {
+    expect(
+      parse({
+        sources: [
+          'icons',
+          {
+            dir: 'node_modules/lucide-static/icons',
+            include: ['house.svg', 'arrow-*.svg'],
+            exclude: ['arrow-big-*.svg'],
+          },
+        ],
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each([
+    [{ sources: [{ include: ['a.svg'] }] }, 'dir'],
+    [{ sources: [{ dir: 'icons', include: 'a.svg' }] }, 'include'],
+    [{ sources: [{ dir: 'icons', include: [] }] }, 'include'],
+    [{ sources: [{ dir: 'icons', glob: ['a.svg'] }] }, 'glob'],
+  ])('rejects %j', (input, key) => {
+    const result = parse(input);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error?.issues)).toContain(key);
+  });
+});
+
 describe('normalizePublicPath', () => {
   it.each([
     ['/icons', '/icons'],

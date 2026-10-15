@@ -28,13 +28,39 @@ describe('resolveConfig', () => {
   it('applies defaults', () => {
     expect(resolveConfig({ sources: ['icons'] }, cwd)).toEqual({
       cwd,
-      sources: ['icons'],
+      sources: [{ dir: 'icons' }],
       outDir: 'public/icons',
       publicPath: '/icons',
       moduleDir: 'svgworm',
       flatten: false,
       color: [],
     });
+  });
+
+  it('keeps include and exclude globs of an object source', () => {
+    const config = resolveConfig(
+      {
+        sources: [
+          { dir: 'node_modules/lucide-static/icons', include: ['house.svg'] },
+          { dir: 'icons', exclude: ['draft-*.svg'] },
+        ],
+      },
+      cwd,
+    );
+    expect(config.sources).toEqual([
+      { dir: 'node_modules/lucide-static/icons', include: ['house.svg'] },
+      { dir: 'icons', exclude: ['draft-*.svg'] },
+    ]);
+  });
+
+  it('rejects overlapping folders given as objects too', () => {
+    const issues = issuesOf(() =>
+      resolveConfig(
+        { sources: [{ dir: 'icons', include: ['a.svg'] }, 'icons/brand'] },
+        cwd,
+      ),
+    );
+    expect(issues.join('\n')).toMatch(/"icons" and "icons\/brand" overlap/);
   });
 
   it('normalizes the public path', () => {
@@ -105,7 +131,7 @@ describe('loadConfig', () => {
     );
     const config = await loadConfig({ cwd });
     expect(config.flatten).toBe(true);
-    expect(config.sources).toEqual(['icons']);
+    expect(config.sources).toEqual([{ dir: 'icons' }]);
   });
 
   it('lets overrides win over the file', async () => {
@@ -118,12 +144,12 @@ describe('loadConfig', () => {
       overrides: { flatten: false, sources: ['other'] },
     });
     expect(config.flatten).toBe(false);
-    expect(config.sources).toEqual(['other']);
+    expect(config.sources).toEqual([{ dir: 'other' }]);
   });
 
   it('works with overrides only when there is no file', async () => {
     const config = await loadConfig({ cwd, overrides: { sources: ['icons'] } });
-    expect(config.sources).toEqual(['icons']);
+    expect(config.sources).toEqual([{ dir: 'icons' }]);
   });
 
   it('fails when an explicit config file is missing', async () => {

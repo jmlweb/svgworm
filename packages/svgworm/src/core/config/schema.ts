@@ -57,13 +57,38 @@ const colorRuleSchema = z.strictObject({
     ),
 });
 
+const GLOB_HELP =
+  'Globs on the path inside dir with "/" separators: "house.svg", "arrows/*.svg", "**/arrow-*.svg".';
+
+const sourceObjectSchema = z.strictObject({
+  dir: z
+    .string()
+    .min(1)
+    .describe(
+      'Folder with the SVG files, relative to the config. It may point into node_modules.',
+    ),
+  include: z
+    .array(z.string().min(1))
+    .min(1)
+    .optional()
+    .describe(
+      `Only files that match one of these globs are icons. Default: every .svg file. ${GLOB_HELP}`,
+    ),
+  exclude: z
+    .array(z.string().min(1))
+    .optional()
+    .describe(`Files to leave out, applied after include. ${GLOB_HELP}`),
+});
+
 export const configSchema = z
   .strictObject({
     $schema: z.string().optional(),
     sources: z
-      .array(z.string().min(1))
+      .array(z.union([z.string().min(1), sourceObjectSchema]))
       .min(1)
-      .describe('Folders that contain the SVG files, relative to the config.'),
+      .describe(
+        'Folders that contain the SVG files, relative to the config: a path, or { "dir", "include", "exclude" } to pick files by glob (for example from an icon package in node_modules).',
+      ),
     outDir: z
       .string()
       .min(1)
@@ -105,6 +130,12 @@ export const configSchema = z
 
 export type ConfigInput = z.input<typeof configSchema>;
 export type ColorRule = z.output<typeof colorRuleSchema>;
+
+/** A source folder with its optional file filters, as `sources` entries normalize to. */
+export type SourceSpec = z.output<typeof sourceObjectSchema>;
+
+export const toSourceSpec = (source: string | SourceSpec): SourceSpec =>
+  typeof source === 'string' ? { dir: source } : source;
 
 /** JSON Schema of the config file, for editors and agents (R-55). */
 export const getConfigJsonSchema = (): unknown =>

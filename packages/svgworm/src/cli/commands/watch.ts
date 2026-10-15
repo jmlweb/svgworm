@@ -43,14 +43,14 @@ export const runWatchCommand = (
         onResult: (result) => {
           if (result.ok) reporter.succeed(result);
           else reporter.fail(result.errors);
-          reporter.watching(config.sources);
+          reporter.watching(config.sources.map((source) => source.dir));
         },
         onError: (error) => {
           reporter.fatal(
             `unexpected failure: ${error instanceof Error ? error.message : String(error)}`,
             FatalCode.UNEXPECTED,
           );
-          reporter.watching(config.sources);
+          reporter.watching(config.sources.map((source) => source.dir));
         },
         signal: host.signal,
       });

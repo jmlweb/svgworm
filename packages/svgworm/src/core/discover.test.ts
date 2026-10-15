@@ -20,6 +20,58 @@ const touch = async (relative: string): Promise<void> => {
   await writeFile(path, '<svg/>');
 };
 
+describe('discoverSvgFiles: include and exclude', () => {
+  beforeEach(async () => {
+    await touch('pkg/icons/house.svg');
+    await touch('pkg/icons/arrow-left.svg');
+    await touch('pkg/icons/arrow-big-left.svg');
+    await touch('pkg/icons/sub/arrow-right.svg');
+    await touch('pkg/icons/menu.svg');
+  });
+
+  it('keeps only the files that match an include glob', async () => {
+    const result = await discoverSvgFiles(root, [
+      { dir: 'pkg/icons', include: ['house.svg', 'arrow-*.svg'] },
+    ]);
+    expect(result.files.map((file) => file.relativePath)).toEqual([
+      'arrow-big-left.svg',
+      'arrow-left.svg',
+      'house.svg',
+    ]);
+  });
+
+  it('matches folders with ** and drops exclude matches after include', async () => {
+    const result = await discoverSvgFiles(root, [
+      {
+        dir: 'pkg/icons',
+        include: ['**/arrow-*.svg'],
+        exclude: ['arrow-big-*.svg'],
+      },
+    ]);
+    expect(result.files.map((file) => file.relativePath)).toEqual([
+      'arrow-left.svg',
+      'sub/arrow-right.svg',
+    ]);
+  });
+
+  it('treats a plain string and { dir } the same', async () => {
+    const plain = await discoverSvgFiles(root, ['pkg/icons']);
+    const object = await discoverSvgFiles(root, [{ dir: 'pkg/icons' }]);
+    expect(object).toEqual(plain);
+    expect(plain.files).toHaveLength(5);
+  });
+
+  it('follows a source folder that is itself a symlink (pnpm packages)', async () => {
+    await symlink(join(root, 'pkg'), join(root, 'linked'), 'dir');
+    const result = await discoverSvgFiles(root, [
+      { dir: 'linked/icons', include: ['menu.svg'] },
+    ]);
+    expect(result.files.map((file) => file.path)).toEqual([
+      'linked/icons/menu.svg',
+    ]);
+  });
+});
+
 describe('discoverSvgFiles', () => {
   it('finds .svg files case-insensitively and skips everything else', async () => {
     await touch('icons/home.svg');

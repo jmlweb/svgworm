@@ -140,7 +140,7 @@ export const watch = async (
   // error is raised.
   const watchers: Watcher[] = [];
   let attachError: unknown;
-  for (const source of config.sources) {
+  for (const { dir: source } of config.sources) {
     try {
       watchers.push(
         createWatcher(join(config.cwd, source), onChange, (error) => {

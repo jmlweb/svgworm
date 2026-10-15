@@ -177,6 +177,32 @@ describe('run: config file and flags', () => {
   });
 });
 
+describe('run: sources with include and exclude', () => {
+  it('builds only the icons an object source selects', async () => {
+    await put('node_modules/pkg/icons/house.svg');
+    await put('node_modules/pkg/icons/menu.svg', svg.replace('M0 0', 'M1 1'));
+    await put('node_modules/pkg/icons/draft.svg', svg.replace('M0 0', 'M2 2'));
+    await put(
+      'svgworm.config.json',
+      JSON.stringify({
+        sources: [
+          {
+            dir: 'node_modules/pkg/icons',
+            include: ['*.svg'],
+            exclude: ['draft.svg'],
+          },
+        ],
+      }),
+    );
+    const { code } = await exec([]);
+    expect(code).toBe(ExitCode.OK);
+    const manifest = JSON.parse(
+      await readFile(join(root, 'svgworm/manifest.json'), 'utf8'),
+    ) as { icons: Record<string, unknown> };
+    expect(Object.keys(manifest.icons)).toEqual(['house', 'menu']);
+  });
+});
+
 describe('run: check (R-31)', () => {
   it('exits 1 with a diff summary when the output is stale, and writes nothing', async () => {
     await put('icons/home.svg');

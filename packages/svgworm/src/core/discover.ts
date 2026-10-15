@@ -1,7 +1,8 @@
-import { lstat, readdir } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { lstat, readdir, stat } from 'node:fs/promises';
+import { join, posix, relative } from 'node:path';
 
 import { comparePaths, toDisplayPath } from './collisions.ts';
+import { toSourceSpec, type SourceSpec } from './config/schema.ts';
 import { ConfigError, DiagnosticCode, type Diagnostic } from './errors.ts';
 import { toPosix } from './fs.ts';
 
@@ -34,7 +35,25 @@ const decodeName = (
 
 const isSvgName = (name: string): boolean => /\.svg$/i.test(name);
 
-type Walk = { files: DiscoveredFile[]; errors: Diagnostic[] };
+type Walk = {
+  files: DiscoveredFile[];
+  errors: Diagnostic[];
+  /** Decides per file, on its `/`-separated path inside the source folder. */
+  readonly keep: (relativePath: string) => boolean;
+};
+
+/**
+ * `include` and `exclude` are globs on the path inside the source folder (output contract
+ * naming input), matched with `path.matchesGlob`: `*`, `**`, `?`, `[…]` and `{a,b}`.
+ */
+const toFilter = (source: SourceSpec): Walk['keep'] => {
+  const { include, exclude } = source;
+  const matches = (globs: readonly string[], path: string): boolean =>
+    globs.some((glob) => posix.matchesGlob(path, glob));
+  return (path) =>
+    (include === undefined || matches(include, path)) &&
+    (exclude === undefined || !matches(exclude, path));
+};
 
 const walk = async (
   directory: string,
@@ -63,7 +82,7 @@ const walk = async (
     if (stats.isSymbolicLink()) continue;
     if (stats.isDirectory()) {
       await walk(absolute, entryRelative, sourcePrefix, out);
-    } else if (stats.isFile() && isSvgName(name)) {
+    } else if (stats.isFile() && isSvgName(name) && out.keep(entryRelative)) {
       out.files.push({
         path: displayPath,
         relativePath: entryRelative,
@@ -73,23 +92,32 @@ const walk = async (
   }
 };
 
-/** Finds the `.svg` files of every source folder, sorted by NFC path. Symlinks are skipped. */
+/**
+ * Finds the `.svg` files of every source folder, sorted by NFC path. Symlinks inside a folder
+ * are skipped; the folder itself may be one (a package in a pnpm `node_modules`).
+ */
 export const discoverSvgFiles = async (
   cwd: string,
-  sources: readonly string[],
+  sources: readonly (string | SourceSpec)[],
 ): Promise<Discovery> => {
-  const out: Walk = { files: [], errors: [] };
-  for (const source of sources) {
-    const directory = join(cwd, source);
-    const stats = await lstat(directory).catch(() => undefined);
+  const files: DiscoveredFile[] = [];
+  const errors: Diagnostic[] = [];
+  for (const entry of sources) {
+    const source = toSourceSpec(entry);
+    const directory = join(cwd, source.dir);
+    const stats = await stat(directory).catch(() => undefined);
     if (stats?.isDirectory() !== true) {
-      throw new ConfigError(`source folder not found: ${source}`);
+      throw new ConfigError(`source folder not found: ${source.dir}`);
     }
     const prefix = toPosix(relative(cwd, directory));
-    await walk(directory, '', prefix, out);
+    await walk(directory, '', prefix, {
+      files,
+      errors,
+      keep: toFilter(source),
+    });
   }
   return {
-    files: out.files.toSorted((a, b) => comparePaths(a.path, b.path)),
-    errors: out.errors.toSorted((a, b) => comparePaths(a.file, b.file)),
+    files: files.toSorted((a, b) => comparePaths(a.path, b.path)),
+    errors: errors.toSorted((a, b) => comparePaths(a.file, b.file)),
   };
 };

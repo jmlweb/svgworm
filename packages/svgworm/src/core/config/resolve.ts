@@ -7,8 +7,10 @@ import { isMissing } from '../fs.ts';
 import {
   configSchema,
   normalizePublicPath,
+  toSourceSpec,
   type ColorRule,
   type ConfigInput,
+  type SourceSpec,
 } from './schema.ts';
 
 export const DEFAULT_CONFIG_FILE = 'svgworm.config.json';
@@ -19,7 +21,8 @@ const DEFAULT_MODULE_DIR = 'svgworm';
 export type ResolvedConfig = {
   /** Absolute working directory. Every other path is relative to it. */
   readonly cwd: string;
-  readonly sources: readonly string[];
+  /** Normalized: a string entry becomes `{ dir }`. */
+  readonly sources: readonly SourceSpec[];
   readonly outDir: string;
   /** Normalized: no trailing slash, and the empty string for the site root. */
   readonly publicPath: string;
@@ -65,14 +68,13 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
   const moduleDir = value.moduleDir ?? DEFAULT_MODULE_DIR;
 
   const absoluteCwd = resolve(cwd);
-  const sourcePaths = value.sources.map((source) =>
-    resolve(absoluteCwd, source),
-  );
+  const sources = value.sources.map(toSourceSpec);
+  const sourcePaths = sources.map((source) => resolve(absoluteCwd, source.dir));
   sourcePaths.forEach((a, i) => {
     sourcePaths.slice(i + 1).forEach((b, offset) => {
       if (isInside(a, b) || isInside(b, a)) {
         issues.push(
-          `sources: "${value.sources[i] ?? ''}" and "${value.sources[i + 1 + offset] ?? ''}" overlap, so a file would be seen twice`,
+          `sources: "${sources[i]?.dir ?? ''}" and "${sources[i + 1 + offset]?.dir ?? ''}" overlap, so a file would be seen twice`,
         );
       }
     });
@@ -101,7 +103,7 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
 
   return {
     cwd: absoluteCwd,
-    sources: value.sources,
+    sources,
     outDir,
     publicPath: publicPath.value,
     moduleDir,

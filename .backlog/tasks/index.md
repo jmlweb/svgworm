@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 15 |
+| Pending | 14 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 59 |
+| Complete | 60 |
 
 ## Active Tasks
 
@@ -28,7 +28,6 @@
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-059 | Spike: select icons from icon packages (include/exclude) | P2 | spike, config, output-contract, adr, dx | 2026-10-15 |
 | TSK-064 | Naming: split camelCase/PascalCase file names into kebab-case | P4 | naming, output-contract, adr | 2026-10-15 |
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |

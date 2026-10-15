@@ -153,7 +153,7 @@ const html = rendered.replace(
     if (template && 'clipboard' in globalThis.navigator) {
       blocks.forEach((pre) => {
         const button = template.content.firstElementChild?.cloneNode(true);
-        if (!(button instanceof HTMLButtonElement)) return;
+        if (!(button instanceof globalThis.HTMLButtonElement)) return;
         const label = button.querySelector('.copy-button-label');
         button.setAttribute('aria-label', 'Copy code');
         button.addEventListener('click', async () => {
