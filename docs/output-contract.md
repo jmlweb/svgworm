@@ -184,7 +184,7 @@ Guarantees:
 - Two or more files that produce the same public name are an **error** (R-03). That includes `Icon.svg` and `icon.svg` on a case-sensitive file system, an NFC and an NFD `café.svg`, `arrow_left.svg` and `arrow-left.svg`, and the same name found in two source folders.
 - The error lists every file involved in the collision. All naming errors are collected and reported together with the other R-04 errors, and no output is written.
 - Error output never depends on crawl order: errors are sorted by the NFC relative path, files inside a collision are sorted the same way, and each error appears once.
-- Nothing is renamed, numbered, or picked by order. There is no alias map in v0.1 (TSK-025).
+- Nothing is renamed, numbered, or picked by order. There is no alias map ([ADR-0025](adr/0025-no-alias-map-for-icon-names.md)): rename the file, or exclude a package file.
 - With several source folders, names from all of them share one space. No folder overrides another. Source folders that overlap (one inside another) are a config error, so a file is never seen twice.
 - Symbolic links are not followed in v0.1.
 

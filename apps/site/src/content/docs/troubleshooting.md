@@ -39,7 +39,7 @@ Every icon is missing, and the network tab shows a 404 for `/icons/icons.<hash>.
 error [name/collision] icons/arrow-left.svg: name "arrow-left" is produced by 2 files: icons/arrow-left.svg, icons/arrow_left.svg. Fix: rename one of the files
 ```
 
-Names come from file paths, lower-cased, with every run of `_`, spaces and punctuation turned into one `-` ([naming](/docs/how-it-works/#names)). Two files that normalize to the same name are an error, never a silent rename: `arrow_left.svg` and `arrow-left.svg`, `Icon.svg` and `icon.svg`, or `home.svg` in two folders when `flatten` is on. The message says which fix applies: rename one file, or turn `flatten` off so folder names stay in the icon names (`ui/home` and `nav/home`).
+Names come from file paths, lower-cased, with every run of `_`, spaces and punctuation turned into one `-` ([naming](/docs/how-it-works/#names)). Two files that normalize to the same name are an error, never a silent rename: `arrow_left.svg` and `arrow-left.svg`, `Icon.svg` and `icon.svg`, or `home.svg` in two folders when `flatten` is on. The message says which fix applies: rename one file, or turn `flatten` off so folder names stay in the icon names (`ui/home` and `nav/home`). When one of the files comes from an icon package, leave it out with [`exclude`](/docs/config/#icons-from-a-package) instead. There is no alias map: a name always comes from its path ([ADR-0025](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0025-no-alias-map-for-icon-names.md)).
 
 ## `svgworm check` fails in CI
 

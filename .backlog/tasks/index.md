@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 13 |
+| Pending | 12 |
 | Active | 0 |
 | Blocked | 2 |
-| Complete | 65 |
+| Complete | 66 |
 
 ## Active Tasks
 
@@ -20,7 +20,6 @@
 |----|-------|----------|------|---------|
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-024 | Vite recipe | P4 | post-v0.1 | 2026-10-07 |
-| TSK-025 | Alias map for icon name collisions | P4 | post-v0.1 | 2026-10-07 |
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
@@ -38,6 +37,7 @@
 |----|-------|-----------|
 | TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |
 | TSK-022 | Inline sprite output | 2026-10-15 |
+| TSK-025 | Alias map for icon name collisions | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
@@ -45,4 +45,3 @@
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | 2026-10-15 |
 | TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | 2026-10-15 |
-| TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | 2026-10-15 |
