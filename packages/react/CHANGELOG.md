@@ -1,5 +1,22 @@
 # @svgworm/react
 
+## 0.3.0
+
+### Minor Changes
+
+- 5ba1d5c: Reads the version 2 manifest that `crossOrigin: "inject"` writes (ADR-0027): `use` icons render `<use href="#id">` against the sprite the loader injects, and the new `createSpriteLoader(manifest)` renders the loader tag (`<script async src integrity crossorigin="anonymous">`) once, in the root layout. It renders nothing for a same-origin manifest, so version 1 output works exactly as before.
+  
+  **Breaking (inject mode only):** a version 2 manifest is rejected by earlier `@svgworm/react` releases with "Unsupported svgworm manifest version 2"; update both packages together.
+
+### Patch Changes
+
+- 5ef810a: Errors now say what to do next:
+  
+  - An unknown CLI flag suggests the closest known one (`unknown flag "--sources". Did you mean "--source"?`) instead of Node's positional-argument explanation.
+  - A `name/collision` error ends with a fix: rename one of the files, or turn `flatten` off when the files sit in different folders.
+  - The `Unknown icon` error thrown by the `@svgworm/react` component lists the closest icon names from the manifest.
+  - An `svg/invalid-xml` message reads `line 2, column 0: …` instead of showing svgo's `<input>:2:0:` placeholder as the location.
+
 ## 0.2.1
 
 ### Patch Changes
