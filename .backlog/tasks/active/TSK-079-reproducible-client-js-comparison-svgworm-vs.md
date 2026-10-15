@@ -1,12 +1,13 @@
 ---
 id: TSK-079
 title: Reproducible client-JS comparison: svgworm vs an icon library and SVGR
-status: pending
+status: active
 priority: P3
 tags: [site, docs, comparison, adoption]
 created: 2026-10-15
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Reproducible client-JS comparison: svgworm vs an icon library and SVGR
@@ -33,3 +34,5 @@ Adding `lucide-react` and SVGR to the spike or measurement app is implied by thi
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Measurement spike delegated to a sonnet worktree agent (spikes/TSK-079-client-js-comparison); doc and landing copy follow in the main session.

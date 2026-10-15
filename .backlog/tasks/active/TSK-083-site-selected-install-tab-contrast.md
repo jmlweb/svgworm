@@ -1,12 +1,13 @@
 ---
 id: TSK-083
 title: Site: selected install tab contrast below 4.5:1
-status: pending
+status: active
 priority: P2
 tags: [site, a11y, contrast]
 created: 2026-10-15
 source: TSK-080 F2, F4
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: selected install tab contrast below 4.5:1
@@ -27,3 +28,5 @@ axe color-contrast (serious): .install-tabs label:has(input:checked) is #de8f8a 
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

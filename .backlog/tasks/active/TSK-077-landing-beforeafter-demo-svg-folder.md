@@ -1,12 +1,13 @@
 ---
 id: TSK-077
 title: Landing: before/after demo, SVG folder to sprite to typed icon
-status: pending
+status: active
 priority: P2
 tags: [site, landing, adoption]
 created: 2026-10-15
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Landing: before/after demo, SVG folder to sprite to typed icon
@@ -38,3 +39,5 @@ It is curated and static. The compiler does not run in the browser, and the sect
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

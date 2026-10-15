@@ -1,12 +1,13 @@
 ---
 id: TSK-085
 title: Site: render-blocking CSS delays mobile LCP
-status: pending
+status: active
 priority: P3
 tags: [site, performance]
 created: 2026-10-15
 source: TSK-080 F5
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: render-blocking CSS delays mobile LCP
@@ -27,3 +28,5 @@ Lighthouse mobile LCP 2.3 s on / (p.lede, 833 ms render delay): HTML > /_astro/B
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

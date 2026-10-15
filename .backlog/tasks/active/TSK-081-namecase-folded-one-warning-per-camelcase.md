@@ -1,12 +1,13 @@
 ---
 id: TSK-081
 title: name/case-folded: one warning per camelCase folder, not per file
-status: pending
+status: active
 priority: P4
 tags: [naming, cli, diagnostics]
 created: 2026-10-15
 source: TSK-064 review
 depends-on: []
+started: 2026-10-15
 ---
 
 # name/case-folded: one warning per camelCase folder, not per file
@@ -28,3 +29,4 @@ ADR-0021's warning is emitted per file. A camelCase folder (SocialMedia/ with 20
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started

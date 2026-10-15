@@ -1,12 +1,13 @@
 ---
 id: TSK-084
 title: Site: scrollable code, terminal and table regions keyboard-focusable
-status: pending
+status: active
 priority: P3
 tags: [site, a11y, keyboard]
 created: 2026-10-15
 source: TSK-080 F3
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: scrollable code, terminal and table regions keyboard-focusable
@@ -27,3 +28,5 @@ axe scrollable-region-focusable (serious): on / at 360px .hero-copy install code
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

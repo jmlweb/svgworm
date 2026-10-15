@@ -1,12 +1,13 @@
 ---
 id: TSK-087
 title: Site: skip link moves focus to main
-status: pending
+status: active
 priority: P4
 tags: [site, a11y, keyboard]
 created: 2026-10-15
 source: TSK-080 F7
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: skip link moves focus to main
@@ -26,3 +27,5 @@ The skip link targets main#content, which has no tabindex, so focus stays on bod
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

@@ -1,12 +1,13 @@
 ---
 id: TSK-078
 title: Landing: lede says the problem first, visible stats caption
-status: pending
+status: active
 priority: P2
 tags: [site, landing, copy]
 created: 2026-10-15
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Landing: lede says the problem first, visible stats caption
@@ -34,3 +35,5 @@ The stats band is labeled only by `aria-label="This page in numbers"`, so sighte
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

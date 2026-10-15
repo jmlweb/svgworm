@@ -1,12 +1,13 @@
 ---
 id: TSK-082
 title: Site: no horizontal page scroll at 360px (CTA install switch, docs install line)
-status: pending
+status: active
 priority: P2
 tags: [site, mobile, a11y]
 created: 2026-10-15
 source: TSK-080 F1
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: no horizontal page scroll at 360px (CTA install switch, docs install line)
@@ -27,3 +28,5 @@ Audit 2026-10-15: at 360px / scrollWidth 370 (378 at 375px) because the CTA .ins
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).

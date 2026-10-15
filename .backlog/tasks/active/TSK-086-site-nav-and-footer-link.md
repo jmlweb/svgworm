@@ -1,12 +1,13 @@
 ---
 id: TSK-086
 title: Site: nav and footer link targets at least 24px
-status: pending
+status: active
 priority: P4
 tags: [site, a11y, mobile]
 created: 2026-10-15
 source: TSK-080 F6
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: nav and footer link targets at least 24px
@@ -27,3 +28,5 @@ At 360px footer links are 18-22px high and the Docs/Compare nav links 22px; WCAG
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to the wave-2 sonnet worktree agent (site tasks in sequence).
