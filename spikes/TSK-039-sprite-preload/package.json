@@ -1,0 +1,11 @@
+{
+  "name": "tsk-039-sprite-preload",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "measure": "node src/measure.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}
