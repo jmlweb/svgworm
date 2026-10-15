@@ -13,6 +13,7 @@ Facts an agent should rely on:
 - Icon names come from file paths: `icons/social/github.svg` is `social/github`. Names are lowercase, `-` separated, with folders as namespaces. `<Icon name="nope" />` is a type error.
 - Color is decided per icon: mono icons follow `currentColor`, multicolor icons keep their colors. Icons with gradients, masks, clip paths or filters are delivered from a second "stack" file as `<img>` or a CSS mask, because WebKit cannot render those through an external `<use>`.
 - Sprites must be same-origin. `publicPath` must start with `/` and include the Next `basePath` when there is one.
+- Never import `Icon` from a `'use client'` file: that pulls the whole manifest (`svgworm/icons.js`, about 200 bytes per icon) into the client chunk. Render the icon in a Server Component and pass it to the client component as a prop or as children.
 
 ## Steps
 

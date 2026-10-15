@@ -51,6 +51,35 @@ Requires Node `^22.20 || >=24.11`.
 
    Names come from the file paths: `home` is `icons/home.svg` and `brand/sunset` is `icons/brand/sunset.svg`, lower-cased with `-` between words. The icon is `aria-hidden` unless you pass `title` or `label`. An unknown `name` is a type error, so an editor lists every valid name.
 
+## Client components
+
+`Icon` runs on the server: it reads the manifest and renders markup, with no hooks and no client JavaScript. Import it only from Server Components. A file with `'use client'` that imports `Icon` pulls the whole manifest (`svgworm/icons.js`, every icon's id, viewBox and delivery) into that client chunk: about 200 bytes per icon before compression, so a 1,500-icon set adds roughly 300 KB of JavaScript that the sprite was meant to avoid. The zero-client-JS check in the [example](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router) catches this.
+
+When a client component needs an icon, render it in the Server Component and pass the result down:
+
+```tsx
+// app/page.tsx (server)
+import { Icon } from "@/components/icon";
+import { MenuButton } from "@/components/menu-button";
+
+export default function Page() {
+  return <MenuButton icon={<Icon name="menu" />} />;
+}
+```
+
+```tsx
+// components/menu-button.tsx
+"use client";
+
+import type { ReactNode } from "react";
+
+export const MenuButton = ({ icon }: { icon: ReactNode }) => (
+  <button onClick={() => {}}>{icon} Menu</button>
+);
+```
+
+The client component receives rendered markup, not the manifest. In a client-only app (Vite, Create React App) there is no server to keep the manifest on, so it ships in the bundle; see the [@svgworm/react README](https://github.com/jmlweb/svgworm/tree/main/packages/react#client-only-apps-and-vite) for the trade-off.
+
 ## Set up by hand
 
 Without `init`, do its part yourself after installing the two packages:
