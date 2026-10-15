@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 3 |
+| Pending | 6 |
 | Active | 0 |
 | Blocked | 2 |
 | Complete | 82 |
@@ -21,6 +21,9 @@
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
+| TSK-088 | Zero-config defaults: optional sources and publicPath derived from outDir | P2 |  | 2026-10-15 |
+| TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | P3 |  | 2026-10-15 |
+| TSK-090 | Site: framework guide cards and help links | P3 |  | 2026-10-15 |
 
 ## Recently Completed
 
