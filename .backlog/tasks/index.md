@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 27 |
+| Pending | 24 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 47 |
+| Complete | 50 |
 
 ## Active Tasks
 
@@ -42,9 +42,6 @@
 | TSK-070 | Redesign the docs index | P3 | site, docs, design | 2026-10-15 |
 | TSK-071 | Docs: on-this-page right rail with scroll-spy | P4 | site, docs, design | 2026-10-15 |
 | TSK-072 | Docs: heading anchor links | P4 | site, docs, ux | 2026-10-15 |
-| TSK-073 | Docs: Icon component reference page | P2 | docs, react, astro, a11y | 2026-10-15 |
-| TSK-074 | Docs: Troubleshooting page | P3 | docs, errors, dx | 2026-10-15 |
-| TSK-076 | Docs: How svgworm works concept page | P3 | docs, concepts | 2026-10-15 |
 
 ## Recently Completed
 

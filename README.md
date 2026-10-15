@@ -95,10 +95,13 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 
 - [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
 - [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
+- [Icon component](https://svgworm.com/docs/icon/): props, the markup per delivery, sizing and coloring
+- [How it works](https://svgworm.com/docs/how-it-works/): sprite, stack, delivery forms, manifest, determinism
 - ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`
 - [Config](https://svgworm.com/docs/config/): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
 - [Output contract](docs/output-contract.md): exact shape of the generated files
 - [Comparison](https://svgworm.com/docs/comparison/): SVGR, @neodx/svg and others, with the numbers behind each claim
+- [Troubleshooting](https://svgworm.com/docs/troubleshooting/): blank icons, 404s, wrong colors, collisions, every diagnostic code
 
 ## For AI agents
 

@@ -57,7 +57,7 @@ Facts an agent should rely on:
    </nav>
    ```
 
-   Size and color are plain SVG props or CSS (`color`, `width`, `height`, `class`, `style`).
+   Size and color are plain SVG props or CSS (`color`, `width`, `height`, `class`, `style`). The markup differs per icon delivery (`<svg><use>`, `<img>`, or a `<span>` with a CSS mask), so target icons with a class, not `svg`: https://svgworm.com/docs/icon/
 
 5. **Cache the hashed files** for a year. Astro sets no cache headers, so the host must. The names are content-hashed, so this is safe:
 
@@ -94,7 +94,7 @@ Keys: `sources` (required), `outDir` (default `public/icons`, needs `publicPath`
 
 ## Fixing errors
 
-Diagnostics print to stderr as `[code] file: message`, and `--json` returns them in `errors`.
+Diagnostics print to stderr as `[code] file: message`, and `--json` returns them in `errors`. The human version of this table, plus fixes for a blank icon in Safari, a sprite 404 and a wrong color, is at https://svgworm.com/docs/troubleshooting/.
 
 | Code | Fix |
 |------|-----|

@@ -180,6 +180,9 @@ pnpm next build
 
 ## Next
 
+- [Icon component](/docs/icon/): every prop, the markup per delivery, sizing and coloring with CSS.
+- [How it works](/docs/how-it-works/): the sprite, the stack, delivery forms, the manifest and determinism.
 - [CLI reference](/docs/cli/): every command, flag and exit code.
 - [Config](/docs/config/): `svgworm.config.json` and per-icon color overrides.
+- [Troubleshooting](/docs/troubleshooting/): blank icons, 404s, wrong colors, collisions, `check` in CI.
 - Using Astro? Read the [Astro setup](/docs/astro/).
