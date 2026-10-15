@@ -1,0 +1,14 @@
+{
+  "name": "tsk-067-cross-origin-inject",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node src/check.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.58.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}

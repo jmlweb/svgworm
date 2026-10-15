@@ -1,12 +1,13 @@
 ---
 id: TSK-080
 title: Site audit: accessibility, mobile layout, Core Web Vitals
-status: pending
+status: active
 priority: P3
 tags: [site, accessibility, performance]
 created: 2026-10-15
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site audit: accessibility, mobile layout, Core Web Vitals
@@ -33,3 +34,5 @@ TSK-051 (font weight and caching) overlaps on performance but does not block thi
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to a sonnet worktree agent (audit only, findings returned to the main session).

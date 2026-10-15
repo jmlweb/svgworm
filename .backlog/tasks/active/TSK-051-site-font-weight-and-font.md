@@ -1,12 +1,13 @@
 ---
 id: TSK-051
 title: Site font weight and font caching
-status: pending
+status: active
 priority: P3
 tags: [site, performance]
 created: 2026-10-15
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site font weight and font caching
@@ -29,3 +30,5 @@ From the 2026-10-15 site review. Fonts are about 147 KB of about 200 KB on the h
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Delegated to a sonnet worktree agent (Phase 2 wave 1).

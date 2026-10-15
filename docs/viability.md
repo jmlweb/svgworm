@@ -17,7 +17,7 @@ _Date: 2026-10-07. Based on the `main` prototype (last commit Jan 2025) and a re
 | Type generation | Low | A string-literal union or `as const` array. Measured in [ADR-0014](adr/0014-icon-name-type-shape.md): 20,000 names check in 0.14 s |
 | React Server Components | Low | A hook-free component that renders `<svg><use/></svg>` is RSC-safe by construction |
 | External sprite + gradients/masks/clipPath/filters | **Medium** | Historic browser quirks with paint servers referenced inside external `<use>`. **Spike required** |
-| Cross-origin sprites (CDN on another domain) | **Medium** | `<use href>` to another origin is blocked. We need a documented constraint or a workaround (opt-in workaround: TSK-067) |
+| Cross-origin sprites (CDN on another domain) | **Medium** | `<use href>` to another origin is blocked. Same-origin by default; a same-origin proxy is the zero-JS fix, and `crossOrigin: "inject"` is the opt-in loader for sprites on a CDN ([ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md)) |
 | Getting the hashed sprite URL into apps | **Medium** | Each framework or bundler serves static assets differently. Needs a framework-agnostic manifest plus guidance. Addressed by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md): a generated module and JSON manifest with a configured `publicPath`, verified in Next.js 16 and plain HTML |
 | Color classification per icon | Medium | Heuristics for mono, stroke, and multicolor. Needs a fixture corpus |
 | Determinism | Low | A matter of discipline: sorting and content hashing |

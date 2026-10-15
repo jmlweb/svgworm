@@ -17,7 +17,7 @@ A CLI that turns a folder of SVG files into **type-safe, cacheable SVG sprites**
 
 ## Product principles (non-negotiable unless an ADR changes them)
 
-1. **Zero-JS by default.** The default delivery is an external sprite file referenced via `<use href>`. There is no inline sprite mode ([ADR-0024](docs/adr/0024-no-inline-sprite-output.md)). This binds what svgworm *generates* (sprites, manifest, types, adapter components): they must never need client JS to render an icon. It does not bind the project's own surfaces: the website (`apps/site`), the examples and tooling may use client-side JS freely.
+1. **Zero-JS by default.** The default delivery is an external sprite file referenced via `<use href>`. There is no inline sprite mode ([ADR-0024](docs/adr/0024-no-inline-sprite-output.md)). The one opt-in exception is `crossOrigin: "inject"` for sprites on another origin, which needs a small loader script ([ADR-0027](docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md)). This binds what svgworm *generates* (sprites, manifest, types, adapter components): they must never need client JS to render an icon. It does not bind the project's own surfaces: the website (`apps/site`), the examples and tooling may use client-side JS freely.
 2. **Deterministic output.** The same input gives byte-identical output on every OS and every run. No dependence on crawl order, timestamps, or locale.
 3. **Agnostic core, thin adapters.** The core knows nothing about React or any other framework. Adapters only consume the output contract.
 4. **Types are the product.** Icon names must be checked at compile time, and an invalid name must be a type error.

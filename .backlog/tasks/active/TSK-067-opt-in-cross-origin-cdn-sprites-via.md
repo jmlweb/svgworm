@@ -1,12 +1,13 @@
 ---
 id: TSK-067
 title: Opt-in cross-origin (CDN) sprites via a minimal injecting loader
-status: pending
+status: active
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-003
 depends-on: []
+started: 2026-10-15
 ---
 
 # Opt-in cross-origin (CDN) sprites via a minimal injecting loader
@@ -44,8 +45,8 @@ Risks to keep in view: principle 1 dilution, CDN compromise (SRI + inert parse +
 
 ## Acceptance Criteria
 
-- [ ] Browser spike in spikes/<task-id>-cross-origin-inject/ with RESULTS.md: inject via fetch+SRI+DOMParser, SRI mismatch, missing CORS, img/mask stack cross-origin, CSP, CLS, paint delay, SPA/duplicate-loader guard, page/icon id collisions, React hydration keeps the injected svg
-- [ ] ADR accepted: principle 1 opt-in exception, Q-02 resolved (proxy documented as zero-JS option), security model; AGENTS.md, open-questions.md and viability.md updated
+- [x] Browser spike in spikes/<task-id>-cross-origin-inject/ with RESULTS.md: inject via fetch+SRI+DOMParser, SRI mismatch, missing CORS, img/mask stack cross-origin, CSP, CLS, paint delay, SPA/duplicate-loader guard, page/icon id collisions, React hydration keeps the injected svg — evidence: spikes/TSK-067-cross-origin-inject/RESULTS.md, results/matrix.md 54/54 (2026-10-15)
+- [x] ADR accepted: principle 1 opt-in exception, Q-02 resolved (proxy documented as zero-JS option), security model; AGENTS.md, open-questions.md and viability.md updated — evidence: docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md; AGENTS.md, open-questions.md, viability.md (2026-10-15)
 - [ ] Output contract updated by ADR: https publicPath only with crossOrigin inject, sprite integrity (sha384), loader file, manifest version 2 only in inject mode, d.ts version types widened
 - [ ] Tests written first: schema, resolve and init prompt validation, inject-mode manifest and loader snapshots, determinism, type tests, React and Astro render tests, reporter snapshots, ownership regex
 - [ ] Core emits a hashed icons.loader.<hash>.js in inject mode; resolve.ts, build/api, write.ts ownership and check.ts cover it; no new runtime dependency
@@ -61,3 +62,5 @@ Risks to keep in view: principle 1 dilution, CDN compromise (SRI + inert parse +
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Spike spikes/TSK-067-cross-origin-inject: 54/54 cases pass in Chromium, Firefox, WebKit (inject, SRI mismatch, no CORS, pinned loader vs swapped loader, hostile sprite, img/mask stack cross-origin, CSP, CLS 0, +1 round trip 127-146 ms at 120 ms latency, duplicate guard, id collision, body swap re-inject, React 19 hydration both orders). ADR-0027 accepted (manifest version 2 only in inject mode, loader integrity in the manifest, createSpriteLoader, SvgwormLoader.astro). AGENTS.md principle 1, open-questions Q-02, viability.md updated.
