@@ -7,10 +7,18 @@ name: Release
 # docs/release.md.
 #
 # Three jobs with the least privilege each needs (2026-10-13 security review):
-#   check    builds and tests with a read-only token, and decides which of the next two runs;
-#   version  opens or updates the Version PR while changesets are pending;
+#   plan     counts the pending changesets with a read-only token and decides which of the
+#            next two runs. It runs no tests: changes reach `main` through CI, and the
+#            Version PR gets the same CI because it is opened with a PAT (see below);
+#   version  opens or updates the Version PR while changesets are pending, and turns on
+#            auto-merge for it. The PR merges itself once the required checks of the `main`
+#            branch protection pass;
 #   publish  runs only with no pending changesets, inside the `npm-publish` environment
 #            (required reviewer, `main` only), and is the only job that can mint an npm token.
+#
+# RELEASE_PAT (fine-grained, this repo only: Contents and Pull requests read/write) is needed
+# because a PR opened with GITHUB_TOKEN does not trigger CI, so the required checks would
+# never run and auto-merge would wait forever. See docs/release.md.
 # Every action is pinned to a commit (Dependabot bumps them) and the toolchain to a major.
 on:
   push:
@@ -24,8 +32,8 @@ permissions:
   contents: read
 
 jobs:
-  check:
-    name: Build and test
+  plan:
+    name: Plan
     runs-on: ubuntu-latest
     # Forks have no npm trusted publisher and must not open version PRs.
     if: github.repository == 'jmlweb/svgworm'
@@ -33,16 +41,6 @@ jobs:
       pending-changesets: ${{ steps.changesets.outputs.pending }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: pnpm check:packages
       - name: Pending changesets?
         id: changesets
         run: |
@@ -52,8 +50,8 @@ jobs:
 
   version:
     name: Version PR
-    needs: check
-    if: needs.check.outputs.pending-changesets == 'true'
+    needs: plan
+    if: needs.plan.outputs.pending-changesets == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -70,17 +68,27 @@ jobs:
       # Only the changesets CLI is needed here; no lifecycle script of any package runs.
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Open or update the Version PR
+        id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
           commit-message: 'chore(release): version packages'
           pr-title: 'chore(release): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A PAT, not GITHUB_TOKEN: pushes and PRs made with GITHUB_TOKEN do not trigger CI.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+      # Merges only after the required checks pass. Without required checks `--auto` fails
+      # instead of merging an untested PR.
+      - name: Auto-merge the Version PR
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: gh pr merge "$PR_NUMBER" --auto --squash --repo "$GITHUB_REPOSITORY"
 
   publish:
     name: Publish to npm
-    needs: check
-    if: needs.check.outputs.pending-changesets == 'false'
+    needs: plan
+    if: needs.plan.outputs.pending-changesets == 'false'
     runs-on: ubuntu-latest
     # Waits for the maintainer's approval (Actions → Review deployments) before anything
     # below runs; the npm trusted publisher is bound to this environment name.
@@ -102,7 +110,9 @@ jobs:
       - run: npm install -g npm@11
       - run: npm --version
       - run: pnpm install --frozen-lockfile --ignore-scripts
+      # Tests already ran on the merged Version PR; this re-checks only what gets published.
       - run: pnpm build
+      - run: pnpm check:packages
       - name: Publish
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2

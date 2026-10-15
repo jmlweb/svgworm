@@ -11,9 +11,9 @@ How a version of `svgworm` and `@svgworm/react` reaches npm. Decided in [ADR-000
 
 The `Release` workflow (`.github/workflows/release.yml`) runs on every push to `main`, in three jobs:
 
-- **check** builds, type-checks, tests and runs `check:packages` with a read-only token, then counts the pending changesets.
-- **version** (pending changesets) opens or updates the **"chore(release): version packages"** PR. That PR bumps both `package.json` versions, writes `CHANGELOG.md` per package and deletes the changesets. Review the changelog like code.
-- **publish** (no pending changesets, so right after that PR is merged) runs inside the **`npm-publish` GitHub environment**: it waits until the maintainer approves the deployment (Actions → the run → *Review deployments*), and only `main` may deploy to it. It is the only job with `id-token: write`. It publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog. A run with nothing new to publish is a no-op, so approving it is harmless; rejecting it is how to hold a release.
+- **plan** counts the pending changesets with a read-only token. It runs no tests: every change reaches `main` through CI.
+- **version** (pending changesets) opens or updates the **"chore(release): version packages"** PR and turns on auto-merge for it. That PR bumps both `package.json` versions, writes `CHANGELOG.md` per package and deletes the changesets. It merges itself once the required checks of the `main` branch protection pass; read the changelog in the PR if you want to stop it first. The job uses the `RELEASE_PAT` secret instead of `GITHUB_TOKEN`, because a PR opened with `GITHUB_TOKEN` does not trigger CI and the required checks would never run.
+- **publish** (no pending changesets, so right after that PR is merged) runs inside the **`npm-publish` GitHub environment**: it waits until the maintainer approves the deployment (Actions → the run → *Review deployments*), and only `main` may deploy to it. It is the only job with `id-token: write`. It builds and runs `check:packages` again (the tests ran on the Version PR), then publishes both packages with `pnpm changeset publish` through **npm trusted publishing** (OIDC, no token in the repo), tags `svgworm@x.y.z` and `@svgworm/react@x.y.z`, and creates the GitHub releases from the changelog. A run with nothing new to publish is a no-op, so approving it is harmless; rejecting it is how to hold a release.
 
 The environment was created on 2026-10-13 (`gh api PUT repos/jmlweb/svgworm/environments/npm-publish`, required reviewer `jmlweb`, custom branch policy `main`). Recreate it with the same name if the repo is moved.
 
@@ -24,6 +24,12 @@ After it finishes:
 1. Open each package on npmjs.com and confirm the **Provenance** badge links to the workflow run.
 2. Smoke test from a clean folder: `pnpm add -D svgworm@x.y.z @svgworm/react@x.y.z`, run `svgworm init --yes`, `svgworm`, and build the Next.js example against the published versions.
 3. Check real Safari and iOS by hand on the example. Playwright's WebKit is not Safari (`testing.md`), so this stays manual. Everything else in the browsers is covered by the rendering matrix: `pnpm render:check` renders the product output of the fixture set in Chromium, Firefox, and WebKit, CI runs it on every PR, and the result is committed in [`tests/render/matrix.json`](../tests/render/matrix.json).
+
+## One-time setup for auto-merge (maintainer)
+
+1. **`RELEASE_PAT` secret**: a fine-grained personal access token, this repository only, with *Contents* and *Pull requests* read and write. Add it with `gh secret set RELEASE_PAT`. Set an expiry and renew it; when it lapses the `version` job fails and no Version PR is opened.
+2. **Allow auto-merge**: `gh api -X PATCH repos/jmlweb/svgworm -F allow_auto_merge=true`.
+3. **Require the CI checks on `main`** (Settings → Branches, or the API): the jobs of `ci.yml` (lint and format, tests on the three OSes, TypeScript 7, determinism, the examples, the site, the rendering matrix). Without required checks `gh pr merge --auto` fails instead of merging. Do not enforce the rules for admins, so direct pushes by the maintainer keep working.
 
 ## One-time setup (maintainer, needs npm login)
 
