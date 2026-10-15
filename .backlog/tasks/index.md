@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 33 |
+| Pending | 32 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 31 |
+| Complete | 32 |
 
 ## Active Tasks
 
@@ -38,7 +38,6 @@
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-052 | Site security headers and the CSS inlining decision | P4 | site, security, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-054 | Init: first run works before any icon exists | P1 | init, onboarding, cli, dx | 2026-10-15 |
 | TSK-055 | Build hooks for Yarn 2+ (pre/post scripts never run) | P1 | init, package-managers, onboarding, cli | 2026-10-15 |
 | TSK-056 | Clear error when no config and no --source | P2 | cli, errors, onboarding, dx | 2026-10-15 |
 | TSK-057 | Docs: package-manager-neutral commands and what to commit | P2 | docs, onboarding, llms, agents | 2026-10-15 |
@@ -62,7 +61,7 @@
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
 | TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |
 | TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
+| TSK-054 | Init: first run works before any icon exists | 2026-10-15 |
 | TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | 2026-10-14 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | 2026-10-12 |
-| TSK-012 | React adapter: RSC-safe Icon component | 2026-10-12 |
