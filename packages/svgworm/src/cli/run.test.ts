@@ -40,7 +40,11 @@ const exists = (relative: string): Promise<boolean> =>
     () => false,
   );
 
-const exec = async (argv: readonly string[], signal?: AbortSignal) => {
+const exec = async (
+  argv: readonly string[],
+  signal?: AbortSignal,
+  cwd = root,
+) => {
   let stdout = '';
   let stderr = '';
   const io: CliIo = {
@@ -48,7 +52,7 @@ const exec = async (argv: readonly string[], signal?: AbortSignal) => {
     stderr: { write: (text) => (stderr += text) },
     env: {},
     isTTY: false,
-    cwd: root,
+    cwd,
     ...(signal === undefined ? {} : { signal }),
   };
   const code = await run(argv, io);
@@ -441,6 +445,20 @@ describe('run: init (R-56)', () => {
     ]);
     expect(document.build).toMatchObject({ ok: true, icons: 1 });
     expect(document.nextSteps.length).toBeGreaterThan(0);
+  });
+
+  it('refuses to run from a subfolder of a package and names the package root', async () => {
+    await put('package.json', '{ "name": "app" }\n');
+    await mkdir(join(root, 'src/app'), { recursive: true });
+    const { code, stderr } = await exec(
+      ['init', '--yes'],
+      undefined,
+      join(root, 'src/app'),
+    );
+    expect(code).toBe(ExitCode.USAGE);
+    expect(stderr).toContain(`no package.json in ${join(root, 'src/app')}`);
+    expect(stderr).toContain(`found one in ${root}`);
+    expect(await exists('src/app/svgworm.config.json')).toBe(false);
   });
 
   it('rejects init-only flags on other commands', async () => {

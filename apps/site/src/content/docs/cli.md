@@ -61,7 +61,7 @@ The plain output lists the files written or removed, the warnings and errors, an
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
-`init` reports the framework it chose and why (`flag` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).
+`init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).
 
 When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons. Then it builds once from the config on disk, so the manifest and types exist before the app first imports them; `--json` reports it as `build`. If that build fails, `init` keeps the files it wrote and exits like `svgworm` would (1 for invalid icons, 2 for a setup problem).
 

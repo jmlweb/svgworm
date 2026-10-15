@@ -33,6 +33,13 @@ export const runInitCommand = async (
       return ExitCode.USAGE;
     }
     const facts = await inspectProject(io.cwd, options);
+    if (!facts.hasPackageJson && facts.packageJsonAbove !== undefined) {
+      reporter.fatal(
+        `no package.json in ${io.cwd}; found one in ${facts.packageJsonAbove}\n  run svgworm init from there, so the config and scripts land in the package`,
+        FatalCode.USAGE,
+      );
+      return ExitCode.USAGE;
+    }
     const flagFramework = frameworkProblem(options, facts);
     if (flagFramework !== undefined) {
       reporter.fatal(flagFramework, FatalCode.USAGE);

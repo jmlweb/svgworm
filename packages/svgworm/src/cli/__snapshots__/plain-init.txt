@@ -9,5 +9,5 @@ Next steps:
   1. Install: npm install -D svgworm
   2. Install: npm install @svgworm/react
   3. Replace the sample icons/svgworm.svg with your own SVG files; svgworm runs before dev and build (or run: npx svgworm)
-  4. Import { Icon } from components/icon in a Server Component and render <Icon name="svgworm" />
+  4. Import { Icon } from components/icon in a component and render <Icon name="svgworm" />
   5. In CI, run: npx svgworm check

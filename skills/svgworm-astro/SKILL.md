@@ -30,7 +30,7 @@ Facts an agent should rely on:
    pnpm svgworm init --yes --agents-md
    ```
 
-   `--agents-md` appends a short, marked svgworm section to the project's `AGENTS.md` so later agents know where icons live. With `--json`, the output carries `framework` and `frameworkSource` (`flag` or `detected`).
+   `--agents-md` appends a short, marked svgworm section to the project's `AGENTS.md` so later agents know where icons live. With `--json`, the output carries `framework` and `frameworkSource` (`flag`, `prompt` or `detected`).
 
 3. **Add the icons and rebuild.** Put the SVG files in `icons/`, delete the sample `icons/svgworm.svg` if init added one, and build again so the manifest and types match before `astro check`:
 

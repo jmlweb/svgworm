@@ -3,7 +3,12 @@ import { confirm, isCancel, select, text } from '@clack/prompts';
 import type { InitOptions, ProjectFacts } from './plan.ts';
 
 import { normalizePublicPath } from '../../core/config/schema.ts';
-import { componentFileFor, Framework, resolveFramework } from './plan.ts';
+import {
+  componentFileFor,
+  Framework,
+  FrameworkSource,
+  resolveFramework,
+} from './plan.ts';
 
 /** Thrown when the user cancels a prompt; the command maps it to exit 2 with no files written. */
 export class InitCancelledError extends Error {
@@ -45,8 +50,13 @@ export const askInitOptions = async (
         ];
   const publicPath = orCancel(
     await text({
-      message:
-        'URL path the sprites are served from (include the Next basePath, if any)',
+      message: `URL path the sprites are served from${
+        facts.usesNext
+          ? ' (include the Next basePath, if any)'
+          : facts.usesAstro
+            ? ' (include the Astro base, if any)'
+            : ''
+      }`,
       defaultValue: options.publicPath ?? '/icons',
       placeholder: options.publicPath ?? '/icons',
       validate: (value) => {
@@ -65,20 +75,21 @@ export const askInitOptions = async (
     }),
   );
   // Only a real ambiguity is asked: no flag, and both frameworks are dependencies.
-  const framework =
-    options.framework === undefined && facts.usesReact && facts.usesAstro
-      ? orCancel(
-          await select({
-            message:
-              'Both react and astro are dependencies. Which one renders icons?',
-            options: [
-              { value: Framework.ASTRO, label: 'Astro (Icon.astro)' },
-              { value: Framework.REACT, label: 'React (Server Component)' },
-            ],
-            initialValue: Framework.ASTRO,
-          }),
-        )
-      : options.framework;
+  const isAsked =
+    options.framework === undefined && facts.usesReact && facts.usesAstro;
+  const framework = isAsked
+    ? orCancel(
+        await select({
+          message:
+            'Both react and astro are dependencies. Which one renders icons?',
+          options: [
+            { value: Framework.ASTRO, label: 'Astro (Icon.astro)' },
+            { value: Framework.REACT, label: 'React (Server Component)' },
+          ],
+          initialValue: Framework.ASTRO,
+        }),
+      )
+    : options.framework;
   const resolved = resolveFramework({ ...options, framework }, facts).framework;
   const addComponent = orCancel(
     await confirm({
@@ -101,6 +112,7 @@ export const askInitOptions = async (
       ? { outDir: 'public/icons' }
       : {}),
     framework,
+    ...(isAsked ? { frameworkSource: FrameworkSource.PROMPT } : {}),
     addScripts,
     addComponent,
     addAgentsMd,

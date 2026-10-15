@@ -14,7 +14,11 @@ import { SAMPLE_ICON_NAME, SAMPLE_ICON_SVG } from './sample-icon.ts';
 export const Framework = { REACT: 'react', ASTRO: 'astro' } as const;
 export type Framework = (typeof Framework)[keyof typeof Framework];
 
-export const FrameworkSource = { FLAG: 'flag', DETECTED: 'detected' } as const;
+export const FrameworkSource = {
+  FLAG: 'flag',
+  PROMPT: 'prompt',
+  DETECTED: 'detected',
+} as const;
 export type FrameworkSource =
   (typeof FrameworkSource)[keyof typeof FrameworkSource];
 
@@ -30,6 +34,8 @@ export type InitOptions = {
   readonly addScripts: boolean;
   /** `--framework`. `undefined` means "detect it from the dependencies" (ADR-0017). */
   readonly framework: Framework | undefined;
+  /** Where `framework` came from when it is set: a flag by default, or a prompt answer. */
+  readonly frameworkSource?: Exclude<FrameworkSource, 'detected'>;
   /** Write the icon component. `undefined` means "when a supported framework is found". */
   readonly addComponent: boolean | undefined;
   /** Where the wiring goes. `undefined` picks `icon.tsx` or `Icon.astro` under `src/components/` or `components/`. */
@@ -58,9 +64,13 @@ type PackageJson = {
 /** Facts read from the project folder before planning. */
 export type ProjectFacts = {
   readonly hasPackageJson: boolean;
+  /** The nearest folder above `cwd` with a package.json, when `cwd` has none (stops at the repo root). */
+  readonly packageJsonAbove: string | undefined;
   /** Parsed package.json, or `undefined` when missing or not a JSON object. */
   readonly packageJson: PackageJson | undefined;
   readonly usesReact: boolean;
+  /** Next.js: the component is a Server Component and the public path may carry a basePath. */
+  readonly usesNext: boolean;
   readonly usesAstro: boolean;
   readonly hasSrcFolder: boolean;
   readonly packageManager: PackageManager;
@@ -123,6 +133,12 @@ export const defaultInitOptions = (): InitOptions => ({
 
 // An unreadable file must not be treated as free to create, so only ENOENT means "absent".
 const readText = readTextIfPresent;
+
+const isFile = async (path: string): Promise<boolean> =>
+  stat(path).then(
+    (stats) => stats.isFile(),
+    () => false,
+  );
 
 const isDirectory = async (path: string): Promise<boolean> =>
   stat(path).then(
@@ -258,7 +274,10 @@ export const resolveFramework = (
   readonly source: FrameworkSource | undefined;
 } => {
   if (options.framework !== undefined) {
-    return { framework: options.framework, source: FrameworkSource.FLAG };
+    return {
+      framework: options.framework,
+      source: options.frameworkSource ?? FrameworkSource.FLAG,
+    };
   }
   if (facts.usesAstro) {
     return { framework: Framework.ASTRO, source: FrameworkSource.DETECTED };
@@ -313,6 +332,21 @@ const hasIcons = async (
   return false;
 };
 
+// init from `src/` would write the config there and never find package.json. Stop at the repo root.
+const findPackageJsonAbove = async (
+  cwd: string,
+): Promise<string | undefined> => {
+  let dir = resolve(cwd);
+  for (;;) {
+    const parent = dirname(dir);
+    if (parent === dir) return undefined;
+    const names = await listDirectory(dir);
+    if (names.includes('.git')) return undefined;
+    dir = parent;
+    if (await isFile(join(dir, 'package.json'))) return dir;
+  }
+};
+
 /** Reads everything `planInit` needs. The only I/O before the plan is shown. */
 export const inspectProject = async (
   cwd: string,
@@ -325,6 +359,7 @@ export const inspectProject = async (
   const deps = dependencyNames(packageJson);
   const hasSrcFolder = await isDirectory(join(cwd, 'src'));
   const usesReact = deps.has('react') || deps.has('next');
+  const usesNext = deps.has('next');
   const usesAstro = deps.has('astro');
   const componentFile = componentFileFor(
     options,
@@ -340,8 +375,11 @@ export const inspectProject = async (
   }
   return {
     hasPackageJson: packageText !== undefined,
+    packageJsonAbove:
+      packageText === undefined ? await findPackageJsonAbove(cwd) : undefined,
     packageJson,
     usesReact,
+    usesNext,
     usesAstro,
     hasSrcFolder,
     // A workspace package with no signal of its own follows the Yarn 2+ root above it.
@@ -807,13 +845,22 @@ const PATH_OPTIONS = [
 // The path ends up unquoted in package.json scripts and in the printed commands.
 const UNSAFE_IN_PATH = /[\s`'"\\$&|;<>()*?#!~]/;
 
-const pathProblem = (cwd: string, value: string): string | undefined => {
+const isOutsideProject = (cwd: string, value: string): boolean => {
+  const inside = relative(resolve(cwd), resolve(cwd, value));
+  return inside === '' || inside.startsWith('..');
+};
+
+// Files init writes must stay inside the project; a source folder may sit elsewhere, as for build.
+const pathProblem = (
+  cwd: string,
+  value: string,
+  options: { readonly mustBeInside: boolean },
+): string | undefined => {
   if (UNSAFE_IN_PATH.test(value)) {
     return 'must not contain spaces, quotes, backticks, backslashes, shell characters or line breaks';
   }
   if (isAbsolute(value)) return 'must be relative to the project folder';
-  const inside = relative(resolve(cwd), resolve(cwd, value));
-  if (inside === '' || inside.startsWith('..')) {
+  if (options.mustBeInside && isOutsideProject(cwd, value)) {
     return 'must point inside the project folder';
   }
   return undefined;
@@ -831,11 +878,11 @@ export const validateInitOptions = (
   for (const [flag, read] of PATH_OPTIONS) {
     const value = read(options);
     if (value === undefined) continue;
-    const problem = pathProblem(cwd, value);
+    const problem = pathProblem(cwd, value, { mustBeInside: true });
     if (problem !== undefined) issues.push(`${flag} "${value}" ${problem}`);
   }
   options.sources.forEach((source) => {
-    const problem = pathProblem(cwd, source);
+    const problem = pathProblem(cwd, source, { mustBeInside: false });
     if (problem !== undefined) issues.push(`--source "${source}" ${problem}`);
   });
   if (issues.length > 0) return issues;
@@ -891,12 +938,13 @@ export const planInit = (
     sameJson,
   );
   // A config that differs may name other folders, so a sample could land where no build reads it.
+  // A folder outside the project (a monorepo package) is not ours to add files to.
+  const firstSource = toPosix(options.sources[0] ?? DEFAULT_SOURCE);
   const samplePath =
-    !facts.sourcesHaveIcons && configAction.status !== InitStatus.SKIPPED
-      ? posix.join(
-          toPosix(options.sources[0] ?? DEFAULT_SOURCE),
-          `${SAMPLE_ICON_NAME}.svg`,
-        )
+    !facts.sourcesHaveIcons &&
+    configAction.status !== InitStatus.SKIPPED &&
+    !posix.normalize(firstSource).startsWith('..')
+      ? posix.join(firstSource, `${SAMPLE_ICON_NAME}.svg`)
       : undefined;
   const actions: InitAction[] = [configAction];
   if (samplePath !== undefined) {
@@ -963,11 +1011,11 @@ export const planInit = (
     ...(addComponent && framework === Framework.ASTRO
       ? [
           `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,
-          'If astro.config sets "base", write the sprites under it: run init with --public-path <base>/icons (or set publicPath in the config)',
+          'If astro.config sets "base", write the sprites under it: set "publicPath": "<base>/icons" in svgworm.config.json (init never edits an existing config)',
         ]
       : addComponent
         ? [
-            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a Server Component and render ${iconExample}`,
+            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a ${facts.usesNext ? 'Server Component' : 'component'} and render ${iconExample}`,
           ]
         : []),
     `In CI, run: ${runner} svgworm check${flag}`,

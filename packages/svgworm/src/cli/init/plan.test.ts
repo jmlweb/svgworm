@@ -21,12 +21,14 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   hasPackageJson: overrides.packageJson !== undefined,
   packageJson: undefined,
   usesReact: false,
+  usesNext: false,
   usesAstro: false,
   hasSrcFolder: false,
   packageManager: PackageManager.NPM,
   runsScriptHooks: true,
   existing: {},
   sourcesHaveIcons: true,
+  packageJsonAbove: undefined,
   ...overrides,
 });
 
@@ -354,7 +356,7 @@ describe('planInit', () => {
     expect(plan.nextSteps).toEqual([
       'Install: pnpm add @svgworm/react',
       'Put SVG files in icons/ and run: pnpm svgworm',
-      'Import { Icon } from components/icon in a Server Component and render <Icon name="…" />',
+      'Import { Icon } from components/icon in a component and render <Icon name="…" />',
       'In CI, run: pnpm svgworm check',
     ]);
   });
@@ -426,7 +428,7 @@ describe('planInit: Astro', () => {
     );
     const steps = plan.nextSteps.join('\n');
     expect(steps).toContain('src/components/Icon.astro');
-    expect(steps).toContain('--public-path <base>/icons');
+    expect(steps).toContain('"publicPath": "<base>/icons"');
     expect(steps).not.toContain('@svgworm/react');
   });
 
@@ -473,6 +475,45 @@ describe('planInit: Astro', () => {
     expect(statusOf(plan, 'components/Icon.astro')?.status).toBe(
       InitStatus.CREATED,
     );
+  });
+});
+
+describe('planInit: prompts and monorepos', () => {
+  it('reports a framework chosen at a prompt as such, not as a flag', () => {
+    const plan = planInit(
+      {
+        ...defaultInitOptions(),
+        framework: Framework.REACT,
+        frameworkSource: FrameworkSource.PROMPT,
+      },
+      facts({ usesReact: true, usesAstro: true }),
+    );
+    expect(plan.framework).toBe(Framework.REACT);
+    expect(plan.frameworkSource).toBe(FrameworkSource.PROMPT);
+  });
+
+  it('never writes the sample icon into a source folder outside the project', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), sources: ['../shared/icons'] },
+      facts({ sourcesHaveIcons: false }),
+    );
+    expect(plan.actions.map((action) => action.path)).not.toContainEqual(
+      expect.stringContaining('svgworm.svg'),
+    );
+    expect(plan.nextSteps.join('\n')).toContain(
+      'Put SVG files in ../shared/icons/',
+    );
+  });
+
+  it('says Server Component only when next is a dependency', () => {
+    const next = planInit(
+      defaultInitOptions(),
+      facts({ usesReact: true, usesNext: true }),
+    );
+    expect(next.nextSteps.join('\n')).toContain('in a Server Component');
+    const vite = planInit(defaultInitOptions(), facts({ usesReact: true }));
+    expect(vite.nextSteps.join('\n')).toContain('in a component and render');
+    expect(vite.nextSteps.join('\n')).not.toContain('Server Component');
   });
 });
 
@@ -596,11 +637,7 @@ describe('validateInitOptions', () => {
     [{ componentFile: '../victim/icon.tsx' }, '--component-file', 'inside'],
     [{ configFile: '/etc/svgworm.json' }, '--config', 'relative'],
     [{ moduleDir: '.' }, '--module-dir', 'inside'],
-    [
-      { outDir: 'public/x', publicPath: '/x', sources: ['../shared'] },
-      '--source',
-      'inside',
-    ],
+    [{ sources: ['/shared/icons'] }, '--source', 'relative'],
     [{ sources: ["ic'ons"] }, '--source', 'quotes'],
     [{ moduleDir: 'a`b' }, '--module-dir', 'quotes'],
     // Scripts and next steps interpolate the path into a shell line without quoting it.
@@ -615,6 +652,15 @@ describe('validateInitOptions', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toContain(flag);
     expect(issues[0]).toContain(word);
+  });
+
+  it('accepts a source folder outside the project, as build does (monorepos)', () => {
+    expect(
+      validateInitOptions(
+        { ...defaultInitOptions(), sources: ['../../packages/icons/svg'] },
+        cwd,
+      ),
+    ).toEqual([]);
   });
 
   it('rejects options that would write a config the next build refuses', () => {
