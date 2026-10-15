@@ -6,9 +6,12 @@
 //      Content-Security-Policy whose script hashes were filled in (TSK-052);
 //   3. every doc in src/content/docs has a page, and every page has a title, a description,
 //      a canonical URL and a sitemap entry;
-//   4. /llms.txt and /llms-full.txt are served, and llms-full.txt holds every doc.
+//   4. every /fonts/* file name carries the first 8 hex of its own SHA-256 (the year-long immutable
+//      cache is only safe for hashed names), and each is referenced by the stylesheet;
+//   5. /llms.txt and /llms-full.txt are served, and llms-full.txt holds every doc.
 // The site itself may ship client JS; only its icons must need none (they are `<use>` refs).
 // Exit 1 with every problem found. Same approach as the Next.js example's check.
+import { createHash } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
@@ -110,7 +113,47 @@ for (const [name, icon] of Object.entries(manifest.icons)) {
     problems.push(`icon "${name}" is in the manifest but no page uses it`);
 }
 
+const stylesheets = await Promise.all(
+  files
+    .filter((file) => file.endsWith('.css'))
+    .map((file) => readFile(join(dist, file), 'utf8')),
+);
+for (const file of files.filter((name) => name.startsWith('fonts/'))) {
+  const hash = createHash('sha256')
+    .update(await readFile(join(dist, file)))
+    .digest('hex')
+    .slice(0, 8);
+  if (!new RegExp(`^fonts/[a-z-]+\\.${hash}\\.woff2$`).test(file))
+    problems.push(
+      `${file}: name must be <family>.${hash}.woff2 (content hash)`,
+    );
+  if (!stylesheets.some((css) => css.includes(`/${file}`)))
+    problems.push(`${file}: no stylesheet references this font`);
+}
+for (const css of stylesheets) {
+  for (const [, url] of css.matchAll(/url\(["']?(\/fonts\/[^"')]+)/g)) {
+    if (!files.includes(url.slice(1)))
+      problems.push(`stylesheet references ${url}, which is not in dist`);
+  }
+}
+
+for (const page of pages) {
+  const html = await readFile(join(dist, page), 'utf8');
+  for (const [, url] of html.matchAll(
+    /rel="preload" href="(\/fonts\/[^"]+)"/g,
+  )) {
+    if (!files.includes(url.slice(1)))
+      problems.push(`${page}: preloads ${url}, which is not in dist`);
+  }
+}
+
 const headers = await readFile(join(dist, '_headers'), 'utf8').catch(() => '');
+if (
+  !/^\/fonts\/\*\n\s+Cache-Control: public, max-age=31536000, immutable$/m.test(
+    headers,
+  )
+)
+  problems.push('_headers does not serve /fonts/* immutable');
 if (
   !/^\/icons\/\*\n\s+Cache-Control: public, max-age=31536000, immutable$/m.test(
     headers,
@@ -137,5 +180,5 @@ if (problems.length > 0) {
 console.log(
   `checked ${String(files.length)} file(s) and ${String(pages.length)} page(s): ` +
     `${String(usedIds.size)} icon(s) from the hashed sprite, ${String(docSlugs.length)} doc(s) ` +
-    'with a page, title, description and sitemap entry, llms.txt and llms-full.txt, immutable /icons/*, security headers',
+    'with a page, title, description and sitemap entry, llms.txt and llms-full.txt, immutable /icons/*, hashed /fonts/*, security headers',
 );

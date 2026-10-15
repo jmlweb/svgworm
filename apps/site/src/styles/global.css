@@ -3,8 +3,10 @@
   font-family: 'Bricolage Grotesque';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 800;
-  src: url('/fonts/bricolage-grotesque-latin-opsz-normal.woff2')
+  /* Pinned to wght 800 (every display use) and opsz 72-96 (the h1 and h2 settings, auto opsz
+     clamps into it) to stay under 25 KB. File names carry a content hash (see fonts in LICENSES.md). */
+  font-weight: 800;
+  src: url('/fonts/bricolage-grotesque.174b8e47.woff2')
     format('woff2-variations');
 }
 
@@ -13,17 +15,17 @@
   font-style: normal;
   font-display: swap;
   font-weight: 400 700;
-  src: url('/fonts/instrument-sans-latin-wght-normal.woff2')
-    format('woff2-variations');
+  src: url('/fonts/instrument-sans.2ee17598.woff2') format('woff2-variations');
 }
 
 @font-face {
   font-family: 'JetBrains Mono';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 800;
-  src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2')
-    format('woff2-variations');
+  /* Menlo and the other fallback monospaces share its 0.6 em advance, so the swap does not move
+     the install line or the terminal; the preload makes it rare anyway. */
+  font-weight: 400 700;
+  src: url('/fonts/jetbrains-mono.e1ccbad5.woff2') format('woff2-variations');
 }
 
 :root {
@@ -1489,7 +1491,7 @@ h1 {
 
 .prose h2 {
   margin: var(--space-12) 0 var(--space-4);
-  font-weight: 700;
+  font-weight: 800;
   font-size: clamp(24px, 3vw, 32px);
   line-height: 1.1;
 }
