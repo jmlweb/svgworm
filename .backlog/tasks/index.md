@@ -5,24 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 3 |
-| Active | 10 |
+| Active | 0 |
 | Blocked | 2 |
-| Complete | 72 |
+| Complete | 82 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
 - TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
-- TSK-035: Browser rendering matrix on product output (Playwright) (P3)
-- TSK-077: Landing: before/after demo, SVG folder to sprite to typed icon (P2)
-- TSK-078: Landing: lede says the problem first, visible stats caption (P2)
-- TSK-079: Reproducible client-JS comparison: svgworm vs an icon library and SVGR (P3)
-- TSK-082: Site: no horizontal page scroll at 360px (CTA install switch, docs install line) (P2)
-- TSK-083: Site: selected install tab contrast below 4.5:1 (P2)
-- TSK-084: Site: scrollable code, terminal and table regions keyboard-focusable (P3)
-- TSK-085: Site: render-blocking CSS delays mobile LCP (P3)
-- TSK-086: Site: nav and footer link targets at least 24px (P4)
-- TSK-087: Site: skip link moves focus to main (P4)
 
 ## Pending Tasks
 
@@ -43,6 +33,6 @@
 | TSK-026 | CSS-variable multicolor mode | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
+| TSK-035 | Browser rendering matrix on product output (Playwright) | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
-| TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | 2026-10-15 |
