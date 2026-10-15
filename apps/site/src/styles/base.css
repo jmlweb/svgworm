@@ -115,6 +115,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Only upright faces are loaded: a synthesized oblique or bold looks worse than none. */
+  font-synthesis: none;
 }
 
 body {
@@ -133,6 +135,20 @@ a {
 
 a:hover {
   text-decoration-thickness: 2px;
+}
+
+/* Emphasis is weight and the accent color (design system), never a fake italic. Muted text
+   (ledes, captions) gets its bold phrases in full ink, so they stand out. */
+strong,
+b {
+  font-weight: 650;
+  color: var(--ink);
+}
+
+em,
+i {
+  font-style: normal;
+  color: var(--accent);
 }
 
 a:focus-visible {

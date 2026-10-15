@@ -374,6 +374,11 @@
   --hairline: #5a3d2f;
 }
 
+/* --ink stays terra here in the light theme, which would hide bold text on the terra ground. */
+.section-dark strong {
+  color: var(--dune);
+}
+
 @media (prefers-color-scheme: dark) {
   .section-dark {
     background: var(--night);
