@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 10 |
-| Active | 5 |
+| Active | 4 |
 | Blocked | 0 |
-| Complete | 25 |
+| Complete | 26 |
 
 ## Active Tasks
 
@@ -15,7 +15,6 @@
 - TSK-028: Pre-launch post: per-icon color result (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-031: Agent discoverability: Context7, agent skill, AGENTS.md snippet (P2)
-- TSK-038: Docs on the website: render user docs from docs/, slim the README (P2)
 
 ## Pending Tasks
 
@@ -36,6 +35,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | 2026-10-14 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | 2026-10-12 |
@@ -45,4 +45,3 @@
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
 | TSK-018 | Release v0.1.0 to npm | 2026-10-12 |
-| TSK-023 | Incremental watch mode | 2026-10-12 |
