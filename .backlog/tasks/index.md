@@ -5,16 +5,15 @@
 | Status | Count |
 |--------|-------|
 | Pending | 3 |
-| Active | 11 |
+| Active | 10 |
 | Blocked | 2 |
-| Complete | 71 |
+| Complete | 72 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
 - TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
 - TSK-035: Browser rendering matrix on product output (Playwright) (P3)
-- TSK-067: Opt-in cross-origin (CDN) sprites via a minimal injecting loader (P3)
 - TSK-077: Landing: before/after demo, SVG folder to sprite to typed icon (P2)
 - TSK-078: Landing: lede says the problem first, visible stats caption (P2)
 - TSK-079: Reproducible client-JS comparison: svgworm vs an icon library and SVGR (P3)
