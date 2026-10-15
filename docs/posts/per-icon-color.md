@@ -1,6 +1,6 @@
 # Your multicolor icons turn black because the sprite tool guessed wrong (draft)
 
-> Draft for a LinkedIn article (TSK-028). Target: a Next.js developer whose design team exports SVGs with hardcoded colors. Lead with the symptom, show the numbers, link every claim to the spike. Record the publish date in TSK-028 and `docs/metrics/manual.json`. The image is `per-icon-color.png` (see the end). LinkedIn articles have no tables and no code formatting, and they do not parse Markdown: paste rich text rendered from this file, with the results table as a list.
+> Draft for a LinkedIn article (TSK-028). Target: a Next.js developer whose design team exports SVGs with hardcoded colors. Lead with the symptom, show the numbers, link every claim to the spike. Record the publish date in TSK-028 and `docs/metrics/manual.json`. Cover: https://svgworm.com/og.png (1200x630, on-brand). Body image: `per-icon-color.png` (see the end); at about 2.1:1 it would be cropped as a 16:9 cover. LinkedIn articles have no tables and no code formatting, and they do not parse Markdown: paste rich text rendered from this file, with the results table as a list.
 
 You export icons from Figma. Some are one color and should follow the text color. Some are logos, flags, illustrations, and should stay exactly as drawn. You drop them in a sprite tool, and it does one of two things: it leaves the fills alone, so your "mono" icons stay `#1E1E1E` forever and ignore dark mode, or it replaces every fill with `currentColor`, and your logos come out as black blobs.
 
@@ -54,11 +54,11 @@ A `<mask>` inherits paint from where it is declared, not from the shape it masks
 
 So the [rewrite](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-003-color-classification/RESULTS.md#classifier-srccolormjs) replaces each paint value on the element that declares it, freezes the inherited fill on masks first, leaves `clipPath` content alone, and sets `fill="currentColor"` on the root only when the icon relies on the default black.
 
-## What this means for a Next.js app
+## What this means for a Next.js or Astro app
 
-This is the core of [svgworm](https://github.com/jmlweb/svgworm), a CLI that turns a folder of SVGs into a hashed sprite plus a manifest and TypeScript types, with a React Server Component `Icon` that ships zero client JavaScript. Color is decided per icon with the rules above, and it can be overridden per glob when you know better.
+This is the core of [svgworm](https://svgworm.com), a CLI that turns a folder of SVGs into a hashed sprite plus a manifest and TypeScript types. In Next.js a React Server Component `Icon` renders the icons with zero client JavaScript; in Astro, `svgworm init` writes a dependency-free `Icon.astro` that does the same. Color is decided per icon with the rules above, and it can be overridden per glob when you know better.
 
-Version 0.1.0 is on npm (`pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`). The classification spike, the [browser rendering tests](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md) (WebKit resolves no gradient, mask, clipPath or filter inside an external `<use>`, so those icons take a [different path](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0006-per-icon-delivery-external-use-and-svg-stack.md)), and an honest [comparison with SVGR and @neodx/svg](https://svgworm.com/docs/comparison/) are all in the repo. If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
+svgworm 0.2 is on npm. In Next.js: `pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`. In Astro: `pnpm add -D svgworm`, then `pnpm svgworm init`. The setup guides and an honest [comparison with SVGR and @neodx/svg](https://svgworm.com/docs/comparison/) are on [svgworm.com](https://svgworm.com/docs/). The classification spike and the [browser rendering tests](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md) (WebKit resolves no gradient, mask, clipPath or filter inside an external `<use>`, so those icons take a [different path](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0006-per-icon-delivery-external-use-and-svg-stack.md)) are in the [repo](https://github.com/jmlweb/svgworm). If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
 
 ---
 
@@ -109,23 +109,26 @@ Fix: rewrite paint per element and freeze mask fills first.
 
 5.
 ```text
-This is the default in svgworm: a CLI that turns an SVG folder into a hashed sprite plus types, with a React Server Component Icon and zero client JS. v0.1.0 is on npm.
+This is the default in svgworm: a CLI that turns an SVG folder into a hashed sprite plus types, with zero client JS in Next.js Server Components or Astro. 0.2 is on npm.
 
 Write-up: [article]
-Code and numbers: https://github.com/jmlweb/svgworm
+Docs: https://svgworm.com
+Code: https://github.com/jmlweb/svgworm
 ```
 
-## LinkedIn post (shares the article)
+## LinkedIn commentary (publish dialog)
+
+Paste into "Tell your network what your article is about" when you click Publish. LinkedIn attaches the article to this feed post, so it needs no article link.
 
 ```text
 Your multicolor icons turn black because your sprite tool has one color setting for the whole folder. Logos and flags get flattened, or mono icons ignore dark mode.
 
 I tested whether a build tool can decide per icon instead, from the SVG alone. On 31,390 icons (28,961 from 11 open-source sets, 2,429 synthetic Figma-style exports), static analysis agreed with rendering on 99.98% of them, recolored zero multicolor icons, and all 21,667 mono rewrites rendered identically in the new color. One trap along the way: fill="currentColor" on the root breaks masks.
 
-The write-up has the method, the numbers and the mask fix. It is the default behavior of svgworm, an open-source CLI that turns an SVG folder into a type-safe sprite for React Server Components with zero client JavaScript.
+The write-up has the method, the numbers and the mask fix. It is the default behavior of svgworm, an open-source CLI that turns an SVG folder into a type-safe sprite for Next.js Server Components and Astro, with zero client JavaScript.
 
-Article: [article]
+Docs: https://svgworm.com
 Code and spike results: https://github.com/jmlweb/svgworm
 
-#nextjs #react #svg #webdev #opensource
+#nextjs #astro #react #svg #webdev #opensource
 ```
