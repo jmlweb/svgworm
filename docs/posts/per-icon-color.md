@@ -4,7 +4,7 @@
 
 You export icons from Figma. Some are one color and should follow the text color. Some are logos, flags, illustrations, and should stay exactly as drawn. You drop them in a sprite tool, and it does one of two things: it leaves the fills alone, so your "mono" icons stay `#1E1E1E` forever and ignore dark mode, or it replaces every fill with `currentColor`, and your logos come out as black blobs.
 
-The sprite tools I [compared](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md) make this a global setting. One rule for the whole folder. The folder is never that uniform.
+The sprite tools I [compared](https://svgworm.com/docs/comparison/) make this a global setting. One rule for the whole folder. The folder is never that uniform.
 
 ## The question
 
@@ -58,7 +58,7 @@ So the [rewrite](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-003-colo
 
 This is the core of [svgworm](https://github.com/jmlweb/svgworm), a CLI that turns a folder of SVGs into a hashed sprite plus a manifest and TypeScript types, with a React Server Component `Icon` that ships zero client JavaScript. Color is decided per icon with the rules above, and it can be overridden per glob when you know better.
 
-Version 0.1.0 is on npm (`pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`). The classification spike, the [browser rendering tests](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md) (WebKit resolves no gradient, mask, clipPath or filter inside an external `<use>`, so those icons take a [different path](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0006-per-icon-delivery-external-use-and-svg-stack.md)), and an honest [comparison with SVGR and @neodx/svg](https://github.com/jmlweb/svgworm/blob/main/docs/comparison.md) are all in the repo. If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
+Version 0.1.0 is on npm (`pnpm add -D svgworm && pnpm add @svgworm/react`, then `pnpm svgworm init`). The classification spike, the [browser rendering tests](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md) (WebKit resolves no gradient, mask, clipPath or filter inside an external `<use>`, so those icons take a [different path](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0006-per-icon-delivery-external-use-and-svg-stack.md)), and an honest [comparison with SVGR and @neodx/svg](https://svgworm.com/docs/comparison/) are all in the repo. If you have an icon folder that breaks it, open an issue with the file. That is exactly the corpus I want.
 
 ---
 

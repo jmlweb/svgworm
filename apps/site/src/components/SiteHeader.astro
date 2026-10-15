@@ -1,0 +1,24 @@
+---
+import logoDark from '../../../../docs/assets/logo-dark.svg?url';
+import logoLight from '../../../../docs/assets/logo-light.svg?url';
+
+const REPO = 'https://github.com/jmlweb/svgworm';
+---
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a aria-label="svgworm home" class="brand" href="/">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset={logoDark} />
+        <img alt="svgworm" height="40" src={logoLight} width="180" />
+      </picture>
+    </a>
+    <nav aria-label="Project links">
+      <a href="/docs/nextjs/">Docs</a>
+      <a href="/docs/comparison/">Compare</a>
+      <a class="nav-npm" href="https://www.npmjs.com/package/svgworm">npm</a>
+      <a class="nav-cta" href={REPO}>GitHub</a>
+    </nav>
+  </div>
+</header>

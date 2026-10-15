@@ -39,3 +39,4 @@
 | LRN-033 | @astrojs/react ships its client renderer even when nothing hydrates | astro, react, static-site, bundle | active | 2026-10-14 |
 | LRN-034 | gh secret set without --body stores an empty value outside a terminal | github, secrets, cli | active | 2026-10-14 |
 | LRN-035 | changeset status skips private packages, so site-only PRs need no changeset | changesets, monorepo, release | active | 2026-10-14 |
+| LRN-036 | Astro 7 needs a new package for any Markdown plugin; context7.json excludes match by name | astro, markdown, dependencies, context7, site | active | 2026-10-14 |

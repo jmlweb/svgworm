@@ -10,7 +10,7 @@
     "build": "pnpm --filter \"./packages/*\" build",
     "typecheck": "pnpm -r typecheck",
     "typecheck:ts7": "pnpm --filter \"./packages/*\" exec pnpm --package=typescript@7.0.2 dlx tsc -p tsconfig.json --noEmit",
-    "lint": "oxlint",
+    "lint": "pnpm --filter svgworm-site sync && oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "test": "vitest run",
@@ -23,7 +23,7 @@
     "site:check": "pnpm --filter svgworm-site check && pnpm site:build && pnpm --filter svgworm-site check:output",
     "verify": "pnpm build && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm check:packages",
     "changeset": "changeset",
-    "lint:fix": "oxlint --fix",
+    "lint:fix": "pnpm --filter svgworm-site sync && oxlint --fix",
     "commitlint": "commitlint",
     "prepare": "husky",
     "schema:generate": "node scripts/generate-config-schema.mjs"

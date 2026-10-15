@@ -1,14 +1,11 @@
 ---
-import logoDark from '../../../../docs/assets/logo-dark.svg?url';
-import logoLight from '../../../../docs/assets/logo-light.svg?url';
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import process from 'node:process';
-import { URL } from 'node:url';
 
 import { manifest } from '../../svgworm/icons.js';
 import Landing from '../components/Landing.astro';
-import '../styles/global.css';
+import Base from '../layouts/Base.astro';
 
 // The real sprite size, so the stats on the page are this build's numbers.
 const spriteUrl = manifest.sprites.icons?.sprite?.url;
@@ -17,50 +14,10 @@ const spriteBytes = spriteUrl
   : 0;
 
 const title = 'svgworm: type-safe SVG sprites with zero client JS';
-// Link previews need absolute URLs. og.png is rendered from og/og.html.
-const pageUrl = new URL('/', import.meta.env.SITE).href;
-const ogImage = new URL('/og.png', import.meta.env.SITE).href;
-const ogImageAlt =
-  'svgworm: One sprite. Zero client JS. Type-safe SVG sprites for React Server Components.';
 const description =
   'svgworm turns a folder of SVG files into type-safe, content-hashed SVG sprites, with a React adapter that renders icons in Server Components with zero client JavaScript.';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={pageUrl} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={ogImageAlt} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href={pageUrl} />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link
-      rel="preload"
-      href="/fonts/bricolage-grotesque-latin-opsz-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/instrument-sans-latin-wght-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-  </head>
-  <body>
-    <Landing logoDark={logoDark} logoLight={logoLight} spriteBytes={spriteBytes} />
-  </body>
-</html>
+<Base title={title} description={description} path="/">
+  <Landing spriteBytes={spriteBytes} />
+</Base>

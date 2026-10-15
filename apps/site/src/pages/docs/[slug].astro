@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+import DocsNav from '../../components/DocsNav.astro';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = async () => {
+  const docs = (await getCollection('docs')).toSorted(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return docs.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, docs },
+  }));
+};
+
+type Props = {
+  readonly entry: CollectionEntry<'docs'>;
+  readonly docs: readonly CollectionEntry<'docs'>[];
+};
+
+const { entry, docs } = Astro.props;
+const { Content } = await render(entry);
+const path = `/docs/${entry.id}/`;
+---
+
+<Base
+  title={`${entry.data.title} | svgworm docs`}
+  description={entry.data.description}
+  path={path}
+  ogType="article"
+>
+  <div class="wrap docs-layout">
+    <DocsNav current={path} docs={docs} />
+    <main class="docs-main" id="content">
+      <article class="prose">
+        <h1>{entry.data.title}</h1>
+        <Content />
+      </article>
+      <p class="docs-edit">
+        <a
+          href={`https://github.com/jmlweb/svgworm/blob/main/apps/site/src/content/docs/${entry.id}.md`}
+          >Edit this page on GitHub</a
+        >
+      </p>
+    </main>
+  </div>
+</Base>
