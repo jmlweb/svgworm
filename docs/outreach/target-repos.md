@@ -37,7 +37,7 @@ Fit: **A** App Router with a real icon folder and recent activity. **B** App Rou
 | 10 | [ilkhoeri/ui](https://github.com/ilkhoeri/ui) | B | App | 9 | 8 | 2026-07 | Component library |
 | 11 | [jolbol1/JamesShopland.com](https://github.com/jolbol1/JamesShopland.com) | B | App | 7 | 30 | 2026-06 | Personal site |
 | 12 | [Femoon/tts-azure-web](https://github.com/Femoon/tts-azure-web) | B | App | 2 | 476 | 2026-09 | Popular, almost no icons |
-| 13 | [Enterwell/react-starter](https://github.com/Enterwell/react-starter) | B | App | 2 | 15 | 2026-10 | A **starter template**: adoption here counts for the kill criterion |
+| 13 | [Enterwell/react-starter](https://github.com/Enterwell/react-starter) | B | App | 2 | 15 | 2026-10 | A **starter template**, but checked 2026-10-16: no icon imports to migrate (favicon URLs only, SVGR only in Storybook), no human commits since 2024-01. No PR |
 | 14 | [PxlSyl/tailwind-nextjs-starter-blog-i18n](https://github.com/PxlSyl/tailwind-nextjs-starter-blog-i18n) | B | App | 1 | 187 | 2026-04 | A **starter template** (icons in `components/social-icons`) |
 | 15 | [guildxyz/guild.xyz](https://github.com/guildxyz/guild.xyz) | B | App + Pages | 12 (465 svg) | 3,478 | 2025-11 | Big, mixed routers, many logos; PR would be large |
 | 16 | [primefaces/primereact](https://github.com/primefaces/primereact) | B | Pages | 20 (119 svg) | 8,307 | 2026-09 | Docs site of a UI library; Pages Router |

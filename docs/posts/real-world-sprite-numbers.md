@@ -49,7 +49,7 @@ Script and method: svgworm.com
 
 ## Before publishing
 
-- **Rendering check.** The bench measures size, not looks. Render each folder as the original `<img>` and as the sprite `<use>` in Chromium, Firefox and WebKit with the method in `.claude/rules/testing.md` (TSK-035), and report any icon that differs. Without that, do not claim "same icons".
+- **Rendering check.** Done on 2026-10-16 with `node scripts/render-check.mjs --fixtures <folder> --out <dir>` against the commits above. It found RPT-006: icons with a viewBox origin other than `0 0` were shifted through `<use>`. That is fixed in TSK-094 (ADR-0030). Publish only after that release, and re-run the check: with the fix, Supabase and Refine match in all three engines, and cal.com differs only on 6 flags that draw outside their own viewBox, where the sprite clips.
 - **Re-run** `scripts/bench-repo.mjs` on the day: repos move, and the commit hash must match what the post says.
 - **Tone.** These are healthy projects. The post is about what a sprite changes, not about what they did wrong. Do not tag maintainers to ask for anything.
 - **Licenses.** Show numbers and the script only. The Supabase repo is Apache-2.0 but brand logos inside it are not ours to republish.
