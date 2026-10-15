@@ -19,10 +19,10 @@ Build in public before the 12-week clock starts (docs/traction.md, pre-launch). 
 
 ## Acceptance Criteria
 
-- [ ] LinkedIn article with the 31k-icon result and a before/after image
-- [ ] Every claim links to the TSK-003 spike
-- [ ] Short social thread on X and a LinkedIn post, with link to the repo
-- [ ] Published (date recorded in TSK-028 and docs/metrics/manual.json)
+- [x] LinkedIn article with the 31k-icon result and a before/after image — evidence: LinkedIn article published 2026-10-15 with the 31,390-icon result and docs/posts/per-icon-color.png (2026-10-15)
+- [x] Every claim links to the TSK-003 spike — evidence: docs/posts/per-icon-color.md: every claim links to spikes/TSK-003-color-classification (RESULTS.md sections, src/color.mjs, src/evaluate.mjs); all links 200 (2026-10-15)
+- [x] Short social thread on X and a LinkedIn post, with link to the repo — evidence: X thread (5 posts) and LinkedIn commentary published 2026-10-15, linking the repo and svgworm.com (2026-10-15)
+- [x] Published (date recorded in TSK-028 and docs/metrics/manual.json) — evidence: published 2026-10-15; recorded in this log and docs/metrics/manual.json posts[per-icon-color] (2026-10-15)
 
 ## Notes
 
@@ -40,3 +40,4 @@ Build in public before the 12-week clock starts (docs/traction.md, pre-launch). 
 - [2026-10-15] Post retargeted for the current release: "0.2 is on npm" instead of 0.1.0, the closing section covers Next.js and Astro (Icon.astro, Astro install without @svgworm/react, from apps/site docs), and the links lead with svgworm.com (docs and comparison) while every spike claim keeps its GitHub link. All 11 links return 200; the RESULTS.md anchors exist.
 - [2026-10-15] LinkedIn flow confirmed in LinkedIn Help: the publish step has a "Tell your network what your article is about" field, so the share post is now that commentary (no article link, #astro added); it covers criterion 3 together with the X thread. X post 5 trimmed to 264 characters. Cover: https://svgworm.com/og.png; the before/after PNG stays in the body (kept off-brand by the maintainer's choice).
 - [2026-10-15] Publishing kit v2: https://claude.ai/artifact/BGfv7yrCfdsFeZXRCPfWFK (cover, title, article, SEO title and description, commentary, thread). docs/metrics/manual.json has no post-date field and the snapshot script reads only known keys, so the date goes in this task; criterion 4 needs rewording or a manual.json field when the maintainer reports back.
+- [2026-10-15] Published by the maintainer on 2026-10-15: LinkedIn article (cover og.png, before/after PNG in the body, commentary in the publish dialog) and the 5-post X thread. Date recorded here and in docs/metrics/manual.json under a new posts field (documented in docs/metrics/README.md; the snapshot script does not read it). Article and thread URLs not yet recorded.

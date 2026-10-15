@@ -3,5 +3,8 @@
   "launchDate": "2026-10-13",
   "starters": [],
   "targetListPrs": { "opened": 0, "merged": 0 },
-  "agentEval": null
+  "agentEval": null,
+  "posts": [
+    { "slug": "per-icon-color", "draft": "docs/posts/per-icon-color.md", "published": "2026-10-15", "channels": ["linkedin-article", "linkedin-post", "x-thread"] }
+  ]
 }
