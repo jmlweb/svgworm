@@ -1,6 +1,6 @@
 ---
 title: Next.js App Router setup
-description: Set up svgworm in a Next.js App Router app. Build a hashed sprite from your SVG folder and render type-checked icons in Server Components with zero client JavaScript.
+description: Set up svgworm in a Next.js App Router app. A hashed sprite from your SVG folder and type-checked icons in Server Components, with zero client JS.
 order: 1
 ---
 
@@ -50,8 +50,6 @@ Requires Node `^22.20 || >=24.11`.
    ```
 
    The icon is `aria-hidden` unless you pass `title` or `label`. An unknown `name` is a type error.
-
-In CI, `pnpm svgworm check` exits 1 when the committed output is stale.
 
 ## Set up by hand
 
@@ -118,13 +116,24 @@ export default {
 
 <p class="alert-title">Important</p>
 
-Next does not add `basePath` to a raw `href`. With a `basePath` of `/docs`, set `--public-path /docs/icons`.
+Next does not add `basePath` to the sprite URLs svgworm writes. With a `basePath` of `/docs`, set `--public-path /docs/icons` (or `"publicPath": "/docs/icons"` in `svgworm.config.json`). `init` does not read `next.config.*`.
 
 </aside>
 
+Next serves `public/` under the `basePath`, so the sprite lives at `/docs/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s.
+
+## CI
+
+Run `svgworm check` before the build. It compiles the icons and compares the result with the committed output, so CI fails (exit 1) when someone changed an icon and forgot to rebuild:
+
+```bash
+pnpm svgworm check
+pnpm next build
+```
+
 ## Working example
 
-[examples/next-app-router](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router) is a complete app with these steps, built with Turbopack and checked in CI for no icon code in client chunks.
+[examples/next-app-router](https://github.com/jmlweb/svgworm/tree/main/examples/next-app-router) is a complete app with these steps. CI builds it with Turbopack and checks that no icon code ends up in client chunks.
 
 ## Next
 

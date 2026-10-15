@@ -44,3 +44,4 @@
 | LRN-038 | skills.sh lists a skill only after an install and an index crawl | agents, discovery, skills, traction | active | 2026-10-15 |
 | LRN-039 | Preload can't match a <use> fetch, and Playwright WebKit/Firefox contexts fake cold-cache results | browser, sprite, delivery, performance, playwright, testing, webkit | active | 2026-10-15 |
 | LRN-040 | Plain svgworm needs sources from a config file; manual setup docs must pass --source | docs, cli, config, onboarding | active | 2026-10-15 |
+| LRN-041 | Yarn 2+ silently skips pre/post scripts; detect Berry and prefix dev/build | package-managers, yarn, init, cli | active | 2026-10-15 |

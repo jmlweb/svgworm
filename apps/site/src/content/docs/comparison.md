@@ -1,7 +1,7 @@
 ---
 title: svgworm compared with other SVG icon tools
 navTitle: Comparison
-description: An honest comparison of svgworm with SVGR, @neodx/svg, vite-plugin-icons-spritesheet and unplugin-icons, with reproducible numbers from the spikes and when to pick each tool.
+description: "svgworm compared with SVGR, @neodx/svg, vite-plugin-icons-spritesheet and unplugin-icons: reproducible numbers and when to pick each tool."
 order: 5
 ---
 
@@ -13,7 +13,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([competitive la
 
 | If you…                                                                                   | Use                                                                                          |
 | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Have your own icon folder in a Next.js App Router app and want zero client JS and no glue | **svgworm**                                                                                  |
+| Have your own icon folder in Next.js (App Router) or Astro and want zero client JS, no glue | **svgworm**                                                                                  |
 | Want one component per icon, tree-shaken, and accept the JS cost                          | [SVGR](https://github.com/gregberge/svgr)                                                    |
 | Use Vite, want a sprite plus types, and your icons are all single-color                   | [vite-plugin-icons-spritesheet](https://github.com/forge42dev/vite-plugin-icons-spritesheet) |
 | Need several sprites, a watcher, or a webpack/Vite plugin today                           | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
@@ -55,11 +55,11 @@ We tested version 1.1.1 in Next.js 16.4 with Turbopack ([TSK-007](https://github
 
 <p class="alert-title">Note</p>
 
-The three findings were reported upstream on 2026-10-12 before this page was published. If they get fixed, this table must change.
+We reported the three findings upstream on 2026-10-12, before publishing this page. When they are fixed, we will update this table.
 
 </aside>
 
-**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. Its weekly downloads are small (about 2k), so expect fewer answers online.
+**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. It has about 2k weekly downloads.
 
 ## SVGR
 
@@ -76,7 +76,7 @@ Turns each SVG into a React component. 21.6M weekly downloads for `@svgr/core`.
 A Vite plugin that builds a sprite and types from a folder, and rebuilds on change. 248k weekly downloads.
 
 - **Strengths:** tight Vite integration, hot rebuild in dev, simple.
-- **Gaps in our landscape survey** ([competitive landscape](https://github.com/jmlweb/svgworm/blob/main/docs/viability.md#competitive-landscape), from its docs): tied to Vite, one sprite, color handling.
+- **Gaps, from its docs** ([competitive landscape](https://github.com/jmlweb/svgworm/blob/main/docs/viability.md#competitive-landscape)): tied to Vite, one sprite, and limited color handling.
 - **Not tested:** we did not run it in a spike.
 
 **Pick it when** you are on Vite and your icons are single-color.

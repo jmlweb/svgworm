@@ -1,6 +1,6 @@
 ---
 title: CLI reference
-description: Every svgworm command, flag and exit code. Build sprites, check that committed output is current in CI, watch for changes, and set a project up, with stable plain and --json output.
+description: "Every svgworm command, flag and exit code: build sprites, check committed output in CI, watch for changes and set a project up, with stable --json output."
 order: 3
 ---
 
@@ -29,7 +29,7 @@ Flags override the config file. The same options are available as [config keys](
 
 <p class="alert-title">Important</p>
 
-`--out-dir` needs `--public-path`.
+`--out-dir` needs `--public-path`. svgworm cannot guess the URL a custom folder is served from, and a wrong URL breaks every icon.
 
 </aside>
 
@@ -70,7 +70,7 @@ Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scrip
 
 ## check
 
-`svgworm check` compiles the icons and compares the result with the files on disk, so CI can fail when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed.
+`svgworm check` compiles the icons and compares the result with the files on disk. It writes nothing. Run it in CI to fail the build when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed.
 
 ## watch
 

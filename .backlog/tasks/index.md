@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 33 |
+| Pending | 41 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 32 |
+| Complete | 33 |
 
 ## Active Tasks
 
@@ -38,7 +38,6 @@
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-052 | Site security headers and the CSS inlining decision | P4 | site, security, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-055 | Build hooks for Yarn 2+ (pre/post scripts never run) | P1 | init, package-managers, onboarding, cli | 2026-10-15 |
 | TSK-056 | Clear error when no config and no --source | P2 | cli, errors, onboarding, dx | 2026-10-15 |
 | TSK-057 | Docs: package-manager-neutral commands and what to commit | P2 | docs, onboarding, llms, agents | 2026-10-15 |
 | TSK-058 | Docs + init: client components, Vite/plain React, framework-neutral wording | P2 | docs, react, vite, init, zero-js | 2026-10-15 |
@@ -51,6 +50,15 @@
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
+| TSK-068 | Collapse the docs nav on mobile | P2 | site, docs, design, mobile | 2026-10-15 |
+| TSK-069 | Copy button on docs code blocks | P3 | site, docs, ux | 2026-10-15 |
+| TSK-070 | Redesign the docs index | P3 | site, docs, design | 2026-10-15 |
+| TSK-071 | Docs: on-this-page right rail with scroll-spy | P4 | site, docs, design | 2026-10-15 |
+| TSK-072 | Docs: heading anchor links | P4 | site, docs, ux | 2026-10-15 |
+| TSK-073 | Docs: Icon component reference page | P2 | docs, react, astro, a11y | 2026-10-15 |
+| TSK-074 | Docs: Troubleshooting page | P3 | docs, errors, dx | 2026-10-15 |
+| TSK-075 | Docs: --json output reference | P3 | docs, cli, agents | 2026-10-15 |
+| TSK-076 | Docs: How svgworm works concept page | P3 | docs, concepts | 2026-10-15 |
 
 ## Recently Completed
 
@@ -63,6 +71,6 @@
 | TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |
 | TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
 | TSK-054 | Init: first run works before any icon exists | 2026-10-15 |
+| TSK-055 | Build hooks for Yarn 2+ (pre/post scripts never run) | 2026-10-15 |
 | TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | 2026-10-14 |
-| TSK-005 | Spike: TypeScript performance with large icon-name sets | 2026-10-12 |

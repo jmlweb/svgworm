@@ -235,9 +235,9 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
 
 - Reads the manifest at build time, never at runtime over the network. The user passes the generated module's `manifest` to the adapter once (for example `createIcon(manifest)`; the adapter's own API lives in `@svgworm/react`, not in this contract), because the adapter can't import a path inside the user's project ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 - Renders by the icon's `delivery` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)):
-  - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough;
+  - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough. `@svgworm/react` makes it 1em wide and high unless the caller sets a size;
   - `img` (multicolor with references): `<img src="{stackUrl}#{id}" width height alt="…">`;
-  - `mask` (mono with references): an element masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
+  - `mask` (mono with references): a `<span>` masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
 - Adds `aria-hidden="true"` unless a title or label is given; with a title it renders `role="img"` and a `<title>`
 - Takes no part in SVG processing
 

@@ -1,53 +1,33 @@
 ---
 title: Astro setup
-description: Set up svgworm in an Astro 7 site. A generated Icon.astro renders type-checked icons from a hashed sprite, with no React and no client JavaScript.
+description: Set up svgworm in an Astro 7 site. A generated Icon.astro renders type-checked icons from a hashed sprite, with no React and no client JS.
 order: 2
 ---
 
-Set svgworm up in an Astro site. Icons render at build time, so a static site ships no JavaScript for them. There is no React and no `@astrojs/react`: the component is a plain `.astro` file that `init` generates in your project ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md)).
-
-<aside class="alert alert-tip">
-
-<p class="alert-title">Tip</p>
-
-`svgworm init` does steps 2 to 4 for you. This page shows what it sets up, plus the parts it cannot do. See the [CLI reference](/docs/cli/#init).
-
-</aside>
+Set svgworm up in an Astro site in three steps. Icons render at build time, so a static site ships no JavaScript for them. You need no React and no `@astrojs/react`: the `Icon` component is a plain `.astro` file that `init` writes into your project.
 
 Requires Node `^22.20 || >=24.11` and Astro 7.
 
 ## Steps
 
-1. **Put your SVG files in `icons/`.**
-
-2. **Install and set up:**
+1. **Install and set up:**
 
    ```bash
    pnpm add -D svgworm
    pnpm svgworm init
    ```
 
-   `init` sees the `astro` dependency and writes `svgworm.config.json`, the `predev`/`prebuild` scripts and `src/components/Icon.astro`, then builds once. If `icons/` is still empty, it adds a sample `icons/svgworm.svg` so the first build works; delete it once you have your own icons. With `--yes` it asks nothing. Use `--framework astro` when the project has no `astro` dependency yet.
+   `init` sees the `astro` dependency and writes `svgworm.config.json`, the `predev`/`prebuild` scripts and `src/components/Icon.astro`, then builds once. If `icons/` is missing or empty, it adds a sample `icons/svgworm.svg` so the first build works. With `--yes` it asks nothing. Use `--framework astro` when the project has no `astro` dependency yet. See the [CLI reference](/docs/cli/#init) for every flag.
 
-3. **Build the sprite:**
+2. **Put your SVG files in `icons/` (delete the sample) and build:**
 
    ```bash
    pnpm svgworm
    ```
 
-   This writes the sprite to `public/icons/` and the manifest and types to `svgworm/`, the same files as in every other setup. Astro serves `public/` as is.
+   This writes the sprite to `public/icons/` and the manifest and types to `svgworm/`, the same files as in every other setup. Astro serves `public/` as is. While you work, run `svgworm watch` next to `astro dev` to rebuild on each change.
 
-4. **Run the CLI before `dev` and `build`:**
-
-   ```json
-   { "scripts": { "predev": "svgworm", "prebuild": "svgworm" } }
-   ```
-
-   Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scripts instead: `"dev": "svgworm && astro dev"` and `"build": "svgworm && astro build"`.
-
-   While you work, `svgworm watch` rebuilds on each change, next to `astro dev`.
-
-5. **Use it in any `.astro` file:**
+3. **Use it in any `.astro` file:**
 
    ```astro
    ---
@@ -64,6 +44,16 @@ Requires Node `^22.20 || >=24.11` and Astro 7.
    `name` is typed from the generated `IconName`, so a typo fails `astro check`. The icon is `aria-hidden` unless you pass `title` or `label`.
 
 `Icon.astro` is your file. `init` never overwrites it. To refresh it after upgrading svgworm, delete it and run `svgworm init` again.
+
+## Set up by hand
+
+Without `init`, run the CLI before `dev` and `build` yourself:
+
+```json
+{ "scripts": { "predev": "svgworm", "prebuild": "svgworm" } }
+```
+
+Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scripts instead: `"dev": "svgworm && astro dev"` and `"build": "svgworm && astro build"`.
 
 ## Cache for a year
 
@@ -84,11 +74,11 @@ Astro does not add `base` to the sprite URLs svgworm writes. With `base: '/docs'
 
 </aside>
 
-This was checked with a build of this site with `base: '/docs'`: `public/icons/` lands in the `dist/` root and `/icons/…` URLs are left unchanged, so they only work when the host serves `dist/` under `/docs/`.
+Why: Astro copies `public/icons/` to the root of `dist/`, and your host serves `dist/` under `/docs/`, so the sprite lives at `/docs/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s. We checked this with a build of this site under `base: '/docs'`.
 
 ## CI
 
-Run `svgworm check` before the build. It compares the committed output with a fresh compile, so it catches a forgotten rebuild only on files as committed:
+Run `svgworm check` before the build. It compiles the icons and compares the result with the committed output, so CI fails when someone changed an icon and forgot to rebuild:
 
 ```bash
 pnpm svgworm check
@@ -97,7 +87,7 @@ pnpm astro build
 
 ## Working example
 
-This website is an Astro 7 static site that renders every icon through the generated `Icon.astro`; its [source](https://github.com/jmlweb/svgworm/tree/main/apps/site) is in the repo. CI checks that every icon comes from the hashed sprite (the site itself may use client JS; only what svgworm generates must not need it), and a test renders `Icon.astro` and `createIcon` from the same manifest and compares the markup.
+This website is an Astro 7 static site that renders every icon through the generated `Icon.astro` ([source](https://github.com/jmlweb/svgworm/tree/main/apps/site)). CI checks that every icon comes from the hashed sprite, and a test checks that `Icon.astro` and the React `Icon` render the same markup from the same manifest.
 
 ## Next
 

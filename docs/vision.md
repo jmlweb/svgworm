@@ -32,7 +32,7 @@ Differentiators, in order of weight:
 3. **Deterministic output**, including Unicode-normalized names, safe to commit and diff in CI, with a `check` mode.
 4. **A CLI UX that reports what it did**: stats, `--json`, stable exit codes.
 
-Table stakes, needed but not the pitch: an external hashed sprite with a manifest, generated types, multiple sprites, and no bundler requirement.
+Table stakes, needed but not the pitch: an external hashed sprite with a manifest, generated types, and no bundler requirement. Multiple sprites are table stakes too; svgworm adds them post-v0.1 (TSK-021).
 
 ## Non-goals (for v1)
 

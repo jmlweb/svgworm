@@ -100,6 +100,8 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 | `svg/not-svg-root`, `svg/invalid-xml`, `svg/invalid-encoding` | The file is not a valid UTF-8 SVG. Re-export it |
 | `svg/forbidden-element`, `svg/forbidden-attribute`, `svg/external-reference` | `<script>`, `on*` event handlers and references to other files (`href`, `url(...)`) are rejected. Remove them or inline the asset |
 | `viewbox/underivable` | No `viewBox` and no plain-number `width`/`height`. Add a `viewBox` |
+| `viewbox/invalid` | The `viewBox` is not four numbers with a positive width and height. Fix it, or remove it so it is derived from plain-number `width`/`height` |
+| `io/unreadable` | A source file cannot be read. Check its permissions, or remove it |
 | `style/unscopable` | A `<style>` rule (for example `@media`) cannot be inlined. Convert it to attributes |
 | `color/forced-mono-unsafe` | A `color: mono` rule would recolor a multicolor icon. Use `preserve` or drop the rule |
 | `build/no-icons` (exit 2) | The source folder has no `.svg` files. Check `sources` |
