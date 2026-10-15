@@ -1,13 +1,14 @@
 ---
 id: TSK-028
 title: Pre-launch post: per-icon color result
-status: active
+status: complete
 priority: P2
 tags: [traction, launch, content]
 created: 2026-10-07
 source: manual
 depends-on: []
 started: 2026-10-12
+completed: 2026-10-15
 ---
 
 # Pre-launch post: per-icon color result
@@ -28,6 +29,7 @@ Build in public before the 12-week clock starts (docs/traction.md, pre-launch). 
 
 ## Learnings
 
+- LRN-037: LinkedIn article publish dialog replaces a separate share post
 ## Progress Log
 
 - [2026-10-07] Created
@@ -41,3 +43,4 @@ Build in public before the 12-week clock starts (docs/traction.md, pre-launch). 
 - [2026-10-15] LinkedIn flow confirmed in LinkedIn Help: the publish step has a "Tell your network what your article is about" field, so the share post is now that commentary (no article link, #astro added); it covers criterion 3 together with the X thread. X post 5 trimmed to 264 characters. Cover: https://svgworm.com/og.png; the before/after PNG stays in the body (kept off-brand by the maintainer's choice).
 - [2026-10-15] Publishing kit v2: https://claude.ai/artifact/BGfv7yrCfdsFeZXRCPfWFK (cover, title, article, SEO title and description, commentary, thread). docs/metrics/manual.json has no post-date field and the snapshot script reads only known keys, so the date goes in this task; criterion 4 needs rewording or a manual.json field when the maintainer reports back.
 - [2026-10-15] Published by the maintainer on 2026-10-15: LinkedIn article (cover og.png, before/after PNG in the body, commentary in the publish dialog) and the 5-post X thread. Date recorded here and in docs/metrics/manual.json under a new posts field (documented in docs/metrics/README.md; the snapshot script does not read it). Article and thread URLs not yet recorded.
+- [2026-10-15] Completed

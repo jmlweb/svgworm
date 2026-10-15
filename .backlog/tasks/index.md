@@ -5,14 +5,13 @@
 | Status | Count |
 |--------|-------|
 | Pending | 10 |
-| Active | 4 |
+| Active | 3 |
 | Blocked | 0 |
-| Complete | 26 |
+| Complete | 27 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
-- TSK-028: Pre-launch post: per-icon color result (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-031: Agent discoverability: Context7, agent skill, AGENTS.md snippet (P2)
 
@@ -35,6 +34,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | 2026-10-14 |
@@ -44,4 +44,3 @@
 | TSK-015 | svgworm init: interactive setup for Next.js | 2026-10-12 |
 | TSK-016 | examples/next-app-router: Next 16 Turbopack example | 2026-10-12 |
 | TSK-017 | Discovery docs and honest comparison page | 2026-10-12 |
-| TSK-018 | Release v0.1.0 to npm | 2026-10-12 |
