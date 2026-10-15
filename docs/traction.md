@@ -62,7 +62,7 @@ Agents find tools through docs they fetch, search results, and training data, an
 | Target-list PRs opened / merged | Leading | Manual |
 | Agent eval: guided success, unprompted pick rate | Leading | Agent eval script |
 
-A weekly snapshot script (extending TSK-020) appends these to a log so the 12-week review has history, not one data point.
+A weekly snapshot script (TSK-033; TSK-020 is the review) appends these to a log so the 12-week review has history, not one data point.
 
 ## Tasks
 
@@ -78,3 +78,4 @@ A weekly snapshot script (extending TSK-020) appends these to a log so the 12-we
 | TSK-031 Agent discoverability: Context7, skill, AGENTS.md snippet | Agent |
 | TSK-032 Agent eval harness | Agent |
 | TSK-033 Weekly traction metrics snapshot | Metrics |
+| TSK-053 Newsletter submissions | Human |

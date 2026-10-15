@@ -14,10 +14,10 @@ _Date: 2026-10-07. Based on the `main` prototype (last commit Jan 2025) and a re
 |------|------|-------|
 | Sprite generation (`<symbol>` + `<use>`) | Low | Standard technique, supported by all modern browsers |
 | SVG optimization | Low | Mature optimizers exist (the prototype used svgo) |
-| Type generation | Low | A string-literal union or `as const` array. TS performance at very large counts needs checking |
+| Type generation | Low | A string-literal union or `as const` array. Measured in [ADR-0014](adr/0014-icon-name-type-shape.md): 20,000 names check in 0.14 s |
 | React Server Components | Low | A hook-free component that renders `<svg><use/></svg>` is RSC-safe by construction |
 | External sprite + gradients/masks/clipPath/filters | **Medium** | Historic browser quirks with paint servers referenced inside external `<use>`. **Spike required** |
-| Cross-origin sprites (CDN on another domain) | **Medium** | `<use href>` to another origin is blocked. We need a documented constraint or a workaround |
+| Cross-origin sprites (CDN on another domain) | **Medium** | `<use href>` to another origin is blocked. We need a documented constraint or a workaround (opt-in workaround: TSK-067) |
 | Getting the hashed sprite URL into apps | **Medium** | Each framework or bundler serves static assets differently. Needs a framework-agnostic manifest plus guidance. Addressed by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md): a generated module and JSON manifest with a configured `publicPath`, verified in Next.js 16 and plain HTML |
 | Color classification per icon | Medium | Heuristics for mono, stroke, and multicolor. Needs a fixture corpus |
 | Determinism | Low | A matter of discipline: sorting and content hashing |
@@ -81,6 +81,6 @@ Checked on 2026-10-08 against the [docs](https://neodx.pages.dev/svg/) and npm. 
 ## Go / no-go criteria for v1
 
 - [x] Spike shows external sprites render gradients, masks, and clipPath correctly in current Chromium, Firefox, and WebKit, or we document a fallback (inline those icons only). They don't in WebKit. The fallback is a zero-JS SVG-stack file (`<img>`, or a CSS mask for mono), not inline. See [ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md).
-- [ ] The URL delivery approach works in at least plain HTML, Next.js App Router, and Vite without a bundler plugin.
+- [ ] The URL delivery approach works in at least plain HTML, Next.js App Router, and Vite without a bundler plugin. (Plain HTML, Next.js and Astro verified, [ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md); Vite: TSK-024.)
 - [x] Color classification is correct on ≥95% of the fixture corpus, with an override for each icon. 99.98% on 31,390 icons, see [ADR-0004](adr/0004-per-icon-color-classification.md).
-- [ ] Type-checking stays fast with 5,000 icon names. Deferred past v0.1 by [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md); v0.1 uses a plain union.
+- [x] Type-checking stays fast with 5,000 icon names. 20,000 names check in 0.14 s on TypeScript 6 and 0.05 s on TypeScript 7; the plain union stays ([ADR-0014](adr/0014-icon-name-type-shape.md)).

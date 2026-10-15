@@ -2,7 +2,7 @@
 
 **Posted 2026-10-12:** [#186](https://github.com/secundant/neodx/issues/186) (Turbopack), [#187](https://github.com/secundant/neodx/issues/187) (SSR inject blanks, mask recolor), [#188](https://github.com/secundant/neodx/issues/188) (NFC/NFD ids). The drafts below are kept as the record of what was reported.
 
-Principle "be fair to competitors" ([traction.md](../traction.md)): report what the [TSK-007 spike](../../spikes/TSK-007-neodx-next/RESULTS.md) found before publishing the comparison, and link the issues from [comparison.md](../comparison.md) once they exist. Tracker: <https://github.com/secundant/neodx/issues>. On 2026-10-12 no open or closed issue there mentions Turbopack, SSR injection, or Unicode normalization (`gh search issues --repo secundant/neodx turbopack`, `"ssr OR inject"`, `"NFD OR normalize"` all return nothing), so these would not be duplicates.
+Principle "be fair to competitors" ([traction.md](../traction.md)): report what the [TSK-007 spike](../../spikes/TSK-007-neodx-next/RESULTS.md) found before publishing the comparison, and link the issues from the [comparison page](https://svgworm.com/docs/comparison/) once they exist. Tracker: <https://github.com/secundant/neodx/issues>. On 2026-10-12 no open or closed issue there mentions Turbopack, SSR injection, or Unicode normalization (`gh search issues --repo secundant/neodx turbopack`, `"ssr OR inject"`, `"NFD OR normalize"` all return nothing), so these would not be duplicates.
 
 Tested version: `@neodx/svg` 1.1.1 (latest on npm, published 2026-08-25) in Next.js 16.4.0 with Turbopack, React 19.3.0, Node 24.13. Repro: `spikes/TSK-007-neodx-next` in this repo (`pnpm install && pnpm build`). Before posting, re-run it against the current neodx release, and paste the exact commit of the spike folder in each issue.
 
@@ -70,6 +70,5 @@ Suggestion: normalize path segments to NFC before deriving names and ids, and do
 
 ## After posting
 
-- Add the three issue URLs to the @neodx/svg table in [comparison.md](../comparison.md).
-- Log the date in TSK-029 and close it.
+- Done: the three issue URLs are in the site's comparison page (`apps/site/src/content/docs/comparison.md`) and TSK-029 is complete. If a maintainer fixes one, update that row.
 - If a maintainer fixes any of them, update the comparison row: it must describe the current release, not the one we tested.

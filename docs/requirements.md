@@ -39,6 +39,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-42** Accessible by default: decorative icons are `aria-hidden`, and a `title` prop makes an icon labelled. _[v0.1]_
 - **R-43** Size and color are set through standard SVG props or CSS. No custom styling API. _[v0.1]_
 - **R-44** Works with multiple sprites or namespaces without the caller knowing which sprite an icon lives in. _[v0.1 single sprite; multi-sprite post-v0.1]_
+- **R-45** `svgworm init` can generate a dependency-free `Icon.astro` with the same delivery forms, accessibility defaults and typed names as the React `Icon`. _[v0.2]_ Rules: [ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md).
 
 ## Non-functional
 

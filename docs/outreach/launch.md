@@ -11,9 +11,9 @@ Structure (each claim links to its spike or the example):
 1. The symptom: SVGR turns every icon into JavaScript; sprite plugins break under Turbopack or flatten colors. One paragraph, no adjectives.
 2. What svgworm does in 5 commands: install, `svgworm init --yes`, `svgworm`, `<Icon name="…" />`, `svgworm check` in CI. Copy from the README quick start.
 3. The two results: per-icon color (31k icons, 99.98%, zero recolored; link the pre-launch post) and gradients/masks that render in Chromium, Firefox and WebKit through the stack file ([TSK-002](../../spikes/TSK-002-external-use/RESULTS.md), [TSK-004](../../spikes/TSK-004-sprite-url/RESULTS.md)).
-4. The Turbopack comparison with @neodx/svg, pointing at the upstream issues we opened ([neodx-issues.md](neodx-issues.md)) and at [comparison.md](../comparison.md), including where neodx or SVGR is the better pick.
+4. The Turbopack comparison with @neodx/svg, pointing at the upstream issues we opened ([neodx-issues.md](neodx-issues.md)) and at the [comparison page](https://svgworm.com/docs/comparison/), including where neodx or SVGR is the better pick.
 5. Zero client JS, proven: the example's chunk check ([examples/next-app-router](../../examples/next-app-router)).
-6. What it does not do (several sprites, inline sprite, other frameworks) and the kill criteria, in the open: we review adoption on 2027-01-05, 12 weeks after publish.
+6. What it does not do (several sprites, inline sprite, frameworks other than React and Astro) and the kill criteria, in the open: we review adoption on 2027-01-05, 12 weeks after publish.
 
 ## Submissions (launch week)
 

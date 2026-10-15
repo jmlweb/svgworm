@@ -1,29 +1,29 @@
 /* Tokens follow the svgworm design system (palette, type, spacing, radius), used as guidance. */
 @font-face {
-  font-family: 'Bricolage Grotesque';
+  font-family: "Bricolage Grotesque";
   font-style: normal;
   font-display: swap;
   font-weight: 200 800;
-  src: url('/fonts/bricolage-grotesque-latin-opsz-normal.woff2')
-    format('woff2-variations');
+  src: url("/fonts/bricolage-grotesque-latin-opsz-normal.woff2")
+    format("woff2-variations");
 }
 
 @font-face {
-  font-family: 'Instrument Sans';
+  font-family: "Instrument Sans";
   font-style: normal;
   font-display: swap;
   font-weight: 400 700;
-  src: url('/fonts/instrument-sans-latin-wght-normal.woff2')
-    format('woff2-variations');
+  src: url("/fonts/instrument-sans-latin-wght-normal.woff2")
+    format("woff2-variations");
 }
 
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: "JetBrains Mono";
   font-style: normal;
   font-display: swap;
   font-weight: 100 800;
-  src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2')
-    format('woff2-variations');
+  src: url("/fonts/jetbrains-mono-latin-wght-normal.woff2")
+    format("woff2-variations");
 }
 
 :root {
@@ -70,9 +70,9 @@
   --astro-code-token-punctuation: #c4a88c;
   --astro-code-token-link: var(--term-string);
 
-  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -151,7 +151,7 @@ h1 {
   font-size: clamp(48px, 7.5vw, 92px);
   line-height: 0.92;
   letter-spacing: -0.04em;
-  font-variation-settings: 'opsz' 96;
+  font-variation-settings: "opsz" 96;
 }
 
 h2 {
@@ -159,7 +159,7 @@ h2 {
   font-size: clamp(32px, 4.5vw, 52px);
   line-height: 1;
   letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 72;
+  font-variation-settings: "opsz" 72;
 }
 
 h3 {
@@ -234,7 +234,7 @@ pre {
 }
 
 .site-header nav a:hover,
-.site-header nav a[aria-current='page'] {
+.site-header nav a[aria-current="page"] {
   color: var(--accent);
 }
 
@@ -547,8 +547,8 @@ pre {
 }
 
 .soil-toggle[hidden],
-.soil-toggle[aria-pressed='true'] .soil-toggle-pause,
-.soil-toggle[aria-pressed='false'] .soil-toggle-play {
+.soil-toggle[aria-pressed="true"] .soil-toggle-pause,
+.soil-toggle[aria-pressed="false"] .soil-toggle-play {
   display: none;
 }
 
@@ -1272,7 +1272,7 @@ h1 {
   background: var(--surface-raised);
 }
 
-.docs-nav a[aria-current='page'] {
+.docs-nav a[aria-current="page"] {
   background: var(--accent-soft);
   color: var(--accent);
   font-weight: 600;
@@ -1417,23 +1417,57 @@ h1 {
 }
 
 .docs-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
   padding: 0;
   list-style: none;
 }
 
 .docs-list li {
-  margin-bottom: var(--space-6);
+  margin: 0;
 }
 
-.docs-list a {
-  font-family: var(--font-display);
+/* Same card as the landing .tile, as one link so the whole card is the target. */
+.docs-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-6);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.docs-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--hairline));
+  box-shadow: var(--shadow);
+}
+
+.prose .docs-card h2 {
+  margin: 0;
   font-size: 22px;
-  font-weight: 700;
 }
 
-.docs-list p {
-  margin: var(--space-1) 0 0;
+.docs-card p {
+  flex: 1;
+  margin: 0;
   color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.docs-card-more {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 @media (max-width: 800px) {
@@ -1454,6 +1488,11 @@ h1 {
 
   /* Headings are a tap away on the page itself; the chip row stays short. */
   .docs-toc {
+    display: none;
+  }
+
+  /* On the index the cards already list every page. */
+  .docs-index .docs-nav {
     display: none;
   }
 }

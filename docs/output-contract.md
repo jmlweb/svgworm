@@ -240,3 +240,5 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
   - `mask` (mono with references): an element masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
 - Adds `aria-hidden="true"` unless a title or label is given; with a title it renders `role="img"` and a `<title>`
 - Takes no part in SVG processing
+
+The `Icon.astro` that `svgworm init` generates for Astro ([ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md)) follows the same rules and renders the same markup.

@@ -9,7 +9,7 @@ svgworm is a CLI. It reads a folder of `.svg` files and writes a content-hashed 
 
 Facts an agent should rely on:
 
-- Everything is non-interactive when stdout is not a TTY or with `--yes`/`--json`. Exit codes: `0` ok, `1` invalid input or stale output, `2` usage or config error.
+- Only `init` can prompt, and only when stdin and stdout are terminals outside CI; with `--yes`, `--json` or a pipe it is non-interactive. Exit codes: `0` ok, `1` invalid input or stale output, `2` usage or config error.
 - Icon names come from file paths: `icons/social/github.svg` is `social/github`. Names are lowercase, `-` separated, with folders as namespaces. `<Icon name="nope" />` is a type error in `astro check`.
 - Color is decided per icon: mono icons follow `currentColor`, multicolor icons keep their colors. Icons with gradients, masks, clip paths or filters are delivered from a second "stack" file as `<img>` or a CSS mask, because WebKit cannot render those through an external `<use>`.
 - Sprites must be same-origin. `publicPath` must start with `/` and include the Astro `base` when there is one. `init` does not read `astro.config.*`.
@@ -110,6 +110,6 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 
 If an icon renders black instead of following the text color, it was classified multicolor (it has more than one color). Add `{ "match": "<name>", "color": "mono" }` only if the icon really is single-color.
 
-## Not in v0.1
+## Not supported yet
 
 Several sprites, inline sprite output, a Vite recipe. Status, flags and the output contract: https://github.com/jmlweb/svgworm/blob/main/llms.txt

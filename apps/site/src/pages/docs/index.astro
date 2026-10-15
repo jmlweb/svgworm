@@ -14,17 +14,26 @@ const docs = (await getCollection('docs')).toSorted(
   description="Guides and references for svgworm: set it up in Next.js or Astro, every CLI command and flag, the config file, and how it compares with other SVG icon tools."
   path="/docs/"
 >
-  <div class="wrap docs-layout">
+  <div class="wrap docs-layout docs-index">
     <DocsNav current="/docs/" docs={docs} />
     <main class="docs-main" id="content">
       <article class="prose">
         <h1>svgworm docs</h1>
+        <p class="lede">
+          Set svgworm up in your framework, then look up any command or config
+          key.
+        </p>
         <ul class="docs-list">
           {
             docs.map((doc) => (
               <li>
-                <a href={`/docs/${doc.id}/`}>{doc.data.title}</a>
-                <p>{doc.data.description}</p>
+                <a class="docs-card" href={`/docs/${doc.id}/`}>
+                  <h2>{doc.data.navTitle ?? doc.data.title}</h2>
+                  <p>{doc.data.description}</p>
+                  <span aria-hidden="true" class="docs-card-more">
+                    Read →
+                  </span>
+                </a>
               </li>
             ))
           }

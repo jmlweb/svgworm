@@ -10,7 +10,7 @@ Measures whether an AI agent can set svgworm up from the docs alone (TSK-032, [t
 Needs Claude Code (`claude`) logged in, pnpm, and `pnpm build` in this repo for `--local`.
 
 ```bash
-node evals/agent/run.mjs --mode guided --local      # until v0.1.0 is on npm
+node evals/agent/run.mjs --mode guided --local      # evaluate unreleased local changes
 node evals/agent/run.mjs --mode unprompted --local
 node evals/agent/run.mjs --mode guided              # against the published packages
 ```

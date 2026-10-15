@@ -1,6 +1,6 @@
-# Your multicolor icons turn black because the sprite tool guessed wrong (draft)
+# Your multicolor icons turn black because the sprite tool guessed wrong
 
-> Draft for a LinkedIn article (TSK-028). Target: a Next.js developer whose design team exports SVGs with hardcoded colors. Lead with the symptom, show the numbers, link every claim to the spike. Record the publish date and URLs in TSK-028. Cover: https://svgworm.com/og.png (1200x630, on-brand). Body image: `per-icon-color.png` (see the end); at about 2.1:1 it would be cropped as a 16:9 cover. LinkedIn articles have no tables and no code formatting, and they do not parse Markdown: paste rich text rendered from this file, with the results table as a list.
+> Published 2026-10-15 as a LinkedIn article, a LinkedIn post and an X thread (TSK-028); this file is the record. Target: a Next.js developer whose design team exports SVGs with hardcoded colors. Lead with the symptom, show the numbers, link every claim to the spike. Cover: https://svgworm.com/og.png (1200x630, on-brand). Body image: `per-icon-color.png` (see the end); at about 2.1:1 it would be cropped as a 16:9 cover. LinkedIn articles have no tables and no code formatting, and they do not parse Markdown: paste rich text rendered from this file, with the results table as a list.
 
 You export icons from Figma. Some are one color and should follow the text color. Some are logos, flags, illustrations, and should stay exactly as drawn. You drop them in a sprite tool, and it does one of two things: it leaves the fills alone, so your "mono" icons stay `#1E1E1E` forever and ignore dark mode, or it replaces every fill with `currentColor`, and your logos come out as black blobs.
 

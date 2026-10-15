@@ -9,5 +9,5 @@
   - `agent-skills:spec-driven-development` before a large feature
   - `agent-skills:documentation-and-adrs` when writing ADRs
   - `agent-skills:doubt-driven-development` for output-contract changes (it's a public API)
-  - `context7-mcp` before relying on any library's API
+  - the Context7 MCP tools (`resolve-library-id`, `query-docs`) before relying on any library's API
 - Independent spikes can run in parallel with `/flowstate:parallel` (worktree isolation).

@@ -17,7 +17,7 @@ A CLI that generates cacheable, hashed sprite files, a manifest, and types from 
 
 - Front-end teams with a custom icon set (design-system owners).
 - Apps that render on the server (React Server Components, SSR, static sites) and care about HTML size and JS budget.
-- Framework-agnostic consumers (plain HTML, Vue, Svelte) through the core output. Adapters come later.
+- Framework-agnostic consumers (plain HTML, Vue, Svelte) through the core output. Astro is supported through a generated `Icon.astro`; other adapters come later.
 
 ## Positioning
 
@@ -39,5 +39,5 @@ Table stakes, needed but not the pitch: an external hashed sprite with a manifes
 - Fetching icon sets from remote sources (Iconify etc.)
 - Raster output (PNG) or icon fonts
 - Visual editing of icons
-- Adapters other than React (they come after the core contract is stable)
+- Framework adapter packages other than `@svgworm/react` (Astro is covered by a generated `Icon.astro`, [ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md); further adapters come after the core contract is stable)
 - Runtime icon loading by name from a server
