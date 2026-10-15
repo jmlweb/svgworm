@@ -1400,6 +1400,36 @@ h1 {
   color: var(--accent);
 }
 
+/* Top-level numbered steps in a guide get the landing's circled counters. */
+.prose > ol {
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.prose > ol > li {
+  position: relative;
+  margin-bottom: var(--space-6);
+  padding-left: calc(36px + var(--space-4));
+}
+
+.prose > ol > li::before {
+  content: counter(step);
+  counter-increment: step;
+  position: absolute;
+  top: -4px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
 /* Callouts use design system tokens only. Kinds differ by label; sienna is decorative, so it
    only colors the rule, never the text. */
 .alert {
@@ -1490,6 +1520,86 @@ h1 {
   margin: 0;
 }
 
+/* Docs index (TSK-070): quickstart first, the two setup guides, then a compact reference row. */
+.prose .docs-quickstart {
+  margin: 0 0 var(--space-2);
+  font-size: 15px;
+}
+
+.docs-quickstart-note {
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.prose .docs-group-title {
+  margin: var(--space-8) 0 var(--space-3);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.docs-list-setup {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* The references as rows, not cards: no orphan card at any width. */
+.prose .docs-ref {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+  list-style: none;
+}
+
+.prose .docs-ref li {
+  margin: 0;
+  max-width: none;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.docs-ref a {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 3fr;
+  gap: var(--space-1) var(--space-6);
+  padding: var(--space-3) var(--space-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.docs-ref a:hover {
+  background: var(--surface-raised);
+}
+
+.docs-ref a:hover strong {
+  color: var(--accent);
+}
+
+.docs-ref strong {
+  font-weight: 600;
+}
+
+.docs-ref span {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .docs-ref a {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.docs-compare {
+  margin-top: var(--space-6);
+  color: var(--ink-muted);
+}
+
+.docs-card-more svg {
+  vertical-align: -0.15em;
+}
+
 /* Same card as the landing .tile, as one link so the whole card is the target. */
 .docs-card {
   display: flex;
@@ -1514,9 +1624,10 @@ h1 {
   box-shadow: var(--shadow);
 }
 
-.prose .docs-card h2 {
+.prose .docs-card h3 {
   margin: 0;
   font-size: 22px;
+  font-weight: 700;
 }
 
 .docs-card p {

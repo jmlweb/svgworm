@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 23 |
+| Pending | 22 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 51 |
+| Complete | 52 |
 
 ## Active Tasks
 
@@ -38,7 +38,6 @@
 | TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
 | TSK-069 | Copy button on docs code blocks | P3 | site, docs, ux | 2026-10-15 |
-| TSK-070 | Redesign the docs index | P3 | site, docs, design | 2026-10-15 |
 | TSK-071 | Docs: on-this-page right rail with scroll-spy | P4 | site, docs, design | 2026-10-15 |
 | TSK-072 | Docs: heading anchor links | P4 | site, docs, ux | 2026-10-15 |
 

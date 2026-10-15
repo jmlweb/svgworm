@@ -1,17 +1,47 @@
 ---
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 import DocsNav from '../../components/DocsNav.astro';
+import Icon from '../../components/Icon.astro';
 import Base from '../../layouts/Base.astro';
 
 const docs = (await getCollection('docs')).toSorted(
   (a, b) => a.data.order - b.data.order,
 );
+
+// Start here, then the references, then the comparison as one line (TSK-070).
+const byId = new Map(docs.map((doc) => [doc.id, doc]));
+const pick = (id: string): CollectionEntry<'docs'> => {
+  const doc = byId.get(id);
+  if (!doc) throw new Error(`docs index: no doc with id "${id}"`);
+  return doc;
+};
+const setup = [pick('nextjs'), pick('astro')];
+const reference = [
+  pick('icon'),
+  pick('cli'),
+  pick('config'),
+  pick('troubleshooting'),
+  pick('how-it-works'),
+];
+const comparison = pick('comparison');
+const listed = new Set([...setup, ...reference, comparison].map((d) => d.id));
+const unlisted = docs.filter((doc) => !listed.has(doc.id));
+if (unlisted.length > 0) {
+  throw new Error(
+    `docs index: add ${unlisted.map((d) => d.id).join(', ')} to a group`,
+  );
+}
+
+const title = (doc: CollectionEntry<'docs'>) =>
+  doc.data.navTitle ?? doc.data.title;
+const quickstart = 'pnpm add -D svgworm && pnpm svgworm init';
 ---
 
 <Base
   title="svgworm docs"
-  description="Guides and references for svgworm: set it up in Next.js or Astro, every CLI command and flag, the config file, and how it compares with other SVG icon tools."
+  description="Guides and references for svgworm: set it up in Next.js or Astro, the Icon component, every CLI command and flag, the config file, troubleshooting, how it works, and how it compares with other SVG icon tools."
   path="/docs/"
 >
   <div class="wrap docs-layout docs-index">
@@ -20,24 +50,53 @@ const docs = (await getCollection('docs')).toSorted(
       <article class="prose">
         <h1>svgworm docs</h1>
         <p class="lede">
-          Set svgworm up in your framework, then look up any command or config
-          key.
+          One command sets a project up. Then pick your framework.
         </p>
-        <ul class="docs-list">
+        <p class="install docs-quickstart">
+          <span aria-hidden="true" class="t-prompt">$</span>
+          <code>{quickstart}</code>
+        </p>
+        <p class="docs-quickstart-note">
+          With npm: <code>npm install -D svgworm && npx svgworm init</code>.
+          React and Next.js also need <code>@svgworm/react</code>.
+        </p>
+
+        <h2 class="docs-group-title">Set up</h2>
+        <ul class="docs-list docs-list-setup">
           {
-            docs.map((doc) => (
+            setup.map((doc) => (
               <li>
                 <a class="docs-card" href={`/docs/${doc.id}/`}>
-                  <h2>{doc.data.navTitle ?? doc.data.title}</h2>
+                  <h3>{title(doc)}</h3>
                   <p>{doc.data.description}</p>
                   <span aria-hidden="true" class="docs-card-more">
-                    Read →
+                    Read <Icon name="arrow-right" />
                   </span>
                 </a>
               </li>
             ))
           }
         </ul>
+
+        <h2 class="docs-group-title">Reference</h2>
+        <ul class="docs-ref">
+          {
+            reference.map((doc) => (
+              <li>
+                <a href={`/docs/${doc.id}/`}>
+                  <strong>{title(doc)}</strong>
+                  <span>{doc.data.description}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="docs-compare">
+          Coming from SVGR, @neodx/svg or a Vite plugin? Read the{' '}
+          <a href={`/docs/${comparison.id}/`}>{title(comparison)}</a>, with the
+          numbers behind each claim.
+        </p>
       </article>
     </main>
   </div>
