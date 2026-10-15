@@ -345,6 +345,17 @@
   font-size: 14px;
 }
 
+/* States where the figures come from (TSK-078). It sits in the grid's bottom padding, so the
+   band keeps its height. */
+.stats-caption {
+  display: block;
+  margin-block: -22px 0;
+  padding-bottom: var(--space-4);
+  color: #c4a88c;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 /* Sections */
 .section {
   padding-block: var(--space-20);

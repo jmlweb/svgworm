@@ -84,9 +84,10 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <span class="squiggle">Zero client JS.</span>
         </h1>
         <p class="lede">
-          svgworm digs through your folder of SVG files and leaves one
-          type-safe, content-hashed sprite behind. Render it in Next.js Server
-          Components or Astro, with no icon code in the browser.
+          Icon libraries ship a runtime and every icon as JavaScript, so icons
+          add to your bundle. svgworm digs through your folder of SVG files and
+          leaves one type-safe, content-hashed sprite behind. Render it in
+          Next.js Server Components or Astro with zero client JS for icons.
         </p>
         <Install id="hero" />
         <div class="actions">
@@ -140,6 +141,10 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
         <span>immutable browser cache</span>
       </div>
     </div>
+    <p class="wrap stats-caption">
+      These numbers are from this page's own build: the sprite it loads and the
+      headers it is served with.
+    </p>
   </section>
 
   <section aria-labelledby="why" class="section">
