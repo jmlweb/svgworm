@@ -51,4 +51,4 @@ The full docs as one text file: [llms-full.txt](https://svgworm.com/llms-full.tx
 
 ## Not supported yet
 
-Several sprites in one build (build one config per sprite instead: https://svgworm.com/docs/config/#several-sprites), inline sprite, frameworks other than React and Astro, and a preload hint for the sprite.
+Several sprites in one build (build one config per sprite instead: https://svgworm.com/docs/config/#several-sprites), inline sprite output (rejected: https://github.com/jmlweb/svgworm/blob/main/docs/adr/0024-no-inline-sprite-output.md), frameworks other than React and Astro, and a preload hint for the sprite.

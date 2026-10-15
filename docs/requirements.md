@@ -14,7 +14,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-10** One or more hashed sprite files, written to a directory I choose (usually a public or static folder). _[v0.1]_
 - **R-11** A manifest that maps each sprite to its public URL (with a configurable base path) and lists the icons in it. _[v0.1]_ Shape: [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md).
 - **R-12** Types that make icon names a compile-time check. _[v0.1]_
-- **R-13** Optional inline sprite output for small sets or single-file deliverables. _[post-v0.1]_
+- **R-13** Optional inline sprite output for small sets or single-file deliverables. _[rejected by [ADR-0024](adr/0024-no-inline-sprite-output.md)]_
 - **R-14** Output is byte-identical across runs and operating systems for the same input. _[v0.1]_
 - **R-15** Stale sprite files from earlier builds are cleaned up safely, removing only files svgworm created. _[v0.1]_ Name pattern and write order: [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md).
 

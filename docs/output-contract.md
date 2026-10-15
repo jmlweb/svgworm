@@ -7,7 +7,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 ## Scope and stability
 
 - **v0.1 scope:** one sprite group (`icons`), the manifest with `color: mono | multicolor` and its per-icon `delivery`, the types, and the naming rules below. Sprite files and stack files are both in scope because the delivery forms need them ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)).
-- **Not in v0.1:** multiple sprite groups or namespace-based splitting in one build ([ADR-0023](adr/0023-several-sprites-through-one-config-per-sprite.md): one config per sprite instead), inline sprite output ([Q-25](open-questions.md)). Per-namespace types were considered and rejected ([ADR-0014](adr/0014-icon-name-type-shape.md)). A consumer never sees these in v0.1 output.
+- **Not in v0.1:** multiple sprite groups or namespace-based splitting in one build ([ADR-0023](adr/0023-several-sprites-through-one-config-per-sprite.md): one config per sprite instead). Inline sprite output is rejected ([ADR-0024](adr/0024-no-inline-sprite-output.md)). Per-namespace types were considered and rejected ([ADR-0014](adr/0014-icon-name-type-shape.md)). A consumer never sees these in v0.1 output.
 - **0.x policy:** until `1.0.0`, a breaking change to the output contract is a **minor** bump, with a "Breaking" note in the changeset ([ADR-0009](adr/0009-license-versioning-and-release.md)). The manifest's `version` field changes only when the manifest format changes. `1.0.0` comes with its own ADR, when the contract is declared stable.
 - **Zero icons:** an error (exit code 2). No file is written.
 - **Byte-level details:** generated JSON and `.js`/`.d.ts` use LF, 2-space indent, `JSON.stringify` quoting, and one trailing newline. SVG bytes come from the pinned svgo version of [ADR-0008](adr/0008-tech-stack-and-package-layout.md) with the core's fixed config; TSK-011 pins and documents that config. Naming follows the Unicode tables of the supported Node range, and a character assigned in a newer Unicode version may name differently ([ADR-0007](adr/0007-icon-naming-and-collision-policy.md)).
@@ -108,7 +108,7 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
 
 ### 4. Inline sprite
 
-Not in v0.1. Inline output is deferred ([ADR-0005](adr/0005-build-standalone-with-kill-criteria.md), [Q-25](open-questions.md)), and no inline file or field is emitted.
+There is no inline sprite output ([ADR-0024](adr/0024-no-inline-sprite-output.md)): in a Server Component app the inline markup is sent twice per page (HTML and RSC payload) and is never cached on its own. No inline file or field is emitted.
 
 ## Icon naming
 

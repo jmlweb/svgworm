@@ -114,4 +114,4 @@ If an icon renders black instead of following the text color, it was classified 
 
 ## Not supported yet
 
-Several sprites in one build (use one config per sprite: https://svgworm.com/docs/config/#several-sprites), inline sprite output, frameworks other than React and Astro. Status, flags and the output contract: https://github.com/jmlweb/svgworm/blob/main/llms.txt
+Several sprites in one build (use one config per sprite: https://svgworm.com/docs/config/#several-sprites), inline sprite output (not planned, ADR-0024), frameworks other than React and Astro. Status, flags and the output contract: https://github.com/jmlweb/svgworm/blob/main/llms.txt
