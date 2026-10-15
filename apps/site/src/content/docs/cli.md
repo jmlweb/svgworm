@@ -19,6 +19,7 @@ svgworm init [options]       Set a project up: config, predev/prebuild scripts, 
   --module-dir <dir>      Where the manifest and types are written. Default: svgworm
   --flatten               Drop folder names from icon names (--no-flatten to undo)
   --json                  Print one JSON document on stdout and nothing else
+  --verbose               Print one line per icon (plain output only)
   -h, --help              Show this help
   -v, --version           Show the version
 ```
@@ -44,6 +45,8 @@ Flags override the config file. The same options are available as [config keys](
 ## Output
 
 At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time). When stdout is not a terminal, or with `--json`, the output is plain and stable, so scripts and AI agents can read it.
+
+The plain output lists the files written or removed, the warnings and errors, and the summary. It does not list every icon: with a large set that was thousands of lines per CI run. Pass `--verbose` to get one `icon <name> <color> <delivery>` line per icon. `--json` always includes every icon.
 
 ## init
 

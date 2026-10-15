@@ -21,6 +21,7 @@ Options:
   --module-dir <dir>      Where the manifest and types are written. Default: svgworm
   --flatten               Drop folder names from icon names (--no-flatten to undo)
   --json                  Print one JSON document on stdout and nothing else
+  --verbose               Print one line per icon (plain output only)
   -h, --help              Show this help
   -v, --version           Show the version
 

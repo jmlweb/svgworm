@@ -16,8 +16,16 @@ const describe = (
     ? `[${diagnostic.code}] ${diagnostic.message}`
     : `[${diagnostic.code}] ${diagnostic.file}: ${diagnostic.message}`;
 
-/** One stable line per event, then the summary. Diagnostics go to stderr. */
-export const createPlainReporter = (io: CliIo): Reporter => {
+export type PlainOptions = {
+  /** One `icon` line per icon. Off by default: 2,000 icons made 2,000 lines per CI run. */
+  readonly isVerbose: boolean;
+};
+
+/** Stable lines for the files and the summary. Diagnostics go to stderr. */
+export const createPlainReporter = (
+  io: CliIo,
+  options: PlainOptions = { isVerbose: false },
+): Reporter => {
   const style = createStyle(io.env);
   const out = (line: string): void => void io.stdout.write(`${line}\n`);
   const err = (line: string): void => void io.stderr.write(`${line}\n`);
@@ -29,9 +37,11 @@ export const createPlainReporter = (io: CliIo): Reporter => {
           out(`svgworm: reading ${String(event.total)} SVG file(s)`);
           break;
         case 'icon':
-          out(
-            `icon ${event.name} ${event.color} ${event.delivery}${event.fromCache ? ' (cached)' : ''}`,
-          );
+          if (options.isVerbose) {
+            out(
+              `icon ${event.name} ${event.color} ${event.delivery}${event.fromCache ? ' (cached)' : ''}`,
+            );
+          }
           break;
         case 'warning':
           err(`${style('yellow', 'warning')} ${describe(event.diagnostic)}`);

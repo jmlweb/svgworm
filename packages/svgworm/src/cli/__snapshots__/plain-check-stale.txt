@@ -1,8 +1,4 @@
 svgworm: reading 4 SVG file(s)
-icon brand/sunset multicolor img
-icon café mono mask
-icon plus mono use
-icon ui/check mono use
 check public/icons/icons.99b95777.svg missing
 check svgworm/icons.js changed
 check svgworm/icons.d.ts changed

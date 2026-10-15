@@ -10,6 +10,14 @@ describe('parseCliArgs', () => {
       configFile: undefined,
       overrides: {},
       isJson: false,
+      isVerbose: false,
+    });
+  });
+
+  it('takes --verbose for build, check and watch', () => {
+    expect(parseCliArgs(['--verbose'])).toMatchObject({ isVerbose: true });
+    expect(parseCliArgs(['check', '--verbose'])).toMatchObject({
+      isVerbose: true,
     });
   });
 
@@ -47,6 +55,7 @@ describe('parseCliArgs', () => {
       command: 'build',
       configFile: 'my.json',
       isJson: true,
+      isVerbose: false,
       overrides: {
         sources: ['a', 'b'],
         outDir: 'static',

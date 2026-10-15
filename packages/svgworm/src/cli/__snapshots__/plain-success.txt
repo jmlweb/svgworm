@@ -1,8 +1,4 @@
 svgworm: reading 4 SVG file(s)
-icon brand/sunset multicolor img
-icon café mono mask
-icon home mono use
-icon ui/check mono use
 write public/icons/icons.d907d82b.svg (289 B)
 write public/icons/icons.stack.91bff0b3.svg (661 B)
 write svgworm/icons.js (983 B)

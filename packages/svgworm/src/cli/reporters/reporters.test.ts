@@ -50,11 +50,20 @@ const stable = (text: string): string =>
     .replace(/^( {2}time {2,})\S+ \S+$/gm, '$1<time>');
 
 describe('plain reporter', () => {
-  it('prints one stable line per event, then the summary', async () => {
+  it('prints the files written and the summary, not one line per icon', async () => {
     const { stdout, stderr } = await exec(['--source', 'icons']);
     expect(stderr).toBe('');
+    expect(stdout).not.toMatch(/^icon /m);
     await expect(stable(stdout)).toMatchFileSnapshot(
       `${snapshots}plain-success.txt`,
+    );
+  });
+
+  it('prints one line per icon with --verbose', async () => {
+    const { stdout } = await exec(['--source', 'icons', '--verbose']);
+    expect(stdout).toContain('icon home mono use');
+    await expect(stable(stdout)).toMatchFileSnapshot(
+      `${snapshots}plain-success-verbose.txt`,
     );
   });
 
@@ -139,6 +148,16 @@ describe('plain reporter: missing config', () => {
 });
 
 describe('check reporters', () => {
+  it('plain: prints the verdict alone when up to date', async () => {
+    await exec(['--source', 'icons']);
+    const { code, stdout, stderr } = await exec(['check', '--source', 'icons']);
+    expect(code).toBe(0);
+    expect(stderr).toBe('');
+    expect(stdout).toBe(
+      'svgworm: reading 4 SVG file(s)\nsvgworm: output is up to date (5 file(s))\n',
+    );
+  });
+
   it('plain: lists stale files on stdout and the verdict on stderr', async () => {
     await exec(['--source', 'icons']);
     await rm(join(root, 'icons/home.svg'));

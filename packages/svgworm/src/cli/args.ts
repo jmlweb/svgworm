@@ -25,6 +25,8 @@ export type ParsedArgs =
       readonly configFile: string | undefined;
       readonly overrides: ConfigOverrides;
       readonly isJson: boolean;
+      /** `--verbose`: one plain line per icon, as before 0.3. */
+      readonly isVerbose: boolean;
     }
   | {
       readonly kind: 'init';
@@ -47,6 +49,7 @@ const OPTIONS = {
   'module-dir': { type: 'string' },
   flatten: { type: 'boolean' },
   json: { type: 'boolean' },
+  verbose: { type: 'boolean' },
   help: { type: 'boolean', short: 'h' },
   version: { type: 'boolean', short: 'v' },
   // init only
@@ -141,6 +144,7 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
       command,
       configFile: values.config,
       isJson: values.json === true,
+      isVerbose: values.verbose === true,
       // Only given flags become overrides, so a flag never blanks a config value.
       overrides: {
         ...(sources === undefined ? {} : { sources }),

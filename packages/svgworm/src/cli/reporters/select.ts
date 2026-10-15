@@ -12,9 +12,18 @@ export const isCi = (env: CliIo['env']): boolean => {
   );
 };
 
+export type ReporterOptions = {
+  readonly isJson: boolean;
+  /** Plain output lists every icon. The clack and JSON reporters ignore it. */
+  readonly isVerbose?: boolean;
+};
+
 /** `--json`, else clack on an interactive terminal outside CI, else plain (ADR-0008). */
-export const selectReporter = (io: CliIo, isJson: boolean): Reporter => {
-  if (isJson) return createJsonReporter(io);
+export const selectReporter = (
+  io: CliIo,
+  options: ReporterOptions,
+): Reporter => {
+  if (options.isJson) return createJsonReporter(io);
   if (io.isTTY && !isCi(io.env)) return createClackReporter(io);
-  return createPlainReporter(io);
+  return createPlainReporter(io, { isVerbose: options.isVerbose === true });
 };

@@ -25,7 +25,7 @@ export const run = async (
       io.stdout.write(`${readVersion()}\n`);
       return ExitCode.OK;
     case 'usage-error':
-      selectReporter(io, args.isJson).fatal(
+      selectReporter(io, { isJson: args.isJson }).fatal(
         `${args.message}\nRun "svgworm --help" for usage.`,
         FatalCode.USAGE,
       );
@@ -41,7 +41,7 @@ export const run = async (
       return runInitCommand(
         args.options,
         io,
-        selectReporter(io, args.isJson),
+        selectReporter(io, { isJson: args.isJson }),
         isInteractive,
       );
     }
@@ -51,7 +51,10 @@ export const run = async (
         configFile: args.configFile,
         overrides: args.overrides,
       };
-      const reporter = selectReporter(io, args.isJson);
+      const reporter = selectReporter(io, {
+        isJson: args.isJson,
+        isVerbose: args.isVerbose,
+      });
       switch (args.command) {
         case Command.BUILD:
           return runBuildCommand(input, reporter);
