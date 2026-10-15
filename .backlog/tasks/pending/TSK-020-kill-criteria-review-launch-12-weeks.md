@@ -1,12 +1,13 @@
 ---
 id: TSK-020
 title: Kill-criteria review: launch + 12 weeks
-status: pending
+status: blocked
 priority: P3
 tags: [measure, adr]
 created: 2026-10-07
 source: plan/PLN-001
 depends-on: []
+blocked-by: Review date is 2027-01-05 (launch + 12 weeks); report and ADR cannot be written earlier
 ---
 
 # Kill-criteria review: launch + 12 weeks
@@ -29,3 +30,4 @@ ADR-0005 criteria, reviewed 12 weeks after v0.1.0: at least 500 weekly npm downl
 
 - [2026-10-07] Created
 - [2026-10-12] Criterion 1 met by TSK-033: `node scripts/traction-snapshot.mjs --review` computes the three ADR-0005 criteria and the review date from manual.json launchDate. Report and ADR wait for launch + 84 days.
+- [2026-10-15] Blocked: Review date is 2027-01-05 (launch + 12 weeks); report and ADR cannot be written earlier
