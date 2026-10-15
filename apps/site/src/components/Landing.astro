@@ -51,7 +51,7 @@ const features: readonly Feature[] = [
 ];
 
 const swatches = ['#933a43', '#b07a52', '#3d7a5c', '#3b5f9a'] as const;
-const suggestions = ['terminal', 'shield-check', 'server'] as const;
+const suggestions = ['terminal'] as const;
 const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${terminalId}"/></svg>`;
 ---
 
@@ -60,7 +60,7 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="eyebrow">
-          <span class="dot"></span> v{version} on npm · MIT · Node 22.20+
+          <span class="dot"></span> v{version} on npm · MIT · Node ^22.20 || >=24.11
         </p>
         <h1>
           One sprite.
@@ -155,7 +155,7 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
           <pre class="code"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span></code></pre>
           <div aria-hidden="true" class="suggest">
             <p class="suggest-input">
-              <span class="c-tag">&lt;Icon</span>
+              <span class="c-tag">&lt;Icon</span>{' '}
               <span class="c-attr">name</span>=<span class="c-str">"te</span
               ><span class="caret"></span>
             </p>
@@ -254,7 +254,7 @@ pnpm svgworm</code></pre>
       <p class="section-lede">
         <code>{spriteUrl}</code>, rendered by the generated <code>Icon.astro</code
         > at build time and served with <code>Cache-Control: immutable</code>.
-        Open your network panel: no JavaScript, one SVG.
+        Open your network panel: no JavaScript, one icon sprite.
       </p>
       <div class="showcase-group">
         <h3>
@@ -292,8 +292,8 @@ pnpm svgworm</code></pre>
       <div class="color-demo">
         <p>
           Same sprite, same <code>&lt;use href&gt;</code>, decided per icon.
-          Change the text color: the mono folder follows it, the multicolor
-          snail keeps its own colors.
+          Each swatch sets a different text color: the mono folder follows it,
+          the multicolor snail keeps its own colors.
         </p>
         <div class="swatches">
           {
@@ -318,7 +318,8 @@ pnpm svgworm</code></pre>
           Everything works without a prompt: flags, <code>--json</code>, stable
           exit codes, a JSON Schema for the config, and{' '}
           <a href="/llms.txt">llms.txt</a>. The agent skills install
-          svgworm in a Next.js or an Astro app and fix every error code.
+          svgworm in a Next.js or an Astro app and explain each diagnostic code
+          with its fix.
         </p>
       </div>
       <figure class="terminal terminal-small">
