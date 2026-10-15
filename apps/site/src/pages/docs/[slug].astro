@@ -84,6 +84,24 @@ const html = rendered.replace(
         >
       </p>
     </main>
+    {
+      /* The sections as a right rail from 1200px (TSK-071); below that they stay nested in
+         the left nav. Without JavaScript it is a plain list of links. */
+      sections.length > 0 && (
+        <aside class="docs-rail">
+          <nav aria-label="On this page">
+            <p class="docs-nav-title">On this page</p>
+            <ul>
+              {sections.map((section) => (
+                <li>
+                  <a href={`#${section.slug}`}>{section.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )
+    }
   </div>
 
   {/* Copy buttons (TSK-069): the script adds one per code block, so without JavaScript there
@@ -96,6 +114,37 @@ const html = rendered.replace(
     </button>
   </template>
   <script>
+    // Scroll-spy for the right rail: the last heading above the top third of the viewport is
+    // the current section. Headings only, so the cost is one observer per h2.
+    const railLinks = [
+      ...globalThis.document.querySelectorAll<HTMLAnchorElement>('.docs-rail a'),
+    ];
+    const headings = railLinks
+      .map((link) =>
+        globalThis.document.getElementById(
+          decodeURIComponent(link.getAttribute('href')?.slice(1) ?? ''),
+        ),
+      )
+      .filter((heading): heading is HTMLElement => heading !== null);
+    if (headings.length > 0) {
+      const mark = () => {
+        const line = globalThis.innerHeight / 3;
+        const current = headings.findLast(
+          (heading) => heading.getBoundingClientRect().top <= line,
+        );
+        railLinks.forEach((link) => {
+          const isCurrent =
+            current !== undefined && link.getAttribute('href') === `#${current.id}`;
+          if (isCurrent) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      };
+      // Heading positions only change on scroll or resize, so no observer is needed.
+      globalThis.addEventListener('scroll', mark, { passive: true });
+      globalThis.addEventListener('resize', mark);
+      mark();
+    }
+
     const template =
       globalThis.document.querySelector<HTMLTemplateElement>('#copy-button');
     const blocks = globalThis.document.querySelectorAll<HTMLPreElement>(
