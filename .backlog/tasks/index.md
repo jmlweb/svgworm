@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 28 |
+| Pending | 27 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 46 |
+| Complete | 47 |
 
 ## Active Tasks
 
@@ -44,7 +44,6 @@
 | TSK-072 | Docs: heading anchor links | P4 | site, docs, ux | 2026-10-15 |
 | TSK-073 | Docs: Icon component reference page | P2 | docs, react, astro, a11y | 2026-10-15 |
 | TSK-074 | Docs: Troubleshooting page | P3 | docs, errors, dx | 2026-10-15 |
-| TSK-075 | Docs: --json output reference | P3 | docs, cli, agents | 2026-10-15 |
 | TSK-076 | Docs: How svgworm works concept page | P3 | docs, concepts | 2026-10-15 |
 
 ## Recently Completed

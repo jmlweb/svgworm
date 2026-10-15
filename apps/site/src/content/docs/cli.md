@@ -50,6 +50,95 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 
 The plain output lists the files written or removed, the warnings and errors, and the summary. It does not list every icon: with a large set that was thousands of lines per CI run. Pass `--verbose` to get one `icon <name> <color> <delivery>` line per icon. `--json` always includes every icon.
 
+## JSON output
+
+`--json` prints exactly one JSON document on stdout, pretty-printed, and nothing else there. Diagnostics still go to stderr as text, so a failing run stays readable in a log. `ok` always mirrors the exit code: `true` for `0`, `false` otherwise. Every document has `warnings` and `errors`, each a list of `{ "code", "file", "message" }`; `file` is the source path with `/` separators, or `""` for a problem with no file (a usage or config error has `code` `cli/usage`, an I/O failure `cli/unexpected`).
+
+### build document
+
+```json
+{
+  "ok": true,
+  "stats": {
+    "icons": 4,
+    "mono": 3,
+    "multicolor": 1,
+    "delivery": { "use": 2, "img": 1, "mask": 1 },
+    "sourceBytes": 820,
+    "spriteBytes": 289,
+    "stackBytes": 661,
+    "savingsBytes": -130,
+    "durationMs": 12.4
+  },
+  "icons": [
+    {
+      "name": "brand/sunset",
+      "id": "i-brand--sunset",
+      "viewBox": "0 0 24 24",
+      "color": "multicolor",
+      "delivery": "img",
+      "file": "icons/brand/sunset.svg"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}
+```
+
+`icons` lists every icon in name order, with the manifest fields (`name`, `id`, `viewBox`, `color`, `delivery`) plus the source `file`. On a failed build the document is `{ "ok": false, "stats": null, "icons": [], "warnings": [...], "errors": [...] }` and nothing is written.
+
+### check document
+
+The build document plus three fields:
+
+```json
+{
+  "ok": false,
+  "upToDate": false,
+  "differences": [
+    { "path": "public/icons/icons.6d36e3d0.svg", "status": "missing" },
+    { "path": "svgworm/manifest.json", "status": "changed" },
+    { "path": "public/icons/icons.d907d82b.svg", "status": "stale" }
+  ],
+  "iconDiff": { "added": [], "removed": ["home"] },
+  "stats": { "...": "as in build" },
+  "icons": [],
+  "warnings": [],
+  "errors": []
+}
+```
+
+`differences` lists every file a build would write or remove, expected files first in write order: `missing` (not on disk), `changed` (differs from what a build writes) or `stale` (a hashed sprite of an earlier build). `iconDiff` compares the icon names in the committed manifest with the new ones. `stale` is a deprecated alias of `differences`, kept until the next minor.
+
+### watch documents
+
+One build document per build, the first one for the initial build. Nothing is printed while it waits for a change.
+
+### init document
+
+```json
+{
+  "ok": true,
+  "framework": "react",
+  "frameworkSource": "detected",
+  "actions": [
+    { "path": "svgworm.config.json", "status": "created" },
+    { "path": "package.json", "status": "updated" },
+    { "path": "components/icon.tsx", "status": "skipped", "reason": "exists with different content; edit it by hand" }
+  ],
+  "build": { "ok": true, "icons": 1, "written": ["public/icons/icons.1f1ab2b4.svg", "svgworm/icons.js", "svgworm/icons.d.ts", "svgworm/manifest.json"] },
+  "nextSteps": ["Install: npm install -D svgworm", "..."],
+  "warnings": [],
+  "errors": []
+}
+```
+
+`framework` is `react`, `astro` or `null`; `frameworkSource` says why (`flag`, `prompt`, `detected` or `null`). Each action is a file `init` looked at, with `status` `created`, `updated`, `unchanged` or `skipped`, a `reason` when skipped, and a `warning` when the user must finish something by hand (a script `init` would not touch). `build` is the first build: `{ "ok": true, "icons", "written" }` or `{ "ok": false }` with the diagnostics in `errors`.
+
+### Stability
+
+Before 1.0 the documents can change in a minor version, never in a patch. A removed or renamed field stays as a deprecated alias for one minor (as `stale` does now), and every change is listed in the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/CHANGELOG.md) with its version. Fields are only added, never reordered, so read them by name. `durationMs` varies between runs; everything else is deterministic for the same input.
+
 ## init
 
 `svgworm init` prompts on a terminal and takes flags everywhere else:
@@ -78,7 +167,7 @@ Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scrip
 
 `svgworm check` compiles the icons and compares the result with the files on disk. It writes nothing. Run it in CI to fail the build when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed.
 
-With `--json`, the document has `ok` and `upToDate` (both `true` only when nothing would change), `differences` (every file a build would write or remove, as `{ "path", "status" }` with `status` one of `missing`, `changed` or `stale`), `iconDiff` (`added` and `removed` icon names), plus the `stats`, `icons`, `warnings` and `errors` of a build. `stale` is a deprecated alias of `differences`, kept until the next minor.
+With `--json`, the document adds `upToDate`, `differences` and `iconDiff` to the build document; see [JSON output](#check-document).
 
 ## watch
 
