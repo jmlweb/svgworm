@@ -137,6 +137,18 @@ const cases: readonly Case[] = [
     react: { title: 'Glyph', width: 20, height: 20, style: { opacity: 0.5 } },
     astro: { title: 'Glyph', width: 20, height: 20, style: 'opacity:0.5' },
   },
+  // Astro accepts object styles too (RPT-002): camelCase keys, bare numbers as px where
+  // React adds them, unitless ones as they are, custom properties untouched.
+  {
+    label: 'mask, object style',
+    name: 'glyph',
+    react: {
+      style: { opacity: 0.5, marginTop: 4, '--size': '2em', zIndex: 2 },
+    },
+    astro: {
+      style: { opacity: 0.5, marginTop: 4, '--size': '2em', zIndex: 2 },
+    },
+  },
 ];
 
 const renderAstro = (props: Record<string, unknown>) =>

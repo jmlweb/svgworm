@@ -677,7 +677,27 @@ const a11y =
 // A bare number is pixels, as in React's style prop.
 const length = (value: string | number | null): string =>
   typeof value === 'number' ? \`\${value}px\` : (value ?? '');
-const userStyle = typeof style === 'string' ? style : '';
+// Numbers that stay unitless, as in React, so an object style serializes the same way.
+const UNITLESS = new Set([
+  'opacity', 'z-index', 'zoom', 'order', 'flex', 'flex-grow', 'flex-shrink',
+  'font-weight', 'line-height', 'scale', 'aspect-ratio', 'tab-size',
+  'fill-opacity', 'stroke-opacity', 'stroke-width',
+]);
+const toProperty = (key: string): string =>
+  key.startsWith('--') ? key : key.replace(/[A-Z]/g, (c) => \`-\${c.toLowerCase()}\`);
+const userStyle =
+  typeof style === 'string'
+    ? style
+    : style && typeof style === 'object'
+      ? Object.entries(style)
+          .filter(([, value]) => value !== undefined && value !== null && value !== '')
+          .map(([key, value]) => {
+            const property = toProperty(key);
+            const unit = typeof value === 'number' && value !== 0 && !UNITLESS.has(property) ? 'px' : '';
+            return \`\${property}:\${String(value)}\${unit}\`;
+          })
+          .join(';')
+      : '';
 const maskStyle =
   icon.delivery === 'mask'
     ? \`display:inline-block;width:\${length(width)};height:\${length(height)};background-color:currentColor;mask:url("\${fileUrl('stack')}") center / contain no-repeat;\${userStyle}\`

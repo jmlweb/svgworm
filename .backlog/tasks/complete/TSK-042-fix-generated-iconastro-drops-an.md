@@ -1,12 +1,14 @@
 ---
 id: TSK-042
 title: Fix: Generated Icon.astro drops an object style on mask icons
-status: pending
+status: complete
 priority: P4
 tags: []
 created: 2026-10-15
 source: report/RPT-002
 depends-on: []
+started: 2026-10-15
+completed: 2026-10-15
 ---
 
 # Fix: Generated Icon.astro drops an object style on mask icons
@@ -27,10 +29,10 @@ Source: RPT-002.
 
 ## Acceptance Criteria
 
-- [ ] An object style on a mask-delivered icon reaches the span in the generated Icon.astro, as with createIcon
-- [ ] apps/site/tests/icon-conformance.test.ts covers a mask icon with an object style (test written first)
-- [ ] apps/site/src/components/Icon.astro is regenerated from the fixed template
-- [ ] A changeset records the generated-output change
+- [x] An object style on a mask-delivered icon reaches the span in the generated Icon.astro, as with createIcon — evidence: icon-conformance.test.ts case mask, object style: Astro output equals createIcon output → pass (2026-10-15)
+- [x] apps/site/tests/icon-conformance.test.ts covers a mask icon with an object style (test written first) — evidence: case added before the template fix and seen failing (object style dropped), then passing (2026-10-15)
+- [x] apps/site/src/components/Icon.astro is regenerated from the fixed template — evidence: pnpm --filter svgworm build, svgworm init --framework astro --yes in a scratch project, generated file diffed against apps/site/src/components/Icon.astro: only the userStyle hunk differs; copied in (2026-10-15)
+- [x] A changeset records the generated-output change — evidence: .changeset/astro-mask-object-style.md (2026-10-15)
 
 ## Notes
 
@@ -39,3 +41,6 @@ Source: RPT-002.
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Template in cli/init/plan.ts serializes object styles (kebab-case, px for non-unitless numbers, custom properties kept). Site Icon.astro regenerated. conformance 13 passed; typecheck, lint, format:check exit 0.
+- [2026-10-15] Completed
