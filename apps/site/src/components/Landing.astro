@@ -3,6 +3,8 @@ import { version } from 'svgworm/package.json';
 
 import { manifest } from '../../svgworm/icons.js';
 import type { IconName } from '../../svgworm/icons.js';
+import { migrationPrompts, setupPrompt } from '../lib/prompts';
+import CopyButtons from './CopyButtons.astro';
 import Icon from './Icon.astro';
 import Install from './Install.astro';
 import Soil from './Soil.astro';
@@ -138,6 +140,10 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           > for icons.
         </p>
         <Install id="hero" />
+        <div class="agent-prompt">
+          <p class="agent-prompt-label">Or paste this into your coding agent</p>
+          <pre aria-label="Prompt for your coding agent" class="code" data-copy role="region" tabindex="0"><code>{setupPrompt}</code></pre>
+        </div>
         <div class="actions">
           <a class="button" href="/docs/">
             Get started <Icon name="arrow-right" />
@@ -491,6 +497,18 @@ pnpm svgworm</code></pre>
         <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
 <span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
       </figure>
+      <div class="agent-migrate">
+        <h3>Migrating from another icon library?</h3>
+        <p>Paste one of these prompts into your agent.</p>
+        {
+          migrationPrompts.map((prompt) => (
+            <div class="agent-prompt">
+              <p class="agent-prompt-label">{prompt.label}</p>
+              <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </section>
 
@@ -498,7 +516,7 @@ pnpm svgworm</code></pre>
     <div class="wrap cta-inner">
       <h2 id="try">Point it at your icon folder.</h2>
       <p>
-        One <code>init</code>, Next.js or Astro, and your icons ship as <strong
+        One <code>init</code>, Next.js, Vite or Astro, and your icons ship as <strong
           >one cached file</strong
         >.
       </p>
@@ -514,3 +532,4 @@ pnpm svgworm</code></pre>
     </div>
   </section>
 </main>
+<CopyButtons />

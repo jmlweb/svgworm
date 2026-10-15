@@ -1,12 +1,13 @@
 ---
 id: TSK-089
 title: Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts)
-status: pending
+status: active
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-005
 depends-on: []
+started: 2026-10-15
 ---
 
 # Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts)
@@ -46,15 +47,15 @@ Make the landing page ready for agents and easy to copy from, following the patt
 
 ## Acceptance Criteria
 
-- [ ] Prompts live as data in apps/site/src/lib/prompts.ts and reference llms.txt or docs URLs, never CLI flags
-- [ ] Docs copy-button logic extracted into one shared script plus CopyBlock.astro; docs page uses it with no behavior change
-- [ ] Install.astro has a Vite tab, a copy button that copies the checked variant, and the stale client-JS comment removed
-- [ ] Hero shows one generic paste-into-your-agent prompt
-- [ ] #agents keeps skill commands and adds lucide-react and react-icons migration prompts
+- [x] Prompts live as data in apps/site/src/lib/prompts.ts and reference llms.txt or docs URLs, never CLI flags
+- [x] Docs copy-button logic extracted into one shared script plus CopyBlock.astro; docs page uses it with no behavior change
+- [x] Install.astro has a Vite tab, a copy button that copies the checked variant, and the stale client-JS comment removed
+- [x] Hero shows one generic paste-into-your-agent prompt
+- [x] #agents keeps skill commands and adds lucide-react and react-icons migration prompts
 - [ ] Each migration prompt passes an eval (evals/agent or by hand) or is dropped
-- [ ] CSP still covers all inline scripts (built _headers hash count checked)
-- [ ] llms.txt and README in sync if a prompt is shared
-- [ ] pnpm site:check passes
+- [x] CSP still covers all inline scripts (built _headers hash count checked)
+- [x] llms.txt and README in sync if a prompt is shared
+- [x] pnpm site:check passes
 
 ## Notes
 
@@ -63,3 +64,5 @@ Make the landing page ready for agents and easy to copy from, following the patt
 ## Progress Log
 
 - [2026-10-15] Created
+- [2026-10-15] Started
+- [2026-10-15] Implemented: prompts.ts, CopyButtons.astro (shared inline script, `[data-copy]` + `.prose pre`), copy styles moved to base.css, Vite tab, hero prompt, #agents migration prompts, #try copy names Vite. site:check passes (3 CSP hashes); checked 1280 and 360 widths. Migration-prompt eval NOT run (evals/agent has no migration mode, costs tokens). `pnpm lint` fails on a clean tree too (ESLint JSON parse), pre-existing.

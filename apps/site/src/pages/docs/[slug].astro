@@ -3,8 +3,8 @@ import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import '../../styles/docs.css';
+import CopyButtons from '../../components/CopyButtons.astro';
 import DocsNav from '../../components/DocsNav.astro';
-import Icon from '../../components/Icon.astro';
 import Base from '../../layouts/Base.astro';
 
 export const getStaticPaths = async () => {
@@ -128,15 +128,7 @@ const html = withAnchors.replace(
     }
   </div>
 
-  {/* Copy buttons (TSK-069): the script adds one per code block, so without JavaScript there
-      is no button. Docs pages only; the landing page stays script-free for icons. The icon
-      comes from the sprite through this template. */}
-  <template id="copy-button">
-    <button class="copy-button" type="button">
-      <Icon name="copy" />
-      <span class="copy-button-label">Copy</span>
-    </button>
-  </template>
+  <CopyButtons />
   <script>
     // Scroll-spy for the right rail: the last heading above the top third of the viewport is
     // the current section. Headings only, so the cost is one observer per h2.
@@ -167,35 +159,6 @@ const html = withAnchors.replace(
       globalThis.addEventListener('scroll', mark, { passive: true });
       globalThis.addEventListener('resize', mark);
       mark();
-    }
-
-    const template =
-      globalThis.document.querySelector<HTMLTemplateElement>('#copy-button');
-    const blocks = globalThis.document.querySelectorAll<HTMLPreElement>(
-      '.prose pre',
-    );
-    if (template && 'clipboard' in globalThis.navigator) {
-      blocks.forEach((pre) => {
-        const button = template.content.firstElementChild?.cloneNode(true);
-        if (!(button instanceof globalThis.HTMLButtonElement)) return;
-        const label = button.querySelector('.copy-button-label');
-        button.setAttribute('aria-label', 'Copy code');
-        button.addEventListener('click', async () => {
-          const text = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
-          try {
-            await globalThis.navigator.clipboard.writeText(text);
-            if (label) label.textContent = 'Copied';
-            button.setAttribute('aria-label', 'Copied');
-          } catch {
-            if (label) label.textContent = 'Press Ctrl+C';
-          }
-          globalThis.setTimeout(() => {
-            if (label) label.textContent = 'Copy';
-            button.setAttribute('aria-label', 'Copy code');
-          }, 2000);
-        });
-        pre.append(button);
-      });
     }
   </script>
 </Base>

@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+---
+
+{/* Copy buttons (TSK-069, TSK-089): the script adds one to every docs code block and to every
+    [data-copy] element, so without JavaScript there is no button. A hidden element (an install
+    variant that is not checked) has a hidden button, so the visible button copies the visible
+    command. The script stays inline: the CSP allows scripts by hash only (TSK-052). The icon
+    comes from the sprite through this template. */}
+<template id="copy-button">
+  <button class="copy-button" type="button">
+    <Icon name="copy" />
+    <span class="copy-button-label">Copy</span>
+  </button>
+</template>
+<script>
+  const template =
+    globalThis.document.querySelector<HTMLTemplateElement>('#copy-button');
+  const blocks = globalThis.document.querySelectorAll<HTMLElement>(
+    '.prose pre, [data-copy]',
+  );
+  if (template && 'clipboard' in globalThis.navigator) {
+    blocks.forEach((block) => {
+      const button = template.content.firstElementChild?.cloneNode(true);
+      if (!(button instanceof globalThis.HTMLButtonElement)) return;
+      const label = button.querySelector('.copy-button-label');
+      button.setAttribute('aria-label', 'Copy code');
+      button.addEventListener('click', async () => {
+        const text =
+          block.querySelector('code')?.textContent ?? block.textContent ?? '';
+        try {
+          await globalThis.navigator.clipboard.writeText(text);
+          if (label) label.textContent = 'Copied';
+          button.setAttribute('aria-label', 'Copied');
+        } catch {
+          if (label) label.textContent = 'Press Ctrl+C';
+        }
+        globalThis.setTimeout(() => {
+          if (label) label.textContent = 'Copy';
+          button.setAttribute('aria-label', 'Copy code');
+        }, 2000);
+      });
+      block.append(button);
+    });
+  }
+</script>

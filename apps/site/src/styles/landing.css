@@ -964,7 +964,8 @@
   margin-bottom: 0;
 }
 
-.install-switch:has(input[value='astro']:checked) .install-next,
+.install-switch:not(:has(input[value='next']:checked)) .install-next,
+.install-switch:not(:has(input[value='vite']:checked)) .install-vite,
 .install-switch:not(:has(input[value='astro']:checked)) .install-astro {
   display: none;
 }
@@ -1021,4 +1022,34 @@
   .hero .terminal {
     display: none;
   }
+}
+
+/* Prompts to paste into a coding agent (TSK-089): wrapped, so the whole prompt shows without
+   horizontal scrolling. */
+.agent-prompt {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 var(--space-6);
+}
+
+.agent-prompt-label {
+  margin: 0 0 var(--space-2);
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agent-prompt .code {
+  margin: 0;
+  padding-right: 80px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.agent-migrate {
+  grid-column: 1 / -1;
+}
+
+.agent-migrate p {
+  margin: 0 0 var(--space-4);
 }
