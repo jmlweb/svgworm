@@ -31,7 +31,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([competitive la
 
 <p class="alert-title">Note</p>
 
-What it does **not** do yet: several sprites, an inline sprite, and frameworks other than React and Astro. See the [open questions](https://github.com/jmlweb/svgworm/blob/main/docs/open-questions.md).
+What it does **not** do yet: several sprites in one build ([one config per sprite](/docs/config/#several-sprites) works), an inline sprite, and frameworks other than React and Astro. See the [open questions](https://github.com/jmlweb/svgworm/blob/main/docs/open-questions.md).
 
 </aside>
 

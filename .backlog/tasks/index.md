@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 15 |
+| Pending | 14 |
 | Active | 0 |
 | Blocked | 2 |
-| Complete | 63 |
+| Complete | 64 |
 
 ## Active Tasks
 
@@ -19,7 +19,6 @@
 | ID | Title | Priority | Tags | Created |
 |----|-------|----------|------|---------|
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
-| TSK-021 | Multiple sprites (namespace or config groups) | P3 | post-v0.1 | 2026-10-07 |
 | TSK-022 | Inline sprite output | P3 | post-v0.1 | 2026-10-07 |
 | TSK-024 | Vite recipe | P4 | post-v0.1 | 2026-10-07 |
 | TSK-025 | Alias map for icon name collisions | P4 | post-v0.1 | 2026-10-07 |
@@ -38,6 +37,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
@@ -47,4 +47,3 @@
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | 2026-10-15 |
 | TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | 2026-10-15 |
 | TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | 2026-10-15 |
-| TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | 2026-10-15 |

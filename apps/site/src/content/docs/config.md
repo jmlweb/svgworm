@@ -57,6 +57,28 @@ A source can point into `node_modules` and pick files by glob, so an icon set su
 
 The `--source` flag takes paths only; globs need the config file.
 
+## Several sprites
+
+One sprite fits most apps: tens of icons are a few KiB, cached for a year. When a large set splits into parts that different pages use (an app area and a marketing site, say), give each part its own config and build both:
+
+`svgworm.app.json`:
+
+```json
+{ "sources": ["icons/app"], "outDir": "public/icons/app", "publicPath": "/icons/app", "moduleDir": "svgworm/app" }
+```
+
+`svgworm.marketing.json`:
+
+```json
+{ "sources": ["icons/marketing"], "outDir": "public/icons/marketing", "publicPath": "/icons/marketing", "moduleDir": "svgworm/marketing" }
+```
+
+```sh
+svgworm --config svgworm.app.json && svgworm --config svgworm.marketing.json
+```
+
+Each build writes its own manifest and `IconName` type, so make one component per sprite: `createIcon(appManifest)` and `createIcon(marketingManifest)`. Give each config its own `outDir`: both builds name their files `icons.<hash>.svg`, and a build removes the hashed files it did not write. Built-in groups in one config were left out on purpose ([ADR-0023](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0023-several-sprites-through-one-config-per-sprite.md)).
+
 ## Color overrides
 
 svgworm decides the color of each icon on its own. A single-color icon becomes mono and follows the CSS `color` of its parent through `currentColor`. An icon with several colors keeps them. When the guess is wrong for an icon, add a rule to `color`:
