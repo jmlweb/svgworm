@@ -21,6 +21,8 @@ Pair it with [`@svgworm/react`](https://github.com/jmlweb/svgworm/tree/main/pack
 
 - [Next.js setup](https://svgworm.com/docs/nextjs/)
 - [Astro setup](https://svgworm.com/docs/astro/)
+- [Vite setup](https://svgworm.com/docs/vite/)
+- [Sprites on a CDN](https://svgworm.com/docs/config/#sprites-on-a-cdn): proxy them, or opt into `crossOrigin: "inject"`
 - ⌨️ [CLI reference](https://svgworm.com/docs/cli/)
 - [Config](https://svgworm.com/docs/config/): `svgworm.config.json`, with a JSON Schema at `svgworm/schema.json`
 - [Comparison](https://svgworm.com/docs/comparison/) with SVGR, @neodx/svg and others

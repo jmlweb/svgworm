@@ -16,8 +16,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { BuildEvent } from './events.ts';
 
 import { build } from './build.ts';
+import { check } from './check.ts';
 import { resolveConfig, type ResolvedConfig } from './config/resolve.ts';
 import { DiagnosticCode } from './errors.ts';
+import { isOwnedFile } from './write.ts';
 
 let root = '';
 
@@ -211,5 +213,49 @@ describe('build', () => {
     expect(result.manifest.sprite?.url.startsWith('/sprites/icons.')).toBe(
       true,
     );
+  });
+});
+
+describe('build: crossOrigin inject (ADR-0027)', () => {
+  const inject = () =>
+    config({
+      outDir: 'public/icons',
+      publicPath: 'https://cdn.example.com/icons',
+      crossOrigin: 'inject',
+    });
+
+  it('owns exactly the hashed loader besides the sprite and stack', () => {
+    expect(isOwnedFile('icons.loader.0123abcd.js')).toBe(true);
+    for (const name of [
+      'icons.loader.0123abcd.svg',
+      'icons.0123abcd.js',
+      'icons.loader.0123ABCD.js',
+      'icons.loader.0123abc.js',
+      'icons.loader.js',
+      'app.loader.0123abcd.js',
+    ]) {
+      expect(isOwnedFile(name)).toBe(false);
+    }
+  });
+
+  it('writes the loader, stays up to date for check, and removes a stale loader', async () => {
+    await put('icons/home.svg');
+    await put('public/icons/icons.loader.00000000.js', 'old');
+    await put('public/icons/app.js', 'foreign');
+    const result = await build(inject());
+    if (!result.ok) throw new Error(JSON.stringify(result.errors));
+    expect(result.removed).toEqual(['public/icons/icons.loader.00000000.js']);
+    const left = (await readdir(join(root, 'public/icons'))).toSorted();
+    expect(
+      left.some((name) => /^icons\.loader\.[0-9a-f]{8}\.js$/.test(name)),
+    ).toBe(true);
+    expect(left).toContain('app.js');
+    const checked = await check(inject());
+    expect(checked.ok && checked.upToDate).toBe(true);
+    const manifest = await readFile(
+      join(root, 'svgworm/manifest.json'),
+      'utf8',
+    );
+    expect(manifest).toContain('"version": 2');
   });
 });

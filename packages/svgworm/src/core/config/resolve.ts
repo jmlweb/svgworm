@@ -6,6 +6,7 @@ import { ConfigError } from '../errors.ts';
 import { isMissing } from '../fs.ts';
 import {
   configSchema,
+  CrossOrigin,
   normalizePublicPath,
   toSourceSpec,
   type ColorRule,
@@ -29,6 +30,7 @@ export type ResolvedConfig = {
   readonly moduleDir: string;
   readonly flatten: boolean;
   readonly color: readonly ColorRule[];
+  readonly crossOrigin: CrossOrigin;
 };
 
 export type ConfigOverrides = Partial<ConfigInput>;
@@ -61,8 +63,10 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
       'outDir: set together with publicPath, because svgworm cannot guess the URL of a custom output folder',
     );
   }
+  const crossOrigin = value.crossOrigin ?? CrossOrigin.NONE;
   const publicPath = normalizePublicPath(
     value.publicPath ?? DEFAULT_PUBLIC_PATH,
+    { crossOrigin },
   );
   const outDir = value.outDir ?? DEFAULT_OUT_DIR;
   const moduleDir = value.moduleDir ?? DEFAULT_MODULE_DIR;
@@ -109,6 +113,7 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
     moduleDir,
     flatten: value.flatten ?? false,
     color: value.color ?? [],
+    crossOrigin,
   };
 };
 

@@ -18,14 +18,21 @@ type ManifestIcon = {
   readonly delivery: 'use' | 'img' | 'mask';
 };
 
+type ManifestIntegrityFile = ManifestFile & {
+  readonly integrity: string;
+};
+
 export type IconManifest = {
   readonly version: number;
+  /** `"inject"` in a version 2 manifest (ADR-0027): the sprite is on another origin. */
+  readonly crossOrigin?: string;
   readonly sprites: Readonly<
     Record<
       string,
       {
         readonly sprite: ManifestFile | null;
         readonly stack: ManifestFile | null;
+        readonly loader?: ManifestIntegrityFile | null;
       }
     >
   >;
@@ -49,7 +56,9 @@ export class SvgwormReactError extends Error {
   override readonly name = 'SvgwormReactError';
 }
 
-const SUPPORTED_VERSION = 1;
+const SUPPORTED_VERSIONS: readonly number[] = [1, 2];
+// Version 2 is only written with crossOrigin "inject": the loader puts the sprite in the page.
+const INJECT_VERSION = 2;
 const DEFAULT_SIZE = '1em';
 
 const resolveFileUrl = (
@@ -64,17 +73,55 @@ const resolveFileUrl = (
       `Icon "${name}" needs the ${kind} file of "${icon.sprite}", but the manifest has none. Run svgworm again.`,
     );
   }
-  return `${file.url}#${icon.id}`;
+  const isInjected = kind === 'sprite' && manifest.version === INJECT_VERSION;
+  return isInjected ? `#${icon.id}` : `${file.url}#${icon.id}`;
+};
+
+const assertVersion = (manifest: IconManifest): void => {
+  if (!SUPPORTED_VERSIONS.includes(manifest.version)) {
+    throw new SvgwormReactError(
+      `Unsupported svgworm manifest version ${String(manifest.version)}; this adapter reads versions ${SUPPORTED_VERSIONS.join(' and ')}. Update @svgworm/react.`,
+    );
+  }
+};
+
+/**
+ * The loader tag for `crossOrigin: "inject"` (ADR-0027): render it once, in the root layout.
+ * It renders nothing for a same-origin manifest, so it is safe to keep in any app. React
+ * dedupes and hoists an async script by its src, and the loader injects the sprite only once.
+ */
+export const createSpriteLoader = (
+  manifest: IconManifest,
+): (() => ReactElement | null) => {
+  assertVersion(manifest);
+  const loaders =
+    manifest.version === INJECT_VERSION
+      ? Object.values(manifest.sprites).flatMap((group) =>
+          group.loader ? [group.loader] : [],
+        )
+      : [];
+  return function SpriteLoader() {
+    if (loaders.length === 0) return null;
+    return (
+      <>
+        {loaders.map((loader) => (
+          <script
+            key={loader.url}
+            async
+            crossOrigin="anonymous"
+            integrity={loader.integrity}
+            src={loader.url}
+          />
+        ))}
+      </>
+    );
+  };
 };
 
 export const createIcon = <const M extends IconManifest>(
   manifest: M,
 ): ((props: IconProps<Extract<keyof M['icons'], string>>) => ReactElement) => {
-  if (manifest.version !== SUPPORTED_VERSION) {
-    throw new SvgwormReactError(
-      `Unsupported svgworm manifest version ${String(manifest.version)}; this adapter reads version ${String(SUPPORTED_VERSION)}. Update @svgworm/react.`,
-    );
-  }
+  assertVersion(manifest);
 
   return function Icon({
     name,

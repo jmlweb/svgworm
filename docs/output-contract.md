@@ -18,20 +18,26 @@ The output contract is the boundary between the core and the adapters. Adapters 
 ### 1. Sprite file(s)
 
 - One SVG file per sprite group, named `<group>.<hash>.svg`. `<hash>` is the first 8 lowercase hex characters of SHA-256 over the file's exact bytes. v0.1 has one group, `icons` ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
-- Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching `^icons(\.stack)?\.[0-9a-f]{8}\.svg$` (R-15, ADR-0010)
+- Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching `^icons(\.stack)?\.[0-9a-f]{8}\.svg$` or `^icons\.loader\.[0-9a-f]{8}\.js$` (R-15, ADR-0010, [ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md))
 - Contains one `<symbol id="<iconId>" viewBox="…">` per icon
 - Must not contain scripts or external references
 - License notices survive: an XML comment in a source file whose text starts with `@license` or `!` (the conventions icon packages and minifiers use) is written once per distinct text, trimmed, before the root element of the sprite or stack that holds the icon, sorted by code point. Every other comment is dropped (TSK-066; the comment bytes are part of the content hash)
 - Internal ids (gradients, masks, clip paths) are prefixed per icon so they can't collide
 - `<style>` rules must not leak between icons. Every rule is inlined, and a `<style>` left over is an error ([ADR-0004](adr/0004-per-icon-color-classification.md), [ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md))
 - Contains only icons that don't depend on `url(#…)` references ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md))
-- Must be served from the same origin as the page. Browsers block cross-origin `<use>` (ADR-0006, Q-02)
+- Must be served from the same origin as the page. Browsers block cross-origin `<use>` (ADR-0006, Q-02). The one exception is `crossOrigin: "inject"` (section 1c)
 
 ### 1b. Stack file ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md))
 
 - One content-hashed SVG holding the icons that use `url(#…)` references (gradients, clipPath, masks, filters, markers). WebKit doesn't render those through an external `<use>`
 - Each icon is a nested `<svg id="<iconId>" viewBox="…">`, shown only when it is the URL `:target`. One generated `:target` rule is the only `<style>` in the file
 - Named `<group>.stack.<hash>.svg`, same hash rule and `outDir` as the sprite. Not written when no icon needs it ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
+
+### 1c. Loader file (`crossOrigin: "inject"` only, [ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md))
+
+- Named `<group>.loader.<hash>.js`, same hash rule and `outDir` as the sprite, LF, no dependencies. Written only with `crossOrigin: "inject"` and only when some icon has `delivery: use`, after the sprite and stack and before the module
+- The sprite URL and the sprite's `integrity` are baked in. It fetches the sprite with `mode: "cors"`, `credentials: "omit"` and `integrity`, parses it with `DOMParser` as `image/svg+xml`, removes `<script>`, `<foreignObject>`, `on*` attributes and `javascript:` values, and prepends it to `<body>` once (hidden, `aria-hidden`, marked `data-svgworm="<integrity>"`), putting it back when a router replaces `<body>`. On failure it injects nothing and logs `svgworm: sprite not loaded from <url>: <reason>`
+- The page loads it with `<script async src integrity crossorigin="anonymous">`, both values from the manifest
 
 ### 2. Manifest
 
@@ -76,7 +82,7 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
 
 | Field                               | Meaning                                                                                                                                                                            |
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `version`                           | Contract version, `1`. An adapter that doesn't know the value fails loudly                                                                                                         |
+| `version`                           | Contract version: `1`, or `2` with `crossOrigin: "inject"` (below). An adapter that doesn't know the value fails loudly                                                       |
 | `sprites.<group>.sprite` / `.stack` | `{ file, url }`, or `null` when that file has no icons. `file` is the bare file name in `outDir`, and `url` is `publicPath + "/" + file`                                           |
 | `icons.<name>`                      | Keyed by public name, sorted by code point ([Ordering](#ordering))                                                                                                                 |
 | `icons.<name>.sprite`               | The group key in `sprites`                                                                                                                                                         |
@@ -85,10 +91,21 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
 | `icons.<name>.color`                | `mono` or `multicolor` ([ADR-0004](adr/0004-per-icon-color-classification.md))                                                                                                     |
 | `icons.<name>.delivery`             | `use`, `img`, or `mask` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)). `use` reads `sprite.url`, and `img` and `mask` read `stack.url`. Append `#` + `id` |
 
+With `crossOrigin: "inject"` ([ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md)) the manifest is version 2. Everything above holds, plus:
+
+| Field                               | Meaning                                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `crossOrigin`                       | `"inject"`. Only in version 2                                                                                                   |
+| `sprites.<group>.sprite.integrity`  | `sha384-<base64>` of the sprite's bytes                                                                                         |
+| `sprites.<group>.loader`            | `{ file, url, integrity }` of the loader file, or `null` when no icon is in the sprite                                         |
+| `icons.<name>.delivery` `use`       | Renders `<use href="#{id}">`: the loader put the sprite in the page. `img` and `mask` still read `stack.url` (`mask` needs CORS) |
+
+Default builds never emit these fields, so their bytes, `version: 1` included, are the same as before. The sample of the version 2 form is in [`core/__snapshots__/inject/`](../packages/svgworm/src/core/__snapshots__/inject/).
+
 `publicPath` rules:
 
 - It must start with a single `/` and must not contain `?`, `#`, `\`, or whitespace. A trailing `/` is removed, so `/` alone is the site root and normalizes to the empty string: `url` is then `"/" + file`, never `//file`. Empty segments (`//`), `.` and `..` segments, `%`, and non-ASCII characters are rejected with exit code 2.
-- Relative, protocol-relative, and `http(s):` values exit with code 2, because sprites must be same-origin (ADR-0006).
+- Relative, protocol-relative, and `http(s):` values exit with code 2, because sprites must be same-origin (ADR-0006). With `crossOrigin: "inject"` an `https://<host>[:port]` origin may come before the path (no user info; the host is lower-cased), and `http:` still exits 2.
 - It must include the app's mount point, for example `/docs/icons` under a Next `basePath: '/docs'`.
 - If `outDir` is set without `publicPath`, it is a config error.
 - `outDir`, `publicPath` and `moduleDir` are descriptive terms. The config keys that set them are outside this contract (TSK-011).
@@ -101,6 +118,7 @@ Decided by [ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-p
 - `type IconName`: a plain union of all public names, sorted by code point. A name that is not in the union is a type error. This shape is final for every set size: at 20,000 names it type-checks in 0.14 s on TypeScript 6 and 0.05 s on TypeScript 7 ([ADR-0014](adr/0014-icon-name-type-shape.md))
 - `interface SvgwormFile { readonly file: string; readonly url: string }`
 - `interface SvgwormIcon { readonly sprite: string; readonly id: string; readonly viewBox: string; readonly color: 'mono' | 'multicolor'; readonly delivery: 'use' | 'img' | 'mask' }`
+- In version 2, `SvgwormManifest` has `readonly version: 2; readonly crossOrigin: 'inject'`, a new `interface SvgwormIntegrityFile extends SvgwormFile { readonly integrity: string }` types `sprite` and `loader`, and each group has `readonly loader: SvgwormIntegrityFile | null`. Default output keeps the version 1 types below byte for byte.
 - `interface SvgwormManifest<Name extends string> { readonly version: 1; readonly sprites: Readonly<Record<string, { readonly sprite: SvgwormFile | null; readonly stack: SvgwormFile | null }>>; readonly icons: Readonly<Record<Name, SvgwormIcon>> }`
 - `declare const manifest: SvgwormManifest<IconName>`
 
@@ -239,6 +257,7 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
   - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough. `@svgworm/react` makes it 1em wide and high unless the caller sets a size;
   - `img` (multicolor with references): `<img src="{stackUrl}#{id}" width height alt="…">`;
   - `mask` (mono with references): a `<span>` masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
+- With a version 2 manifest, `use` icons render `<use href="#{id}">`, and the adapter offers a way to render the loader tag once (`createSpriteLoader(manifest)` in `@svgworm/react`, `SvgwormLoader.astro` from `init`)
 - Adds `aria-hidden="true"` unless a title or label is given; with a title it renders `role="img"` and a `<title>`
 - Takes no part in SVG processing
 

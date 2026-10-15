@@ -12,7 +12,11 @@ import { build } from 'esbuild';
 import { chromium, firefox, webkit } from 'playwright';
 
 import { compile } from '../../../packages/svgworm/dist/index.js';
-import { makeLoader } from './loader.mjs';
+import { emitLoader } from '../../../packages/svgworm/dist/core/emit/loader.js';
+import { makeLoader as spikeLoader } from './loader.mjs';
+
+// PRODUCT=1 checks the loader the built core emits instead of the spike's draft.
+const makeLoader = process.env.PRODUCT === '1' ? emitLoader : spikeLoader;
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, '../out');

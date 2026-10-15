@@ -6,8 +6,10 @@ import type { BuildEventHandler } from './events.ts';
 
 import { readIfPresent, replaceFile, toPosix } from './fs.ts';
 
-// The only files svgworm may delete: its own content-hashed sprite and stack (R-15).
-const OWNED_FILE = /^icons(?:\.stack)?\.[0-9a-f]{8}\.svg$/;
+// The only files svgworm may delete: its own content-hashed sprite, stack and loader (R-15,
+// ADR-0027).
+const OWNED_FILE =
+  /^icons(?:\.stack)?\.[0-9a-f]{8}\.svg$|^icons\.loader\.[0-9a-f]{8}\.js$/;
 
 export const isOwnedFile = (name: string): boolean => OWNED_FILE.test(name);
 

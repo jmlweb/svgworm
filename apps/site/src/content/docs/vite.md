@@ -143,6 +143,8 @@ Why: Vite copies `public/icons/` to `dist/icons/`, and your host serves `dist/` 
 }
 ```
 
+An absolute `base` (`https://cdn.example.com/app/`) serves `public/` from that origin, so the sprite is cross-origin. Proxy `/icons/*` through the page's origin to keep zero JS, or build with `--cross-origin inject --public-path https://cdn.example.com/app/icons` and render the loader ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)).
+
 If the base differs per environment, keep it in one place and pass it to both. The example's `check:base` script builds with `base: '/app/'` and checks that the bundle, the manifest and `dist/icons/` agree.
 
 ## What to commit

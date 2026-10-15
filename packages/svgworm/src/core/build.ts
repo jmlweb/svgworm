@@ -97,6 +97,7 @@ export const compileFromDisk = async (
       flatten: config.flatten,
       publicPath: config.publicPath,
       color: config.color,
+      crossOrigin: config.crossOrigin,
       ...(options.cache === undefined ? {} : { cache: options.cache }),
     },
     onEvent,

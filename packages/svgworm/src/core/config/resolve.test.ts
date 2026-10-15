@@ -34,7 +34,33 @@ describe('resolveConfig', () => {
       moduleDir: 'svgworm',
       flatten: false,
       color: [],
+      crossOrigin: 'none',
     });
+  });
+
+  it('keeps an https publicPath only with crossOrigin inject', () => {
+    const config = resolveConfig(
+      {
+        sources: ['i'],
+        outDir: 'out',
+        publicPath: 'https://cdn.example.com/icons/',
+        crossOrigin: 'inject',
+      },
+      cwd,
+    );
+    expect(config.publicPath).toBe('https://cdn.example.com/icons');
+    expect(config.crossOrigin).toBe('inject');
+    const issues = issuesOf(() =>
+      resolveConfig(
+        {
+          sources: ['i'],
+          outDir: 'out',
+          publicPath: 'https://cdn.example.com/icons',
+        },
+        cwd,
+      ),
+    );
+    expect(issues.join('\n')).toContain('crossOrigin');
   });
 
   it('keeps include and exclude globs of an object source', () => {

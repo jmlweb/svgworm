@@ -1,7 +1,7 @@
 import { expectTypeOf, test } from 'vitest';
 
-import { createIcon } from './create-icon.js';
-import { manifest } from './fixture-manifest.js';
+import { createIcon, createSpriteLoader } from './create-icon.js';
+import { injectManifest, manifest } from './fixture-manifest.js';
 
 const Icon = createIcon(manifest);
 
@@ -26,4 +26,13 @@ test('standard svg props are accepted', () => {
     title: 'Home',
     width: 24,
   });
+});
+
+test('a version 2 manifest types the same names and a loader component', () => {
+  const Injected = createIcon(injectManifest);
+  expectTypeOf<Parameters<typeof Injected>[0]['name']>().toEqualTypeOf<
+    'brand/sunset' | 'café' | 'home'
+  >();
+  expectTypeOf(createSpriteLoader(injectManifest)).toBeCallableWith();
+  expectTypeOf(createSpriteLoader(manifest)).toBeCallableWith();
 });

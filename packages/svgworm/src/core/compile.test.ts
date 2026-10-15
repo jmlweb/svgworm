@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -323,5 +324,93 @@ describe('compile: events', () => {
       ),
     );
     expect(result.icons.map((icon) => icon.color)).toEqual(['multicolor']);
+  });
+});
+
+describe('compile: crossOrigin inject (ADR-0027)', () => {
+  const inject: CompileOptions = {
+    ...options,
+    publicPath: 'https://cdn.example.com/icons',
+    crossOrigin: 'inject',
+  };
+  const sri = (text: string) =>
+    `sha384-${createHash('sha384').update(text).digest('base64')}`;
+  const byName = (result: ReturnType<typeof success>, prefix: string) =>
+    result.files.find((file) => file.name.startsWith(prefix));
+
+  it('emits a hashed loader after the sprite and stack, before the module', () => {
+    const result = success(compile(corpus, inject));
+    expect(
+      result.files.map((file) => file.name.replace(/[0-9a-f]{8}/, 'H')),
+    ).toEqual([
+      'icons.H.svg',
+      'icons.stack.H.svg',
+      'icons.loader.H.js',
+      'icons.js',
+      'icons.d.ts',
+      'manifest.json',
+    ]);
+  });
+
+  it('pins the sprite in the loader and the loader in the manifest', () => {
+    const result = success(compile(corpus, inject));
+    const sprite = result.files.find((file) =>
+      /^icons\.[0-9a-f]{8}\.svg$/.test(file.name),
+    );
+    const loader = byName(result, 'icons.loader.');
+    expect(sprite).toBeDefined();
+    expect(loader).toBeDefined();
+    if (sprite === undefined || loader === undefined) return;
+    expect(loader.content).toContain(
+      JSON.stringify(`https://cdn.example.com/icons/${sprite.name}`),
+    );
+    expect(loader.content).toContain(JSON.stringify(sri(sprite.content)));
+    const manifest = JSON.parse(
+      byName(result, 'manifest.json')?.content ?? '{}',
+    ) as {
+      version: number;
+      sprites: {
+        icons: {
+          sprite: { integrity: string };
+          loader: { file: string; url: string; integrity: string };
+        };
+      };
+    };
+    expect(manifest.version).toBe(2);
+    expect(manifest.sprites.icons.sprite.integrity).toBe(sri(sprite.content));
+    expect(manifest.sprites.icons.loader).toEqual({
+      file: loader.name,
+      url: `https://cdn.example.com/icons/${loader.name}`,
+      integrity: sri(loader.content),
+    });
+    expect(byName(result, 'icons.d.ts')?.content).toContain(
+      'readonly version: 2;',
+    );
+  });
+
+  it('writes no loader when no icon is in the sprite', () => {
+    const stackOnly = corpus.filter((item) =>
+      item.relativePath.startsWith('gradient/'),
+    );
+    const result = success(compile(stackOnly, inject));
+    expect(result.icons.every((icon) => icon.delivery !== 'use')).toBe(true);
+    expect(byName(result, 'icons.loader.')).toBeUndefined();
+    expect(byName(result, 'manifest.json')?.content).toContain(
+      '"loader": null',
+    );
+  });
+
+  it('gives identical bytes for shuffled input', () => {
+    const run = (sources: readonly SourceInput[]) =>
+      withoutTiming(compile(sources, inject));
+    expect(run(shuffle(corpus, 7))).toEqual(run(corpus));
+  });
+
+  it('leaves default-mode output without a loader and at version 1', () => {
+    const result = success(
+      compile(corpus, { ...options, crossOrigin: 'none' }),
+    );
+    expect(byName(result, 'icons.loader.')).toBeUndefined();
+    expect(byName(result, 'manifest.json')?.content).toContain('"version": 1,');
   });
 });

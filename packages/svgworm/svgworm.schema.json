@@ -53,7 +53,7 @@
       "minLength": 1
     },
     "publicPath": {
-      "description": "URL path the sprites are served from, same-origin. Default \"/icons\".",
+      "description": "URL path the sprites are served from, same-origin. Default \"/icons\". An https:// URL needs \"crossOrigin\": \"inject\".",
       "type": "string"
     },
     "moduleDir": {
@@ -85,6 +85,11 @@
         "required": ["match", "color"],
         "additionalProperties": false
       }
+    },
+    "crossOrigin": {
+      "description": "Default \"none\": sprites are served same-origin with zero client JS. \"inject\" allows an https:// publicPath on another origin (a CDN) and emits a small loader script that fetches the sprite with CORS and integrity and injects it (ADR-0027). Icons need JS in that mode.",
+      "type": "string",
+      "enum": ["none", "inject"]
     }
   },
   "required": ["sources"],

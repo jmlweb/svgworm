@@ -48,24 +48,56 @@ export const askInitOptions = async (
             }),
           ),
         ];
-  const publicPath = orCancel(
-    await text({
-      message: `URL path the sprites are served from${
-        facts.usesNext
-          ? ' (include the Next basePath, if any)'
-          : facts.usesAstro
-            ? ' (include the Astro base, if any)'
-            : ''
-      }`,
-      defaultValue: options.publicPath ?? '/icons',
-      placeholder: options.publicPath ?? '/icons',
-      validate: (value) => {
-        if (value === undefined || value === '') return undefined;
-        const result = normalizePublicPath(value);
-        return result.ok ? undefined : result.message;
-      },
-    }),
-  );
+  // Never on by default: inject mode makes icons need JS (ADR-0027).
+  const isCdn =
+    options.cdnUrl !== undefined ||
+    (options.publicPath === undefined &&
+      orCancel(
+        await confirm({
+          message:
+            'Serve sprites from a CDN on another origin? (needs a small loader script; same-origin needs none)',
+          initialValue: false,
+        }),
+      ));
+  const cdnUrl =
+    options.cdnUrl ??
+    (isCdn
+      ? orCancel(
+          await text({
+            message: 'CDN URL the sprites are served from (https://…)',
+            placeholder: 'https://cdn.example.com/icons',
+            validate: (value) => {
+              if (value === undefined || !value.startsWith('https://')) {
+                return 'An https:// URL';
+              }
+              const result = normalizePublicPath(value, {
+                crossOrigin: 'inject',
+              });
+              return result.ok ? undefined : result.message;
+            },
+          }),
+        )
+      : undefined);
+  const publicPath = isCdn
+    ? '/icons'
+    : orCancel(
+        await text({
+          message: `URL path the sprites are served from${
+            facts.usesNext
+              ? ' (include the Next basePath, if any)'
+              : facts.usesAstro
+                ? ' (include the Astro base, if any)'
+                : ''
+          }`,
+          defaultValue: options.publicPath ?? '/icons',
+          placeholder: options.publicPath ?? '/icons',
+          validate: (value) => {
+            if (value === undefined || value === '') return undefined;
+            const result = normalizePublicPath(value);
+            return result.ok ? undefined : result.message;
+          },
+        }),
+      );
   const addScripts = orCancel(
     await confirm({
       message: facts.runsScriptHooks
@@ -105,6 +137,7 @@ export const askInitOptions = async (
   );
   return {
     ...options,
+    cdnUrl,
     sources,
     publicPath: publicPath === '/icons' ? options.publicPath : publicPath,
     // A custom publicPath needs an outDir the app serves there; keep the default folder.

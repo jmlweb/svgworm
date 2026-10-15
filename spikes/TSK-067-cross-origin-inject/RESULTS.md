@@ -6,7 +6,7 @@ Question (Q-02, PLN-003): can a sprite served from another origin be fetched wit
 
 `src/check.mjs` compiles every valid fixture with the built core (`pnpm build` at the root first) and serves two origins: the page on `http://127.0.0.1:<a>` and a "CDN" on `http://localhost:<b>`, with and without `Access-Control-Allow-Origin: *`. Every response on both servers waits 120 ms (`LATENCY`), so request chains show up in the timings. `src/loader.mjs` is the candidate loader: the sprite URL and its sha384 are baked in; it fetches with `mode: "cors"` and `integrity`, parses with `DOMParser` (`image/svg+xml`), drops `<script>`, `<foreignObject>`, `on*` attributes and `javascript:` values, and prepends the `<svg>` (0×0, `aria-hidden`) to `<body>` once, guarded by a `data-svgworm` attribute. Icons are compared pixel by pixel (Δ > 64 on any channel, browser-decoded screenshots) against the same icons through a same-origin external `<use>`. React 19.3 cases server-render a document with `react-dom/server` and hydrate it with `hydrateRoot(document, …)` from an esbuild bundle.
 
-Run: `pnpm install --ignore-workspace && pnpm check`. Playwright 1.58.2, esbuild 0.28.2, React 19.3.0.
+Run: `pnpm install --ignore-workspace && pnpm check`. `PRODUCT=1 pnpm check` runs the same matrix against the loader the built core emits (`packages/svgworm/dist/core/emit/loader.js`); the committed matrix is from that run, 54 of 54. Playwright 1.58.2, esbuild 0.28.2, React 19.3.0.
 
 ## Results (2026-10-15): 54 of 54 cases pass in all three engines
 

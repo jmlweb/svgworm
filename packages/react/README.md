@@ -33,6 +33,19 @@ In a client-only React app (Vite, Create React App) there is no server, so the m
 
 Vite setup, step by step, with `base` and cache headers: the [Vite guide](https://svgworm.com/docs/vite/). In short: run `svgworm` before `vite` (`"predev": "svgworm"`, `"prebuild": "svgworm"`), import the manifest from `svgworm/icons.js`, and create the component as above. Vite serves `public/` at `base`, so with `base: '/app/'` set `--public-path /app/icons` (or `"publicPath": "/app/icons"` in `svgworm.config.json`); without it the manifest points at `/icons/…` and every icon 404s. `svgworm init` detects React but not Vite, so it writes `components/icon.tsx` and the scripts, and you set `publicPath` yourself.
 
+## Sprites on a CDN
+
+With `"crossOrigin": "inject"` in `svgworm.config.json` the sprite lives on another origin, and a small loader puts it in the page (opt-in, icons need JS; [Sprites on a CDN](https://svgworm.com/docs/config/#sprites-on-a-cdn)). `Icon` then renders `<use href="#id">`. Render the loader once in the root layout:
+
+```tsx
+import { createSpriteLoader } from '@svgworm/react';
+
+export const SpriteLoader = createSpriteLoader(manifest);
+// app/layout.tsx: <html><body><SpriteLoader />{children}</body></html>
+```
+
+It renders nothing for a same-origin manifest, and React keeps one tag however many times it is rendered.
+
 ## Docs
 
 - [Get started](https://github.com/jmlweb/svgworm#get-started)

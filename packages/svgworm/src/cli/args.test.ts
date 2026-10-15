@@ -66,6 +66,41 @@ describe('parseCliArgs', () => {
     });
   });
 
+  it('maps --cross-origin to a config override (ADR-0027)', () => {
+    expect(
+      parseCliArgs([
+        '--cross-origin',
+        'inject',
+        '--public-path',
+        'https://cdn.example.com/icons',
+      ]),
+    ).toMatchObject({
+      kind: 'command',
+      overrides: {
+        crossOrigin: 'inject',
+        publicPath: 'https://cdn.example.com/icons',
+      },
+    });
+    expect(parseCliArgs(['--cross-origin', 'cors'])).toMatchObject({
+      kind: 'usage-error',
+      message: expect.stringContaining(
+        '--cross-origin must be one of: none, inject',
+      ) as unknown,
+    });
+  });
+
+  it('takes --cdn-url for init only', () => {
+    expect(
+      parseCliArgs(['init', '--cdn-url', 'https://cdn.example.com/icons']),
+    ).toMatchObject({
+      kind: 'init',
+      options: { cdnUrl: 'https://cdn.example.com/icons' },
+    });
+    expect(
+      parseCliArgs(['--cdn-url', 'https://cdn.example.com/icons']),
+    ).toMatchObject({ kind: 'usage-error' });
+  });
+
   it('lets --no-flatten turn flatten off', () => {
     expect(parseCliArgs(['--no-flatten'])).toMatchObject({
       overrides: { flatten: false },

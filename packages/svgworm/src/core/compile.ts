@@ -1,7 +1,13 @@
 import type { BuildEventHandler, BuildStats } from './events.ts';
 import type { TransformCache } from './svg/cache.ts';
 
-import { contentHash, spriteFileName, stackFileName } from './assemble/hash.ts';
+import {
+  contentHash,
+  loaderFileName,
+  spriteFileName,
+  stackFileName,
+  subresourceIntegrity,
+} from './assemble/hash.ts';
 import {
   assembleSprite,
   assembleStack,
@@ -14,7 +20,8 @@ import {
   toDisplayPath,
 } from './collisions.ts';
 import { compareCodePoints } from './compare-code-units.ts';
-import { ColorMode, type ColorRule } from './config/schema.ts';
+import { ColorMode, CrossOrigin, type ColorRule } from './config/schema.ts';
+import { emitLoader } from './emit/loader.ts';
 import {
   toFileReference,
   type ManifestIcon,
@@ -46,6 +53,8 @@ export type CompileOptions = {
   /** Normalized: no trailing slash, "" for the site root. */
   readonly publicPath: string;
   readonly color: readonly Pick<ColorRule, 'match' | 'color'>[];
+  /** `inject` adds the loader and a version 2 manifest (ADR-0027). Default `none`. */
+  readonly crossOrigin?: CrossOrigin;
   /** Reuses per-icon transforms across compiles of one process (`watch`, ADR-0015). */
   readonly cache?: TransformCache;
 };
@@ -265,11 +274,38 @@ export const compile = (
       ? null
       : stackFileName(contentHash(new TextEncoder().encode(stackText)));
 
+  const spriteReference =
+    spriteName === null
+      ? null
+      : toFileReference(spriteName, options.publicPath);
+  const isInject = options.crossOrigin === CrossOrigin.INJECT;
+  const spriteIntegrity =
+    spriteText === null ? null : subresourceIntegrity(spriteText);
+  const loaderText =
+    !isInject || spriteReference === null || spriteIntegrity === null
+      ? null
+      : emitLoader(spriteReference.url, spriteIntegrity);
+  const loaderName =
+    loaderText === null
+      ? null
+      : loaderFileName(contentHash(new TextEncoder().encode(loaderText)));
+
   const manifest: ManifestInput = {
-    sprite:
-      spriteName === null
-        ? null
-        : toFileReference(spriteName, options.publicPath),
+    ...(isInject
+      ? {
+          inject: {
+            spriteIntegrity,
+            loader:
+              loaderName === null || loaderText === null
+                ? null
+                : {
+                    ...toFileReference(loaderName, options.publicPath),
+                    integrity: subresourceIntegrity(loaderText),
+                  },
+          },
+        }
+      : {}),
+    sprite: spriteReference,
     stack:
       stackName === null
         ? null
@@ -290,11 +326,17 @@ export const compile = (
     ...(stackName === null || stackText === null
       ? []
       : [{ target: 'outDir' as const, name: stackName, content: stackText }]),
+    ...(loaderName === null || loaderText === null
+      ? []
+      : [{ target: 'outDir' as const, name: loaderName, content: loaderText }]),
     { target: 'moduleDir', name: 'icons.js', content: emitModule(manifest) },
     {
       target: 'moduleDir',
       name: 'icons.d.ts',
-      content: emitTypes(manifest.icons.map((icon) => icon.name)),
+      content: emitTypes(
+        manifest.icons.map((icon) => icon.name),
+        { crossOrigin: options.crossOrigin },
+      ),
     },
     {
       target: 'moduleDir',

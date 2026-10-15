@@ -4,6 +4,7 @@ import type { ConfigOverrides } from '../core/api.ts';
 import type { InitOptions } from './init/plan.ts';
 
 import { DEFAULT_CONFIG_FILE } from '../core/config/resolve.ts';
+import { CrossOrigin } from '../core/config/schema.ts';
 import { defaultInitOptions, Framework } from './init/plan.ts';
 import { didYouMean, suggestClosest } from './suggest.ts';
 
@@ -49,6 +50,7 @@ const OPTIONS = {
   'public-path': { type: 'string' },
   'module-dir': { type: 'string' },
   flatten: { type: 'boolean' },
+  'cross-origin': { type: 'string' },
   json: { type: 'boolean' },
   verbose: { type: 'boolean' },
   help: { type: 'boolean', short: 'h' },
@@ -59,6 +61,7 @@ const OPTIONS = {
   component: { type: 'boolean' },
   scripts: { type: 'boolean' },
   'agents-md': { type: 'boolean' },
+  'cdn-url': { type: 'string' },
   yes: { type: 'boolean', short: 'y' },
 } as const;
 
@@ -68,8 +71,14 @@ const INIT_ONLY = [
   'component',
   'scripts',
   'agents-md',
+  'cdn-url',
   'yes',
 ] as const;
+
+const CROSS_ORIGINS: readonly string[] = Object.values(CrossOrigin);
+
+const isCrossOrigin = (value: string): value is CrossOrigin =>
+  CROSS_ORIGINS.includes(value);
 
 const FRAMEWORKS: readonly string[] = Object.values(Framework);
 
@@ -127,8 +136,19 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
     const publicPath = values['public-path'];
     const moduleDir = values['module-dir'];
     const flatten = values.flatten;
+    const crossOrigin = values['cross-origin'];
+    if (crossOrigin !== undefined && !isCrossOrigin(crossOrigin)) {
+      return usageError(
+        `--cross-origin must be one of: ${CROSS_ORIGINS.join(', ')} (got "${crossOrigin}")`,
+      );
+    }
 
     if (command === Command.INIT) {
+      if (crossOrigin !== undefined) {
+        return usageError(
+          'init takes --cdn-url <https-url> instead of --cross-origin',
+        );
+      }
       const framework = values.framework;
       if (framework !== undefined && !isFramework(framework)) {
         return usageError(
@@ -152,6 +172,7 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
           addComponent: values.component,
           componentFile: values['component-file'],
           addAgentsMd: values['agents-md'] ?? defaults.addAgentsMd,
+          cdnUrl: values['cdn-url'],
         },
       };
     }
@@ -175,6 +196,7 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
         ...(publicPath === undefined ? {} : { publicPath }),
         ...(moduleDir === undefined ? {} : { moduleDir }),
         ...(flatten === undefined ? {} : { flatten }),
+        ...(crossOrigin === undefined ? {} : { crossOrigin }),
       },
     };
   } catch (error) {

@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
+import { emitLoader } from './loader.ts';
 import { toFileReference, type ManifestInput } from './manifest.ts';
 import { emitManifestJson, emitModule, emitTypes } from './module.ts';
 
@@ -97,5 +99,104 @@ describe('emit', () => {
     expect(toFileReference('a.svg', '/docs/icons').url).toBe(
       '/docs/icons/a.svg',
     );
+  });
+});
+
+const injectDir = fileURLToPath(
+  new URL('../__snapshots__/inject/', import.meta.url),
+);
+const injected: ManifestInput = {
+  ...input,
+  sprite: toFileReference(
+    'icons.d907d82b.svg',
+    'https://cdn.example.com/icons',
+  ),
+  stack: toFileReference(
+    'icons.stack.91bff0b3.svg',
+    'https://cdn.example.com/icons',
+  ),
+  inject: {
+    spriteIntegrity: 'sha384-SPRITE',
+    loader: {
+      ...toFileReference(
+        'icons.loader.0a1b2c3d.js',
+        'https://cdn.example.com/icons',
+      ),
+      integrity: 'sha384-LOADER',
+    },
+  },
+};
+
+describe('emit: crossOrigin inject (ADR-0027)', () => {
+  it('writes a version 2 manifest with integrity and the loader', async () => {
+    const json = emitManifestJson(injected);
+    await expect(json).toMatchFileSnapshot(`${injectDir}manifest.json`);
+    const parsed = JSON.parse(json) as Record<string, unknown>;
+    expect(parsed).toMatchObject({
+      version: 2,
+      crossOrigin: 'inject',
+      sprites: {
+        icons: {
+          sprite: { integrity: 'sha384-SPRITE' },
+          stack: {
+            url: 'https://cdn.example.com/icons/icons.stack.91bff0b3.svg',
+          },
+          loader: {
+            file: 'icons.loader.0a1b2c3d.js',
+            integrity: 'sha384-LOADER',
+          },
+        },
+      },
+    });
+  });
+
+  it('writes the same object in icons.js', () => {
+    const module = emitModule(injected);
+    expect(module).toContain('"version": 2');
+    expect(module).toContain('"loader": {');
+  });
+
+  it('writes a null loader when no icon is in the sprite', () => {
+    const json = emitManifestJson({
+      ...injected,
+      sprite: null,
+      inject: { spriteIntegrity: null, loader: null },
+    });
+    expect(json).toContain('"sprite": null');
+    expect(json).toContain('"loader": null');
+  });
+
+  it('types version 2 and the new fields', async () => {
+    const types = emitTypes(
+      input.icons.map((icon) => icon.name),
+      { crossOrigin: 'inject' },
+    );
+    await expect(types).toMatchFileSnapshot(`${injectDir}icons.d.ts`);
+    expect(types).toContain('readonly version: 2;');
+    expect(types).toContain("readonly crossOrigin: 'inject';");
+  });
+
+  it('keeps default-mode types byte-identical', () => {
+    expect(
+      emitTypes(
+        input.icons.map((icon) => icon.name),
+        { crossOrigin: 'none' },
+      ),
+    ).toBe(sample('icons.d.ts'));
+  });
+
+  it('writes a loader with the sprite url and integrity baked in', async () => {
+    const loader = emitLoader(
+      'https://cdn.example.com/icons/icons.d907d82b.svg',
+      'sha384-SPRITE',
+    );
+    await expect(loader).toMatchFileSnapshot(`${injectDir}loader.js`);
+    expect(loader).toContain(
+      '"https://cdn.example.com/icons/icons.d907d82b.svg"',
+    );
+    expect(loader).toContain('"sha384-SPRITE"');
+    expect(loader.endsWith(';\n')).toBe(true);
+    expect(loader).not.toContain('\r');
+    expect(new TextEncoder().encode(loader).byteLength).toBeLessThan(1500);
   });
 });

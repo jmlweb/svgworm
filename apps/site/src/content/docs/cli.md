@@ -25,6 +25,7 @@ svgworm [build | check | watch | init] [options]
 | `--public-path <path>` | URL path the sprites are served from. Default: `/icons`                    |
 | `--module-dir <dir>`   | Where the manifest and types are written. Default: `svgworm`               |
 | `--flatten`            | Drop folder names from icon names (`--no-flatten` to undo)                 |
+| `--cross-origin <mode>` | `none` (default) or `inject`: allow an `https://` `--public-path` on a CDN, loaded by a small script ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)) |
 | `--json`               | Print one JSON document on stdout and nothing else                         |
 | `--verbose`            | Print one line per icon (plain output only)                                |
 | `-h`, `--help`         | Show the help                                                              |
@@ -157,6 +158,7 @@ Before 1.0 the documents can change in a minor version, never in a patch. A remo
 | `--no-component`          | Skip the component                                                                                                          |
 | `--no-scripts`            | Leave the package.json scripts alone (`predev` and `prebuild`, or `dev` and `build` on Yarn 2+)                             |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
+| `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
 `init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).

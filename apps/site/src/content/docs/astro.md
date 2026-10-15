@@ -104,6 +104,10 @@ Astro does not add `base` to the sprite URLs svgworm writes. With `base: '/docs'
 
 Why: Astro copies `public/icons/` to the root of `dist/`, and your host serves `dist/` under `/docs/`, so the sprite lives at `/docs/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s. We checked this with a build of this site under `base: '/docs'`.
 
+## Sprites on a CDN
+
+`build.assetsPrefix` does not move `public/`, so the sprite stays on your origin. To serve it from another origin anyway, see [Sprites on a CDN](/docs/config/#sprites-on-a-cdn): `svgworm init --cdn-url <https-url>` also writes `SvgwormLoader.astro`; render `<SvgwormLoader />` once in your layout's `<head>`. With the `<ClientRouter />`, the loader puts the sprite back after each page swap.
+
 ## What to commit
 
 Two choices. Pick one and stick with it:

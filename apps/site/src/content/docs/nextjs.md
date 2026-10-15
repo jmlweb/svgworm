@@ -158,6 +158,10 @@ Next does not add `basePath` to the sprite URLs svgworm writes. With a `basePath
 
 Next serves `public/` under the `basePath`, so the sprite lives at `/docs/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s.
 
+## Sprites on a CDN
+
+`assetPrefix` does not move `public/`, so the sprite stays on your origin and needs nothing else. To serve it from another origin anyway, see [Sprites on a CDN](/docs/config/#sprites-on-a-cdn): `svgworm init --cdn-url <https-url>` adds `export const SpriteLoader = createSpriteLoader(manifest)` to the component file; render `<SpriteLoader />` once in `app/layout.tsx`.
+
 ## What to commit
 
 Two choices. Pick one and stick with it:

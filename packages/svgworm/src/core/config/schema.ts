@@ -13,17 +13,14 @@ export type PublicPathResult =
 
 const PUBLIC_PATH_SEGMENT = /^[A-Za-z0-9\-_.~!$&'()*+,;=:@]+$/;
 
-/**
- * publicPath rules of the output contract. `/` alone is the site root and normalizes to
- * the empty string, so a URL is always `"/" + file`, never `//file`.
- */
-export const normalizePublicPath = (raw: string): PublicPathResult => {
+export const CrossOrigin = {
+  NONE: 'none',
+  INJECT: 'inject',
+} as const;
+export type CrossOrigin = (typeof CrossOrigin)[keyof typeof CrossOrigin];
+
+const normalizePath = (raw: string): PublicPathResult => {
   const fail = (message: string): PublicPathResult => ({ ok: false, message });
-  if (!raw.startsWith('/')) {
-    return fail(
-      'must start with "/": sprites must be same-origin, so relative and http(s) URLs are not allowed',
-    );
-  }
   if (raw === '/') return { ok: true, value: '' };
   const value = raw.endsWith('/') ? raw.slice(0, -1) : raw;
   if (/[?#\\\s]/.test(value)) {
@@ -41,6 +38,51 @@ export const normalizePublicPath = (raw: string): PublicPathResult => {
     return fail('must contain only ASCII URL path characters');
   }
   return { ok: true, value };
+};
+
+const HTTPS_ORIGIN = /^https:\/\/([^/?#]*)(.*)$/i;
+
+/**
+ * publicPath rules of the output contract. `/` alone is the site root and normalizes to
+ * the empty string, so a URL is always `"/" + file`, never `//file`. An `https:` origin is
+ * allowed only with `crossOrigin: "inject"` (ADR-0027), because browsers block a
+ * cross-origin `<use>`.
+ */
+export const normalizePublicPath = (
+  raw: string,
+  options: { readonly crossOrigin?: CrossOrigin | undefined } = {},
+): PublicPathResult => {
+  const fail = (message: string): PublicPathResult => ({ ok: false, message });
+  const isInject = options.crossOrigin === CrossOrigin.INJECT;
+  const absolute = HTTPS_ORIGIN.exec(raw);
+  if (absolute !== null) {
+    if (!isInject) {
+      return fail(
+        'is an absolute URL: sprites must be same-origin unless "crossOrigin": "inject" is set (it loads them with a small script, ADR-0027)',
+      );
+    }
+    const [, host = '', path = ''] = absolute;
+    if (host === '' || host.includes('@') || /[\\\s%]/.test(host)) {
+      return fail('must be https://<host>[:port]/<path> with no user info');
+    }
+    let origin: string;
+    try {
+      origin = new URL(`https://${host}`).origin;
+    } catch {
+      return fail(`has an invalid host "${host}"`);
+    }
+    if (path === '') return { ok: true, value: origin };
+    const rest = normalizePath(path);
+    return rest.ok ? { ok: true, value: `${origin}${rest.value}` } : rest;
+  }
+  if (!raw.startsWith('/') || raw.startsWith('//')) {
+    return fail(
+      isInject
+        ? 'must be a path starting with "/" or an https:// URL'
+        : 'must start with "/": sprites must be same-origin, so relative and http(s) URLs are not allowed',
+    );
+  }
+  return normalizePath(raw);
 };
 
 const colorRuleSchema = z.strictObject({
@@ -100,7 +142,7 @@ export const configSchema = z
       .string()
       .optional()
       .describe(
-        'URL path the sprites are served from, same-origin. Default "/icons".',
+        'URL path the sprites are served from, same-origin. Default "/icons". An https:// URL needs "crossOrigin": "inject".',
       ),
     moduleDir: z
       .string()
@@ -115,10 +157,18 @@ export const configSchema = z
       .array(colorRuleSchema)
       .optional()
       .describe('Per-icon color overrides. The last matching rule wins.'),
+    crossOrigin: z
+      .enum([CrossOrigin.NONE, CrossOrigin.INJECT])
+      .optional()
+      .describe(
+        'Default "none": sprites are served same-origin with zero client JS. "inject" allows an https:// publicPath on another origin (a CDN) and emits a small loader script that fetches the sprite with CORS and integrity and injects it (ADR-0027). Icons need JS in that mode.',
+      ),
   })
   .superRefine((value, context) => {
     if (value.publicPath === undefined) return;
-    const result = normalizePublicPath(value.publicPath);
+    const result = normalizePublicPath(value.publicPath, {
+      crossOrigin: value.crossOrigin,
+    });
     if (!result.ok) {
       context.addIssue({
         code: 'custom',

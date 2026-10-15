@@ -20,6 +20,8 @@ Options:
   --public-path <path>    URL path the sprites are served from. Default: /icons
   --module-dir <dir>      Where the manifest and types are written. Default: svgworm
   --flatten               Drop folder names from icon names (--no-flatten to undo)
+  --cross-origin <mode>   none (default) or inject: allow an https:// --public-path on a CDN,
+                          loaded by a small script (icons need JS in that mode)
   --json                  Print one JSON document on stdout and nothing else
   --verbose               Print one line per icon (plain output only)
   -h, --help              Show this help
@@ -35,6 +37,7 @@ Init options:
   --no-component          Skip the Icon wiring (default: written when react, next or astro is a dependency)
   --no-scripts            Do not run svgworm from package.json scripts (predev/prebuild, or dev/build on Yarn 2+)
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents
+  --cdn-url <https-url>   Serve sprites from a CDN on another origin (crossOrigin: inject)
   -y, --yes               Take the defaults and flags without asking
 
 Exit codes:

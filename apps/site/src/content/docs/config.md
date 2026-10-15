@@ -22,6 +22,7 @@ order: 6
 | `moduleDir`  | `svgworm`      | Where the manifest and types go                                                                 |
 | `flatten`    | `false`        | Drop folder names from icon names                                                               |
 | `color`      | `[]`           | Per-icon color overrides (see [Color overrides](#color-overrides)). The last matching rule wins |
+| `crossOrigin` | `none`        | `inject` serves the sprite from another origin through a small loader script (see [Sprites on a CDN](#sprites-on-a-cdn)) |
 
 <aside class="alert alert-tip">
 
@@ -78,6 +79,36 @@ svgworm --config svgworm.app.json && svgworm --config svgworm.marketing.json
 ```
 
 Each build writes its own manifest and `IconName` type, so make one component per sprite: `createIcon(appManifest)` and `createIcon(marketingManifest)`. Give each config its own `outDir`: both builds name their files `icons.<hash>.svg`, and a build removes the hashed files it did not write. Built-in groups in one config were left out on purpose ([ADR-0023](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0023-several-sprites-through-one-config-per-sprite.md)).
+
+## Sprites on a CDN
+
+Browsers refuse a `<use>` that points at another origin, even with CORS headers, so by default `publicPath` must be a path on your site. Two ways to serve the sprite from a CDN:
+
+1. **Proxy it (zero JS, recommended).** Keep `publicPath: "/icons"` and have your host or CDN forward `/icons/*` to the bucket. The page still sees a same-origin URL, and nothing changes in svgworm. Next's `assetPrefix` and Astro's `build.assetsPrefix` never move `public/`, so those apps are already same-origin.
+2. **Inject it (`crossOrigin: "inject"`).** For when the page and the sprite must live on different origins, such as a Vite app with an absolute `base`:
+
+```json
+{
+  "sources": ["icons"],
+  "outDir": "public/icons",
+  "publicPath": "https://cdn.example.com/icons",
+  "crossOrigin": "inject"
+}
+```
+
+The build then also writes `icons.loader.<hash>.js`. The loader fetches the sprite with CORS and its integrity hash, parses it without running anything, and puts it at the start of `<body>` once. `use` icons then point at `#id` in the page. `img` and `mask` icons keep loading the stack file from the CDN. The manifest becomes version 2 with the loader's URL and `integrity`, and it needs `@svgworm/react` 0.3 or later, or an `Icon.astro` written by the matching `svgworm init`.
+
+What it costs, measured in Chromium, Firefox and WebKit ([ADR-0027](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md)):
+
+- **Icons need JavaScript.** Without it, or before the loader runs, `use` icons are blank. They paint one round trip later than a same-origin sprite: the loader comes first, then the sprite.
+- **The CDN must send CORS headers.** Send `Access-Control-Allow-Origin` for your site on the sprite, stack and loader. A CSS mask is fetched in CORS mode too, so mask icons stay blank without it.
+- **A Content-Security-Policy needs the CDN origin** in `script-src`, `connect-src` and `img-src`.
+- **Render the loader tag once**, from the manifest, with its `integrity` and `crossorigin="anonymous"`. Then a CDN that serves a changed loader or sprite gets nothing to run: the browser rejects both. React: `createSpriteLoader(manifest)` in the root layout. Astro: the `SvgwormLoader.astro` that `init` writes. Plain HTML: `<script async src="…" integrity="…" crossorigin="anonymous">` with `sprites.icons.loader` from `manifest.json`.
+- **Upload `outDir` after every build** without deleting the previous files, so pages cached before a deploy keep working ([ADR-0022](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0022-builds-keep-only-the-current-sprite.md)).
+
+`svgworm init --cdn-url https://cdn.example.com/icons` writes this config and the loader wiring. The `--cross-origin inject` flag sets the key for one build, so CI can build for the CDN while local builds stay same-origin.
+
+An `http:` or protocol-relative `publicPath` is always an error. An `https:` one without `crossOrigin: "inject"` exits 2 and names the key.
 
 ## Color overrides
 

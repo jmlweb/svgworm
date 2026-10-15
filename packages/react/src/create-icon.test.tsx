@@ -1,8 +1,12 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { createIcon, SvgwormReactError } from './create-icon.js';
-import { manifest } from './fixture-manifest.js';
+import {
+  createIcon,
+  createSpriteLoader,
+  SvgwormReactError,
+} from './create-icon.js';
+import { injectManifest, manifest } from './fixture-manifest.js';
 
 const Icon = createIcon(manifest);
 const render = (element: React.ReactElement) => renderToStaticMarkup(element);
@@ -116,7 +120,7 @@ describe('delivery mask', () => {
 
 describe('failing loudly', () => {
   it('rejects an unknown manifest version', () => {
-    expect(() => createIcon({ ...manifest, version: 2 } as never)).toThrow(
+    expect(() => createIcon({ ...manifest, version: 99 } as never)).toThrow(
       SvgwormReactError,
     );
   });
@@ -164,5 +168,54 @@ describe('server component safety', () => {
     expect(source).not.toMatch(
       /\buse(State|Effect|Context|Ref|Memo|Callback|Reducer|Id)\b/,
     );
+  });
+});
+
+describe('crossOrigin inject (manifest version 2, ADR-0027)', () => {
+  const Injected = createIcon(injectManifest);
+  const Loader = createSpriteLoader(injectManifest);
+
+  it('renders use icons against the injected sprite by id', () => {
+    expect(render(<Injected name="home" />)).toBe(
+      '<svg focusable="false" height="1em" viewBox="0 0 24 24" width="1em" aria-hidden="true">' +
+        '<use href="#i-home"></use></svg>',
+    );
+  });
+
+  it('keeps absolute stack urls for img and mask icons', () => {
+    expect(render(<Injected name="brand/sunset" />)).toContain(
+      'src="https://cdn.example.com/icons/icons.stack.91bff0b3.svg#i-brand--sunset"',
+    );
+    expect(render(<Injected name="café" />)).toContain(
+      'https://cdn.example.com/icons/icons.stack.91bff0b3.svg#i-caf_e9_',
+    );
+  });
+
+  it('renders the loader script with its integrity, once per render', () => {
+    const html = render(
+      <>
+        <Loader />
+        <Loader />
+      </>,
+    );
+    expect(html).toContain(
+      'src="https://cdn.example.com/icons/icons.loader.0a1b2c3d.js"',
+    );
+    expect(html).toContain('integrity="sha384-LOADER"');
+    expect(html).toContain('crossorigin="anonymous"');
+    expect(html.match(/<script/g)).toHaveLength(1);
+  });
+
+  it('renders no loader for a version 1 manifest', () => {
+    const NoLoader = createSpriteLoader(manifest);
+    expect(render(<NoLoader />)).toBe('');
+  });
+
+  it('renders no loader when the manifest has none', () => {
+    const NoLoader = createSpriteLoader({
+      ...injectManifest,
+      sprites: { icons: { ...injectManifest.sprites.icons, loader: null } },
+    });
+    expect(render(<NoLoader />)).toBe('');
   });
 });

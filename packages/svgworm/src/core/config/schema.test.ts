@@ -70,6 +70,69 @@ describe('normalizePublicPath', () => {
   });
 });
 
+describe('normalizePublicPath with crossOrigin inject (ADR-0027)', () => {
+  const inject = { crossOrigin: 'inject' as const };
+
+  it.each([
+    ['https://cdn.example.com/icons', 'https://cdn.example.com/icons'],
+    ['https://cdn.example.com/icons/', 'https://cdn.example.com/icons'],
+    ['https://cdn.example.com', 'https://cdn.example.com'],
+    ['https://cdn.example.com/', 'https://cdn.example.com'],
+    ['https://cdn.example.com:8443/a/b', 'https://cdn.example.com:8443/a/b'],
+    ['https://CDN.Example.com/icons', 'https://cdn.example.com/icons'],
+    ['/icons', '/icons'],
+  ])('accepts %s as %j', (input, expected) => {
+    expect(normalizePublicPath(input, inject)).toEqual({
+      ok: true,
+      value: expected,
+    });
+  });
+
+  it.each([
+    'http://cdn.example.com/icons',
+    '//cdn.example.com/icons',
+    'https://user:pass@cdn.example.com/icons',
+    'https://cdn.example.com/icons?v=1',
+    'https://cdn.example.com/icons#x',
+    'https://cdn.example.com//icons',
+    'https://cdn.example.com/a/../icons',
+    'https://cdn.example.com/a%20b',
+    'https://cdn.example.com/a b',
+    'https:cdn.example.com/icons',
+    'ftp://cdn.example.com/icons',
+  ])('rejects %j', (input) => {
+    expect(normalizePublicPath(input, inject)).toMatchObject({ ok: false });
+  });
+
+  it('names the crossOrigin key when an https URL is used without it', () => {
+    const result = normalizePublicPath('https://cdn.example.com/icons');
+    expect(result).toMatchObject({ ok: false });
+    expect(result.ok ? '' : result.message).toContain(
+      '"crossOrigin": "inject"',
+    );
+  });
+
+  it('accepts crossOrigin in the config only as "none" or "inject"', () => {
+    expect(
+      parse({
+        sources: ['icons'],
+        crossOrigin: 'inject',
+        publicPath: 'https://cdn.example.com/icons',
+      }).success,
+    ).toBe(true);
+    expect(parse({ sources: ['icons'], crossOrigin: 'none' }).success).toBe(
+      true,
+    );
+    expect(parse({ sources: ['icons'], crossOrigin: 'cors' }).success).toBe(
+      false,
+    );
+    expect(
+      parse({ sources: ['icons'], publicPath: 'https://cdn.example.com/icons' })
+        .success,
+    ).toBe(false);
+  });
+});
+
 describe('configSchema', () => {
   it('accepts a minimal config', () => {
     expect(parse({ sources: ['icons'] }).success).toBe(true);

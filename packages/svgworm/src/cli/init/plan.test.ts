@@ -883,3 +883,89 @@ describe('inspectProject: Yarn 2+ detection', () => {
     expect((await inspect()).runsScriptHooks).toBe(false);
   });
 });
+
+describe('planInit: CDN on another origin (--cdn-url, ADR-0027)', () => {
+  const cdn = {
+    ...defaultInitOptions(),
+    cdnUrl: 'https://cdn.example.com/icons',
+  };
+
+  it('writes crossOrigin inject with the CDN url as publicPath', () => {
+    const plan = planInit(cdn, facts({ usesReact: true }));
+    expect(
+      JSON.parse(statusOf(plan, 'svgworm.config.json')?.content ?? ''),
+    ).toEqual({
+      $schema: 'https://unpkg.com/svgworm/svgworm.schema.json',
+      sources: ['icons'],
+      outDir: 'public/icons',
+      publicPath: 'https://cdn.example.com/icons',
+      crossOrigin: 'inject',
+    });
+  });
+
+  it('exports a SpriteLoader from the React wiring', () => {
+    const plan = planInit(cdn, facts({ usesReact: true }));
+    const content = statusOf(plan, 'components/icon.tsx')?.content ?? '';
+    expect(content).toContain(
+      "import { createIcon, createSpriteLoader } from '@svgworm/react';",
+    );
+    expect(content).toContain(
+      'export const SpriteLoader = createSpriteLoader(manifest);',
+    );
+    expect(
+      statusOf(
+        planInit(defaultInitOptions(), facts({ usesReact: true })),
+        'components/icon.tsx',
+      )?.content,
+    ).not.toContain('SpriteLoader');
+  });
+
+  it('writes SvgwormLoader.astro next to Icon.astro for Astro', () => {
+    const plan = planInit(cdn, facts({ usesAstro: true }));
+    const loader = statusOf(plan, 'components/SvgwormLoader.astro');
+    expect(loader).toMatchObject({ status: InitStatus.CREATED });
+    expect(loader?.content).toContain('crossorigin="anonymous"');
+    expect(loader?.content).toContain('integrity={loader.integrity}');
+    expect(
+      statusOf(
+        planInit(defaultInitOptions(), facts({ usesAstro: true })),
+        'components/SvgwormLoader.astro',
+      ),
+    ).toBeUndefined();
+  });
+
+  it('renders use icons by id from a version 2 manifest in Icon.astro', () => {
+    const content =
+      statusOf(
+        planInit(defaultInitOptions(), facts({ usesAstro: true })),
+        'components/Icon.astro',
+      )?.content ?? '';
+    expect(content).toContain('version !== 1 && version !== 2');
+    expect(content).toContain("kind === 'sprite' && version === 2");
+  });
+
+  it('prints the CDN steps and where the loader goes', () => {
+    const steps = planInit(
+      cdn,
+      facts({ usesReact: true, usesNext: true }),
+    ).nextSteps.join('\n');
+    expect(steps).toContain(
+      'Upload public/icons/ to https://cdn.example.com/icons',
+    );
+    expect(steps).toContain('Access-Control-Allow-Origin');
+    expect(steps).toContain('<SpriteLoader />');
+    expect(steps).toContain('connect-src');
+  });
+
+  it('rejects an http CDN url and --public-path together with --cdn-url', () => {
+    expect(
+      validateInitOptions(
+        { ...cdn, cdnUrl: 'http://cdn.example.com/icons' },
+        '/p',
+      ).join('\n'),
+    ).toContain('the config would be invalid');
+    expect(
+      validateInitOptions({ ...cdn, publicPath: '/icons' }, '/p').join('\n'),
+    ).toContain('--cdn-url replaces --public-path');
+  });
+});

@@ -588,3 +588,69 @@ describe('run: init (R-56)', () => {
     );
   });
 });
+
+describe('run: crossOrigin inject (ADR-0027)', () => {
+  const cdn = [
+    '--source',
+    'icons',
+    '--out-dir',
+    'public/icons',
+    '--public-path',
+    'https://cdn.example.com/icons',
+  ];
+
+  it('exits 2 for an https publicPath without --cross-origin inject, naming the key', async () => {
+    await put('icons/home.svg');
+    const { code, stderr } = await exec(cdn);
+    expect(code).toBe(ExitCode.USAGE);
+    expect(stderr).toContain('"crossOrigin": "inject"');
+  });
+
+  it('writes the loader and a version 2 manifest', async () => {
+    await put('icons/home.svg');
+    const { code, stdout } = await exec([
+      ...cdn,
+      '--cross-origin',
+      'inject',
+      '--json',
+    ]);
+    expect(code).toBe(ExitCode.OK);
+    expect(JSON.parse(stdout)).toMatchObject({ ok: true });
+    expect(
+      (await readdir(join(root, 'public/icons'))).some((name) =>
+        /^icons\.loader\.[0-9a-f]{8}\.js$/.test(name),
+      ),
+    ).toBe(true);
+    const manifest = await readFile(
+      join(root, 'svgworm/manifest.json'),
+      'utf8',
+    );
+    expect(manifest).toContain('"crossOrigin": "inject"');
+    const check = await exec(['check', ...cdn, '--cross-origin', 'inject']);
+    expect(check.code).toBe(ExitCode.OK);
+  });
+
+  it('writes crossOrigin and the CDN url from init --cdn-url', async () => {
+    await put(
+      'package.json',
+      JSON.stringify({ dependencies: { react: '19.3.0' } }),
+    );
+    const { code } = await exec([
+      'init',
+      '--yes',
+      '--cdn-url',
+      'https://cdn.example.com/icons',
+    ]);
+    expect(code).toBe(ExitCode.OK);
+    const config = JSON.parse(
+      await readFile(join(root, 'svgworm.config.json'), 'utf8'),
+    ) as Record<string, unknown>;
+    expect(config).toMatchObject({
+      publicPath: 'https://cdn.example.com/icons',
+      crossOrigin: 'inject',
+    });
+    expect(await readFile(join(root, 'components/icon.tsx'), 'utf8')).toContain(
+      'createSpriteLoader',
+    );
+  });
+});

@@ -108,7 +108,8 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 | `style/unscopable` | A `<style>` rule (for example `@media`) cannot be inlined. Convert it to attributes |
 | `color/forced-mono-unsafe` | A `color: mono` rule would recolor a multicolor icon. Use `preserve` or drop the rule |
 | `build/no-icons` (exit 2) | The source folder has no `.svg` files. Check `sources` |
-| exit 2 with `publicPath` in the message | The path must start with `/`, be same-origin, and contain no `?`, `#`, `%` or whitespace |
+| exit 2 with `publicPath` in the message | The path must start with `/`, be same-origin, and contain no `?`, `#`, `%` or whitespace. A CDN URL (`https://…`) needs `"crossOrigin": "inject"`, which makes icons need a loader script: prefer proxying `/icons/*` through the site (https://svgworm.com/docs/config/#sprites-on-a-cdn) |
+| `use` icons blank with `crossOrigin: "inject"` | The loader tag is missing (render it once: `createSpriteLoader(manifest)` in the root layout, or `SvgwormLoader.astro` in the layout head), or the console shows `svgworm: sprite not loaded from …` (CORS header or CSP `connect-src` missing on the CDN) |
 | exit 2 with `--component-file` in the message | The file extension must match the framework: `.astro` for Astro, `.tsx` or `.jsx` for React |
 | `Unknown icon "…"` at build | The name is not in the manifest. Run `svgworm` again, or fix the name |
 | sprite 404 under `base` | `publicPath` is missing the `base` prefix |
