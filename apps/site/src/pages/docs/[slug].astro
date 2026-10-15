@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import DocsNav from '../../components/DocsNav.astro';
+import Icon from '../../components/Icon.astro';
 import Base from '../../layouts/Base.astro';
 
 export const getStaticPaths = async () => {
@@ -21,7 +22,7 @@ type Props = {
 };
 
 const { entry, docs } = Astro.props;
-const { Content, headings } = await render(entry);
+const { headings } = await render(entry);
 const path = `/docs/${entry.id}/`;
 const sections = headings.filter((heading) => heading.depth === 2);
 const index = docs.findIndex((doc) => doc.id === entry.id);
@@ -29,6 +30,20 @@ const previous = docs[index - 1];
 const next = docs[index + 1];
 const navTitle = (doc: CollectionEntry<'docs'>) =>
   doc.data.navTitle ?? doc.data.title;
+
+// Heading anchors (TSK-072). Astro assigns the ids after user rehype plugins run, so the link is
+// added to the rendered HTML instead, which keeps every id exactly as the TOC and deep links
+// already use it. The content layer renders Markdown to a string, so this is the same HTML
+// <Content /> would print.
+const rendered = entry.rendered?.html;
+if (rendered === undefined) {
+  throw new Error(`docs: "${entry.id}" has no rendered HTML`);
+}
+const html = rendered.replace(
+  /<h([23]) id="([^"]+)">([\s\S]*?)<\/h\1>/g,
+  (_, level: string, id: string, inner: string) =>
+    `<h${level} id="${id}">${inner}<a class="heading-anchor" href="#${id}" aria-label="Link to this section">#</a></h${level}>`,
+);
 ---
 
 <Base
@@ -42,7 +57,7 @@ const navTitle = (doc: CollectionEntry<'docs'>) =>
     <main class="docs-main" id="content">
       <article class="prose">
         <h1>{entry.data.title}</h1>
-        <Content />
+        <div set:html={html} />
       </article>
       {
         (previous || next) && (
@@ -70,4 +85,44 @@ const navTitle = (doc: CollectionEntry<'docs'>) =>
       </p>
     </main>
   </div>
+
+  {/* Copy buttons (TSK-069): the script adds one per code block, so without JavaScript there
+      is no button. Docs pages only; the landing page stays script-free for icons. The icon
+      comes from the sprite through this template. */}
+  <template id="copy-button">
+    <button class="copy-button" type="button">
+      <Icon name="copy" />
+      <span class="copy-button-label">Copy</span>
+    </button>
+  </template>
+  <script>
+    const template =
+      globalThis.document.querySelector<HTMLTemplateElement>('#copy-button');
+    const blocks = globalThis.document.querySelectorAll<HTMLPreElement>(
+      '.prose pre',
+    );
+    if (template && 'clipboard' in globalThis.navigator) {
+      blocks.forEach((pre) => {
+        const button = template.content.firstElementChild?.cloneNode(true);
+        if (!(button instanceof HTMLButtonElement)) return;
+        const label = button.querySelector('.copy-button-label');
+        button.setAttribute('aria-label', 'Copy code');
+        button.addEventListener('click', async () => {
+          const text = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+          try {
+            await globalThis.navigator.clipboard.writeText(text);
+            if (label) label.textContent = 'Copied';
+            button.setAttribute('aria-label', 'Copied');
+          } catch {
+            if (label) label.textContent = 'Press Ctrl+C';
+          }
+          globalThis.setTimeout(() => {
+            if (label) label.textContent = 'Copy';
+            button.setAttribute('aria-label', 'Copy code');
+          }, 2000);
+        });
+        pre.append(button);
+      });
+    }
+  </script>
 </Base>

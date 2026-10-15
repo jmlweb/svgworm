@@ -3,6 +3,7 @@ export type IconName =
   | "arrow-right"
   | "book-open"
   | "check"
+  | "copy"
   | "emoji/carrot"
   | "emoji/mushroom"
   | "emoji/rock"

@@ -1542,6 +1542,76 @@ h1 {
   font-weight: 800;
 }
 
+/* Heading anchors (TSK-072): a # that shows on hover and focus, never in the heading text flow. */
+.prose h2,
+.prose h3 {
+  position: relative;
+}
+
+.heading-anchor {
+  margin-left: 0.35em;
+  color: var(--ink-muted);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
+/* Copy buttons (TSK-069): added by the docs page script, so no JavaScript means no button. */
+.prose pre {
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid rgb(234 219 196 / 0.25);
+  border-radius: var(--radius-pill);
+  background: rgb(26 17 13 / 0.7);
+  color: var(--term-ink);
+  font: 600 12px/1.4 var(--font-sans);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.prose pre:hover .copy-button,
+.copy-button:focus-visible {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  border-color: var(--worm);
+  color: var(--worm);
+}
+
+.copy-button:focus-visible {
+  outline: 2px solid var(--worm);
+  outline-offset: 2px;
+}
+
+/* Fine pointers hide the button until hover; touch screens always show it. */
+@media (hover: none) {
+  .copy-button {
+    opacity: 1;
+  }
+}
+
 /* Callouts use design system tokens only. Kinds differ by label; sienna is decorative, so it
    only colors the rule, never the text. */
 .alert {

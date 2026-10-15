@@ -4,8 +4,8 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.f291e640.svg",
-        "url": "/icons/icons.f291e640.svg"
+        "file": "icons.9e001365.svg",
+        "url": "/icons/icons.9e001365.svg"
       },
       "stack": null
     }
@@ -28,6 +28,13 @@ export const manifest = {
     "check": {
       "sprite": "icons",
       "id": "i-check",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "copy": {
+      "sprite": "icons",
+      "id": "i-copy",
       "viewBox": "0 0 24 24",
       "color": "mono",
       "delivery": "use"
