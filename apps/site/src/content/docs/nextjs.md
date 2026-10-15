@@ -28,12 +28,12 @@ Requires Node `^22.20 || >=24.11`.
 
    `pnpm dev` and `pnpm build` run it too, through the `predev` and `prebuild` scripts. It writes the sprite to `public/icons/` and the manifest and types to `svgworm/`:
 
-   ```text
-   public/icons/icons.<hash>.svg   sprite (and icons.stack.<hash>.svg when an icon needs it)
-   svgworm/icons.js                manifest (data only)
-   svgworm/icons.d.ts              types: IconName and the manifest shape
-   svgworm/manifest.json           same manifest, for scripts and templates
-   ```
+   | File | Contents |
+   | --- | --- |
+   | `public/icons/icons.<hash>.svg` | Sprite (plus `icons.stack.<hash>.svg` when an icon needs it) |
+   | `svgworm/icons.js` | Manifest (data only) |
+   | `svgworm/icons.d.ts` | Types: `IconName` and the manifest shape |
+   | `svgworm/manifest.json` | Same manifest, for scripts and templates |
 
 3. **Use it anywhere on the server:**
 
@@ -79,7 +79,12 @@ Without `init`, do its part yourself after installing the two packages:
 3. **Run the CLI before `dev` and `build`:**
 
    ```json
-   { "scripts": { "predev": "svgworm --source icons", "prebuild": "svgworm --source icons" } }
+   {
+     "scripts": {
+       "predev": "svgworm --source icons",
+       "prebuild": "svgworm --source icons"
+     }
+   }
    ```
 
 ## Cache for a year

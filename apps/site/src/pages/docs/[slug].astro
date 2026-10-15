@@ -24,6 +24,11 @@ const { entry, docs } = Astro.props;
 const { Content, headings } = await render(entry);
 const path = `/docs/${entry.id}/`;
 const sections = headings.filter((heading) => heading.depth === 2);
+const index = docs.findIndex((doc) => doc.id === entry.id);
+const previous = docs[index - 1];
+const next = docs[index + 1];
+const navTitle = (doc: CollectionEntry<'docs'>) =>
+  doc.data.navTitle ?? doc.data.title;
 ---
 
 <Base
@@ -39,6 +44,24 @@ const sections = headings.filter((heading) => heading.depth === 2);
         <h1>{entry.data.title}</h1>
         <Content />
       </article>
+      {
+        (previous || next) && (
+          <nav aria-label="Previous and next page" class="docs-pager">
+            {previous && (
+              <a href={`/docs/${previous.id}/`} rel="prev">
+                <span>Previous</span>
+                {navTitle(previous)}
+              </a>
+            )}
+            {next && (
+              <a class="docs-pager-next" href={`/docs/${next.id}/`} rel="next">
+                <span>Next</span>
+                {navTitle(next)}
+              </a>
+            )}
+          </nav>
+        )
+      }
       <p class="docs-edit">
         <a
           href={`https://github.com/jmlweb/svgworm/blob/main/apps/site/src/content/docs/${entry.id}.md`}
