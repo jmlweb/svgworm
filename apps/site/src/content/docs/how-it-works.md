@@ -20,7 +20,7 @@ The sprite is one SVG file with a `<symbol id="i-home" viewBox="0 0 24 24">` per
 
 An external file rather than an inline `<svg>` in the HTML because it is cached across pages and it keeps the HTML small. The cost is one extra request on the first visit, and that the whole set downloads at once ([performance notes](/docs/nextjs/#performance-notes)). The file name carries the first 8 hex characters of the SHA-256 of its bytes, so it can be served with a year-long cache and still update the moment its content changes.
 
-Before an icon goes into the sprite, svgworm validates it (no scripts, no event handlers, no references to other files), inlines any `<style>` rules into attributes so one icon's CSS can never reach another, optimizes it with [svgo](https://svgo.dev) using a fixed configuration, and prefixes every internal id (gradients, masks, clip paths) with the symbol id so two icons never collide.
+Before an icon goes into the sprite, svgworm validates it (no scripts, no event handlers, no references to other files), inlines any `<style>` rules into attributes so one icon's CSS can never reach another, optimizes it with [svgo](https://svgo.dev) using a fixed configuration, and prefixes every internal id (gradients, masks, clip paths) with the symbol id so two icons never collide. Comments are dropped, except license notices (`<!-- @license … -->` and `<!--! … -->`, as Lucide, Tabler and Font Awesome write them), which the sprite keeps once each before its root element, so an ISC or MIT notice travels with the copies.
 
 ## Color
 

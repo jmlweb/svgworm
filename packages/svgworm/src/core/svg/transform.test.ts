@@ -27,6 +27,39 @@ const input = {
   mode: ColorMode.AUTO,
 };
 
+describe('transformIcon: license comments (TSK-066)', () => {
+  const icon = (markup: string) =>
+    transformIcon({
+      ...input,
+      content: new TextEncoder().encode(markup),
+    });
+
+  it('keeps @license and /*! style comments, trimmed, sorted and unique', () => {
+    const result = icon(
+      '<!-- @license lucide-static v1.52.0 - ISC -->\n' +
+        '<!-- a note that is not a license -->\n' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+        '<!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->' +
+        '<!--   @license lucide-static v1.52.0 - ISC   -->' +
+        '<path d="M0 0h24v24H0z"/></svg>',
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.icon.licenses).toEqual([
+      '! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.',
+      '@license lucide-static v1.52.0 - ISC',
+    ]);
+    expect(result.icon.inner).not.toContain('<!--');
+  });
+
+  it('has no licenses for a file without such comments', () => {
+    const result = icon(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><!-- plain --><path d="M0 0h24v24H0z"/></svg>',
+    );
+    expect(result.ok && result.icon.licenses).toEqual([]);
+  });
+});
+
 describe('transformIcon: failure boundaries (RPT-001)', () => {
   it('transforms a valid icon', () => {
     expect(transformIcon(input).ok).toBe(true);

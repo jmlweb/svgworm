@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 14 |
+| Pending | 17 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 60 |
+| Complete | 61 |
 
 ## Active Tasks
 
@@ -30,8 +30,11 @@
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
 | TSK-064 | Naming: split camelCase/PascalCase file names into kebab-case | P4 | naming, output-contract, adr | 2026-10-15 |
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
-| TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
+| TSK-077 | Landing: before/after demo, SVG folder to sprite to typed icon | P2 | site, landing, adoption | 2026-10-15 |
+| TSK-078 | Landing: lede says the problem first, visible stats caption | P2 | site, landing, copy | 2026-10-15 |
+| TSK-079 | Reproducible client-JS comparison: svgworm vs an icon library and SVGR | P3 | site, docs, comparison, adoption | 2026-10-15 |
+| TSK-080 | Site audit: accessibility, mobile layout, Core Web Vitals | P3 | site, accessibility, performance | 2026-10-15 |
 
 ## Recently Completed
 

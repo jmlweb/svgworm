@@ -58,6 +58,47 @@ const snapshotName = (name: string): string =>
 const withoutTiming = (result: CompileResult): unknown =>
   result.ok ? { ...result, stats: { ...result.stats, durationMs: 0 } } : result;
 
+describe('compile: license comments', () => {
+  const lucide = (d: string) =>
+    new TextEncoder().encode(
+      `<!-- @license lucide-static v1.52.0 - ISC -->\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${d}"/></svg>`,
+    );
+
+  it('puts the licenses of the icons in a file once at the top of that file', () => {
+    const result = compile(
+      [
+        {
+          path: 'icons/a.svg',
+          relativePath: 'a.svg',
+          content: lucide('M0 0h1'),
+        },
+        {
+          path: 'icons/b.svg',
+          relativePath: 'b.svg',
+          content: lucide('M0 0h2'),
+        },
+        {
+          path: 'icons/c.svg',
+          relativePath: 'c.svg',
+          content: new TextEncoder().encode(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h3"/></svg>',
+          ),
+        },
+      ],
+      { flatten: false, color: [], publicPath: '/icons' },
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const sprite = result.files.find((file) => file.name.startsWith('icons.'));
+    expect(sprite?.content.split('@license')).toHaveLength(2);
+    expect(
+      sprite?.content.startsWith(
+        '<!-- @license lucide-static v1.52.0 - ISC -->\n<svg',
+      ),
+    ).toBe(true);
+  });
+});
+
 describe('compile: fixture corpus', () => {
   const result = success(compile(corpus, options));
 

@@ -53,6 +53,7 @@ A source can point into `node_modules` and pick files by glob, so an icon set su
 - Names come from the path inside `dir`, as for any source: `house.svg` is `house`. The package folder is not part of the name, so an icon with the same name in two sources is a [collision](/docs/troubleshooting/#name-collision); rename your own file or exclude the package's.
 - The whole set builds too (`"dir": "node_modules/lucide-static/icons"` alone), but every page then downloads every icon. Pick what you render; see the [performance notes](/docs/nextjs/#performance-notes).
 - `svgworm watch` watches the folder, so a package update rebuilds the sprite. Commit the lockfile so CI resolves the same icons.
+- The package's license notice (`<!-- @license lucide-static … - ISC -->`) is kept once at the top of the sprite, so the attribution the license asks for travels with the copies.
 
 The `--source` flag takes paths only; globs need the config file.
 

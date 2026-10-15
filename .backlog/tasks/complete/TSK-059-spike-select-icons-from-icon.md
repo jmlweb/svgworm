@@ -28,6 +28,7 @@ Dogfooding 0.2.1: the most common icon source is a package such as lucide-static
 
 ## Learnings
 
+- LRN-042: pnpm installs packages as symlinks: stat the source root, lstat only inside
 ## Progress Log
 
 - [2026-10-15] Created

@@ -1,5 +1,37 @@
 import { describe, expect, it } from 'vitest';
 
+describe('license comments', () => {
+  const symbol = {
+    id: 'i-a',
+    viewBox: '0 0 24 24',
+    attributes: [],
+    inner: '<path d="M0 0h1v1"/>',
+  };
+
+  it('writes each distinct license once before the root, sorted', () => {
+    const text = assembleSprite(
+      [symbol, { ...symbol, id: 'i-b' }],
+      ['@license lucide-static v1.52.0 - ISC', '! Font Awesome Free 6.5.1'],
+    );
+    expect(text).toBe(
+      '<!-- ! Font Awesome Free 6.5.1 -->\n' +
+        '<!-- @license lucide-static v1.52.0 - ISC -->\n' +
+        '<svg xmlns="http://www.w3.org/2000/svg">' +
+        '<symbol id="i-a" viewBox="0 0 24 24"><path d="M0 0h1v1"/></symbol>' +
+        '<symbol id="i-b" viewBox="0 0 24 24"><path d="M0 0h1v1"/></symbol></svg>',
+    );
+  });
+
+  it('never breaks the comment syntax', () => {
+    const text = assembleStack([symbol], ['a -- b --> c']);
+    expect(text.startsWith('<!-- a - - b - -> c -->\n<svg')).toBe(true);
+  });
+
+  it('writes nothing extra without licenses', () => {
+    expect(assembleSprite([symbol], []).startsWith('<svg')).toBe(true);
+  });
+});
+
 import { contentHash, spriteFileName, stackFileName } from './hash.ts';
 import { assembleSprite, assembleStack, type SymbolMarkup } from './sprite.ts';
 

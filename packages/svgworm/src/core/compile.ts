@@ -224,10 +224,16 @@ export const compile = (
   const icons = processed.toSorted((a, b) => compareCodePoints(a.name, b.name));
   const inSprite = icons.filter((item) => item.icon.delivery === Delivery.USE);
   const inStack = icons.filter((item) => item.icon.delivery !== Delivery.USE);
+  const licensesOf = (items: readonly Processed[]): readonly string[] =>
+    items.flatMap((item) => item.icon.licenses);
   const spriteText =
-    inSprite.length === 0 ? null : assembleSprite(inSprite.map(toSymbol));
+    inSprite.length === 0
+      ? null
+      : assembleSprite(inSprite.map(toSymbol), licensesOf(inSprite));
   const stackText =
-    inStack.length === 0 ? null : assembleStack(inStack.map(toSymbol));
+    inStack.length === 0
+      ? null
+      : assembleStack(inStack.map(toSymbol), licensesOf(inStack));
   const spriteName =
     spriteText === null
       ? null

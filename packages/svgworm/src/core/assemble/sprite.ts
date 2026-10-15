@@ -30,10 +30,30 @@ const element = (name: string, symbol: SymbolMarkup): string =>
     ? `<${name}${startTagAttributes(symbol)}/>`
     : `<${name}${startTagAttributes(symbol)}>${symbol.inner}</${name}>`;
 
+// XML forbids `--` inside a comment and `-->` would end it early.
+const comment = (text: string): string =>
+  `<!-- ${text.replaceAll('--', '- -')} -->\n`;
+
+/**
+ * License notices of the icons in the file (TSK-066), once each, before the root element.
+ * Sorted by code point so the bytes, and the hash, never depend on icon order.
+ */
+const licenseHeader = (licenses: readonly string[]): string =>
+  [...new Set(licenses)]
+    .toSorted((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(comment)
+    .join('');
+
 /** One `<symbol>` per icon, for `<use href="sprite.svg#id">`. Callers pass them sorted. */
-export const assembleSprite = (symbols: readonly SymbolMarkup[]): string =>
-  `${SVG_OPEN}${symbols.map((symbol) => element('symbol', symbol)).join('')}</svg>`;
+export const assembleSprite = (
+  symbols: readonly SymbolMarkup[],
+  licenses: readonly string[] = [],
+): string =>
+  `${licenseHeader(licenses)}${SVG_OPEN}${symbols.map((symbol) => element('symbol', symbol)).join('')}</svg>`;
 
 /** Nested `<svg>` per icon, shown only when it is the URL `:target` (ADR-0006). */
-export const assembleStack = (symbols: readonly SymbolMarkup[]): string =>
-  `${SVG_OPEN}${STACK_STYLE}${symbols.map((symbol) => element('svg', symbol)).join('')}</svg>`;
+export const assembleStack = (
+  symbols: readonly SymbolMarkup[],
+  licenses: readonly string[] = [],
+): string =>
+  `${licenseHeader(licenses)}${SVG_OPEN}${STACK_STYLE}${symbols.map((symbol) => element('svg', symbol)).join('')}</svg>`;

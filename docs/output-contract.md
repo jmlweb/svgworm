@@ -21,6 +21,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 - Written to `outDir` (default `public/icons`), and served at `<publicPath>/<file>` (default `/icons`). svgworm deletes only stale files matching `^icons(\.stack)?\.[0-9a-f]{8}\.svg$` (R-15, ADR-0010)
 - Contains one `<symbol id="<iconId>" viewBox="…">` per icon
 - Must not contain scripts or external references
+- License notices survive: an XML comment in a source file whose text starts with `@license` or `!` (the conventions icon packages and minifiers use) is written once per distinct text, trimmed, before the root element of the sprite or stack that holds the icon, sorted by code point. Every other comment is dropped (TSK-066; the comment bytes are part of the content hash)
 - Internal ids (gradients, masks, clip paths) are prefixed per icon so they can't collide
 - `<style>` rules must not leak between icons. Every rule is inlined, and a `<style>` left over is an error ([ADR-0004](adr/0004-per-icon-color-classification.md), [ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md))
 - Contains only icons that don't depend on `url(#…)` references ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md))

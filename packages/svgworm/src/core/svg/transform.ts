@@ -16,6 +16,7 @@ import {
   type Delivery,
 } from './references.ts';
 import {
+  collectLicenseComments,
   getDocumentElement,
   mutateSvgTree,
   parseSvgTree,
@@ -30,6 +31,11 @@ export type IconMarkup = {
   readonly isViewBoxDerived: boolean;
   readonly color: ColorKind;
   readonly delivery: Delivery;
+  /**
+   * License notices from the source (`<!-- @license … -->` and `<!--! … -->`, the forms icon
+   * packages and minifiers use), trimmed, unique and sorted. The sprite keeps them once.
+   */
+  readonly licenses: readonly string[];
   /** Presentation attributes of the source root that the symbol inherits. */
   readonly attributes: readonly (readonly [string, string])[];
   /** Serialized children of the source root, with ids renamed. */
@@ -127,6 +133,8 @@ export const transformIcon = (input: TransformInput): TransformResult => {
   }
   const rawErrors = validateTree(raw.root, file);
   if (rawErrors.length > 0) return fail(rawErrors);
+  // Read before svgo runs: its preset strips every comment, license or not.
+  const licenses = collectLicenseComments(raw.root);
 
   const rootAttributes = getDocumentElement(raw.root)?.attributes ?? {};
   const viewBox = resolveViewBox(rootAttributes, file);
@@ -201,6 +209,7 @@ export const transformIcon = (input: TransformInput): TransformResult => {
       isViewBoxDerived: viewBox.isDerived,
       color,
       delivery: toDelivery(color, hasReferences),
+      licenses,
       attributes,
       inner: sliceInner(outcome.data),
     },

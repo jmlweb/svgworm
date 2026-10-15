@@ -34,6 +34,9 @@ const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
         // would only hide the source names.
         cleanupIds: { minify: false },
         removeDesc: { removeAny: true },
+        // License comments are collected before this pass and written once per sprite
+        // (TSK-066), so none may stay inside a symbol; the preset would keep `<!--! … -->`.
+        removeComments: { preservePatterns: false },
       },
     },
   },

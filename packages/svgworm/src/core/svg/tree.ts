@@ -121,6 +121,28 @@ export const walkElements = (
   });
 };
 
+// The two conventions for a comment that must survive minification: `@license` (Google
+// Closure, svgo's own `preserveComments`) and a leading `!` (UglifyJS, terser, Font Awesome).
+const isLicenseComment = (value: string): boolean =>
+  value.startsWith('@license') || value.startsWith('!');
+
+/** Every license comment in the document, trimmed, unique and sorted by code point. */
+export const collectLicenseComments = (root: XastRoot): readonly string[] => {
+  const found = new Set<string>();
+  const visit = (node: XastParent): void => {
+    node.children.forEach((child) => {
+      if (child.type === 'comment') {
+        const value = child.value.trim();
+        if (isLicenseComment(value)) found.add(value);
+      } else if (isElement(child)) {
+        visit(child);
+      }
+    });
+  };
+  visit(root);
+  return [...found].toSorted((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+};
+
 export const getHref = (element: XastElement): string | undefined =>
   element.attributes['href'] ?? element.attributes['xlink:href'];
 

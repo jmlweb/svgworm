@@ -4,8 +4,8 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.9e001365.svg",
-        "url": "/icons/icons.9e001365.svg"
+        "file": "icons.ce28be92.svg",
+        "url": "/icons/icons.ce28be92.svg"
       },
       "stack": null
     }
