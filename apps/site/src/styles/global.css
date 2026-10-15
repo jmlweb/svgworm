@@ -1141,6 +1141,12 @@ h1 {
   transform: none;
 }
 
+/* The skip link's target takes focus (tabindex="-1" in the markup) so the next Tab starts below
+   the header. It is not a control, so no ring. */
+#content:focus {
+  outline: none;
+}
+
 /* WCAG 1.4.10 reflow: the swatches wrap at 320px instead of widening the page. */
 .swatches {
   flex-wrap: wrap;

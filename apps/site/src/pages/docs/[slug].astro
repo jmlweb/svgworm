@@ -77,7 +77,7 @@ const html = withAnchors.replace(
 >
   <div class="wrap docs-layout">
     <DocsNav current={path} docs={docs} sections={sections} />
-    <main class="docs-main" id="content">
+    <main class="docs-main" id="content" tabindex="-1">
       <article class="prose">
         <h1>{entry.data.title}</h1>
         <div set:html={html} />
