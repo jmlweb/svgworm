@@ -1,12 +1,13 @@
 ---
 id: TSK-034
 title: Move repo toolchain to TypeScript 7 at 7.1
-status: pending
+status: blocked
 priority: P3
 tags: [tooling, typescript]
 created: 2026-10-11
 source: ADR-0011
 depends-on: []
+blocked-by: TypeScript 7.1 is not published (2026-10-15: npm latest 7.0.2, next 7.1.0-dev.20261015.1); revisit when 7.1 ships
 ---
 
 # Move repo toolchain to TypeScript 7 at 7.1
@@ -29,3 +30,4 @@ ADR-0011 keeps builds and type checks on TypeScript 6.0 and drops the typescript
 
 - [2026-10-11] Created
 - [2026-10-12] 2026-10-12: TypeScript 7.1 is not released (npm latest 7.0.2, next 7.1.0-dev.20261011.1). Nothing to decide yet; revisit when 7.1 ships. typecheck:ts7 still runs 7.0.2 in CI.
+- [2026-10-15] Blocked: TypeScript 7.1 is not published (2026-10-15: npm latest 7.0.2, next 7.1.0-dev.20261015.1); revisit when 7.1 ships
