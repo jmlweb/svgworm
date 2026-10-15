@@ -123,7 +123,9 @@ describe('json reporter', () => {
     await rm(join(root, 'icons'), { recursive: true });
     const { code, stdout } = await exec(['--json']);
     expect(code).toBe(2);
-    await expect(stdout.replaceAll(root, '<cwd>')).toMatchFileSnapshot(
+    // JSON escapes the backslashes of a Windows path, so replace the escaped form.
+    const escapedRoot = JSON.stringify(root).slice(1, -1);
+    await expect(stdout.replaceAll(escapedRoot, '<cwd>')).toMatchFileSnapshot(
       `${snapshots}json-no-config.json`,
     );
   });
