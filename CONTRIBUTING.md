@@ -1,11 +1,11 @@
 # Contributing
 
-Thanks for helping out! 🙌 Bug reports, fixes and docs improvements are all welcome.
+Thanks for helping out! Bug reports, fixes and docs improvements are all welcome.
 
 ## Before you start
 
-- 📖 Read [AGENTS.md](AGENTS.md) first. It has the product principles, the commands, and the rules for decisions and tests.
-- ⚖️ Contributions are licensed under MIT, the project license, simply by submitting them. There is no CLA and no DCO sign-off ([ADR-0009](docs/adr/0009-license-versioning-and-release.md)).
+- Read [AGENTS.md](AGENTS.md) first. It has the product principles, the commands, and the rules for decisions and tests.
+- Contributions are licensed under MIT, the project license, simply by submitting them. There is no CLA and no DCO sign-off ([ADR-0009](docs/adr/0009-license-versioning-and-release.md)).
 
 ## Setup
 

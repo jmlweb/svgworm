@@ -1,5 +1,6 @@
 ---
 title: svgworm compared with other SVG icon tools
+navTitle: Comparison
 description: An honest comparison of svgworm with SVGR, @neodx/svg, vite-plugin-icons-spritesheet and unplugin-icons, with reproducible numbers from the spikes and when to pick each tool.
 order: 5
 ---

@@ -2,7 +2,16 @@
 import logoDark from '../../../../docs/assets/logo-dark.svg?url';
 import logoLight from '../../../../docs/assets/logo-light.svg?url';
 
+type Props = {
+  /** Current page path with a leading slash, to mark the section in the nav. */
+  readonly path: string;
+};
+
+const { path } = Astro.props;
 const REPO = 'https://github.com/jmlweb/svgworm';
+const isComparison = path === '/docs/comparison/';
+const isDocs = path.startsWith('/docs/') && !isComparison;
+const current = (active: boolean) => (active ? 'page' : undefined);
 ---
 
 <a class="skip-link" href="#content">Skip to content</a>
@@ -15,8 +24,8 @@ const REPO = 'https://github.com/jmlweb/svgworm';
       </picture>
     </a>
     <nav aria-label="Project links">
-      <a href="/docs/">Docs</a>
-      <a href="/docs/comparison/">Compare</a>
+      <a aria-current={current(isDocs)} href="/docs/">Docs</a>
+      <a aria-current={current(isComparison)} href="/docs/comparison/">Compare</a>
       <a class="nav-npm" href="https://www.npmjs.com/package/svgworm">npm</a>
       <a class="nav-cta" href={REPO}>GitHub</a>
     </nav>

@@ -17,11 +17,11 @@ Pair it with [`@svgworm/react`](https://github.com/jmlweb/svgworm/tree/main/pack
 
 ## Docs
 
-- 🧭 [Next.js setup](https://svgworm.com/docs/nextjs/)
-- 🚀 [Astro setup](https://svgworm.com/docs/astro/)
+- [Next.js setup](https://svgworm.com/docs/nextjs/)
+- [Astro setup](https://svgworm.com/docs/astro/)
 - ⌨️ [CLI reference](https://svgworm.com/docs/cli/)
-- ⚙️ [Config](https://svgworm.com/docs/config/): `svgworm.config.json`, with a JSON Schema at `svgworm/schema.json`
-- ⚖️ [Comparison](https://svgworm.com/docs/comparison/) with SVGR, @neodx/svg and others
-- 🤖 For AI agents: [llms.txt](https://github.com/jmlweb/svgworm/blob/main/llms.txt)
+- [Config](https://svgworm.com/docs/config/): `svgworm.config.json`, with a JSON Schema at `svgworm/schema.json`
+- [Comparison](https://svgworm.com/docs/comparison/) with SVGR, @neodx/svg and others
+- For AI agents: [llms.txt](https://github.com/jmlweb/svgworm/blob/main/llms.txt)
 
 > **Status:** 0.x. Flags and the output contract can still change in a minor version before 1.0; see the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/CHANGELOG.md).

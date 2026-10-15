@@ -21,7 +21,7 @@ const site = import.meta.env.SITE;
 const pageUrl = new URL(path.endsWith('/') ? path : `${path}/`, site).href;
 const ogImage = new URL('/og.png', site).href;
 const ogImageAlt =
-  'svgworm: One sprite. Zero client JS. Type-safe SVG sprites for React Server Components.';
+  'svgworm: One sprite. Zero client JS. Type-safe SVG sprites for React Server Components and Astro.';
 ---
 
 <!doctype html>
@@ -61,7 +61,7 @@ const ogImageAlt =
     />
   </head>
   <body>
-    <SiteHeader />
+    <SiteHeader path={path} />
     <slot />
     <SiteFooter />
   </body>

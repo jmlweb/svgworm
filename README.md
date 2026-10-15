@@ -29,11 +29,11 @@ const nope = <Icon name="nope" />; // type error: "nope" is not an icon name
 
 ## Why
 
-- 🎨 **Icons that render right, with no config.** Each icon is mono (follows `currentColor`) or multicolor (keeps its colors). Gradients, masks and filters render in Chromium, Firefox and WebKit.
-- ⚡ **Zero client JS.** The browser fetches one hashed sprite and caches it.
-- 🔒 **Type-safe names.** A wrong icon name fails `tsc`.
-- 🧩 **No bundler plugin.** It is a CLI that writes files, so it works with Turbopack, webpack and Vite.
-- 🔁 **Deterministic.** The same input gives byte-identical output on every OS.
+- **Icons that render right, with no config.** Each icon is mono (follows `currentColor`) or multicolor (keeps its colors). Gradients, masks and filters render in Chromium, Firefox and WebKit.
+- **Zero client JS.** The browser fetches one hashed sprite and caches it.
+- **Type-safe names.** A wrong icon name fails `tsc`.
+- **No bundler plugin.** It is a CLI that writes files, so it works with Turbopack, webpack and Vite.
+- **Deterministic.** The same input gives byte-identical output on every OS.
 
 ## Get started
 
@@ -92,12 +92,12 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 
 ## Docs
 
-- 🧭 [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
-- 🚀 [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
+- [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
+- [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
 - ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`
-- ⚙️ [Config](https://svgworm.com/docs/config/): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
-- 📦 [Output contract](docs/output-contract.md): exact shape of the generated files
-- ⚖️ [Comparison](https://svgworm.com/docs/comparison/): SVGR, @neodx/svg and others, with the numbers behind each claim
+- [Config](https://svgworm.com/docs/config/): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
+- [Output contract](docs/output-contract.md): exact shape of the generated files
+- [Comparison](https://svgworm.com/docs/comparison/): SVGR, @neodx/svg and others, with the numbers behind each claim
 
 ## For AI agents
 
