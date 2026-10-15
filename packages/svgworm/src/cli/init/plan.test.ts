@@ -395,6 +395,9 @@ describe('planInit: Astro', () => {
         'components/Icon.astro',
       )?.content ?? '';
     expect(content).toContain('!== 1');
+    // RPT-006: like createIcon, the consumer svg gets only the viewBox size.
+    expect(content).toContain('viewBox={viewBoxSize}');
+    expect(content).not.toContain('viewBox={icon.viewBox}');
     expect(content).toContain('Object.hasOwn(');
     expect(content).toContain('Unknown icon');
     expect(content).toContain("'1em'");

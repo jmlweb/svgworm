@@ -24,6 +24,13 @@ export const manifest = {
       viewBox: '0 0 32 32',
       delivery: 'use',
     },
+    // A viewBox origin other than 0 0, as in cropped logos and flags (RPT-006).
+    flag: {
+      sprite: 'icons',
+      id: 'flag-5b6a',
+      viewBox: '0 85.333 512 341.333',
+      delivery: 'use',
+    },
     photo: {
       sprite: 'icons',
       id: 'photo-1f2e',

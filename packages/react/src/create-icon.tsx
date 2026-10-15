@@ -52,6 +52,15 @@ export type IconProps<Name extends string> = Omit<
 
 import { didYouMean, suggestClosest } from './suggest.js';
 
+// <use> draws the symbol at 0,0 of the consumer's user space, so the consumer viewBox keeps
+// only the size; the symbol carries the origin (RPT-006, ADR-0030).
+const viewBoxSize = (viewBox: string): string => {
+  const [, , width, height] = viewBox.trim().split(/[\s,]+/);
+  return width === undefined || height === undefined
+    ? viewBox
+    : `0 0 ${width} ${height}`;
+};
+
 export class SvgwormReactError extends Error {
   override readonly name = 'SvgwormReactError';
 }
@@ -186,7 +195,7 @@ export const createIcon = <const M extends IconManifest>(
       <svg
         focusable="false"
         height={height}
-        viewBox={icon.viewBox}
+        viewBox={viewBoxSize(icon.viewBox)}
         width={width}
         {...a11y}
         aria-label={label}

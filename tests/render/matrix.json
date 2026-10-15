@@ -120,6 +120,14 @@
     "viewbox-derived/no-viewbox": {
       "use": "pass",
       "use-inject": "pass"
+    },
+    "viewbox-offset/flag-offset": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-offset/mono-offset": {
+      "use": "pass",
+      "use-inject": "pass"
     }
   },
   "firefox": {
@@ -243,6 +251,14 @@
     "viewbox-derived/no-viewbox": {
       "use": "pass",
       "use-inject": "pass"
+    },
+    "viewbox-offset/flag-offset": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-offset/mono-offset": {
+      "use": "pass",
+      "use-inject": "pass"
     }
   },
   "webkit": {
@@ -364,6 +380,14 @@
       "use-inject": "pass"
     },
     "viewbox-derived/no-viewbox": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-offset/flag-offset": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-offset/mono-offset": {
       "use": "pass",
       "use-inject": "pass"
     }

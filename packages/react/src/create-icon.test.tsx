@@ -19,6 +19,32 @@ describe('delivery use', () => {
     );
   });
 
+  // RPT-006: <use> draws the symbol at 0,0, so a consumer viewBox with the icon's origin
+  // shifts the icon by that origin. The symbol keeps the full viewBox.
+  it('gives the svg only the viewBox size, so an offset origin stays in place', () => {
+    const OffsetIcon = createIcon({
+      ...manifest,
+      icons: {
+        rust: {
+          ...manifest.icons.home,
+          id: 'i-rust',
+          viewBox: '19 19 106 106',
+        },
+        flag: {
+          ...manifest.icons.home,
+          id: 'i-flag',
+          viewBox: '0,85.333,512,341.333',
+        },
+      },
+    });
+    expect(render(<OffsetIcon name="rust" />)).toContain(
+      'viewBox="0 0 106 106"',
+    );
+    expect(render(<OffsetIcon name="flag" />)).toContain(
+      'viewBox="0 0 512 341.333"',
+    );
+  });
+
   it('uses the symbol id from the manifest, never one derived from the name', () => {
     expect(render(<Icon name="home" />)).not.toContain('#home');
   });

@@ -45,6 +45,8 @@ The manifest records a `delivery` per icon ([how svgworm works](/docs/how-it-wor
 </svg>
 ```
 
+The `viewBox` carries only the icon's size (`0 0 {width} {height}`). The symbol in the sprite keeps the full viewBox, including an origin such as `19 19 106 106`, so writing your own `<svg><use>` with the manifest's `viewBox` would shift such an icon.
+
 With `title="Go home"`: `role="img"`, no `aria-hidden`, and `<title>Go home</title>` before the `<use>`.
 
 The icon's paths live in the sprite's `<symbol>`. Mono icons are drawn with `currentColor`, so the `color` of the `<svg>` (inherited from the parent) is the icon color.

@@ -3,8 +3,8 @@
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.6df314fa.svg",
-        "url": "/icons/icons.6df314fa.svg"
+        "file": "icons.c676df53.svg",
+        "url": "/icons/icons.c676df53.svg"
       },
       "stack": {
         "file": "icons.stack.d2afff96.svg",
@@ -234,6 +234,20 @@
       "sprite": "icons",
       "id": "i-viewbox-derived--no-viewbox",
       "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "viewbox-offset/flag-offset": {
+      "sprite": "icons",
+      "id": "i-viewbox-offset--flag-offset",
+      "viewBox": "0 85.333 512 341.333",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "viewbox-offset/mono-offset": {
+      "sprite": "icons",
+      "id": "i-viewbox-offset--mono-offset",
+      "viewBox": "19 19 106 106",
       "color": "mono",
       "delivery": "use"
     }

@@ -1,6 +1,6 @@
 # 0006. Per-icon delivery: external `<use>` by default, SVG-stack image for icons with `url(#…)` references
 
-- **Status:** accepted
+- **Status:** accepted; point 5 (Q-03), "the same `viewBox` on the consumer `<svg>` … is harmless", is superseded by [0030](0030-consumer-viewbox-keeps-only-the-size.md)
 - **Date:** 2026-10-08
 - **Task:** TSK-002
 - **Resolves:** Q-01, Q-03, Q-04 (browser side), Q-06. Informs Q-02 (constraint only) and Q-05. Accepts [ADR-0001](0001-external-sprite-default.md).

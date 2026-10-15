@@ -31,7 +31,9 @@ export type IconName =
   | "stroke/tabler-home"
   | "style/illustrator-mono"
   | "style/illustrator-multicolor"
-  | "viewbox-derived/no-viewbox";
+  | "viewbox-derived/no-viewbox"
+  | "viewbox-offset/flag-offset"
+  | "viewbox-offset/mono-offset";
 
 export interface SvgwormFile {
   readonly file: string;

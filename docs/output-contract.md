@@ -254,7 +254,7 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
 
 - Reads the manifest at build time, never at runtime over the network. The user passes the generated module's `manifest` to the adapter once (for example `createIcon(manifest)`; the adapter's own API lives in `@svgworm/react`, not in this contract), because the adapter can't import a path inside the user's project ([ADR-0010](adr/0010-sprite-url-delivery-generated-module-and-public-path.md))
 - Renders by the icon's `delivery` ([ADR-0006](adr/0006-per-icon-delivery-external-use-and-svg-stack.md)):
-  - `use`: `<svg viewBox focusable="false"><use href="{url}#{id}"/></svg>`. `viewBox` on the consumer is optional, since the symbol's is enough. `@svgworm/react` makes it 1em wide and high unless the caller sets a size;
+  - `use`: `<svg viewBox="0 0 {width} {height}" focusable="false"><use href="{url}#{id}"/></svg>`. The consumer `viewBox` is optional, since the symbol's is enough, but when set it carries only the size: the third and fourth numbers of `icons.<name>.viewBox`, never its origin. `<use>` draws the symbol at `0,0`, so an origin such as `19 19` on the consumer shifts the icon ([ADR-0030](adr/0030-consumer-viewbox-keeps-only-the-size.md)). `@svgworm/react` makes it 1em wide and high unless the caller sets a size;
   - `img` (multicolor with references): `<img src="{stackUrl}#{id}" width height alt="…">`;
   - `mask` (mono with references): a `<span>` masked by `url("{stackUrl}#{id}")` with `background-color: currentColor`
 - With a version 2 manifest, `use` icons render `<use href="#{id}">`, and the adapter offers a way to render the loader tag once (`createSpriteLoader(manifest)` in `@svgworm/react`, `SvgwormLoader.astro` from `init`)

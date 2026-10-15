@@ -749,6 +749,10 @@ const fileUrl = (kind: 'sprite' | 'stack'): string => {
     : \`\${file.url}#\${icon.id}\`;
 };
 
+// <use> draws the symbol at 0,0, so the svg gets only the viewBox size; the symbol keeps the origin.
+const [, , viewBoxWidth, viewBoxHeight] = icon.viewBox.trim().split(/[\\s,]+/);
+const viewBoxSize = \`0 0 \${viewBoxWidth} \${viewBoxHeight}\`;
+
 const accessibleName = title ?? label;
 const a11y =
   accessibleName === undefined
@@ -799,7 +803,7 @@ const maskStyle =
     <svg
       focusable="false"
       height={height}
-      viewBox={icon.viewBox}
+      viewBox={viewBoxSize}
       width={width}
       {...a11y}
       aria-label={label}

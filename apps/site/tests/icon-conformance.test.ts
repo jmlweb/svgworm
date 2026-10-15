@@ -123,6 +123,7 @@ const cases: readonly Case[] = [
       'data-id': 'x',
     },
   },
+  { label: 'use, viewBox origin not 0 0', name: 'flag', react: {}, astro: {} },
   { label: 'img, defaults', name: 'photo', react: {}, astro: {} },
   {
     label: 'img, label and class',
@@ -170,6 +171,12 @@ describe('Icon.astro matches createIcon', () => {
     expect(html).toContain('focusable="false"');
     expect(html).toContain('href="/icons/icons.1a2b3c4d.svg#home-9c8d"');
     expect(html).not.toContain('<script');
+  });
+
+  it('gives the svg only the viewBox size; the symbol keeps the origin (ADR-0030)', async () => {
+    expect(await renderAstro({ name: 'flag' })).toContain(
+      'viewBox="0 0 512 341.333"',
+    );
   });
 
   it.each(['nope', 'constructor'])(

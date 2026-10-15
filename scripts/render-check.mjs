@@ -5,22 +5,30 @@
 // spikes/TSK-002-external-use/src/check.mjs.
 //
 // Usage: node scripts/render-check.mjs   (run `pnpm build` first)
+//        node scripts/render-check.mjs --fixtures <svg folder> --out <dir>
+// The second form checks any folder of SVGs (e.g. a bench-repo target, docs/posts): files the
+// compiler rejects are dropped and listed, and the matrix goes to <dir> instead of tests/render.
 // Writes tests/render/matrix.json (pass/fail/skipped per cell, no numbers, so it is byte-identical
 // across runs and operating systems) and tests/render/out/metrics.json (raw percentages, ignored by git).
 // Exits 1 when any cell fails.
 /* oxlint-disable no-undef -- document and window are used inside page.evaluate, which runs in the browser */
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { extname, join, relative } from 'node:path';
+import { extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { chromium, firefox, webkit } from 'playwright';
 import { PNG } from 'pngjs';
 
 import { compile } from '../packages/svgworm/dist/index.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const FIXTURES = join(ROOT, 'fixtures');
-const MATRIX_DIR = join(ROOT, 'tests/render');
+const { values: args } = parseArgs({
+  options: { fixtures: { type: 'string' }, out: { type: 'string' } },
+});
+const IS_CUSTOM = args.fixtures !== undefined;
+const FIXTURES = IS_CUSTOM ? resolve(args.fixtures) : join(ROOT, 'fixtures');
+const MATRIX_DIR = args.out ? resolve(args.out) : join(ROOT, 'tests/render');
 const ENGINES = { chromium, firefox, webkit };
 const SIZE = 48;
 const SCALE = 2;
@@ -67,8 +75,45 @@ const readFixtures = async () => {
         };
       }),
   );
-  return sources.filter((source) => !isInvalid(source.relativePath));
+  return IS_CUSTOM
+    ? sources
+    : sources.filter((source) => !isInvalid(source.relativePath));
 };
+
+// A foreign folder may hold files svgworm rejects by design; drop them like bench-repo does.
+const dropRejected = (sources) => {
+  const rejected = [];
+  let kept = sources;
+  for (let pass = 0; pass < 10; pass++) {
+    const result = compile(kept, { flatten: false, color: [] });
+    if (result.ok) return { kept, rejected };
+    const files = new Set(result.errors.map((error) => error.file));
+    if (!kept.some((source) => files.has(source.path)))
+      throw new Error(`compile failed: ${result.errors[0]?.message}`);
+    result.errors
+      .filter((error) => files.has(error.file))
+      .forEach((error) =>
+        rejected.push({
+          file: error.file,
+          reason: error.message.split('\n')[0],
+        }),
+      );
+    kept = kept.filter((source) => !files.has(source.path));
+  }
+  throw new Error('too many rejected files');
+};
+
+// Icon names are normalized from paths, so the <img> reference needs the original file path.
+const nameToPath = (sources) =>
+  new Map(
+    sources.map((source) => {
+      const result = compile([source], { flatten: false, color: [] });
+      const manifest = JSON.parse(
+        result.files.find((file) => file.name === 'manifest.json').content,
+      );
+      return [Object.keys(manifest.icons)[0], source.relativePath];
+    }),
+  );
 
 // Each cell is one icon in one form. `use-inject` is the `use` form of a crossOrigin: "inject"
 // build, where the loader script puts the sprite in the page and the icon references `#id`.
@@ -92,6 +137,34 @@ const buildCells = (manifest, mode) => {
     });
 };
 
+// Same markup as @svgworm/react and Icon.astro: the consumer viewBox keeps only the size, because
+// <use> draws the symbol at 0,0 and the symbol carries the origin (RPT-006, ADR-0030).
+const viewBoxSize = (viewBox) => {
+  const [, , width, height] = viewBox.trim().split(/[\s,]+/);
+  return `0 0 ${width} ${height}`;
+};
+
+// A source with width/height and no viewBox is stretched by <img width height>, while svgworm
+// derives viewBox="0 0 W H" and scales it (ADR-0006 rule 6). Give the reference the same viewBox
+// so both scale the same way.
+const withDerivedViewBox = (content) => {
+  const text = content.toString('utf8');
+  const root = /<svg\b[^>]*>/.exec(text)?.[0];
+  if (!root || /\sviewBox\s*=/.test(root)) return content;
+  const size = (name) =>
+    new RegExp(`\\s${name}\\s*=\\s*["']\\s*([\\d.]+)(?:px)?\\s*["']`).exec(
+      root,
+    )?.[1];
+  const [width, height] = [size('width'), size('height')];
+  if (!width || !height) return content;
+  return Buffer.from(
+    text.replace(
+      root,
+      root.replace(/^<svg\b/, `<svg viewBox="0 0 ${width} ${height}"`),
+    ),
+  );
+};
+
 const productHtml = ({ form, icon, href }) => {
   // Mono icons get a red `color`, so the recoloring through currentColor is verified too.
   const color = icon.color === 'mono' ? 'color:#ff0000;' : '';
@@ -99,7 +172,7 @@ const productHtml = ({ form, icon, href }) => {
     return `<img src="${href}" width="${SIZE}" height="${SIZE}" alt="">`;
   if (form === 'mask')
     return `<span style="display:inline-block;width:${SIZE}px;height:${SIZE}px;background-color:currentColor;mask:url('${href}') center / contain no-repeat;${color}"></span>`;
-  return `<svg viewBox="${icon.viewBox}" width="${SIZE}" height="${SIZE}" style="${color}" focusable="false" aria-hidden="true"><use href="${href}"/></svg>`;
+  return `<svg viewBox="${viewBoxSize(icon.viewBox)}" width="${SIZE}" height="${SIZE}" style="${color}" focusable="false" aria-hidden="true"><use href="${href}"/></svg>`;
 };
 
 // Integer pixel grid, so cells crop at the same device pixels in every engine.
@@ -114,7 +187,7 @@ const STYLE = `<style>
 const pageHtml = (cells, loaderTag) => {
   const items = cells
     .map((cell, index) => {
-      const ref = `<img src="/fixtures/${encodeURI(`${cell.name}.svg`)}" width="${SIZE}" height="${SIZE}" alt="">`;
+      const ref = `<img src="/fixtures/${encodeURI(cell.refPath ?? `${cell.name}.svg`)}" width="${SIZE}" height="${SIZE}" alt="">`;
       return `<div class="item"><div class="cell" data-cell data-index="${index}" data-role="ref">${ref}</div><div class="cell" data-cell data-index="${index}" data-role="product">${productHtml(cell)}</div></div>`;
     })
     .join('\n');
@@ -142,7 +215,9 @@ const serve = (modes) => {
     );
     try {
       const body = path.startsWith('/fixtures/')
-        ? await readFile(join(FIXTURES, path.slice('/fixtures/'.length)))
+        ? withDerivedViewBox(
+            await readFile(join(FIXTURES, path.slice('/fixtures/'.length))),
+          )
         : files.get(path);
       if (body === undefined) throw new Error('not found');
       res.writeHead(200, {
@@ -357,8 +432,15 @@ const renderMode = async (browser, origin, mode) => {
 };
 
 const main = async () => {
-  const sources = await readFixtures();
-  if (sources.length === 0) throw new Error('No fixtures found');
+  const found = await readFixtures();
+  if (found.length === 0) throw new Error('No fixtures found');
+  const { kept: sources, rejected } = IS_CUSTOM
+    ? dropRejected(found)
+    : { kept: found, rejected: [] };
+  rejected.forEach(({ file, reason }) =>
+    console.log(`  rejected ${file}: ${reason}`),
+  );
+  const paths = IS_CUSTOM ? nameToPath(sources) : new Map();
   const modes = MODES.map((mode) => {
     const result = compile(sources, {
       flatten: false,
@@ -372,7 +454,10 @@ const main = async () => {
     const manifest = JSON.parse(
       result.files.find((file) => file.name === 'manifest.json').content,
     );
-    const cells = buildCells(manifest, mode.name);
+    const cells = buildCells(manifest, mode.name).map((cell) => ({
+      ...cell,
+      refPath: paths.get(cell.name),
+    }));
     const [group] = Object.values(manifest.sprites);
     const loaderTag =
       mode.name === 'inject' && group.loader
