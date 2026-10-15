@@ -15,7 +15,7 @@ Each question maps to a backlog task. When an ADR resolves one, mark it ✅ with
 
 - ✅ **Q-10** Which heuristic classifies an icon as mono, stroke, or multicolor reliably? → TSK-003. Answered by [ADR-0004](adr/0004-per-icon-color-classification.md): two classes, mono and multicolor, 99.98% on 31k icons
 - ✅ **Q-11** How should `currentColor` be applied: on the root, or rewritten on each element? What about icons that mix fill and stroke? → TSK-003. Answered by [ADR-0004](adr/0004-per-icon-color-classification.md): per element, root only for the default fill, masks frozen
-- **Q-12** Should a CSS custom-property mode (`--icon-color-1`, …) exist for multicolor theming? → TSK-026. Deferred past v1 by [ADR-0004](adr/0004-per-icon-color-classification.md) and to post-v0.1 by ADR-0005.
+- ✅ **Q-12** Should a CSS custom-property mode (`--icon-color-1`, …) exist for multicolor theming? → TSK-026. Deferred past v1 by [ADR-0004](adr/0004-per-icon-color-classification.md) and to post-v0.1 by ADR-0005. Answered by [ADR-0026](adr/0026-no-generated-css-variable-color-mode.md): no generated mode. Author-written `var(--name, fallback)` paints are kept (ADR-0013) and theme through the external sprite in all three engines; generated slot numbers would mean nothing across icons
 
 ## Delivery and integration
 

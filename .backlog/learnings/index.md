@@ -47,3 +47,4 @@
 | LRN-041 | Yarn 2+ silently skips pre/post scripts; detect Berry and prefix dev/build | package-managers, yarn, init, cli | active | 2026-10-15 |
 | LRN-042 | pnpm installs packages as symlinks: stat the source root, lstat only inside | pnpm, symlink, discover, sources, node_modules | active | 2026-10-15 |
 | LRN-043 | pnpm verify does not catch stale committed example or site output | testing, ci, example, output | active | 2026-10-15 |
+| LRN-044 | Custom properties reach var() paints inside an external use sprite | color, css-variables, browsers, delivery | active | 2026-10-15 |

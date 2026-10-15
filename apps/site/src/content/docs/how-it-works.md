@@ -29,6 +29,8 @@ Each icon is classified on its own ([ADR-0004](https://github.com/jmlweb/svgworm
 - **mono**: every fill and stroke is one color, or `currentColor`. svgworm rewrites those paints to `currentColor`, so the icon takes the `color` of the text around it.
 - **multicolor**: the icon uses several colors, a gradient with several stops, a raster image, a pattern, a CSS variable or an animated color. It keeps what the file says.
 
+To theme a multicolor icon, write CSS variables into the SVG: `fill="var(--brand, #2196f3)"`. svgworm keeps them as they are, and a page sets `--brand` on the icon or any parent; the fallback applies when it is unset. This works through the external sprite in Chromium, Firefox and WebKit. It does not reach an icon that also uses gradients, masks or other `url(#…)` references: those are drawn as `<img>`, which page CSS cannot style, so they show the fallbacks. svgworm never generates variables itself ([ADR-0026](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0026-no-generated-css-variable-color-mode.md)).
+
 The guess is right for most icon sets. When it is not, a [color override](/docs/config/#color-overrides) forces `mono` or `preserve` per icon. The manifest records the result as `color`.
 
 ## Delivery
