@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+
+const REPO = 'https://github.com/jmlweb/svgworm';
+
+const guides = [
+  {
+    icon: 'server',
+    name: 'Next.js',
+    line: 'Server Components, zero client JS, Turbopack.',
+    docs: '/docs/nextjs/',
+    example: `${REPO}/tree/main/examples/next-app-router`,
+    exampleLabel: 'examples/next-app-router',
+  },
+  {
+    icon: 'zap',
+    name: 'Vite + React',
+    line: 'Hashed sprite that follows your base path.',
+    docs: '/docs/vite/',
+    example: `${REPO}/tree/main/examples/vite-react`,
+    exampleLabel: 'examples/vite-react',
+  },
+  {
+    icon: 'file-code',
+    name: 'Astro',
+    line: 'A dependency-free Icon.astro written by init.',
+    docs: '/docs/astro/',
+    example: null,
+    exampleLabel: '',
+  },
+] as const;
+---
+
+<section aria-labelledby="guides" class="section">
+  <div class="wrap">
+    <p class="kicker">Pick your framework</p>
+    <h2 id="guides">One guide per stack.</h2>
+    <div class="guides">
+      {
+        guides.map((guide) => (
+          <article class="tile">
+            <div class="tile-head">
+              <span class="badge">
+                <Icon name={guide.icon} />
+              </span>
+              <h3>{guide.name}</h3>
+            </div>
+            <p>{guide.line}</p>
+            <p class="guide-links">
+              <a href={guide.docs}>{guide.name} guide</a>
+              {guide.example && (
+                <a href={guide.example}>{guide.exampleLabel}</a>
+              )}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

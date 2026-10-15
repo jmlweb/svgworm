@@ -12,7 +12,7 @@
 // The site itself may ship client JS; only its icons must need none (they are `<use>` refs).
 // Exit 1 with every problem found. Same approach as the Next.js example's check.
 import { createHash } from 'node:crypto';
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 const root = process.cwd();
@@ -91,6 +91,16 @@ for (const page of pages) {
     problems.push(`${page}: canonical ${canonical} is not on ${site.origin}`);
   else if (!sitemapUrls.has(canonical))
     problems.push(`${page}: ${canonical} is not in the sitemap`);
+}
+
+// The landing page links examples on GitHub; a renamed directory must not leave a dead link.
+const repoRoot = join(root, '../..');
+const landing = await readFile(join(dist, 'index.html'), 'utf8');
+for (const [, path] of landing.matchAll(
+  /href="https:\/\/github\.com\/jmlweb\/svgworm\/tree\/main\/([^"#]+)"/g,
+)) {
+  if (!(await stat(join(repoRoot, path)).catch(() => null)))
+    problems.push(`index.html links ${path}, which is not in the repo`);
 }
 
 const llmsFull = await readFile(join(dist, 'llms-full.txt'), 'utf8').catch(

@@ -1053,3 +1053,23 @@
 .agent-migrate p {
   margin: 0 0 var(--space-4);
 }
+
+.guides {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.guide-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: auto;
+}
+
+@media (max-width: 860px) {
+  .guides {
+    grid-template-columns: 1fr;
+  }
+}
