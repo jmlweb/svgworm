@@ -743,14 +743,19 @@ describe('planInit: package.json scripts per package manager', () => {
     },
   );
 
-  it('prefixes && chains and pipes with yarn 4', () => {
+  it('prefixes && chains, pipes and redirects with yarn 4', () => {
     const plan = planInit(
       defaultInitOptions(),
-      berry({ scripts: { dev: 'vite | tee log', build: 'tsc && vite build' } }),
+      berry({
+        scripts: {
+          dev: 'vite 2>&1 | tee log',
+          build: 'tsc && vite build &>out',
+        },
+      }),
     );
     expect(scriptsOf(plan)).toEqual({
-      dev: 'svgworm && vite | tee log',
-      build: 'svgworm && tsc && vite build',
+      dev: 'svgworm && vite 2>&1 | tee log',
+      build: 'svgworm && tsc && vite build &>out',
     });
   });
 });

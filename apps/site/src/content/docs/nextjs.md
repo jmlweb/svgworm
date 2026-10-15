@@ -87,6 +87,8 @@ Without `init`, do its part yourself after installing the two packages:
    }
    ```
 
+   Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scripts instead: `"dev": "svgworm --source icons && next dev"` and `"build": "svgworm --source icons && next build"`.
+
 ## Cache for a year
 
 Next serves `public/` with `max-age=0`. The file names are content-hashed, so a long cache is safe:

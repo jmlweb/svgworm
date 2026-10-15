@@ -313,6 +313,16 @@ describe('run: init (R-56)', () => {
     expect((await readJson('package.json'))['scripts']).toEqual({
       build: 'svgworm && next build',
     });
+
+    const json = await exec(['init', '--json']);
+    const document = JSON.parse(json.stdout) as {
+      actions: { path: string; status: string; warning?: string }[];
+    };
+    const action = document.actions.find(
+      (item) => item.path === 'package.json',
+    );
+    expect(action?.status).toBe('unchanged');
+    expect(action?.warning).toContain('there is no "dev" script');
   });
 
   it('is idempotent: a second run changes nothing', async () => {

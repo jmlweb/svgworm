@@ -43,6 +43,8 @@ Requires Node `^22.20 || >=24.11` and Astro 7.
    { "scripts": { "predev": "svgworm", "prebuild": "svgworm" } }
    ```
 
+   Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scripts instead: `"dev": "svgworm && astro dev"` and `"build": "svgworm && astro build"`.
+
    While you work, `svgworm watch` rebuilds on each change, next to `astro dev`.
 
 5. **Use it in any `.astro` file:**

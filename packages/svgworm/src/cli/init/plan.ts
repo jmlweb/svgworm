@@ -430,8 +430,8 @@ const HOOKED_SCRIPTS = ['dev', 'build'] as const;
 const RUNS_SVGWORM = /(?:^|[\s&|;(])svgworm(?=$|[\s&|;)])/;
 
 // `svgworm && a || b` runs `b` when svgworm fails, `svgworm && a; b` too, and `svgworm && a & b`
-// starts `b` without waiting. Pipes and `&&` chains keep their meaning behind the prefix.
-const UNSAFE_TO_PREFIX = /\|\||;|\n|(?<!&)&(?!&)/;
+// starts `b` without waiting. Pipes, redirects such as `2>&1` and `&&` chains keep their meaning.
+const UNSAFE_TO_PREFIX = /\|\||;|\n|(?<![&>])&(?![&>])/;
 
 /** The build command the scripts and docs should run: plain, or with the custom config file. */
 const buildCommand = (options: InitOptions): string =>
@@ -451,7 +451,7 @@ type ScriptEdit = {
   readonly problems: readonly string[];
 };
 
-// npm, pnpm, Yarn 1 and Bun run `pre<name>` before `<name>`, so svgworm goes there.
+// npm, pnpm and Yarn 1 run `pre<name>` before `<name>`, so svgworm goes there.
 const addHooks = (
   scripts: Record<string, unknown>,
   command: string,
