@@ -48,11 +48,12 @@ Requires Node `^22.20 || >=24.11` and pnpm (pinned by `packageManager`; use Core
 | `pnpm example:build` / `pnpm example:check` | Build the Next.js 16 example in `examples/next-app-router` with Turbopack, or check it: committed svgworm output current, then build, then no icon code in client chunks (run `pnpm build` first) |
 | `pnpm example:vite:build` / `pnpm example:vite:check` | Build the Vite + React example in `examples/vite-react`, or check it: committed svgworm output current, then build, then the bundle references the hashed sprite, also under a `base` (run `pnpm build` first) |
 | `pnpm site:build` / `pnpm site:check` | Build the landing page in `apps/site` with Astro, or check it: committed svgworm output current, then build, then every icon from the hashed sprite (run `pnpm build` first) |
+| `pnpm render:check` | Render every icon of the compiled fixture set in its manifest delivery form (`use`, `img`, `mask`, and `use` after the `crossOrigin: "inject"` loader) in Chromium, Firefox, and WebKit, compare each with the original fixture, and rewrite `tests/render/matrix.json` (pass/fail/skipped only). Needs Playwright browsers (`pnpm exec playwright install chromium firefox webkit`) and `pnpm build` first. Not in `pnpm verify`; CI runs it on Linux and fails when the matrix changes |
 | `pnpm schema:generate` | Regenerate `packages/svgworm/svgworm.schema.json` from the zod config schema (run `pnpm build` first; a test fails when it is stale) |
-| `pnpm verify` | build, lint, format check, typecheck, tests and package checks. Not TS 7, determinism, the example or the site |
+| `pnpm verify` | build, lint, format check, typecheck, tests and package checks. Not TS 7, determinism, the examples, the site or the render matrix |
 | `pnpm changeset` | Record a changeset for a user-facing change |
 
-CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, the Next.js example (Turbopack build and zero-client-JS check), the Vite example, the site check, commit messages checked with commitlint over the PR range, and a changeset reminder. `.github/workflows/site.yml` deploys `apps/site`: production from `main`, a preview per same-repo PR.
+CI (`.github/workflows/ci.yml`) runs on every PR: quality checks, tests on Linux, macOS, and Windows with Node 22, 24, and 26, a TypeScript 7 typecheck, the cross-OS determinism comparison, the Next.js example (Turbopack build and zero-client-JS check), the Vite example, the site check, the browser rendering matrix on Linux (Playwright; `git diff --exit-code tests/render/matrix.json`), commit messages checked with commitlint over the PR range, and a changeset reminder. `.github/workflows/site.yml` deploys `apps/site`: production from `main`, a preview per same-repo PR.
 
 ### Shared tooling (jmlweb/tooling)
 

@@ -13,3 +13,6 @@ dist/
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Raw render-check numbers (the committed matrix holds pass/fail only)
+tests/render/out/

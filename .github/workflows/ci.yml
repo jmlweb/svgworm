@@ -159,6 +159,39 @@ jobs:
       - run: pnpm build
       - run: pnpm site:check
 
+  # Product sprites rendered in Chromium, Firefox and WebKit against the original fixtures
+  # (TSK-035, testing.md). Linux only: the committed matrix holds pass/fail and skip reasons, so it
+  # is the same on every OS, and one runner keeps browser downloads small. Not part of `pnpm verify`.
+  render:
+    name: Browser rendering matrix (Playwright, Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v6
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - name: Install browsers and system dependencies
+        if: steps.browsers.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - name: Install system dependencies only
+        if: steps.browsers.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium firefox webkit
+      - run: pnpm render:check
+      - name: The committed matrix is current
+        run: git diff --exit-code tests/render/matrix.json
+
   commitlint:
     name: Conventional Commits
     if: github.event_name == 'pull_request'

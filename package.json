@@ -28,6 +28,7 @@
     "lint:fix": "pnpm --filter svgworm-site sync && oxlint --fix",
     "commitlint": "commitlint",
     "prepare": "husky",
+    "render:check": "node scripts/render-check.mjs",
     "schema:generate": "node scripts/generate-config-schema.mjs"
   },
   "devDependencies": {
@@ -48,6 +49,8 @@
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
     "oxlint-tsgolint": "7.0.2004",
+    "playwright": "1.58.2",
+    "pngjs": "7.0.0",
     "publint": "0.3.24",
     "typescript": "6.0.3",
     "vitest": "5.0.1"

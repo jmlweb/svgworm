@@ -23,7 +23,7 @@ After it finishes:
 
 1. Open each package on npmjs.com and confirm the **Provenance** badge links to the workflow run.
 2. Smoke test from a clean folder: `pnpm add -D svgworm@x.y.z @svgworm/react@x.y.z`, run `svgworm init --yes`, `svgworm`, and build the Next.js example against the published versions.
-3. Check real Safari and iOS by hand on the example (Playwright's WebKit is not Safari; `testing.md`).
+3. Check real Safari and iOS by hand on the example. Playwright's WebKit is not Safari (`testing.md`), so this stays manual. Everything else in the browsers is covered by the rendering matrix: `pnpm render:check` renders the product output of the fixture set in Chromium, Firefox, and WebKit, CI runs it on every PR, and the result is committed in [`tests/render/matrix.json`](../tests/render/matrix.json).
 
 ## One-time setup (maintainer, needs npm login)
 

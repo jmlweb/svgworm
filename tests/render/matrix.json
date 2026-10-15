@@ -1,0 +1,371 @@
+{
+  "chromium": {
+    "animation/pulse-fill": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "animation/spin": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "clip-path/fluent-paperclip": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "css-variables/themed-fill": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/actions/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/arrows/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "filter/logos-grove": {
+      "img": "pass"
+    },
+    "gradient/logos-kotlin": {
+      "img": "pass"
+    },
+    "gradient/logos-scaledrone-transparent-stop": {
+      "img": "pass"
+    },
+    "internal-refs/flat-color-up-right": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "internal-refs/logos-dropmark": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "markers/arrow-mono": {
+      "mask": "pass"
+    },
+    "markers/arrow-two-tone": {
+      "img": "pass"
+    },
+    "mask/knockout": {
+      "mask": "pass"
+    },
+    "mask/logos-nextjs": {
+      "img": "pass"
+    },
+    "mixed-fill-stroke/badge": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mixed-fill-stroke/two-tone": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/heroicons-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/phosphor-house-duotone-opacity": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/simple-icons-github": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flag-es": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flat-color-about": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "nested-svg/nested": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/café": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/日本": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/lucide-house": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/tabler-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-mono": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-multicolor": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-derived/no-viewbox": {
+      "use": "pass",
+      "use-inject": "pass"
+    }
+  },
+  "firefox": {
+    "animation/pulse-fill": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "animation/spin": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "clip-path/fluent-paperclip": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "css-variables/themed-fill": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/actions/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/arrows/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "filter/logos-grove": {
+      "img": "pass"
+    },
+    "gradient/logos-kotlin": {
+      "img": "pass"
+    },
+    "gradient/logos-scaledrone-transparent-stop": {
+      "img": "pass"
+    },
+    "internal-refs/flat-color-up-right": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "internal-refs/logos-dropmark": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "markers/arrow-mono": {
+      "mask": "pass"
+    },
+    "markers/arrow-two-tone": {
+      "img": "pass"
+    },
+    "mask/knockout": {
+      "mask": "pass"
+    },
+    "mask/logos-nextjs": {
+      "img": "pass"
+    },
+    "mixed-fill-stroke/badge": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mixed-fill-stroke/two-tone": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/heroicons-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/phosphor-house-duotone-opacity": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/simple-icons-github": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flag-es": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flat-color-about": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "nested-svg/nested": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/café": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/日本": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/lucide-house": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/tabler-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-mono": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-multicolor": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-derived/no-viewbox": {
+      "use": "pass",
+      "use-inject": "pass"
+    }
+  },
+  "webkit": {
+    "animation/pulse-fill": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "animation/spin": {
+      "use": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ",
+      "use-inject": "skipped: SMIL animation: the <img> reference cannot be paused, so the frames differ"
+    },
+    "clip-path/fluent-paperclip": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "css-variables/themed-fill": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/actions/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "duplicates/arrows/close": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "filter/logos-grove": {
+      "img": "pass"
+    },
+    "gradient/logos-kotlin": {
+      "img": "pass"
+    },
+    "gradient/logos-scaledrone-transparent-stop": {
+      "img": "pass"
+    },
+    "internal-refs/flat-color-up-right": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "internal-refs/logos-dropmark": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "markers/arrow-mono": {
+      "mask": "pass"
+    },
+    "markers/arrow-two-tone": {
+      "img": "pass"
+    },
+    "mask/knockout": {
+      "mask": "pass"
+    },
+    "mask/logos-nextjs": {
+      "img": "pass"
+    },
+    "mixed-fill-stroke/badge": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mixed-fill-stroke/two-tone": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/heroicons-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/phosphor-house-duotone-opacity": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "mono-fill/simple-icons-github": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flag-es": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "multicolor/flat-color-about": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "nested-svg/nested": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/café": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "non-ascii/日本": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/figma-export": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/lucide-house": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "stroke/tabler-home": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-mono": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "style/illustrator-multicolor": {
+      "use": "pass",
+      "use-inject": "pass"
+    },
+    "viewbox-derived/no-viewbox": {
+      "use": "pass",
+      "use-inject": "pass"
+    }
+  }
+}
