@@ -36,7 +36,7 @@ The output contract is the boundary between the core and the adapters. Adapters 
 ### 1c. Loader file (`crossOrigin: "inject"` only, [ADR-0027](adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md))
 
 - Named `<group>.loader.<hash>.js`, same hash rule and `outDir` as the sprite, LF, no dependencies. Written only with `crossOrigin: "inject"` and only when some icon has `delivery: use`, after the sprite and stack and before the module
-- The sprite URL and the sprite's `integrity` are baked in. It fetches the sprite with `mode: "cors"`, `credentials: "omit"` and `integrity`, parses it with `DOMParser` as `image/svg+xml`, removes `<script>`, `<foreignObject>`, `on*` attributes and `javascript:` values, and prepends it to `<body>` once (hidden, `aria-hidden`, marked `data-svgworm="<integrity>"`), putting it back when a router replaces `<body>`. On failure it injects nothing and logs `svgworm: sprite not loaded from <url>: <reason>`
+- The sprite URL and the sprite's `integrity` are baked in. It fetches the sprite with `mode: "cors"`, `credentials: "omit"` and `integrity`, parses it with `DOMParser` as `image/svg+xml`, keeps only SVG-namespace elements (minus `script`, `foreignObject`, `style`, `a`, and SMIL that animates a link or a handler), removes `on*` and URL-loading attributes, script schemes, and any `href` or `url()` that leaves the sprite, and prepends it to `<body>` once (hidden, `aria-hidden`, marked `data-svgworm="<integrity>"`), putting it back when a router replaces `<body>`. On failure it injects nothing and logs `svgworm: sprite not loaded from <url>: <reason>`
 - The page loads it with `<script async src integrity crossorigin="anonymous">`, both values from the manifest
 
 ### 2. Manifest

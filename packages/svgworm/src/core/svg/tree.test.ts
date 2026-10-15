@@ -122,6 +122,35 @@ describe('validateTree', () => {
       '<svg viewBox="0 0 1 1"><style>.a{mask:\\75 rl(//x/m.svg#a)}</style></svg>',
       'svg/external-reference',
     ],
+    // HTML elements inside an SVG load documents or rewrite the page (TSK-067 security review).
+    [
+      '<svg viewBox="0 0 1 1"><h:iframe xmlns:h="http://www.w3.org/1999/xhtml" srcdoc="&lt;script&gt;x()&lt;/script&gt;"/></svg>',
+      'svg/forbidden-element',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><h:base xmlns:h="http://www.w3.org/1999/xhtml" href="https://x/"/></svg>',
+      'svg/forbidden-element',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><h:meta xmlns:h="http://www.w3.org/1999/xhtml" http-equiv="refresh" content="0;url=https://x/"/></svg>',
+      'svg/forbidden-element',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><h:img xmlns:h="http://www.w3.org/1999/xhtml" src="https://x/a.png"/></svg>',
+      'svg/forbidden-element',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><h:form xmlns:h="http://www.w3.org/1999/xhtml" action="https://x/"/></svg>',
+      'svg/forbidden-element',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><rect src="https://x/a.png"/></svg>',
+      'svg/external-reference',
+    ],
+    [
+      '<svg viewBox="0 0 1 1"><rect data="https://x/a.svg"/></svg>',
+      'svg/external-reference',
+    ],
     // Whitespace inside the scheme is ignored by browsers.
     [
       '<svg viewBox="0 0 1 1"><a href="java&#9;script:alert(1)"/></svg>',

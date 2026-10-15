@@ -197,6 +197,6 @@ describe('emit: crossOrigin inject (ADR-0027)', () => {
     expect(loader).toContain('"sha384-SPRITE"');
     expect(loader.endsWith(';\n')).toBe(true);
     expect(loader).not.toContain('\r');
-    expect(new TextEncoder().encode(loader).byteLength).toBeLessThan(1500);
+    expect(new TextEncoder().encode(loader).byteLength).toBeLessThan(2500);
   });
 });

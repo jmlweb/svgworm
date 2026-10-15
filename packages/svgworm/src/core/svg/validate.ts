@@ -44,6 +44,35 @@ const FORBIDDEN_ELEMENTS = new Set([
   'canvas',
   'handler',
   'listener',
+  // HTML elements an SVG can carry in another namespace: they load documents or images,
+  // retarget every relative URL on the page, or submit forms once the sprite is in the page.
+  'frame',
+  'frameset',
+  'portal',
+  'applet',
+  'base',
+  'meta',
+  'link',
+  'img',
+  'picture',
+  'source',
+  'track',
+  'form',
+  'input',
+  'button',
+  'textarea',
+  'select',
+  'template',
+]);
+
+// Attributes that load a URL on HTML elements. An SVG never needs them, so any value that is
+// not a fragment is an external reference.
+const LOADING_ATTRIBUTES = new Set([
+  'src',
+  'data',
+  'action',
+  'formaction',
+  'poster',
 ]);
 
 // SMIL can rewrite any attribute; these two retarget a link or add a handler at runtime.
@@ -108,6 +137,18 @@ export const validateTree = (
       add(
         DiagnosticCode.FORBIDDEN_ATTRIBUTE,
         `<${owner}> ${attribute} runs script`,
+      );
+    }
+    if (localName(attribute) === 'srcdoc') {
+      add(
+        DiagnosticCode.FORBIDDEN_ATTRIBUTE,
+        `<${owner}> ${attribute} embeds a document`,
+      );
+    }
+    if (LOADING_ATTRIBUTES.has(localName(attribute)) && isExternalHref(value)) {
+      add(
+        DiagnosticCode.EXTERNAL_REFERENCE,
+        `<${owner}> ${attribute}="${value}" points outside the file`,
       );
     }
     if (attribute === 'href' || attribute === 'xlink:href') {

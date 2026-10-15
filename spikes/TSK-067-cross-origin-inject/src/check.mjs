@@ -86,11 +86,31 @@ const cdnFiles = () => ({
   'loader-tampered.js': `window.__pwned='loader';${makeLoader(`${cdnOrigin}/cors/${spriteFile.name}`, SPRITE_SRI)}`,
   'loader-slow.js': makeLoader(`${cdnOrigin}/cors/${spriteFile.name}`, SPRITE_SRI),
   'evil.svg': EVIL,
+  'loader-evil2.js': makeLoader(`${cdnOrigin}/cors/evil2.svg`, sri(EVIL2)),
+  'evil2.svg': EVIL2,
+  'loader-xhtml-root.js': makeLoader(`${cdnOrigin}/cors/xhtml-root.svg`, sri(XHTML_ROOT)),
+  'xhtml-root.svg': XHTML_ROOT,
 });
 const EVIL =
   '<svg xmlns="http://www.w3.org/2000/svg" onload="window.__pwned=1"><script>window.__pwned=2</script>' +
   '<symbol id="i-evil" viewBox="0 0 1 1"><rect width="1" height="1" onclick="window.__pwned=3"/>' +
   '<a href="javascript:window.__pwned=4"><rect width="1" height="1"/></a></symbol></svg>';
+
+// Payloads from the security review (2026-10-15): obfuscated javascript:, HTML elements in
+// another namespace, a page-wide <style>, an external image, SMIL retargeting a link.
+const EVIL2 =
+  '<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink">' +
+  '<style>body{display:none}</style>' +
+  '<h:iframe srcdoc="&lt;script&gt;parent.__pwned=6&lt;/script&gt;"/>' +
+  '<h:base href="https://evil.invalid/"/>' +
+  '<symbol id="i-evil2" viewBox="0 0 1 1">' +
+  '<a href="java&#9;script:window.__pwned=5"><rect width="1" height="1"/></a>' +
+  '<a xlink:href="&#10;javascript:window.__pwned=7"><rect width="1" height="1"/></a>' +
+  '<image href="https://evil.invalid/x.png" width="1" height="1"/>' +
+  '<rect width="1" height="1"><set attributeName="href" to="javascript:window.__pwned=8"/></rect>' +
+  '<rect width="1" height="1" style="fill:url(https://evil.invalid/f.svg#a)"/>' +
+  '</symbol></svg>';
+const XHTML_ROOT = '<svg xmlns="http://www.w3.org/1999/xhtml"><iframe srcdoc="&lt;script&gt;parent.__pwned=9&lt;/script&gt;"></iframe></svg>';
 
 const cdn = await listen(async (req, res) => {
   const [, mode, name] = req.url.split('?')[0].split('/');
@@ -159,6 +179,8 @@ const PAGES = {
     }),
   'loader-pinned': () => doc({ head: loaderTag('loader-ok.js', LOADER_SRI()), body: row('ref', USE.map(cells.same)) + row('test', USE.map(cells.inject)) }),
   'loader-tampered': () => doc({ head: loaderTag('loader-tampered.js', LOADER_SRI()), body: row('test', USE.map(cells.inject)) }),
+  evil2: () => doc({ head: loaderTag('loader-evil2.js'), body: '<p id="probe">visible</p>' }),
+  'xhtml-root': () => doc({ head: loaderTag('loader-xhtml-root.js'), body: '<p>x</p>' }),
   evil: () => doc({ head: loaderTag('loader-evil.js'), body: '<svg width="10" height="10"><use href="#i-evil"/></svg>' }),
 };
 const CSP = {
@@ -407,6 +429,35 @@ for (const engine of engines) {
       return { pwned: window.__pwned ?? null, injected: document.querySelectorAll('svg[data-svgworm]').length, scripts: document.querySelectorAll('[data-svgworm] script').length };
     });
     add(name, 'hostile sprite (with valid SRI): no script, handler or javascript: URL runs', pwned.pwned === null, JSON.stringify(pwned));
+    await close();
+  }
+  {
+    const { tab, close } = await open('evil2');
+    await tab.waitForTimeout(400);
+    const state = await tab.evaluate(() => {
+      const n = document.querySelector('svg[data-svgworm]');
+      document.querySelectorAll('[data-svgworm] a, [data-svgworm] rect').forEach((e) =>
+        e.dispatchEvent(new MouseEvent('click', { bubbles: true })),
+      );
+      return {
+        pwned: window.__pwned ?? null,
+        injected: n ? 1 : 0,
+        left: n ? [...n.querySelectorAll('*')].map((e) => e.localName).filter((x) => /^(style|iframe|base|a|set)$/.test(x)) : [],
+        externalAttrs: n ? [...n.querySelectorAll('*')].flatMap((e) => [...e.attributes].filter((a) => a.name !== "id" && /evil|javascript/i.test(a.value)).map((a) => a.name)) : [],
+        baseURI: document.baseURI.startsWith(location.origin),
+        bodyVisible: getComputedStyle(document.body).display !== 'none',
+      };
+    });
+    await tab.waitForTimeout(300);
+    const pwned = await tab.evaluate(() => window.__pwned ?? null);
+    add(name, 'review payloads (obfuscated javascript:, XHTML iframe/base, <style>, external image, SMIL href): all dropped', pwned === null && state.injected === 1 && state.left.length === 0 && state.externalAttrs.length === 0 && state.baseURI && state.bodyVisible, JSON.stringify({ ...state, pwned }));
+    await close();
+  }
+  {
+    const { tab, close } = await open('xhtml-root');
+    await tab.waitForTimeout(400);
+    const state = await tab.evaluate(() => ({ pwned: window.__pwned ?? null, injected: document.querySelectorAll('[data-svgworm]').length, iframes: document.querySelectorAll('iframe').length }));
+    add(name, 'root in the XHTML namespace: rejected, nothing injected', state.pwned === null && state.injected === 0 && state.iframes === 0, JSON.stringify(state));
     await close();
   }
   for (const [path, delay] of [['react', 1500], ['react-late', 0]]) {
