@@ -211,15 +211,18 @@ pnpm add @svgworm/react
 pnpm svgworm init</code></pre>
         </li>
         <li>
-          <h3>Drop SVGs in icons/</h3>
+          <h3>Drop SVGs in icons/ and build</h3>
           <p>
             Each run writes a hashed sprite to <code>public/icons/</code> and a typed
-            manifest to <code>svgworm/</code>.
+            manifest to <code>svgworm/</code>. <code>predev</code> and
+            <code>prebuild</code> run it for you.
           </p>
           <pre class="code"><code>icons/
 ├── home.svg
 ├── search.svg
-└── brand/logo.svg</code></pre>
+└── brand/logo.svg
+
+pnpm svgworm</code></pre>
         </li>
         <li>
           <h3>Render in a Server Component</h3>

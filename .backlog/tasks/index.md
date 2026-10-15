@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 21 |
-| Active | 2 |
+| Pending | 20 |
+| Active | 3 |
 | Blocked | 0 |
 | Complete | 29 |
 
@@ -13,6 +13,7 @@
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
+- TSK-047: Align the landing three steps with the Next.js docs (P2)
 
 ## Pending Tasks
 
@@ -33,7 +34,6 @@
 | TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | P4 |  | 2026-10-15 |
 | TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | P4 |  | 2026-10-15 |
 | TSK-046 | Landing: fix false and inaccurate claims | P2 | site, copy | 2026-10-15 |
-| TSK-047 | Align the landing three steps with the Next.js docs | P2 | site, docs, onboarding | 2026-10-15 |
 | TSK-048 | Site layout polish: code wrapping, docs table, mobile hero | P3 | site, design, mobile | 2026-10-15 |
 | TSK-049 | Zero-JS interactivity: Next/Astro install toggle and live color demo | P3 | site, ux | 2026-10-15 |
 | TSK-050 | Landing copy: state the pain and surface the comparison | P3 | site, copy | 2026-10-15 |
