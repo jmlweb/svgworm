@@ -43,3 +43,4 @@
 | LRN-037 | LinkedIn article publish dialog replaces a separate share post | traction, content, linkedin | active | 2026-10-15 |
 | LRN-038 | skills.sh lists a skill only after an install and an index crawl | agents, discovery, skills, traction | active | 2026-10-15 |
 | LRN-039 | Preload can't match a <use> fetch, and Playwright WebKit/Firefox contexts fake cold-cache results | browser, sprite, delivery, performance, playwright, testing, webkit | active | 2026-10-15 |
+| LRN-040 | Plain svgworm needs sources from a config file; manual setup docs must pass --source | docs, cli, config, onboarding | active | 2026-10-15 |

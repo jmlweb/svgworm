@@ -5,15 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 20 |
-| Active | 3 |
+| Active | 2 |
 | Blocked | 0 |
-| Complete | 29 |
+| Complete | 30 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
-- TSK-047: Align the landing three steps with the Next.js docs (P2)
 
 ## Pending Tasks
 
@@ -48,9 +47,9 @@
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
+| TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
 | TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
 | TSK-037 | First-class Astro support with a generated Icon.astro | 2026-10-14 |
 | TSK-005 | Spike: TypeScript performance with large icon-name sets | 2026-10-12 |
 | TSK-012 | React adapter: RSC-safe Icon component | 2026-10-12 |
 | TSK-013 | Watch mode and CI check mode | 2026-10-12 |
-| TSK-015 | svgworm init: interactive setup for Next.js | 2026-10-12 |
