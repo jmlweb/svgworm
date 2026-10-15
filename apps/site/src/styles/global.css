@@ -1232,7 +1232,9 @@ h1 {
 .install-tabs label:has(input:checked) {
   border-color: var(--accent);
   background: var(--accent-soft);
-  color: var(--accent);
+  /* --accent on the soft fill was 4.48:1 (light) and 3.09:1 (dark); the ink is at least 4.86:1
+     on the fill over the hero glow and 5.68:1 over the raised CTA band. */
+  color: var(--ink);
 }
 
 .install-tabs label:has(input:focus-visible) {
