@@ -1,0 +1,13 @@
+{
+  "ok": false,
+  "stats": null,
+  "icons": [],
+  "warnings": [],
+  "errors": [
+    {
+      "code": "cli/usage",
+      "file": "",
+      "message": "no svgworm.config.json found in <cwd>\n  run \"svgworm init\" to create one, or pass --source <dir>"
+    }
+  ]
+}

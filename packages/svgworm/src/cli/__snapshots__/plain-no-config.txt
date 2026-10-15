@@ -1,0 +1,2 @@
+svgworm: no svgworm.config.json found in <cwd>
+  run "svgworm init" to create one, or pass --source <dir>

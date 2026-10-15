@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import { isAbsolute, join, relative, resolve } from 'node:path';
+import { readFile, stat } from 'node:fs/promises';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { z } from 'zod';
 
 import { ConfigError } from '../errors.ts';
@@ -109,6 +109,39 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
   };
 };
 
+const isMissingError = (error: unknown): boolean =>
+  error instanceof Error && 'code' in error && error.code === 'ENOENT';
+
+/** The nearest folder above `cwd` that holds a default config file, if any. */
+const findConfigAbove = async (cwd: string): Promise<string | undefined> => {
+  let dir = dirname(cwd);
+  for (;;) {
+    const found = await stat(join(dir, DEFAULT_CONFIG_FILE)).then(
+      (info) => info.isFile(),
+      () => false,
+    );
+    if (found) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) return undefined;
+    dir = parent;
+  }
+};
+
+/**
+ * The first error most users see, so it says what to do instead of showing the
+ * validation issue for a missing `sources` field.
+ */
+const describeMissingConfig = async (cwd: string): Promise<string> => {
+  const above = await findConfigAbove(cwd);
+  const where = `no ${DEFAULT_CONFIG_FILE} found in ${cwd}`;
+  return above === undefined
+    ? `${where}
+  run "svgworm init" to create one, or pass --source <dir>`
+    : `${where}; found one in ${above}
+  run svgworm from there, or pass --source <dir>`;
+};
+
+/** Returns `undefined` when the default config file does not exist. */
 const readConfigFile = async (
   cwd: string,
   configFile: string | undefined,
@@ -119,9 +152,8 @@ const readConfigFile = async (
   try {
     text = await readFile(path, 'utf8');
   } catch (error) {
-    const isMissing =
-      error instanceof Error && 'code' in error && error.code === 'ENOENT';
-    if (isMissing && !explicit) return {};
+    const isMissing = isMissingError(error);
+    if (isMissing && !explicit) return undefined;
     throw new ConfigError(
       isMissing
         ? `Config file not found: ${configFile ?? ''}`
@@ -144,11 +176,14 @@ export const loadConfig = async (options: {
   readonly overrides?: ConfigOverrides;
 }): Promise<ResolvedConfig> => {
   const fromFile = await readConfigFile(options.cwd, options.configFile);
+  if (fromFile === undefined && options.overrides?.sources === undefined) {
+    throw new ConfigError(await describeMissingConfig(resolve(options.cwd)));
+  }
   const merged =
     typeof fromFile === 'object' &&
     fromFile !== null &&
     !Array.isArray(fromFile)
       ? { ...fromFile, ...options.overrides }
-      : fromFile;
+      : (fromFile ?? { ...options.overrides });
   return resolveConfig(merged, options.cwd);
 };

@@ -110,10 +110,31 @@ describe('json reporter', () => {
     expect(document.errors.map((error) => error.code)).toEqual(['cli/usage']);
   });
 
+  it('reports a missing config as a document with a fix hint', async () => {
+    await rm(join(root, 'icons'), { recursive: true });
+    const { code, stdout } = await exec(['--json']);
+    expect(code).toBe(2);
+    await expect(stdout.replaceAll(root, '<cwd>')).toMatchFileSnapshot(
+      `${snapshots}json-no-config.json`,
+    );
+  });
+
   it('reports a usage error as a document too', async () => {
     const { code, stdout } = await exec(['--bogus', '--json']);
     expect(code).toBe(2);
     expect(JSON.parse(stdout)).toMatchObject({ ok: false });
+  });
+});
+
+describe('plain reporter: missing config', () => {
+  it('says how to fix it instead of the raw validation issue', async () => {
+    await rm(join(root, 'icons'), { recursive: true });
+    const { code, stdout, stderr } = await exec([]);
+    expect(code).toBe(2);
+    expect(stdout).toBe('');
+    await expect(stderr.replaceAll(root, '<cwd>')).toMatchFileSnapshot(
+      `${snapshots}plain-no-config.txt`,
+    );
   });
 });
 

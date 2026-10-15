@@ -143,4 +143,37 @@ describe('loadConfig', () => {
   it('fails when no source is configured anywhere', async () => {
     await expect(loadConfig({ cwd })).rejects.toThrow(ConfigError);
   });
+
+  it('says what to do when there is no config file and no --source', async () => {
+    const error = await loadConfig({ cwd }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ConfigError);
+    const message = (error as ConfigError).message;
+    expect(message).toContain(`no svgworm.config.json found in ${cwd}`);
+    expect(message).toMatch(/svgworm init/);
+    expect(message).toMatch(/--source <dir>/);
+    expect(message).not.toMatch(/expected array/);
+  });
+
+  it('names the nearest config file above cwd', async () => {
+    await writeFile(
+      join(cwd, 'svgworm.config.json'),
+      JSON.stringify({ sources: ['icons'] }),
+    );
+    const sub = join(cwd, 'src', 'app');
+    await mkdir(sub, { recursive: true });
+    const error = await loadConfig({ cwd: sub }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ConfigError);
+    const message = (error as ConfigError).message;
+    expect(message).toContain(`no svgworm.config.json found in ${sub}`);
+    expect(message).toContain(`found one in ${cwd}`);
+    expect(message).toMatch(/run svgworm from there/);
+  });
+
+  it('keeps the key path for other config errors', async () => {
+    await writeFile(
+      join(cwd, 'svgworm.config.json'),
+      JSON.stringify({ sources: ['icons'], flatten: 'yes' }),
+    );
+    await expect(loadConfig({ cwd })).rejects.toThrow(/flatten/);
+  });
 });
