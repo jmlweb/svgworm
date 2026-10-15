@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 10 |
-| Active | 3 |
+| Pending | 14 |
+| Active | 4 |
 | Blocked | 0 |
 | Complete | 27 |
 
@@ -14,6 +14,7 @@
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-031: Agent discoverability: Context7, agent skill, AGENTS.md snippet (P2)
+- TSK-039: Spike: sprite preload (Q-23) (P2)
 
 ## Pending Tasks
 
@@ -27,8 +28,12 @@
 | TSK-026 | CSS-variable multicolor mode | P4 | post-v0.1 | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
-| TSK-039 | Spike: sprite preload (Q-23) | P2 | spike, performance, delivery, adr, browsers | 2026-10-14 |
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | P3 | docs, performance, cli | 2026-10-14 |
+| TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | P3 |  | 2026-10-15 |
+| TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | P4 |  | 2026-10-15 |
+| TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | P4 |  | 2026-10-15 |
+| TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | P4 |  | 2026-10-15 |
+| TSK-045 | Fix: CheckOutcome.stale lists missing and changed files too | P4 |  | 2026-10-15 |
 
 ## Recently Completed
 

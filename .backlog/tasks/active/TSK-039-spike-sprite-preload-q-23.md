@@ -1,12 +1,13 @@
 ---
 id: TSK-039
 title: Spike: sprite preload (Q-23)
-status: pending
+status: active
 priority: P2
 tags: [spike, performance, delivery, adr, browsers]
 created: 2026-10-14
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Spike: sprite preload (Q-23)
@@ -48,3 +49,4 @@ Measure in Chromium, Firefox and WebKit with the TSK-002 Playwright method (same
 ## Progress Log
 
 - [2026-10-14] Created
+- [2026-10-15] Started
