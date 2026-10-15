@@ -62,10 +62,29 @@ Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scrip
 
 The file names are content-hashed, so a long cache is safe. Astro does not set cache headers; your host does.
 
-| Host                | File              | Rule                                                                                                                                    |
-| ------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Cloudflare, Netlify | `public/_headers` | `/icons/*` then `  Cache-Control: public, max-age=31536000, immutable`                                                                  |
-| Vercel              | `vercel.json`     | `{ "headers": [{ "source": "/icons/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }] }` |
+- **Cloudflare and Netlify**, in `public/_headers`:
+
+  ```text
+  /icons/*
+    Cache-Control: public, max-age=31536000, immutable
+    X-Content-Type-Options: nosniff
+  ```
+
+- **Vercel**, in `vercel.json`:
+
+  ```json
+  {
+    "headers": [
+      {
+        "source": "/icons/(.*)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+          { "key": "X-Content-Type-Options", "value": "nosniff" }
+        ]
+      }
+    ]
+  }
+  ```
 
 ## Performance notes
 

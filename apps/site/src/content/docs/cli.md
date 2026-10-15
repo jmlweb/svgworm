@@ -7,22 +7,28 @@ order: 4
 One command builds everything. The others check, watch, and set a project up.
 
 ```text
-svgworm [build] [options]    Write the sprite, manifest and types (default)
-svgworm check [options]      Exit 1 if the committed output is stale. Writes nothing (CI)
-svgworm watch [options]      Build, then rebuild on every change in the source folders
-svgworm init [options]       Set a project up: config, predev/prebuild scripts, Icon wiring (React or Astro), first build
-
-  --config <file>         Config file. Default: svgworm.config.json (optional)
-  --source <dir>          Folder with the SVG files. Repeat for several folders
-  --out-dir <dir>         Where sprite files are written. Default: public/icons
-  --public-path <path>    URL path the sprites are served from. Default: /icons
-  --module-dir <dir>      Where the manifest and types are written. Default: svgworm
-  --flatten               Drop folder names from icon names (--no-flatten to undo)
-  --json                  Print one JSON document on stdout and nothing else
-  --verbose               Print one line per icon (plain output only)
-  -h, --help              Show this help
-  -v, --version           Show the version
+svgworm [build | check | watch | init] [options]
 ```
+
+| Command | What it does                                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| `build` | Write the sprite, manifest and types. The default when no command is given                                    |
+| `check` | Exit 1 if the committed output is stale. Writes nothing (for CI)                                              |
+| `watch` | Build, then rebuild on every change in the source folders                                                     |
+| `init`  | Set a project up: config, `predev`/`prebuild` scripts, Icon wiring (React or Astro), first build              |
+
+| Option                 | Meaning                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `--config <file>`      | Config file. Default: `svgworm.config.json` (optional)                     |
+| `--source <dir>`       | Folder with the SVG files. Repeat for several folders                      |
+| `--out-dir <dir>`      | Where sprite files are written. Default: `public/icons`                    |
+| `--public-path <path>` | URL path the sprites are served from. Default: `/icons`                    |
+| `--module-dir <dir>`   | Where the manifest and types are written. Default: `svgworm`               |
+| `--flatten`            | Drop folder names from icon names (`--no-flatten` to undo)                 |
+| `--json`               | Print one JSON document on stdout and nothing else                         |
+| `--verbose`            | Print one line per icon (plain output only)                                |
+| `-h`, `--help`         | Show the help                                                              |
+| `-v`, `--version`      | Show the version                                                           |
 
 Flags override the config file. The same options are available as [config keys](/docs/config/).
 

@@ -1227,6 +1227,17 @@ h1 {
 
 /* Docs (ADR-0018): sidebar plus a readable column. */
 
+/* The page list is a <details> for phones (TSK-068). On wide screens the summary is hidden and
+   the list shows through ::details-content, so no script and no duplicate markup. */
+.docs-menu-summary {
+  display: none;
+}
+
+.docs-menu::details-content {
+  display: block;
+  content-visibility: visible;
+}
+
 .docs-layout {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -1529,6 +1540,63 @@ h1 {
 
   .docs-nav {
     position: static;
+  }
+
+  /* Closed by default: the content comes first, the page list is one tap away. */
+  .docs-menu::details-content {
+    content-visibility: hidden;
+  }
+
+  .docs-menu[open]::details-content {
+    content-visibility: visible;
+  }
+
+  .docs-menu-summary {
+    display: flex;
+    gap: var(--space-2) var(--space-3);
+    align-items: baseline;
+    padding: 10px var(--space-4);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .docs-menu-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .docs-menu-summary::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-right: 2px solid var(--ink-muted);
+    border-bottom: 2px solid var(--ink-muted);
+    transform: translateY(-0.15em) rotate(45deg);
+    transition: transform 160ms ease;
+  }
+
+  .docs-menu[open] .docs-menu-summary::before {
+    transform: translateY(0.1em) rotate(-135deg);
+  }
+
+  .docs-menu-summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .docs-menu-label {
+    font-weight: 600;
+  }
+
+  .docs-menu-current {
+    color: var(--ink-muted);
+    font-size: 14px;
+  }
+
+  .docs-menu-body {
+    padding: var(--space-4) var(--space-2) 0;
   }
 
   /* A table wider than the phone scrolls inside itself instead of widening the page. */

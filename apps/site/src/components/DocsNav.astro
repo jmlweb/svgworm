@@ -15,48 +15,72 @@ type Props = {
 
 const { current, docs, sections = [] } = Astro.props;
 const REPO = 'https://github.com/jmlweb/svgworm';
+const currentDoc = docs.find((doc) => current === `/docs/${doc.id}/`);
 ---
 
+{/*
+  On phones the page list sits behind a <details> so the content comes first (TSK-068).
+  On wide screens CSS hides the summary and shows the list through ::details-content,
+  so the sidebar needs no script in either case.
+*/}
 <nav aria-label="Documentation" class="docs-nav">
-  <p class="docs-nav-title">Docs</p>
-  <ul>
-    {
-      docs.map((doc) => {
-        const isCurrent = current === `/docs/${doc.id}/`;
-        return (
-          <li>
-            <a
-              aria-current={isCurrent ? 'page' : undefined}
-              href={`/docs/${doc.id}/`}
-            >
-              {doc.data.navTitle ?? doc.data.title}
-            </a>
-            {isCurrent && sections.length > 0 && (
-              <ul aria-label="On this page" class="docs-toc">
-                {sections.map((section) => (
-                  <li>
-                    <a href={`#${section.slug}`}>{section.text}</a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        );
-      })
-    }
-  </ul>
-  <p class="docs-nav-title">Project</p>
-  <ul>
-    <li>
-      <a href={`${REPO}/blob/main/docs/output-contract.md`}
-        >Output contract <span aria-hidden="true" class="docs-nav-external">↗</span></a
-      >
-    </li>
-    <li><a href="/llms.txt">llms.txt</a></li>
-    <li>
-      <a href={`${REPO}/tree/main/docs/adr`}
-        >Decisions (ADRs) <span aria-hidden="true" class="docs-nav-external">↗</span></a
-      >
-    </li>
-  </ul>
+  <details class="docs-menu">
+    <summary class="docs-menu-summary">
+      <span class="docs-menu-label">Docs menu</span>
+      {
+        currentDoc && (
+          <span class="docs-menu-current">
+            {currentDoc.data.navTitle ?? currentDoc.data.title}
+          </span>
+        )
+      }
+    </summary>
+    <div class="docs-menu-body">
+      <p class="docs-nav-title">Docs</p>
+      <ul>
+        {
+          docs.map((doc) => {
+            const isCurrent = current === `/docs/${doc.id}/`;
+            return (
+              <li>
+                <a
+                  aria-current={isCurrent ? 'page' : undefined}
+                  href={`/docs/${doc.id}/`}
+                >
+                  {doc.data.navTitle ?? doc.data.title}
+                </a>
+                {isCurrent && sections.length > 0 && (
+                  <ul aria-label="On this page" class="docs-toc">
+                    {sections.map((section) => (
+                      <li>
+                        <a href={`#${section.slug}`}>{section.text}</a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })
+        }
+      </ul>
+      <p class="docs-nav-title">Project</p>
+      <ul>
+        <li>
+          <a href={`${REPO}/blob/main/docs/output-contract.md`}
+            >Output contract <span aria-hidden="true" class="docs-nav-external"
+              >↗</span
+            ></a
+          >
+        </li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+        <li>
+          <a href={`${REPO}/tree/main/docs/adr`}
+            >Decisions (ADRs) <span aria-hidden="true" class="docs-nav-external"
+              >↗</span
+            ></a
+          >
+        </li>
+      </ul>
+    </div>
+  </details>
 </nav>

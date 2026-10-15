@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 24 |
+| Pending | 23 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 50 |
+| Complete | 51 |
 
 ## Active Tasks
 
@@ -37,7 +37,6 @@
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-066 | Keep license comments from source SVGs | P4 | licensing, svgo, output | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
-| TSK-068 | Collapse the docs nav on mobile | P2 | site, docs, design, mobile | 2026-10-15 |
 | TSK-069 | Copy button on docs code blocks | P3 | site, docs, ux | 2026-10-15 |
 | TSK-070 | Redesign the docs index | P3 | site, docs, design | 2026-10-15 |
 | TSK-071 | Docs: on-this-page right rail with scroll-spy | P4 | site, docs, design | 2026-10-15 |
