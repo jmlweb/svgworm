@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 description: "Fixes for the problems people hit with svgworm: a blank icon in Safari, a sprite that 404s, an icon in the wrong color, name collisions, svgworm check failing in CI, and every diagnostic code with its fix."
-order: 6
+order: 7
 ---
 
 Start with the symptom. The [diagnostic codes](#diagnostic-codes) at the end cover every error and warning the CLI prints.
@@ -20,7 +20,7 @@ Still blank everywhere? Open the sprite URL from the manifest in a tab: a 404 me
 
 Every icon is missing, and the network tab shows a 404 for `/icons/icons.<hash>.svg`.
 
-- **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base` and Vite `base` are not added to the URLs svgworm writes. With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](https://github.com/jmlweb/svgworm/tree/main/packages/react#client-only-apps-and-vite)).
+- **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base` and Vite `base` are not added to the URLs svgworm writes. With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](/docs/vite/#base)).
 - **`outDir` and `publicPath` disagree.** A custom `outDir` must be served at `publicPath`. `public/sprites` is served at `/sprites`, so pass both flags together; the config refuses `outDir` on its own for this reason.
 - **The deploy replaced the sprite under cached HTML.** Each build writes a new hashed file and removes the old one, so HTML from the previous deploy that a CDN still serves points at a hash that is gone. A tab that already loaded the sprite is fine: every icon is in that one file. svgworm keeps only the current sprite on purpose, so the output stays a pure function of your icons ([ADR-0022](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0022-builds-keep-only-the-current-sprite.md)). Fix it in the deploy: upload the sprite before the HTML, keep HTML caches short or purge them on deploy, and when you sync `outDir` to a bucket, do not delete old files (`aws s3 sync` without `--delete`, `rclone copy` instead of `rclone sync`). Hashed names never collide, so old files can expire by age. The sprite itself can be cached for a year, because its name changes with its content.
 - **The committed output is stale.** Someone changed an icon and did not run `svgworm`, so the manifest in git points at a sprite that no build produced. `svgworm check` in CI catches this before a deploy.

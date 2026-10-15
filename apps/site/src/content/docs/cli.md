@@ -1,7 +1,7 @@
 ---
 title: CLI reference
 description: "Every svgworm command, flag and exit code: build sprites, check committed output in CI, watch for changes and set a project up, with stable --json output."
-order: 4
+order: 5
 ---
 
 One command builds everything. The others check, watch, and set a project up.

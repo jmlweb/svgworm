@@ -78,7 +78,7 @@ export const MenuButton = ({ icon }: { icon: ReactNode }) => (
 );
 ```
 
-The client component receives rendered markup, not the manifest. In a client-only app (Vite, Create React App) there is no server to keep the manifest on, so it ships in the bundle; see the [@svgworm/react README](https://github.com/jmlweb/svgworm/tree/main/packages/react#client-only-apps-and-vite) for the trade-off.
+The client component receives rendered markup, not the manifest. In a client-only app (Vite, Create React App) there is no server to keep the manifest on, so it ships in the bundle; see the [Vite setup](/docs/vite/) for the trade-off.
 
 ## Set up by hand
 
@@ -185,4 +185,4 @@ pnpm next build
 - [CLI reference](/docs/cli/): every command, flag and exit code.
 - [Config](/docs/config/): `svgworm.config.json` and per-icon color overrides.
 - [Troubleshooting](/docs/troubleshooting/): blank icons, 404s, wrong colors, collisions, `check` in CI.
-- Using Astro? Read the [Astro setup](/docs/astro/).
+- Using Astro? Read the [Astro setup](/docs/astro/). Using Vite? Read the [Vite setup](/docs/vite/).

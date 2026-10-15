@@ -131,4 +131,4 @@ This website is an Astro 7 static site that renders every icon through the gener
 - [CLI reference](/docs/cli/): every command, flag and exit code.
 - [Config](/docs/config/): `svgworm.config.json` and per-icon color overrides.
 - [Troubleshooting](/docs/troubleshooting/): blank icons, 404s, wrong colors, collisions, `check` in CI.
-- Using Next.js? Read the [Next.js setup](/docs/nextjs/).
+- Using Next.js? Read the [Next.js setup](/docs/nextjs/). Using Vite? Read the [Vite setup](/docs/vite/).

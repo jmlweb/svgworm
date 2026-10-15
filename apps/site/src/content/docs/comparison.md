@@ -2,7 +2,7 @@
 title: svgworm compared with other SVG icon tools
 navTitle: Comparison
 description: "svgworm compared with SVGR, @neodx/svg, vite-plugin-icons-spritesheet and unplugin-icons: reproducible numbers and when to pick each tool."
-order: 8
+order: 9
 ---
 
 An honest comparison. For each tool it says what it does well and when to pick it instead of svgworm. Numbers come from the spikes in the repo, and each one links to its source. Where we did not test a tool ourselves, the page says so.

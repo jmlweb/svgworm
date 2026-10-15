@@ -1,7 +1,7 @@
 ---
 title: Config
 description: Every svgworm.config.json key and its default, per-icon color overrides, and the JSON Schema that editors and AI agents validate against.
-order: 5
+order: 6
 ---
 
 `svgworm.config.json` is optional: every key except `sources` has a default, and CLI flags can replace the file entirely. Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/svgworm.schema.json) to get autocomplete and validation in your editor. The package also exports it as `svgworm/schema.json`.

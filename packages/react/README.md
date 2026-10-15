@@ -31,11 +31,12 @@ pnpm add -D svgworm && pnpm add @svgworm/react   # npm install -D svgworm && npm
 
 In a client-only React app (Vite, Create React App) there is no server, so the manifest ships in the bundle: one module with every icon's id, viewBox and delivery, about 200 bytes per icon before compression. The icons themselves still come from the hashed sprite and are not JavaScript. Keep the source folder to the icons you use.
 
-Vite setup, by hand: run `svgworm` before `vite` (`"predev": "svgworm"`, `"prebuild": "svgworm"`), import the manifest from `svgworm/icons.js`, and create the component as above. Vite serves `public/` at `base`, so with `base: '/app/'` set `--public-path /app/icons` (or `"publicPath": "/app/icons"` in `svgworm.config.json`); without it the manifest points at `/icons/…` and every icon 404s. `svgworm init` detects React but not Vite, so it writes `components/icon.tsx` and the scripts, and you set `publicPath` yourself.
+Vite setup, step by step, with `base` and cache headers: the [Vite guide](https://svgworm.com/docs/vite/). In short: run `svgworm` before `vite` (`"predev": "svgworm"`, `"prebuild": "svgworm"`), import the manifest from `svgworm/icons.js`, and create the component as above. Vite serves `public/` at `base`, so with `base: '/app/'` set `--public-path /app/icons` (or `"publicPath": "/app/icons"` in `svgworm.config.json`); without it the manifest points at `/icons/…` and every icon 404s. `svgworm init` detects React but not Vite, so it writes `components/icon.tsx` and the scripts, and you set `publicPath` yourself.
 
 ## Docs
 
 - [Get started](https://github.com/jmlweb/svgworm#get-started)
 - [Next.js setup, caching and `basePath`](https://svgworm.com/docs/nextjs/)
+- [Vite setup, caching and `base`](https://svgworm.com/docs/vite/)
 
 > **Status:** 0.x, versioned together with `svgworm`. The props can still change in a minor version before 1.0; see the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/react/CHANGELOG.md).

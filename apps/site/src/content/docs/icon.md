@@ -2,7 +2,7 @@
 title: Icon component reference
 navTitle: Icon component
 description: "Every prop of the React Icon and the generated Icon.astro, the markup each icon delivery renders (svg, img or a CSS mask), and how to size and color icons with CSS."
-order: 3
+order: 4
 ---
 
 `Icon` is the one component svgworm gives you: `createIcon(manifest)` from `@svgworm/react`, or the `Icon.astro` that `svgworm init` writes. Both read the manifest and render the same markup with no client JavaScript, and a test in this repository keeps them in step ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md)). This page covers both.
