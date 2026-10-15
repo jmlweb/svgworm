@@ -4,8 +4,8 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 4 |
-| Active | 10 |
+| Pending | 3 |
+| Active | 11 |
 | Blocked | 2 |
 | Complete | 71 |
 
@@ -13,6 +13,7 @@
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
 - TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
+- TSK-035: Browser rendering matrix on product output (Playwright) (P3)
 - TSK-067: Opt-in cross-origin (CDN) sprites via a minimal injecting loader (P3)
 - TSK-077: Landing: before/after demo, SVG folder to sprite to typed icon (P2)
 - TSK-078: Landing: lede says the problem first, visible stats caption (P2)
@@ -30,7 +31,6 @@
 |----|-------|----------|------|---------|
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
-| TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
 
 ## Recently Completed

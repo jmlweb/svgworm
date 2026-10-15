@@ -1,12 +1,13 @@
 ---
 id: TSK-035
 title: Browser rendering matrix on product output (Playwright)
-status: pending
+status: active
 priority: P3
 tags: [testing, browsers, ci, post-v0.1]
 created: 2026-10-12
 source: manual
 depends-on: []
+started: 2026-10-15
 ---
 
 # Browser rendering matrix on product output (Playwright)
@@ -33,3 +34,5 @@ Port the spike's method into a repeatable script over the built core, decided by
 ## Progress Log
 
 - [2026-10-12] Created
+- [2026-10-15] Started
+- [2026-10-15] Playwright authorization: the maintainer's run instruction (2026-10-15) names TSK-035 and asks for the Playwright rendering matrix in CI per .claude/rules/testing.md; taken as the confirmation of criterion 5. Delegated to a sonnet worktree agent (root devDependency playwright 1.58.2, matrix also covers crossOrigin inject use icons).

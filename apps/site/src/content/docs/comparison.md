@@ -35,6 +35,26 @@ What it does **not** do yet: several sprites in one build ([one config per sprit
 
 </aside>
 
+## Client JS, measured
+
+The same 20 Lucide icons, rendered three ways in one Next.js 16 App Router app built with Turbopack: svgworm, `lucide-react`, and SVGR importing the same `lucide-static` files. Each runs on a Server Component page and inside one small `'use client'` component. A route with no icons gives the framework floor (130.1 KiB gzip of client JS), which the second column subtracts. Cold cache, Chromium, one run on one machine ([TSK-079 spike](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-079-client-js-comparison/RESULTS.md); reproduce with `pnpm measure` in that folder).
+
+| Variant                 | Client JS over the floor, raw / gzip | HTML raw / gzip  | Requests for icons          |
+| ----------------------- | ------------------------------------ | ---------------- | --------------------------- |
+| svgworm, server page    | 0 / 0 KiB                            | 13.5 / 2.0 KiB   | 1 sprite (5.3 KiB, 1.2 gzip) |
+| svgworm, client         | 4.2 / 1.5 KiB (the manifest)         | 8.0 / 1.8 KiB    | 1 sprite, 1 chunk           |
+| lucide-react, server    | 2.5 / 1.2 KiB                        | 20.0 / 3.7 KiB   | 1 chunk                     |
+| lucide-react, client    | 7.7 / 3.3 KiB                        | 12.6 / 2.8 KiB   | 1 chunk                     |
+| SVGR, server page       | 0 / 0 KiB                            | 22.4 / 3.5 KiB   | none                        |
+| SVGR, client            | 10.3 / 2.1 KiB                       | 12.4 / 2.9 KiB   | 1 chunk                     |
+
+Versions: next 16.3.8, react 19.3.0, lucide-react and lucide-static 1.50.0, @svgr/webpack 8.1.0, svgworm built from the repo.
+
+- On a server page svgworm and SVGR add no client JS. `lucide-react` 1.50.0 still ships a chunk there, because its `Icon` is a Client Component.
+- Inside a client component the icon code reaches the bundle in every approach. svgworm sends the manifest (ids and view boxes, no path data); the others send path data.
+- The gaps are small: 1 to 3 KiB gzip for 20 icons against a 130 KiB floor. They grow with the number of icons used in client components.
+- svgworm costs a build step and one extra request, which is cached for a year. SVGR needs no extra request, but it puts the markup into the HTML and the RSC payload of every page. svgworm is 0.x.
+
 ## @neodx/svg
 
 The closest competitor. MIT, CLI plus Node API plus unplugin, multiple sprites, hashed files, typed metadata.
