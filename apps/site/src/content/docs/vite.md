@@ -4,11 +4,17 @@ description: Set up svgworm in a Vite and React app. A hashed sprite from your S
 order: 3
 ---
 
-Set svgworm up in a Vite and React app in three steps. You end up with a hashed sprite in `public/icons/`, typed icon names, and an `Icon` component. Vite serves `public/` as it is and copies it into `dist/`, so the sprite needs no plugin.
+Set svgworm up in a Vite and React app in three steps. You end up with:
+
+- a **hashed sprite** in `public/icons/`;
+- **typed icon names**;
+- an `Icon` component.
+
+Vite serves `public/` as it is and copies it into `dist/`, so **the sprite needs no plugin**.
 
 Requires Node `^22.20 || >=24.11`. The [working example](#working-example) uses Vite 8.
 
-A Vite app renders on the client, so `Icon` runs in the browser. The sprite is a separate cached file and is not JavaScript, but the manifest (every icon's id, viewBox and delivery, about 200 bytes per icon before compression) ships in your bundle. Keep the source folder to the icons you use. For zero client JS, use [Next.js](/docs/nextjs/) Server Components or [Astro](/docs/astro/).
+A Vite app renders on the client, so `Icon` runs in the browser. The sprite is a separate cached file and is not JavaScript. But the manifest ships in your bundle: every icon's id, viewBox and delivery, about 200 bytes per icon before compression. **Keep the source folder to the icons you use.** For zero client JS, use [Next.js](/docs/nextjs/) Server Components or [Astro](/docs/astro/).
 
 ## Steps
 
@@ -20,7 +26,14 @@ A Vite app renders on the client, so `Icon` runs in the browser. The sprite is a
    # yarn: yarn add -D svgworm && yarn add @svgworm/react && yarn svgworm init
    ```
 
-   `init` writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists). If `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`, then it builds once. It does not detect Vite, so it does not read `vite.config.*`: set `publicPath` yourself when you use a [`base`](#base). See the [CLI reference](/docs/cli/#init) for every flag.
+   `init` does the setup for you:
+
+   - **Config:** writes `svgworm.config.json`.
+   - **Scripts:** adds `predev` and `prebuild` scripts that run `svgworm`.
+   - **Component:** creates `components/icon.tsx` (`src/components/icon.tsx` when `src/` exists).
+   - **First build:** if `icons/` is missing or empty, it adds a sample `icons/svgworm.svg`. Then it builds once.
+
+   It does not detect Vite, so it does not read `vite.config.*`. **Set `publicPath` yourself** when you use a [`base`](#base). See the [CLI reference](/docs/cli/#init) for every flag.
 
 2. **Put your SVG files in `icons/` (delete the sample) and build:**
 
@@ -51,7 +64,10 @@ A Vite app renders on the client, so `Icon` runs in the browser. The sprite is a
    );
    ```
 
-   Names come from the file paths: `home` is `icons/home.svg` and `brand/sunset` is `icons/brand/sunset.svg`, lower-cased with `-` between words. The icon is `aria-hidden` unless you pass `title` or `label`. An unknown `name` is a type error, so an editor lists every valid name. There is no `'use client'` rule here: every component runs in the browser, so importing `Icon` anywhere is fine.
+   - **Names come from the file paths:** `home` is `icons/home.svg` and `brand/sunset` is `icons/brand/sunset.svg`, lower-cased with `-` between words.
+   - **Decorative by default:** the icon is `aria-hidden` unless you pass `title` or `label`.
+   - **Type-checked:** an unknown `name` is a type error, so an editor lists every valid name.
+   - **No `'use client'` rule:** every component runs in the browser, so importing `Icon` anywhere is fine.
 
 ## Set up by hand
 
@@ -87,11 +103,11 @@ Without `init`, do its part yourself after installing the two packages:
    }
    ```
 
-   Yarn 2+ never runs `pre` scripts. With it, put the command in front of the scripts instead: `"dev": "svgworm --source icons && vite"` and `"build": "svgworm --source icons && vite build"`.
+   **Yarn 2+ never runs `pre` scripts.** With it, put the command in front of the scripts instead: `"dev": "svgworm --source icons && vite"` and `"build": "svgworm --source icons && vite build"`.
 
 ## Cache for a year
 
-Vite copies `public/` as it is and has no header setting for it. The file names are content-hashed, so a long cache is safe, and your host sets it. `vite preview` and the dev server send no long cache.
+Vite copies `public/` as it is and has no header setting for it. The file names are content-hashed, so **a long cache is safe**, and your host sets it. `vite preview` and the dev server send no long cache.
 
 - **Cloudflare and Netlify**, in `public/_headers`:
 
@@ -132,7 +148,7 @@ Vite does not add `base` to the sprite URLs svgworm writes. With `base: '/app/'`
 
 </aside>
 
-Why: Vite copies `public/icons/` to `dist/icons/`, and your host serves `dist/` under `/app/`, so the sprite lives at `/app/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and every icon 404s. `outDir` stays `public/icons`: only the URL changes, not where the file is written.
+Why: Vite copies `public/icons/` to `dist/icons/`, and your host serves `dist/` under `/app/`. So the sprite lives at `/app/icons/…`. Without `publicPath`, the manifest still points at `/icons/…` and **every icon 404s**. `outDir` stays `public/icons`. Only the URL changes, not where the file is written.
 
 ```json
 {
@@ -143,20 +159,23 @@ Why: Vite copies `public/icons/` to `dist/icons/`, and your host serves `dist/` 
 }
 ```
 
-An absolute `base` (`https://cdn.example.com/app/`) serves `public/` from that origin, so the sprite is cross-origin. Proxy `/icons/*` through the page's origin to keep zero JS, or build with `--cross-origin inject --public-path https://cdn.example.com/app/icons` and render the loader ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)).
+An absolute `base` (`https://cdn.example.com/app/`) serves `public/` from that origin, so the sprite is cross-origin. You have two options:
 
-If the base differs per environment, keep it in one place and pass it to both. The example's `check:base` script builds with `base: '/app/'` and checks that the bundle, the manifest and `dist/icons/` agree.
+- **Proxy:** proxy `/icons/*` through the page's origin to keep zero JS.
+- **Loader:** build with `--cross-origin inject --public-path https://cdn.example.com/app/icons` and render the loader ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)).
+
+If the base differs per environment, **keep it in one place** and pass it to both. The example's `check:base` script builds with `base: '/app/'` and checks that the bundle, the manifest and `dist/icons/` agree.
 
 ## What to commit
 
-Two choices. Pick one and stick with it:
+Two choices. **Pick one and stick with it:**
 
-- **Commit `public/icons/` and `svgworm/`** and run `svgworm check` in CI. Every checkout type-checks without a build step, reviews show icon changes as diffs of the sprite and the manifest, and CI fails when someone edits an icon and forgets to rebuild.
-- **Ignore both folders** (`public/icons/` and `svgworm/` in `.gitignore`) and rely on the `predev` and `prebuild` scripts. Less noise in reviews, but anything that runs before `vite build`, such as `tsc` or ESLint in CI, must run `svgworm` first or it will not find `svgworm/icons.d.ts`.
+- **Commit `public/icons/` and `svgworm/`** and run `svgworm check` in CI. Every checkout type-checks without a build step. Reviews show icon changes as diffs of the sprite and the manifest. CI fails when someone edits an icon and forgets to rebuild.
+- **Ignore both folders** (`public/icons/` and `svgworm/` in `.gitignore`) and rely on the `predev` and `prebuild` scripts. Less noise in reviews. But anything that runs before `vite build`, such as `tsc` or ESLint in CI, must run `svgworm` first. Otherwise it will not find `svgworm/icons.d.ts`.
 
 ## CI
 
-Run `svgworm check` before the build. It compiles the icons and compares the result with the committed output, so CI fails (exit 1) when someone changed an icon and forgot to rebuild:
+Run `svgworm check` before the build. It compiles the icons and compares the result with the committed output. **CI fails (exit 1) when someone changed an icon and forgot to rebuild:**
 
 ```bash
 pnpm svgworm check
@@ -165,7 +184,13 @@ pnpm build
 
 ## Working example
 
-[examples/vite-react](https://github.com/jmlweb/svgworm/tree/main/examples/vite-react) is a complete Vite 8 and React app with these steps. CI runs `svgworm check`, builds it, and then checks that the bundle references the hashed sprite from the manifest, that the sprite is in `dist/icons/`, and that `dist/icons/` holds only the manifest's files. A second build under `base: '/app/'` runs the same checks.
+[examples/vite-react](https://github.com/jmlweb/svgworm/tree/main/examples/vite-react) is a complete Vite 8 and React app with these steps. CI runs `svgworm check` and builds it. Then it checks three things:
+
+- **Bundle:** it references the hashed sprite from the manifest.
+- **Sprite:** it is in `dist/icons/`.
+- **Output:** `dist/icons/` holds only the manifest's files.
+
+A second build under `base: '/app/'` runs the same checks.
 
 ## Next steps
 

@@ -5,7 +5,7 @@ description: "Every prop of the React Icon and the generated Icon.astro, the mar
 order: 4
 ---
 
-`Icon` is the one component svgworm gives you: `createIcon(manifest)` from `@svgworm/react`, or the `Icon.astro` that `svgworm init` writes. Both read the manifest and render the same markup with no client JavaScript, and a test in this repository keeps them in step ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md)). This page covers both.
+`Icon` is the one component svgworm gives you: `createIcon(manifest)` from `@svgworm/react`, or the `Icon.astro` that `svgworm init` writes. Both read the manifest and render the same markup with **no client JavaScript**. A test in this repository keeps them in step ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md)). This page covers both.
 
 ```tsx
 <Icon name="home" />
@@ -25,11 +25,11 @@ order: 4
 | `style`                              | React: object. Astro: string or object                             |          | Passed to the rendered element. On a mask icon it is merged after the mask declarations, so it can override them                 |
 | any other SVG prop                   | `SVGProps<SVGSVGElement>` minus `children`, `ref`, `title`, `name` |          | `id`, `data-*`, `aria-*`, `onClick` and so on. On the `img` and `mask` deliveries only HTML attributes carry over                |
 
-Without `title` or `label` the icon is decorative: `aria-hidden="true"` on the `<svg>` and the `<span>`, `alt=""` on the `<img>`. The `<svg>` also gets `focusable="false"` so old Edge does not tab into it.
+Without `title` or `label` the icon is **decorative**: `aria-hidden="true"` on the `<svg>` and the `<span>`, `alt=""` on the `<img>`. The `<svg>` also gets `focusable="false"` so old Edge does not tab into it.
 
 ## Markup per delivery
 
-The manifest records a `delivery` per icon ([how svgworm works](/docs/how-it-works/#delivery)), and `Icon` renders a different element for each. CSS that targets `svg` reaches only the first one.
+The manifest records a `delivery` per icon ([how svgworm works](/docs/how-it-works/#delivery)). `Icon` renders a different element for each. **CSS that targets `svg` reaches only the first one.**
 
 ### `use` (most icons)
 
@@ -45,7 +45,9 @@ The manifest records a `delivery` per icon ([how svgworm works](/docs/how-it-wor
 </svg>
 ```
 
-With `title="Go home"`: `role="img"`, no `aria-hidden`, and `<title>Go home</title>` before the `<use>`. The icon's paths live in the sprite's `<symbol>`; mono icons are drawn with `currentColor`, so the `color` of the `<svg>` (inherited from the parent) is the icon color.
+With `title="Go home"`: `role="img"`, no `aria-hidden`, and `<title>Go home</title>` before the `<use>`.
+
+The icon's paths live in the sprite's `<symbol>`. Mono icons are drawn with `currentColor`, so the `color` of the `<svg>` (inherited from the parent) is the icon color.
 
 ### `img` (multicolor icons that need gradients, masks, clip paths or filters)
 
@@ -58,7 +60,7 @@ With `title="Go home"`: `role="img"`, no `aria-hidden`, and `<title>Go home</tit
 />
 ```
 
-The stack file shows the one nested `<svg>` whose id is the URL fragment. An `<img>` cannot inherit `currentColor`, which is fine: these icons keep their own colors. `title` or `label` becomes the `alt`.
+The stack file shows the one nested `<svg>` whose id is the URL fragment. An `<img>` cannot inherit `currentColor`, which is fine, because these icons keep their own colors. `title` or `label` becomes the `alt`.
 
 ### `mask` (mono icons that need gradients, masks, clip paths or filters)
 
@@ -69,19 +71,19 @@ The stack file shows the one nested `<svg>` whose id is the URL fragment. An `<i
 ></span>
 ```
 
-The icon is a CSS mask over a `currentColor` background, so it follows the parent's `color` like a `use` icon. Its size is an inline style, so change it with the `width` and `height` props (or `style`), not with a class.
+The icon is a CSS mask over a `currentColor` background, so it follows the parent's `color` like a `use` icon. Its size is an inline style. **Change it with the `width` and `height` props** (or `style`), not with a class.
 
 ## Sizing
 
 - The default `1em` makes every delivery follow the parent's `font-size`: a 20 px line gets 20 px icons.
 - `width` and `height` props set the size on every delivery: `width={24} height={24}` or `width="1.5rem" height="1.5rem"`.
-- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` and `img` icons, but not `mask` icons, whose size is inline. Use the props when the icon may be a mask icon.
+- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` and `img` icons, but not `mask` icons, whose size is inline. **Use the props when the icon may be a mask icon.**
 
 ## Coloring
 
-- Set `color` on the parent (or on the icon through `className`/`class`): mono icons follow it, on both the `use` and the `mask` delivery. A link that turns red on hover turns its icon red too.
-- Multicolor icons ignore `color` and keep the colors from the SVG file. To make one follow `currentColor`, add a `mono` [color override](/docs/config/#color-overrides); svgworm fails the build when the icon has content that cannot follow it.
-- Do not set `fill` or `stroke` on the `<svg>`: the symbol's own attributes win inside a `<use>`. `color` is the only knob.
+- **Mono icons:** set `color` on the parent (or on the icon through `className`/`class`). Mono icons follow it, on both the `use` and the `mask` delivery. A link that turns red on hover turns its icon red too.
+- **Multicolor icons:** they ignore `color` and keep the colors from the SVG file. To make one follow `currentColor`, add a `mono` [color override](/docs/config/#color-overrides). svgworm fails the build when the icon has content that cannot follow it.
+- **Do not set `fill` or `stroke`** on the `<svg>`. The symbol's own attributes win inside a `<use>`. `color` is the only knob.
 
 ## Reaching every delivery with CSS
 
@@ -102,8 +104,8 @@ In Astro the prop is `class`. Both components put the class on the element they 
 
 ## Errors
 
-- A `name` that is not in the manifest is a type error. At runtime (an untyped name, or a stale manifest) the component throws `Unknown icon "…"`, with the closest names in React.
-- `Unsupported svgworm manifest version` means the manifest was written by a newer svgworm than the adapter reads. Update `@svgworm/react`, or re-run `svgworm init` for a fresh `Icon.astro`.
-- `Icon "…" needs the stack file …, but the manifest has none` means the manifest is from an older build. Run `svgworm` again.
+- **Unknown name:** a `name` that is not in the manifest is a type error. At runtime (an untyped name, or a stale manifest) the component throws `Unknown icon "…"`, with the closest names in React.
+- **`Unsupported svgworm manifest version`:** the manifest was written by a newer svgworm than the adapter reads. Update `@svgworm/react`, or re-run `svgworm init` for a fresh `Icon.astro`.
+- **`Icon "…" needs the stack file …, but the manifest has none`:** the manifest is from an older build. Run `svgworm` again.
 
 See [Troubleshooting](/docs/troubleshooting/) for icons that render blank or in the wrong color.

@@ -31,15 +31,15 @@ svgworm [build | check | watch | init] [options]
 | `-h`, `--help`         | Show the help                                                              |
 | `-v`, `--version`      | Show the version                                                           |
 
-Flags override the config file. The same options are available as [config keys](/docs/config/).
+**Flags override the config file.** The same options are available as [config keys](/docs/config/).
 
-Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgworm` or `bunx svgworm`. The pages here write `pnpm svgworm`; the command is the same with any of them.
+Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgworm` or `bunx svgworm`. The pages here write `pnpm svgworm`. The command is the same with any of them.
 
 <aside class="alert alert-important">
 
 <p class="alert-title">Important</p>
 
-`--out-dir` needs `--public-path`. svgworm cannot guess the URL a custom folder is served from, and a wrong URL breaks every icon.
+`--out-dir` needs `--public-path`. svgworm cannot guess the URL a custom folder is served from, and **a wrong URL breaks every icon**.
 
 </aside>
 
@@ -53,13 +53,21 @@ Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgwor
 
 ## Output
 
-At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time). `savings` is the source bytes minus the sprite and stack bytes, before gzip or Brotli: an optimizer figure that says how much svgo and the sprite took out of your files, not what the browser transfers. A negative value is normal for a handful of tiny icons, because each symbol carries an id and a viewBox. When stdout is not a terminal, or with `--json`, the output is plain and stable, so scripts and AI agents can read it.
+At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time).
 
-The plain output lists the files written or removed, the warnings and errors, and the summary. It does not list every icon: with a large set that was thousands of lines per CI run. Pass `--verbose` to get one `icon <name> <color> <delivery>` line per icon. `--json` always includes every icon.
+- **`savings`:** the source bytes minus the sprite and stack bytes, before gzip or Brotli. It is an optimizer figure. It says how much svgo and the sprite took out of your files, **not what the browser transfers**.
+- **Negative savings:** normal for a handful of tiny icons, because each symbol carries an id and a viewBox.
+- **Plain output:** when stdout is not a terminal, or with `--json`, the output is plain and stable. Scripts and AI agents can read it.
+
+The plain output lists the files written or removed, the warnings and errors, and the summary. It does not list every icon, because with a large set that was thousands of lines per CI run. Pass `--verbose` to get one `icon <name> <color> <delivery>` line per icon. `--json` always includes every icon.
 
 ## JSON output
 
-`--json` prints exactly one JSON document on stdout, pretty-printed, and nothing else there. Diagnostics still go to stderr as text, so a failing run stays readable in a log. `ok` always mirrors the exit code: `true` for `0`, `false` otherwise. Every document has `warnings` and `errors`, each a list of `{ "code", "file", "message" }`; `file` is the source path with `/` separators, or `""` for a problem with no file (a usage or config error has `code` `cli/usage`, an I/O failure `cli/unexpected`).
+`--json` prints **exactly one JSON document** on stdout, pretty-printed, and nothing else there. Diagnostics still go to stderr as text, so a failing run stays readable in a log.
+
+- **`ok`:** always mirrors the exit code. `true` for `0`, `false` otherwise.
+- **`warnings` and `errors`:** every document has both. Each is a list of `{ "code", "file", "message" }`.
+- **`file`:** the source path with `/` separators, or `""` for a problem with no file. A usage or config error has `code` `cli/usage`. An I/O failure has `cli/unexpected`.
 
 ### build document
 
@@ -92,7 +100,9 @@ The plain output lists the files written or removed, the warnings and errors, an
 }
 ```
 
-`icons` lists every icon in name order, with the manifest fields (`name`, `id`, `viewBox`, `color`, `delivery`) plus the source `file`. On a failed build the document is `{ "ok": false, "stats": null, "icons": [], "warnings": [...], "errors": [...] }` and nothing is written.
+`icons` lists every icon in name order, with the manifest fields (`name`, `id`, `viewBox`, `color`, `delivery`) plus the source `file`.
+
+On a failed build the document is `{ "ok": false, "stats": null, "icons": [], "warnings": [...], "errors": [...] }` and **nothing is written**.
 
 ### check document
 
@@ -115,7 +125,9 @@ The build document plus three fields:
 }
 ```
 
-`differences` lists every file a build would write or remove, expected files first in write order: `missing` (not on disk), `changed` (differs from what a build writes) or `stale` (a hashed sprite of an earlier build). `iconDiff` compares the icon names in the committed manifest with the new ones. `stale` is a deprecated alias of `differences`, kept until the next minor.
+- **`differences`:** every file a build would write or remove, expected files first in write order. The status is `missing` (not on disk), `changed` (differs from what a build writes) or `stale` (a hashed sprite of an earlier build).
+- **`iconDiff`:** compares the icon names in the committed manifest with the new ones.
+- **`stale`:** a deprecated alias of `differences`, kept until the next minor.
 
 ### watch documents
 
@@ -140,11 +152,16 @@ One build document per build, the first one for the initial build. Nothing is pr
 }
 ```
 
-`framework` is `react`, `astro` or `null`; `frameworkSource` says why (`flag`, `prompt`, `detected` or `null`). Each action is a file `init` looked at, with `status` `created`, `updated`, `unchanged` or `skipped`, a `reason` when skipped, and a `warning` when the user must finish something by hand (a script `init` would not touch). `build` is the first build: `{ "ok": true, "icons", "written" }` or `{ "ok": false }` with the diagnostics in `errors`.
+- **`framework`:** `react`, `astro` or `null`.
+- **`frameworkSource`:** says why (`flag`, `prompt`, `detected` or `null`).
+- **`actions`:** each action is a file `init` looked at. It has a `status` of `created`, `updated`, `unchanged` or `skipped`, a `reason` when skipped, and a `warning` when the user must finish something by hand (a script `init` would not touch).
+- **`build`:** the first build, either `{ "ok": true, "icons", "written" }` or `{ "ok": false }` with the diagnostics in `errors`.
 
 ### Stability
 
-Before 1.0 the documents can change in a minor version, never in a patch. A removed or renamed field stays as a deprecated alias for one minor (as `stale` does now), and every change is listed in the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/CHANGELOG.md) with its version. Fields are only added, never reordered, so read them by name. `durationMs` varies between runs; everything else is deterministic for the same input.
+Before 1.0 the documents can change in a minor version, **never in a patch**. A removed or renamed field stays as a deprecated alias for one minor (as `stale` does now). Every change is listed in the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/CHANGELOG.md) with its version.
+
+Fields are only added, never reordered, so read them by name. `durationMs` varies between runs. Everything else is deterministic for the same input.
 
 ## init
 
@@ -161,25 +178,37 @@ Before 1.0 the documents can change in a minor version, never in a patch. A remo
 | `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
-`init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).
+`init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output. In `--json` they are `framework` and `frameworkSource`. For Astro it writes `Icon.astro` instead of the React wiring. See the [Astro setup](/docs/astro/).
 
-When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons. Then it builds once from the config on disk, so the manifest and types exist before the app first imports them; `--json` reports it as `build`. If that build fails, `init` keeps the files it wrote and exits like `svgworm` would (1 for invalid icons, 2 for a setup problem).
+When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons.
 
-It never overwrites a file that differs from what it would write, so re-running it is safe.
+Then it builds once from the config on disk, so the manifest and types exist before the app first imports them. `--json` reports it as `build`. If that build fails, `init` keeps the files it wrote and exits like `svgworm` would (1 for invalid icons, 2 for a setup problem).
+
+It never overwrites a file that differs from what it would write, so **re-running it is safe**.
 
 ### Yarn 2+
 
-Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scripts, so a `prebuild` script would be skipped without an error and the app would ship without a sprite. When `init` finds Yarn 2+ (a `packageManager` of `yarn@2` or later, a `.yarnrc.yml`, or a Berry `yarn.lock`, also at a workspace root), it puts svgworm in front of the scripts themselves instead: `"build": "svgworm && next build"`. It skips a script that is missing or that uses `||`, `;` or `&`, because a prefix would change what it does, and prints a warning that names it. Then add `svgworm &&` to that script by hand.
+Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scripts. A `prebuild` script would be skipped without an error, and **the app would ship without a sprite**.
+
+When `init` finds Yarn 2+, it puts svgworm in front of the scripts themselves instead: `"build": "svgworm && next build"`. It detects Yarn 2+ from any of these, also at a workspace root:
+
+- a `packageManager` of `yarn@2` or later;
+- a `.yarnrc.yml`;
+- a Berry `yarn.lock`.
+
+It skips a script that is missing or that uses `||`, `;` or `&`, because a prefix would change what it does. It prints a warning that names the script. Then add `svgworm &&` to that script by hand.
 
 ## check
 
-`svgworm check` compiles the icons and compares the result with the files on disk. It writes nothing. Run it in CI to fail the build when someone changed an icon and forgot to commit the output. It lists each missing, changed or stale file and the icon names added or removed.
+`svgworm check` compiles the icons and compares the result with the files on disk. It writes nothing.
+
+Run it in CI to **fail the build when someone changed an icon and forgot to commit the output**. It lists each missing, changed or stale file and the icon names added or removed.
 
 With `--json`, the document adds `upToDate`, `differences` and `iconDiff` to the build document; see [JSON output](#check-document).
 
 ## watch
 
-`svgworm watch` rebuilds after each change in a source folder and re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). With `--json`, `watch` prints one document per build.
+`svgworm watch` rebuilds after each change in a source folder. It re-optimizes only the icons whose content changed (about 10 ms per rebuild for 1,000 icons). With `--json`, `watch` prints one document per build.
 
 <aside class="alert alert-warning">
 

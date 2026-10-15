@@ -37,6 +37,8 @@ const breakable = (name: string) => name.replaceAll('/', '/<wbr>');
 type Feature = {
   readonly icon: IconName;
   readonly title: string;
+  // Rendered bold before the body: the claim to take away from the tile.
+  readonly lead: string;
   readonly body: string;
 };
 
@@ -45,12 +47,14 @@ const features: readonly Feature[] = [
   {
     icon: 'layers',
     title: 'Right colors, per icon',
-    body: 'Mono icons follow currentColor, multicolor icons keep their colors: on 31,390 icons the classifier agreed with the rendering 99.98% of the time. Gradients, masks and filters render in Chromium, Firefox and WebKit.',
+    lead: 'Mono icons follow currentColor, multicolor icons keep their colors.',
+    body: 'On 31,390 icons the classifier agreed with the rendering 99.98% of the time. Gradients, masks and filters render in Chromium, Firefox and WebKit.',
   },
   {
     icon: 'git-branch',
     title: 'Plain files, no plugin',
-    body: 'A CLI that writes static files, byte-identical on Linux, macOS and Windows. Turbopack, webpack and Vite need no plugin, and svgworm check fails CI when the output is stale.',
+    lead: 'A CLI that writes static files.',
+    body: 'They are byte-identical on Linux, macOS and Windows. Turbopack, webpack and Vite need no plugin. svgworm check fails CI when the output is stale.',
   },
 ];
 
@@ -126,10 +130,12 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <span class="squiggle">Zero client JS.</span>
         </h1>
         <p class="lede">
-          Icon libraries ship a runtime and every icon as JavaScript, so icons
-          add to your bundle. svgworm digs through your folder of SVG files and
-          leaves one type-safe, content-hashed sprite behind. Render it in
-          Next.js Server Components or Astro with zero client JS for icons.
+          Icon libraries ship every icon as JavaScript. svgworm digs through
+          your SVG folder and leaves <strong
+            >one type-safe, content-hashed sprite</strong
+          > behind. Render it in Next.js Server Components or Astro with <strong
+            >zero client JS</strong
+          > for icons.
         </p>
         <Install id="hero" />
         <div class="actions">
@@ -194,9 +200,10 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
       <p class="kicker">From folder to typed icon</p>
       <h2 id="demo">What svgworm does to your SVG files.</h2>
       <p class="section-lede">
-        A curated demo, not a live build: the compiler does not run in your
-        browser. The file names are this site's own <code>icons/</code> folder,
-        and the icons in step 3 are drawn from this page's real sprite.
+        A curated demo, not a live build. The file names come from this site's
+        own <code>icons/</code> folder. The icons in step 3 are drawn from <strong
+          >this page's real sprite</strong
+        >.
       </p>
       <ol class="steps demo-steps">
         <li>
@@ -208,7 +215,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <h3>One sprite and a type</h3>
           <p>
             <code>svgworm</code> writes a hashed sprite and the icon names as a
-            type. A wrong name fails <code>tsc</code>.
+            type. <strong>A wrong name fails <code>tsc</code>.</strong>
           </p>
           <pre aria-label="Generated files" class="code" role="region" tabindex="0"><code><span class="c-comment">// generated</span>
 public{spriteUrl}
@@ -225,7 +232,9 @@ svgworm/icons.d.ts
           <h3>Rendered from the sprite</h3>
           <p>
             Each icon is a <code>&lt;use href&gt;</code> into
-            <code>{spriteUrl}</code>. No icon code reaches the browser.
+            <code>{spriteUrl}</code>. <strong
+              >No icon code reaches the browser.</strong
+            >
           </p>
           <div class="demo-icons">
             {
@@ -247,17 +256,17 @@ svgworm/icons.d.ts
       <p class="kicker">Why svgworm</p>
       <h2 id="why">Icons that stay out of your bundle.</h2>
       <p class="section-lede">
-        The usual way, one React component per icon, ships every icon as
-        JavaScript and repeats its path data in the HTML on every render.
-        svgworm ships one cached file and a name. Nothing else reaches the
-        browser.{' '}
+        The usual way is one React component per icon. Every icon ships as
+        JavaScript, and its path data repeats in the HTML on every render.
+        svgworm ships <strong>one cached file and a name</strong>. Nothing else
+        reaches the browser.{' '}
         <a href="/docs/comparison/">How it compares with SVGR and @neodx/svg</a>.
       </p>
       <p class="section-lede">
-        Measured with the same 20 Lucide icons in Next.js 16: on a server page
-        svgworm adds no client JS while lucide-react still ships a chunk, and in
-        a client component it adds the least. The gap is 1 to 3 KiB gzip at
-        this size.{' '}
+        Measured with the same 20 Lucide icons in Next.js 16. On a server page,
+        <strong>svgworm adds no client JS</strong>; lucide-react still ships a
+        chunk. In a client component, svgworm adds the least. The gap is 1 to
+        3 KiB gzip at this size.{' '}
         <a href="/docs/comparison/#client-js-measured">Method and numbers</a>.
       </p>
       <div class="bento">
@@ -268,7 +277,7 @@ svgworm/icons.d.ts
           </div>
           <p>
             Each icon is a tiny <code>&lt;use href&gt;</code> into one hashed sprite.
-            The browser fetches the sprite once and keeps it.
+            The browser <strong>fetches the sprite once</strong> and keeps it.
           </p>
           <pre aria-label="Icon usage and generated markup" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
 <span class="c-comment">{terminalComment}</span></code></pre>
@@ -279,8 +288,9 @@ svgworm/icons.d.ts
             <h3>Type-safe names</h3>
           </div>
           <p>
-            The generated types list every icon. A typo fails <code>tsc</code>,
-            not production.
+            The generated types list every icon. <strong
+              >A typo fails <code>tsc</code>, not production.</strong
+            >
           </p>
           <pre aria-label="Icon usage with a misspelled name" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str c-error">"termnial"</span> <span class="c-tag">/&gt;</span></code></pre>
           <div aria-hidden="true" class="suggest">
@@ -316,7 +326,9 @@ svgworm/icons.d.ts
                 </span>
                 <h3>{feature.title}</h3>
               </div>
-              <p>{feature.body}</p>
+              <p>
+                <strong>{feature.lead}</strong> {feature.body}
+              </p>
             </article>
           ))
         }
@@ -334,8 +346,9 @@ svgworm/icons.d.ts
           <p>
             <code>init</code> writes the config, the <code>predev</code>/<code
               >prebuild</code
-            > scripts and the component, then builds once so the app runs before
-            you add an icon.
+            > scripts and the component. Then it builds once, so <strong
+              >the app runs before you add an icon</strong
+            >.
           </p>
           <pre aria-label="Install commands" class="code" role="region" tabindex="0"><code>pnpm add -D svgworm
 pnpm add @svgworm/react
@@ -345,8 +358,9 @@ pnpm svgworm init</code></pre>
           <h3>Drop SVGs in icons/ and build</h3>
           <p>
             Each run writes a hashed sprite to <code>public/icons/</code> and a typed
-            manifest to <code>svgworm/</code>. <code>predev</code> and
-            <code>prebuild</code> run it for you.
+            manifest to <code>svgworm/</code>. <strong
+              ><code>predev</code> and <code>prebuild</code> run it for you.</strong
+            >
           </p>
           <pre aria-label="Icons folder and build command" class="code" role="region" tabindex="0"><code>icons/
 ├── home.svg
@@ -358,8 +372,8 @@ pnpm svgworm</code></pre>
         <li>
           <h3>Render in a Server Component</h3>
           <p>
-            Decorative by default. Pass <code>title</code> or <code>label</code> for
-            an accessible name.
+            <strong>Decorative by default.</strong> Pass <code>title</code> or
+            <code>label</code> for an accessible name.
           </p>
           <pre aria-label="Icon usage in a Server Component" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-tag">/&gt;</span>
 <span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-attr">title</span>=<span class="c-str">"Home"</span> <span class="c-tag">/&gt;</span></code></pre>
@@ -383,8 +397,10 @@ pnpm svgworm</code></pre>
       <h2 id="proof">Every icon here is one sprite.</h2>
       <p class="section-lede">
         <code>{spriteUrl}</code>, rendered by the generated <code>Icon.astro</code
-        > at build time and served with <code>Cache-Control: immutable</code>.
-        Open your network panel: one icon sprite and no JavaScript to render it.
+        > at build time. It is served with <code>Cache-Control: immutable</code>.
+        Open your network panel: <strong
+          >one icon sprite and no JavaScript to render it</strong
+        >.
       </p>
       <div class="showcase-group">
         <h3>
@@ -422,8 +438,9 @@ pnpm svgworm</code></pre>
       <div class="color-demo">
         <style set:html={swatchStyle} />
         <p>
-          Same sprite, same <code>&lt;use href&gt;</code>, decided per icon.
-          Pick a text color: the mono folder follows it, the multicolor snail
+          Same sprite, same <code>&lt;use href&gt;</code>, <strong
+            >decided per icon</strong
+          >. Pick a text color. The mono folder follows it; the multicolor snail
           keeps its own colors. No JavaScript, only CSS <code>color</code>.
         </p>
         <fieldset class="swatches">
@@ -457,10 +474,10 @@ pnpm svgworm</code></pre>
         <p class="kicker">Built for AI agents too</p>
         <h2 id="agents">Your agent can set it up.</h2>
         <p>
-          Everything works without a prompt: flags, <code>--json</code>, stable
-          exit codes, a JSON Schema for the config, and{' '}
-          <a href="/llms.txt">llms.txt</a>. The agent skills install
-          svgworm in a Next.js or an Astro app and explain each diagnostic code
+          <strong>Everything works without a prompt:</strong> flags,
+          <code>--json</code>, stable exit codes, a JSON Schema for the config,
+          and <a href="/llms.txt">llms.txt</a>. The agent skills install svgworm
+          in a Next.js or an Astro app. They also explain each diagnostic code
           with its fix.
         </p>
       </div>
@@ -481,8 +498,9 @@ pnpm svgworm</code></pre>
     <div class="wrap cta-inner">
       <h2 id="try">Point it at your icon folder.</h2>
       <p>
-        One <code>init</code>, Next.js or Astro, and your icons ship as one
-        cached file.
+        One <code>init</code>, Next.js or Astro, and your icons ship as <strong
+          >one cached file</strong
+        >.
       </p>
       <Install id="cta" />
       <div class="actions">

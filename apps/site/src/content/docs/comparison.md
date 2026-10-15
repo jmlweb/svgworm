@@ -5,7 +5,10 @@ description: "svgworm compared with SVGR, @neodx/svg, vite-plugin-icons-spritesh
 order: 9
 ---
 
-An honest comparison. For each tool it says what it does well and when to pick it instead of svgworm. Numbers come from the spikes in the repo, and each one links to its source. Where we did not test a tool ourselves, the page says so.
+An honest comparison. For each tool it says what it does well and when to pick it instead of svgworm.
+
+- **Numbers:** they come from the spikes in the repo, and each one links to its source.
+- **Untested tools:** where we did not test a tool ourselves, the page says so.
 
 Versions, dates and download counts come from npm on 2026-10-08 ([competitive landscape](https://github.com/jmlweb/svgworm/blob/main/docs/viability.md#competitive-landscape)).
 
@@ -22,7 +25,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([competitive la
 ## What svgworm does differently
 
 - **Per-icon color.** Each icon is classified as mono or multicolor. Mono icons follow `currentColor`; multicolor icons keep their colors. In [TSK-003](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-003-color-classification/RESULTS.md) the classifier agreed with rendering on 99.98% of 31,390 icons and recolored no multicolor icon.
-- **Gradients, masks and filters render in every engine.** WebKit resolves no `url(#…)` reference inside an external `<use>` sprite ([TSK-002](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md)): gradient, mask and filter icons come out blank there. svgworm puts those icons in a second "stack" file and delivers them as `<img>` (multicolor) or a CSS mask (mono). [TSK-004](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-004-sprite-url/RESULTS.md) renders all of them in Chromium, Firefox and WebKit with JavaScript disabled.
+- **Gradients, masks and filters render in every engine.** WebKit resolves no `url(#…)` reference inside an external `<use>` sprite ([TSK-002](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md)). Gradient, mask and filter icons come out blank there. svgworm puts those icons in a second "stack" file and delivers them as `<img>` (multicolor) or a CSS mask (mono). [TSK-004](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-004-sprite-url/RESULTS.md) renders all of them in Chromium, Firefox and WebKit with JavaScript disabled.
 - **No bundler plugin.** It is a CLI that writes files, so it works the same under Turbopack, webpack and Vite.
 - **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-006-icon-naming/RESULTS.md)).
 - **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
@@ -37,7 +40,9 @@ What it does **not** do yet: several sprites in one build ([one config per sprit
 
 ## Client JS, measured
 
-The same 20 Lucide icons, rendered three ways in one Next.js 16 App Router app built with Turbopack: svgworm, `lucide-react`, and SVGR importing the same `lucide-static` files. Each runs on a Server Component page and inside one small `'use client'` component. A route with no icons gives the framework floor (130.1 KiB gzip of client JS), which the second column subtracts. Cold cache, Chromium, one run on one machine ([TSK-079 spike](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-079-client-js-comparison/RESULTS.md); reproduce with `pnpm measure` in that folder).
+The same 20 Lucide icons, rendered three ways in one Next.js 16 App Router app built with Turbopack: svgworm, `lucide-react`, and SVGR importing the same `lucide-static` files. Each runs on a Server Component page and inside one small `'use client'` component.
+
+A route with no icons gives the framework floor (130.1 KiB gzip of client JS), which the second column subtracts. The setup is cold cache, Chromium, **one run on one machine** ([TSK-079 spike](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-079-client-js-comparison/RESULTS.md); reproduce with `pnpm measure` in that folder).
 
 | Variant                 | Client JS over the floor, raw / gzip | HTML raw / gzip  | Requests for icons          |
 | ----------------------- | ------------------------------------ | ---------------- | --------------------------- |
@@ -50,10 +55,10 @@ The same 20 Lucide icons, rendered three ways in one Next.js 16 App Router app b
 
 Versions: next 16.3.8, react 19.3.0, lucide-react and lucide-static 1.50.0, @svgr/webpack 8.1.0, svgworm built from the repo.
 
-- On a server page svgworm and SVGR add no client JS. `lucide-react` 1.50.0 still ships a chunk there, because its `Icon` is a Client Component.
-- Inside a client component the icon code reaches the bundle in every approach. svgworm sends the manifest (ids and view boxes, no path data); the others send path data.
-- The gaps are small: 1 to 3 KiB gzip for 20 icons against a 130 KiB floor. They grow with the number of icons used in client components.
-- svgworm costs a build step and one extra request, which is cached for a year. SVGR needs no extra request, but it puts the markup into the HTML and the RSC payload of every page. svgworm is 0.x.
+- **On a server page, svgworm and SVGR add no client JS.** `lucide-react` 1.50.0 still ships a chunk there, because its `Icon` is a Client Component.
+- **Inside a client component, the icon code reaches the bundle in every approach.** svgworm sends the manifest (ids and view boxes, no path data). The others send path data.
+- **The gaps are small:** 1 to 3 KiB gzip for 20 icons against a 130 KiB floor. They grow with the number of icons used in client components.
+- **Trade-offs:** svgworm costs a build step and one extra request, which is cached for a year. SVGR needs no extra request, but it puts the markup into the HTML and the RSC payload of every page. svgworm is 0.x.
 
 ## @neodx/svg
 
@@ -79,21 +84,21 @@ We reported the three findings upstream on 2026-10-12, before publishing this pa
 
 </aside>
 
-**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable, and what we hit is the default behavior, not a hard limit. It has about 2k weekly downloads.
+**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable. What we hit is the default behavior, not a hard limit. It has about 2k weekly downloads.
 
 ## SVGR
 
-Turns each SVG into a React component. 21.6M weekly downloads for `@svgr/core`.
+Turns each SVG into a React component. It has 21.6M weekly downloads for `@svgr/core`.
 
 - **Strengths:** works with any bundler, tree-shakes, every icon is a normal component you can style or animate, huge ecosystem.
-- **Cost:** every icon becomes JavaScript, and the path data is repeated in the HTML each time the icon is rendered on the server. A sprite sends the path data once, in a cacheable file.
+- **Cost:** every icon becomes JavaScript. The path data is repeated in the HTML each time the icon is rendered on the server. A sprite sends the path data once, in a cacheable file.
 - **Not measured:** we have not run a bundle-size benchmark against SVGR. We do not publish a size ratio until we have one that anyone can reproduce.
 
 **Pick SVGR when** you have a small icon set, need per-icon animation or props on inner paths, or you are not on a framework with Server Components.
 
 ## vite-plugin-icons-spritesheet
 
-A Vite plugin that builds a sprite and types from a folder, and rebuilds on change. 248k weekly downloads.
+A Vite plugin that builds a sprite and types from a folder, and rebuilds on change. It has 248k weekly downloads.
 
 - **Strengths:** tight Vite integration, hot rebuild in dev, simple.
 - **Gaps, from its docs** ([competitive landscape](https://github.com/jmlweb/svgworm/blob/main/docs/viability.md#competitive-landscape)): tied to Vite, one sprite, and limited color handling.
@@ -103,9 +108,9 @@ A Vite plugin that builds a sprite and types from a folder, and rebuilds on chan
 
 ## unplugin-icons and Iconify
 
-Pull icons from public sets on demand and compile them to components. 841k weekly downloads.
+Pull icons from public sets on demand and compile them to components. They have 841k weekly downloads.
 
-**Pick it when** you want icons from public sets and do not own SVG files. svgworm is for your own folder. It does not fetch icons.
+**Pick it when** you want icons from public sets and do not own SVG files. **svgworm is for your own folder.** It does not fetch icons.
 
 ## Where to check our claims
 
