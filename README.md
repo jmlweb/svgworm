@@ -95,6 +95,7 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 
 - [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
 - [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
+- [Vite guide](https://svgworm.com/docs/vite/): Vite + React, `base`, caching, [examples/vite-react](examples/vite-react)
 - [Icon component](https://svgworm.com/docs/icon/): props, the markup per delivery, sizing and coloring
 - [How it works](https://svgworm.com/docs/how-it-works/): sprite, stack, delivery forms, manifest, determinism
 - ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`

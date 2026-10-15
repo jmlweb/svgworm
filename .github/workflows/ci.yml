@@ -127,6 +127,22 @@ jobs:
       - run: pnpm build
       - run: pnpm example:check
 
+  # The documented Vite path: committed output current (svgworm check), the bundle references
+  # the hashed sprite, and a second build under base /app/ passes the same checks (TSK-024).
+  example-vite:
+    name: Vite example (hashed sprite, base)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm example:vite:check
+
   # The landing page (ADR-0016): committed svgworm output current, Astro build, then
   # every icon from the hashed sprite. Deploys live in site.yml.
   site:
