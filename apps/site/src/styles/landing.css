@@ -1,0 +1,972 @@
+/* Landing page styles. base.css is inlined here at build time (one request, no ordering to get wrong). */
+@import './base.css';
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--space-12) var(--space-20);
+  background:
+    radial-gradient(
+      circle 520px at 88% 12%,
+      color-mix(in oklab, var(--worm) 38%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      circle 460px at 8% 90%,
+      color-mix(in oklab, var(--sienna) 22%, transparent),
+      transparent
+    );
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin: 0 0 var(--space-6);
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.eyebrow .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3d9a6a;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #3d9a6a 25%, transparent);
+}
+
+/* A hand-drawn wiggle under the claim, drawn like a worm trail. */
+.squiggle {
+  padding-bottom: 0.08em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10'%3E%3Cpath d='M0 6 Q 5 1 10 6 T 20 6 T 30 6 T 40 6' fill='none' stroke='%23de8f8a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
+    0 100% / 40px 10px repeat-x;
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.button {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 12px 22px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -10px var(--accent);
+}
+
+.button svg {
+  transition: transform 160ms ease;
+}
+
+.button:hover svg:last-child {
+  transform: translateX(3px);
+}
+
+.button-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--hairline);
+}
+
+.button-ghost:hover {
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+/* Terminal */
+.terminal {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--term-bg);
+  color: var(--term-ink);
+  box-shadow: var(--shadow);
+}
+
+.terminal-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(234 219 196 / 0.08);
+  color: var(--term-muted);
+}
+
+.terminal-bar span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #6e4530;
+}
+
+.terminal-bar span:first-child {
+  background: var(--worm);
+}
+
+.terminal-bar span:nth-child(2) {
+  background: var(--sienna);
+}
+
+.terminal-bar code,
+.terminal-bar svg {
+  margin-left: auto;
+  background: none;
+  color: var(--term-muted);
+  font-size: 12px;
+}
+
+.terminal pre {
+  margin: 0;
+  padding: var(--space-6);
+  overflow-x: auto;
+  line-height: 1.7;
+}
+
+.t-ok {
+  color: #8fd1a6;
+}
+
+.t-num {
+  color: #f0c27b;
+}
+
+.t-path {
+  color: var(--term-muted);
+}
+
+.t-err {
+  color: #ff8c84;
+  font-weight: 700;
+}
+
+/* Soil band with the worm. SMIL motion; Soil.astro pauses it on request and for reduced motion. */
+.soil {
+  position: relative;
+  /* The art's aspect ratio: a lower cap would crop the bottom layer on wide screens. */
+  height: max(120px, 16.4vw);
+  margin-top: calc(-1 * var(--space-12));
+  overflow: hidden;
+}
+
+.soil-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.stratum-1 {
+  fill: var(--terra);
+}
+
+.stratum-2 {
+  fill: var(--rust);
+}
+
+.stratum-3 {
+  fill: #8a5a3c;
+}
+
+.stratum-bedrock {
+  fill: var(--terra);
+}
+
+@media (prefers-color-scheme: dark) {
+  .stratum-1 {
+    fill: var(--night);
+  }
+
+  .stratum-2 {
+    fill: #4a2f22;
+  }
+
+  .stratum-3 {
+    fill: #5e3d2b;
+  }
+
+  .stratum-bedrock {
+    fill: var(--night);
+  }
+}
+
+.worm-tunnel {
+  fill: none;
+  stroke: rgb(26 17 13 / 0.4);
+  stroke-width: 34;
+  stroke-linecap: round;
+}
+
+/* Layers share one animated path through <use>, so strokes are set on the <use> and inherited. */
+.worm use {
+  fill: none;
+  stroke-width: 22;
+  stroke-linecap: round;
+}
+
+.worm .worm-shadow {
+  stroke: rgb(0 0 0 / 0.5);
+  stroke-width: 20;
+}
+
+.worm .worm-rim {
+  stroke: color-mix(in oklab, var(--worm) 55%, var(--worm-deep));
+}
+
+.worm .worm-body {
+  stroke: var(--worm);
+  stroke-width: 15;
+}
+
+.worm .worm-rings {
+  stroke: rgb(147 58 67 / 0.35);
+  stroke-dasharray: 0.6 3.4;
+  stroke-linecap: butt;
+}
+
+.worm .worm-saddle {
+  stroke: var(--clitellum);
+  stroke-dasharray: 0 26 9 100;
+  stroke-linecap: butt;
+}
+
+.worm .worm-shine {
+  stroke: rgb(255 236 230 / 0.45);
+  stroke-width: 4;
+}
+
+.soil-toggle {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgb(234 219 196 / 0.3);
+  border-radius: 50%;
+  background: rgb(26 17 13 / 0.45);
+  color: var(--dune);
+  cursor: pointer;
+}
+
+.soil-toggle:hover {
+  background: rgb(26 17 13 / 0.7);
+}
+
+.soil-toggle:focus-visible {
+  outline: 2px solid var(--worm);
+  outline-offset: 2px;
+}
+
+.soil-toggle[hidden],
+.soil-toggle[aria-pressed='true'] .soil-toggle-pause,
+.soil-toggle[aria-pressed='false'] .soil-toggle-play {
+  display: none;
+}
+
+.pebble {
+  color: rgb(234 219 196 / 0.4);
+}
+
+/* Stats */
+
+/* The soil's bedrock layer is the top of this band. The -1px overlap hides a subpixel seam;
+   position puts the band above the soil, which is positioned too. */
+.stats {
+  position: relative;
+  margin-top: -1px;
+  background: var(--terra);
+  color: var(--dune);
+}
+
+@media (prefers-color-scheme: dark) {
+  .stats {
+    background: var(--night);
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+  /* The bedrock above adds about 21 of the soil's 236 viewBox units, so the bottom padding
+     adds it too to center the stats in the dark area, minus 10px that reads better. */
+  padding-block: var(--space-8) calc(var(--space-8) + max(11px, 1.46vw) - 10px);
+}
+
+.stats-grid div {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--worm);
+}
+
+.stats strong {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--worm);
+}
+
+.stats span {
+  color: #c4a88c;
+  font-size: 14px;
+}
+
+/* Sections */
+.section {
+  padding-block: var(--space-20);
+}
+
+.section-raised {
+  background: var(--surface-raised);
+}
+
+.section-dark {
+  background: var(--terra);
+  color: var(--dune);
+  --ink-muted: #c4946c;
+  --accent: var(--worm);
+  --surface-raised: #452e23;
+  --hairline: #5a3d2f;
+}
+
+@media (prefers-color-scheme: dark) {
+  .section-dark {
+    background: var(--night);
+  }
+}
+
+.kicker {
+  margin: 0 0 var(--space-3);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.section-lede {
+  max-width: 62ch;
+  margin: calc(-1 * var(--space-4)) 0 var(--space-8);
+  color: var(--ink-muted);
+  font-size: 18px;
+}
+
+.more {
+  margin: var(--space-8) 0 0;
+  color: var(--ink-muted);
+}
+
+/* Code blocks inside tiles and steps */
+.code {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  background: var(--term-bg);
+  color: var(--term-ink);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.c-tag {
+  color: var(--term-tag);
+}
+
+.c-attr {
+  color: var(--term-attr);
+}
+
+.c-str {
+  color: var(--term-string);
+}
+
+.c-comment {
+  color: var(--term-muted);
+}
+
+.c-error {
+  text-decoration: underline wavy #ff8c84;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 4px;
+}
+
+/* Bento */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.tile:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--hairline));
+  box-shadow: var(--shadow);
+}
+
+.tile p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 16px;
+}
+
+.tile-wide {
+  grid-column: span 2;
+}
+
+.tile-tall {
+  grid-row: span 2;
+}
+
+.tile-head {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.checks {
+  display: grid;
+  gap: var(--space-2);
+  margin: auto 0 0;
+  padding: var(--space-4) 0 0;
+  list-style: none;
+  font-size: 15px;
+}
+
+.checks li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.checks svg {
+  color: #3d9a6a;
+}
+
+/* Steps */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.steps li::before {
+  content: counter(step);
+  counter-increment: step;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: var(--space-4);
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.steps p {
+  margin: var(--space-2) 0 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.steps .code {
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+
+.steps li > p {
+  margin-bottom: var(--space-4);
+}
+
+/* Showcase */
+.showcase {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.showcase li {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  padding: var(--space-6) var(--space-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  color: var(--worm);
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.showcase li:hover {
+  background: rgb(222 143 138 / 0.08);
+  transform: translateY(-3px);
+}
+
+.showcase code {
+  background: none;
+  color: #c4a88c;
+  font-size: 12px;
+}
+
+.color-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: rgb(234 219 196 / 0.06);
+}
+
+.color-demo p {
+  max-width: 44ch;
+  margin: 0;
+  color: #c4a88c;
+}
+
+/* Live color demo: a radio per swatch, the stage follows the checked one through :has(). */
+.swatches {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.swatch {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  background: var(--swatch);
+  cursor: pointer;
+  transition: transform 160ms ease;
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.swatch:has(input:checked) {
+  border-color: var(--bone);
+  box-shadow: 0 0 0 2px var(--swatch);
+}
+
+.swatch:has(input:focus-visible) {
+  outline: 2px solid var(--worm);
+  outline-offset: 3px;
+}
+
+.color-stage {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  margin: 0;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--bone);
+  color: #933a43;
+  transition: color 200ms ease;
+}
+
+/* Agents */
+.agents {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.agents p {
+  color: var(--ink-muted);
+}
+
+/* Tablets: the bento in two columns, the tall tile beside the two feature tiles. */
+@media (max-width: 1040px) {
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Small screens */
+@media (max-width: 860px) {
+  .hero-grid,
+  .agents {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bento,
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tile-wide,
+  .tile-tall {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Code scrolls sideways instead of wrapping: a wrapped `</svg>` or `/>` reads as a mistake. */
+.terminal pre,
+.code {
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Landing copy: an inline token such as --json or Cache-Control: immutable never breaks inside. */
+.landing :not(pre) > code {
+  white-space: nowrap;
+}
+
+/* Editor-style autocomplete in the type-safe tile. */
+.suggest {
+  overflow: hidden;
+  border: 1px solid rgb(234 219 196 / 0.1);
+  border-radius: var(--radius-md);
+  background: var(--term-bg);
+  color: var(--term-ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.suggest-input {
+  margin: 0;
+  padding: 10px var(--space-4);
+  border-bottom: 1px solid rgb(234 219 196 / 0.1);
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  background: var(--worm);
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.suggest ul {
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+}
+
+.suggest li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--term-muted);
+}
+
+.suggest li.active {
+  background: rgb(222 143 138 / 0.16);
+  color: var(--term-ink);
+}
+
+.suggest li svg {
+  color: var(--worm);
+}
+
+.suggest code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: 13px;
+}
+
+.suggest small {
+  margin-left: auto;
+  color: var(--term-muted);
+  font-size: 11px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
+}
+
+/* Accessibility (TSK-036 audit) */
+
+/* WCAG 2.2.2: motion that starts on its own stops within 5 seconds. The worm loops but has
+   a pause button (Soil.astro). */
+.caret {
+  animation-iteration-count: 4;
+}
+
+/* The muted label failed 4.5:1 on the highlighted row (4.2:1). */
+.suggest li.active small {
+  color: var(--term-ink);
+}
+
+/* Softer glows in dark mode keep the hero text above 4.5:1 where the glow peaks. */
+@media (prefers-color-scheme: dark) {
+  .hero {
+    background:
+      radial-gradient(
+        circle 520px at 88% 12%,
+        color-mix(in oklab, var(--worm) 22%, transparent),
+        transparent
+      ),
+      radial-gradient(
+        circle 460px at 8% 90%,
+        color-mix(in oklab, var(--sienna) 10%, transparent),
+        transparent
+      );
+  }
+}
+
+/* WCAG 1.4.10 reflow: the swatches wrap at 320px instead of widening the page. */
+.swatches {
+  flex-wrap: wrap;
+}
+
+.color-demo {
+  align-items: center;
+}
+
+/* The worm glow sits behind the lede on narrow screens: a lighter muted tone keeps 4.5:1. */
+@media (prefers-color-scheme: dark) {
+  .hero .lede {
+    color: #dcb08c;
+  }
+}
+
+/* Showcase groups: multicolor and mono icons from the same sprite. */
+.showcase-group + .showcase-group {
+  margin-top: var(--space-8);
+}
+
+.showcase-group h3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: baseline;
+  margin-bottom: var(--space-4);
+}
+
+.showcase-group h3 small {
+  color: #c4a88c;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.showcase-multi li {
+  background: rgb(234 219 196 / 0.06);
+}
+
+/* Framework switch for the install command (TSK-049): radios plus :has(), no script. */
+.install-switch {
+  /* A grid item (the CTA) does not shrink below its nowrap command without this; the command
+     then scrolls inside its own box. */
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 var(--space-6);
+}
+
+.install-tabs {
+  display: flex;
+  gap: var(--space-1);
+  width: fit-content;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  border: 0;
+}
+
+.install-tabs label {
+  position: relative;
+  padding: 4px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-tabs input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.install-tabs label:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  /* --accent on the soft fill was 4.48:1 (light) and 3.09:1 (dark); the ink is at least 4.86:1
+     on the fill over the hero glow and 5.68:1 over the raised CTA band. */
+  color: var(--ink);
+}
+
+.install-tabs label:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.install-switch .install {
+  margin-bottom: 0;
+}
+
+.install-switch:has(input[value='astro']:checked) .install-next,
+.install-switch:not(:has(input[value='astro']:checked)) .install-astro {
+  display: none;
+}
+
+/* Closing call to action. */
+.cta-inner {
+  display: grid;
+  /* One bounded track: with `auto` the nowrap install command widens the track past the page at 320px. */
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+.cta-inner h2 {
+  margin-bottom: var(--space-4);
+}
+
+.cta-inner > p:not(.install) {
+  margin: 0 0 var(--space-8);
+  color: var(--ink-muted);
+  font-size: 18px;
+}
+
+.cta .actions {
+  justify-content: center;
+}
+
+@media (max-width: 560px) {
+  .terminal pre {
+    padding: var(--space-4);
+    font-size: 12px;
+  }
+
+  /* Three icons per row instead of two: the demo stays a grid, not a long list. */
+  .showcase {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .showcase li {
+    padding: var(--space-4) var(--space-1);
+  }
+
+  /* Names break only at the <wbr> after a folder slash, never inside a word. */
+  .showcase code {
+    font-size: 11px;
+    text-align: center;
+  }
+}
+
+/* Below 640px the hero terminal pushed the proof section far down; the stats band carries the
+   same numbers, so the terminal goes and the copy comes first. */
+@media (max-width: 640px) {
+  .hero .terminal {
+    display: none;
+  }
+}

@@ -1,0 +1,661 @@
+/* Docs styles. base.css is inlined here at build time (one request, no ordering to get wrong). */
+@import './base.css';
+
+/* `.prose p` caps paragraphs at 68ch, which beats `.install`'s own cap; keep the command in the column. */
+.prose p.install {
+  max-width: 100%;
+}
+
+/* Right rail (TSK-071): from 1200px the sections move out of the left nav into a sticky rail
+   beside the content. The grid gains the column only when a rail exists (the index has none). */
+.docs-rail {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .docs-layout:has(.docs-rail) {
+    grid-template-columns: 220px minmax(0, 1fr) 200px;
+  }
+
+  .docs-rail {
+    position: sticky;
+    top: 88px;
+    display: block;
+    align-self: start;
+    font-size: 14px;
+  }
+
+  .docs-rail ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .docs-rail li {
+    margin: 0;
+  }
+
+  .docs-rail a {
+    display: block;
+    padding: 4px var(--space-3);
+    border-left: 2px solid var(--hairline);
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+
+  .docs-rail a:hover {
+    color: var(--ink);
+  }
+
+  .docs-rail a[aria-current='location'] {
+    border-left-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* The left nav lists pages only once the rail shows the sections. */
+  .docs-nav .docs-toc {
+    display: none;
+  }
+}
+
+/* Docs (ADR-0018): sidebar plus a readable column. */
+
+/* The page list is a <details> for phones (TSK-068). On wide screens the summary is hidden and
+   the list shows through ::details-content, so no script and no duplicate markup. */
+.docs-menu-summary {
+  display: none;
+}
+
+.docs-menu::details-content {
+  display: block;
+  content-visibility: visible;
+}
+
+.docs-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--space-12);
+  padding-block: var(--space-8) var(--space-20);
+}
+
+.docs-nav {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  font-size: 15px;
+}
+
+.docs-nav-title {
+  margin: var(--space-6) 0 var(--space-2);
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.docs-nav-title:first-child {
+  margin-top: 0;
+}
+
+.docs-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-nav a {
+  display: block;
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.docs-nav a:hover {
+  background: var(--surface-raised);
+}
+
+.docs-nav-external {
+  color: var(--ink-muted);
+  font-size: 0.85em;
+}
+
+.docs-nav a[aria-current='page'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* The current page's sections, nested under its entry. */
+.docs-toc {
+  margin: var(--space-1) 0 var(--space-2) var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--hairline);
+  font-size: 14px;
+}
+
+.docs-toc a {
+  padding-block: 4px;
+  color: var(--ink-muted);
+}
+
+.docs-toc a:hover {
+  color: var(--ink);
+}
+
+.docs-main {
+  min-width: 0;
+  max-width: 760px;
+}
+
+.prose h1 {
+  margin-bottom: var(--space-6);
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.02;
+}
+
+.prose h2 {
+  margin: var(--space-12) 0 var(--space-4);
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+}
+
+.prose h3 {
+  margin: var(--space-8) 0 var(--space-3);
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose table,
+.prose pre {
+  margin-block: 0 var(--space-4);
+}
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+/* Code blocks and tables keep the full column; running text stays at a readable measure. */
+.prose p,
+.prose li {
+  max-width: 68ch;
+}
+
+.prose li:has(> pre, > table) {
+  max-width: none;
+}
+
+.prose li > pre {
+  margin-top: var(--space-3);
+}
+
+.prose pre {
+  padding: var(--space-4);
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  line-height: 1.55;
+}
+
+/* Dark in both themes like the terminals; Shiki reads the same --astro-code-* tokens. */
+.prose pre {
+  background: var(--term-bg);
+  color: var(--term-ink);
+}
+
+.prose pre code {
+  font-size: 13.5px;
+}
+
+/* A table wider than the column scrolls inside its focusable wrapper (added in the docs page),
+   not the page. */
+.table-scroll {
+  margin-block: 0 var(--space-4);
+  overflow-x: auto;
+}
+
+.table-scroll table {
+  margin: 0;
+}
+
+/* Scrollable regions are keyboard stops (TSK-084). Code and terminals are dark in both themes,
+   so their ring is the light worm tone, drawn inside because .terminal clips its overflow. */
+.table-scroll:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.prose th,
+.prose td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  color: var(--ink-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.prose a {
+  color: var(--accent);
+}
+
+/* Top-level numbered steps in a guide get the landing's circled counters. */
+.prose > ol {
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.prose > ol > li {
+  position: relative;
+  margin-bottom: var(--space-6);
+  padding-left: calc(36px + var(--space-4));
+}
+
+.prose > ol > li::before {
+  content: counter(step);
+  counter-increment: step;
+  position: absolute;
+  top: -4px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+/* Heading anchors (TSK-072): a # that shows on hover and focus, never in the heading text flow.
+   The scroll margin keeps a jumped-to heading below the sticky header. */
+.prose h2,
+.prose h3 {
+  position: relative;
+  scroll-margin-top: 96px;
+}
+
+/* A flag such as --json never splits at its hyphen where the column is wide enough; on phones
+   a long token may still wrap rather than widen the page. */
+@media (min-width: 640px) {
+  .prose :not(pre) > code {
+    white-space: nowrap;
+  }
+}
+
+.heading-anchor {
+  margin-left: 0.35em;
+  color: var(--ink-muted);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
+/* Copy buttons (TSK-069): added by the docs page script, so no JavaScript means no button. */
+.prose pre {
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid rgb(234 219 196 / 0.25);
+  border-radius: var(--radius-pill);
+  background: rgb(26 17 13 / 0.7);
+  color: var(--term-ink);
+  font: 600 12px/1.4 var(--font-sans);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.prose pre:hover .copy-button,
+.copy-button:focus-visible {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  border-color: var(--worm);
+  color: var(--worm);
+}
+
+.copy-button:focus-visible {
+  outline: 2px solid var(--worm);
+  outline-offset: 2px;
+}
+
+/* Fine pointers hide the button until hover; touch screens always show it. */
+@media (hover: none) {
+  .copy-button {
+    opacity: 1;
+  }
+}
+
+/* Callouts use design system tokens only. Kinds differ by label; sienna is decorative, so it
+   only colors the rule, never the text. */
+.alert {
+  margin: 0 0 var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--alert-rule, var(--sienna));
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.alert :not(pre) > code {
+  background: var(--surface);
+}
+
+.alert > :last-child {
+  margin-bottom: 0;
+}
+
+.alert-title {
+  margin: 0 0 var(--space-1);
+  color: var(--alert-label, var(--ink-muted));
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.alert-important,
+.alert-warning,
+.alert-caution {
+  --alert-rule: var(--accent);
+  --alert-label: var(--accent);
+}
+
+.docs-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-12);
+}
+
+.docs-pager a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.docs-pager a:hover {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--hairline));
+}
+
+.docs-pager span {
+  color: var(--ink-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.docs-pager-next {
+  grid-column: 2;
+  text-align: right;
+}
+
+.docs-edit {
+  margin-top: var(--space-12);
+}
+
+.docs-pager + .docs-edit {
+  margin-top: var(--space-6);
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.docs-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.docs-list li {
+  margin: 0;
+}
+
+/* Docs index (TSK-070): quickstart first, the two setup guides, then a compact reference row. */
+.prose .docs-quickstart {
+  margin: 0 0 var(--space-2);
+  font-size: 15px;
+}
+
+.docs-quickstart-note {
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.prose .docs-group-title {
+  margin: var(--space-8) 0 var(--space-3);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.docs-list-setup {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* The references as rows, not cards: no orphan card at any width. */
+.prose .docs-ref {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+  list-style: none;
+}
+
+.prose .docs-ref li {
+  margin: 0;
+  max-width: none;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.docs-ref a {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 3fr;
+  gap: var(--space-1) var(--space-6);
+  padding: var(--space-3) var(--space-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.docs-ref a:hover {
+  background: var(--surface-raised);
+}
+
+.docs-ref a:hover strong {
+  color: var(--accent);
+}
+
+.docs-ref strong {
+  font-weight: 600;
+}
+
+.docs-ref span {
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .docs-ref a {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.docs-compare {
+  margin-top: var(--space-6);
+  color: var(--ink-muted);
+}
+
+.docs-card-more svg {
+  vertical-align: -0.15em;
+}
+
+/* Same card as the landing .tile, as one link so the whole card is the target. */
+.docs-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-6);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.docs-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--hairline));
+  box-shadow: var(--shadow);
+}
+
+.prose .docs-card h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.docs-card p {
+  flex: 1;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.docs-card-more {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 800px) {
+  .docs-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .docs-nav {
+    position: static;
+  }
+
+  /* Closed by default: the content comes first, the page list is one tap away. */
+  .docs-menu::details-content {
+    content-visibility: hidden;
+  }
+
+  .docs-menu[open]::details-content {
+    content-visibility: visible;
+  }
+
+  .docs-menu-summary {
+    display: flex;
+    gap: var(--space-2) var(--space-3);
+    align-items: baseline;
+    padding: 10px var(--space-4);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .docs-menu-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .docs-menu-summary::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-right: 2px solid var(--ink-muted);
+    border-bottom: 2px solid var(--ink-muted);
+    transform: translateY(-0.15em) rotate(45deg);
+    transition: transform 160ms ease;
+  }
+
+  .docs-menu[open] .docs-menu-summary::before {
+    transform: translateY(0.1em) rotate(-135deg);
+  }
+
+  .docs-menu-summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .docs-menu-label {
+    font-weight: 600;
+  }
+
+  .docs-menu-current {
+    color: var(--ink-muted);
+    font-size: 14px;
+  }
+
+  .docs-menu-body {
+    padding: var(--space-4) var(--space-2) 0;
+  }
+
+  .docs-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  /* Headings are a tap away on the page itself; the chip row stays short. Scoped under
+     .docs-nav so it beats the flex rule on .docs-nav ul. */
+  .docs-nav .docs-toc {
+    display: none;
+  }
+
+  /* On the index the cards already list every page. */
+  .docs-index .docs-nav {
+    display: none;
+  }
+}
