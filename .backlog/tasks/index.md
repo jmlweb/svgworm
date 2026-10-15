@@ -4,17 +4,16 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
-| Active | 2 |
+| Pending | 14 |
+| Active | 1 |
 | Blocked | 2 |
-| Complete | 69 |
+| Complete | 70 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
 - TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
 - TSK-067: Opt-in cross-origin (CDN) sprites via a minimal injecting loader (P3)
-- TSK-080: Site audit: accessibility, mobile layout, Core Web Vitals (P3)
 
 ## Pending Tasks
 
@@ -28,6 +27,12 @@
 | TSK-078 | Landing: lede says the problem first, visible stats caption | P2 | site, landing, copy | 2026-10-15 |
 | TSK-079 | Reproducible client-JS comparison: svgworm vs an icon library and SVGR | P3 | site, docs, comparison, adoption | 2026-10-15 |
 | TSK-081 | name/case-folded: one warning per camelCase folder, not per file | P4 | naming, cli, diagnostics | 2026-10-15 |
+| TSK-082 | Site: no horizontal page scroll at 360px (CTA install switch, docs install line) | P2 | site, mobile, a11y | 2026-10-15 |
+| TSK-083 | Site: selected install tab contrast below 4.5:1 | P2 | site, a11y, contrast | 2026-10-15 |
+| TSK-084 | Site: scrollable code, terminal and table regions keyboard-focusable | P3 | site, a11y, keyboard | 2026-10-15 |
+| TSK-085 | Site: render-blocking CSS delays mobile LCP | P3 | site, performance | 2026-10-15 |
+| TSK-086 | Site: nav and footer link targets at least 24px | P4 | site, a11y, mobile | 2026-10-15 |
+| TSK-087 | Site: skip link moves focus to main | P4 | site, a11y, keyboard | 2026-10-15 |
 
 ## Recently Completed
 
