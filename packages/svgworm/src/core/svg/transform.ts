@@ -75,6 +75,32 @@ const fail = (errors: readonly Diagnostic[]): TransformResult => ({
   errors,
 });
 
+/**
+ * svgo plugins can throw on odd but well-formed input (CSS it cannot parse, for one).
+ * That is the user's file, so it comes back as a diagnostic. Nothing else in the
+ * pipeline is caught: a failure there is a svgworm bug and must surface as one.
+ */
+const runSvgo = (
+  pass: (text: string) => string,
+  text: string,
+  file: string,
+):
+  | { readonly ok: true; readonly text: string }
+  | { readonly ok: false; readonly error: Diagnostic } => {
+  try {
+    return { ok: true, text: pass(text) };
+  } catch (error) {
+    return {
+      ok: false,
+      error: {
+        code: DiagnosticCode.INVALID_XML,
+        file,
+        message: `svgo could not process the file: ${error instanceof Error ? error.message : String(error)}`,
+      },
+    };
+  }
+};
+
 export type TransformInput = {
   readonly content: Uint8Array;
   /** Path used in diagnostics. */
@@ -90,100 +116,93 @@ export type TransformInput = {
  */
 export const transformIcon = (input: TransformInput): TransformResult => {
   const { file } = input;
-  try {
-    const decoded = decodeSource(input.content, file);
-    if (!decoded.ok) return fail([decoded.error]);
+  const decoded = decodeSource(input.content, file);
+  if (!decoded.ok) return fail([decoded.error]);
 
-    const raw = parseSvgTree(decoded.text);
-    if (!raw.ok) {
-      return fail([
-        { code: DiagnosticCode.INVALID_XML, file, message: raw.message },
-      ]);
-    }
-    const rawErrors = validateTree(raw.root, file);
-    if (rawErrors.length > 0) return fail(rawErrors);
+  const raw = parseSvgTree(decoded.text);
+  if (!raw.ok) {
+    return fail([
+      { code: DiagnosticCode.INVALID_XML, file, message: raw.message },
+    ]);
+  }
+  const rawErrors = validateTree(raw.root, file);
+  if (rawErrors.length > 0) return fail(rawErrors);
 
-    const rootAttributes = getDocumentElement(raw.root)?.attributes ?? {};
-    const viewBox = resolveViewBox(rootAttributes, file);
-    if (!viewBox.ok) return fail([viewBox.error]);
+  const rootAttributes = getDocumentElement(raw.root)?.attributes ?? {};
+  const viewBox = resolveViewBox(rootAttributes, file);
+  if (!viewBox.ok) return fail([viewBox.error]);
 
-    const styled = normalizeStyles(decoded.text);
-    const styledTree = parseSvgTree(styled);
-    if (!styledTree.ok) {
-      return fail([
-        {
-          code: DiagnosticCode.INVALID_XML,
-          file,
-          message: styledTree.message,
-        },
-      ]);
-    }
-    const leftover = findLeftoverStyles(styledTree.root, file);
-    if (leftover.length > 0) return fail(leftover);
-
-    const outcome = mutateSvgTree(optimizeMarkup(styled), (root) => {
-      const document = getDocumentElement(root);
-      const classification = classifyIcon(root);
-      const isForced = input.mode === ColorMode.MONO;
-      if (isForced && classification.flags.length > 0) {
-        return {
-          ok: false as const,
-          error: {
-            code: DiagnosticCode.FORCED_MONO_UNSAFE,
-            file,
-            message: `color "mono" is forced, but the icon has ${classification.flags.map(describePaintFlag).join(' and ')}, which cannot follow currentColor`,
-          },
-        };
-      }
-      const isRecolored =
-        isForced ||
-        (input.mode === ColorMode.AUTO &&
-          classification.kind === ColorKind.MONO);
-      if (isRecolored) rewriteToCurrentColor(root, classification);
-
-      walkElements(root, (element) => {
-        removeAttribute(element, 'class');
-      });
-      dropNoopClips(root, viewBox.viewBox);
-      renameIds(root, input.symbolId);
-
-      // Checked while the root still carries its attributes: a filter or mask can sit there.
-      const hasReferences = hasUrlReferences(root);
-      const attributes = Object.entries(document?.attributes ?? {}).filter(
-        ([name]) => !isRootOnly(name),
-      );
-      // Leave `<svg>` bare so the inner markup can be sliced out of the serialization.
-      Object.keys(document?.attributes ?? {}).forEach((name) => {
-        if (document !== undefined) removeAttribute(document, name);
-      });
-      return {
-        ok: true as const,
-        color: isRecolored ? ColorKind.MONO : ColorKind.MULTICOLOR,
-        hasReferences,
-        attributes,
-      };
-    });
-
-    if (!outcome.result.ok) return fail([outcome.result.error]);
-    const { color, hasReferences, attributes } = outcome.result;
-    return {
-      ok: true,
-      icon: {
-        viewBox: viewBox.viewBox,
-        isViewBoxDerived: viewBox.isDerived,
-        color,
-        delivery: toDelivery(color, hasReferences),
-        attributes,
-        inner: sliceInner(outcome.data),
-      },
-    };
-  } catch (error) {
+  const styled = runSvgo(normalizeStyles, decoded.text, file);
+  if (!styled.ok) return fail([styled.error]);
+  const styledTree = parseSvgTree(styled.text);
+  if (!styledTree.ok) {
     return fail([
       {
         code: DiagnosticCode.INVALID_XML,
         file,
-        message: error instanceof Error ? error.message : String(error),
+        message: styledTree.message,
       },
     ]);
   }
+  const leftover = findLeftoverStyles(styledTree.root, file);
+  if (leftover.length > 0) return fail(leftover);
+
+  const optimized = runSvgo(optimizeMarkup, styled.text, file);
+  if (!optimized.ok) return fail([optimized.error]);
+
+  const outcome = mutateSvgTree(optimized.text, (root) => {
+    const document = getDocumentElement(root);
+    const classification = classifyIcon(root);
+    const isForced = input.mode === ColorMode.MONO;
+    if (isForced && classification.flags.length > 0) {
+      return {
+        ok: false as const,
+        error: {
+          code: DiagnosticCode.FORCED_MONO_UNSAFE,
+          file,
+          message: `color "mono" is forced, but the icon has ${classification.flags.map(describePaintFlag).join(' and ')}, which cannot follow currentColor`,
+        },
+      };
+    }
+    const isRecolored =
+      isForced ||
+      (input.mode === ColorMode.AUTO && classification.kind === ColorKind.MONO);
+    if (isRecolored) rewriteToCurrentColor(root, classification);
+
+    walkElements(root, (element) => {
+      removeAttribute(element, 'class');
+    });
+    dropNoopClips(root, viewBox.viewBox);
+    renameIds(root, input.symbolId);
+
+    // Checked while the root still carries its attributes: a filter or mask can sit there.
+    const hasReferences = hasUrlReferences(root);
+    const attributes = Object.entries(document?.attributes ?? {}).filter(
+      ([name]) => !isRootOnly(name),
+    );
+    // Leave `<svg>` bare so the inner markup can be sliced out of the serialization.
+    Object.keys(document?.attributes ?? {}).forEach((name) => {
+      if (document !== undefined) removeAttribute(document, name);
+    });
+    return {
+      ok: true as const,
+      color: isRecolored ? ColorKind.MONO : ColorKind.MULTICOLOR,
+      hasReferences,
+      attributes,
+    };
+  });
+
+  if (!outcome.result.ok) return fail([outcome.result.error]);
+  const { color, hasReferences, attributes } = outcome.result;
+  return {
+    ok: true,
+    icon: {
+      viewBox: viewBox.viewBox,
+      isViewBoxDerived: viewBox.isDerived,
+      color,
+      delivery: toDelivery(color, hasReferences),
+      attributes,
+      inner: sliceInner(outcome.data),
+    },
+  };
 };

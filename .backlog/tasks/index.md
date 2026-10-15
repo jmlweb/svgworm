@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 40 |
+| Pending | 39 |
 | Active | 2 |
 | Blocked | 0 |
-| Complete | 34 |
+| Complete | 35 |
 
 ## Active Tasks
 
@@ -27,7 +27,6 @@
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-040 | Docs: performance notes (savings stat, large icon sets, cold stack fetches) | P3 | docs, performance, cli | 2026-10-14 |
-| TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | P3 |  | 2026-10-15 |
 | TSK-042 | Fix: Generated Icon.astro drops an object style on mask icons | P4 |  | 2026-10-15 |
 | TSK-043 | Fix: Core repeats small I/O and path helpers that must stay identical | P4 |  | 2026-10-15 |
 | TSK-044 | Fix: init writes an unquoted --config path into package.json scripts | P4 |  | 2026-10-15 |
@@ -67,9 +66,9 @@
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
 | TSK-038 | Docs on the website: render user docs from docs/, slim the README | 2026-10-15 |
 | TSK-039 | Spike: sprite preload (Q-23) | 2026-10-15 |
+| TSK-041 | Fix: transformIcon reports internal failures as INVALID_XML against the user's file | 2026-10-15 |
 | TSK-046 | Landing: fix false and inaccurate claims | 2026-10-15 |
 | TSK-047 | Align the landing three steps with the Next.js docs | 2026-10-15 |
 | TSK-054 | Init: first run works before any icon exists | 2026-10-15 |
 | TSK-055 | Build hooks for Yarn 2+ (pre/post scripts never run) | 2026-10-15 |
 | TSK-056 | Clear error when no config and no --source | 2026-10-15 |
-| TSK-036 | Project website: Astro landing page on Cloudflare Workers | 2026-10-14 |
