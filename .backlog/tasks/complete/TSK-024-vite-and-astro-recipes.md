@@ -25,6 +25,7 @@ Deferred past v0.1. Q-21 for Vite (Astro was answered by ADR-0017 in TSK-037). P
 
 ## Learnings
 
+- LRN-045: A new vite version in any workspace package splits vitest's vite peer and untypes vitest configs
 ## Progress Log
 
 - [2026-10-07] Created

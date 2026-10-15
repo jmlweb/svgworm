@@ -48,3 +48,5 @@
 | LRN-042 | pnpm installs packages as symlinks: stat the source root, lstat only inside | pnpm, symlink, discover, sources, node_modules | active | 2026-10-15 |
 | LRN-043 | pnpm verify does not catch stale committed example or site output | testing, ci, example, output | active | 2026-10-15 |
 | LRN-044 | Custom properties reach var() paints inside an external use sprite | color, css-variables, browsers, delivery | active | 2026-10-15 |
+| LRN-045 | A new vite version in any workspace package splits vitest's vite peer and untypes vitest configs | tooling, vite, vitest, pnpm, lint | active | 2026-10-15 |
+| LRN-046 | An XML-illegal character in a spike payload makes DOMParser reject the whole sprite | security, svg, spike, testing | active | 2026-10-15 |

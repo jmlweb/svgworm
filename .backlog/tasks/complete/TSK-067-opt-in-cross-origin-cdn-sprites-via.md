@@ -60,6 +60,7 @@ Risks to keep in view: principle 1 dilution, CDN compromise (SRI + inert parse +
 
 ## Learnings
 
+- LRN-046: An XML-illegal character in a spike payload makes DOMParser reject the whole sprite
 ## Progress Log
 
 - [2026-10-15] Created
