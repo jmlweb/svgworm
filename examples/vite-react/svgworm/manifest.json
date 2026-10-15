@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "sprites": {
+    "icons": {
+      "sprite": {
+        "file": "icons.93edda38.svg",
+        "url": "/icons/icons.93edda38.svg"
+      },
+      "stack": {
+        "file": "icons.stack.03693524.svg",
+        "url": "/icons/icons.stack.03693524.svg"
+      }
+    }
+  },
+  "icons": {
+    "brand/about": {
+      "sprite": "icons",
+      "id": "i-brand--about",
+      "viewBox": "0 0 48 48",
+      "color": "multicolor",
+      "delivery": "use"
+    },
+    "brand/kotlin": {
+      "sprite": "icons",
+      "id": "i-brand--kotlin",
+      "viewBox": "0 0 256 256",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "ui/github": {
+      "sprite": "icons",
+      "id": "i-ui--github",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "ui/home": {
+      "sprite": "icons",
+      "id": "i-ui--home",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    }
+  }
+}
