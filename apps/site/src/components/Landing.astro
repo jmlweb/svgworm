@@ -343,58 +343,41 @@ svgworm/icons.d.ts
     </div>
   </section>
 
-  <section aria-labelledby="start" class="section section-raised">
-    <div class="wrap">
-      <p class="kicker">Get started in Next.js</p>
-      <h2 id="start">Three steps, no bundler config.</h2>
-      <ol class="steps">
-        <li>
-          <h3>Install and set up</h3>
-          <p>
-            <code>init</code> writes the config, the <code>predev</code>/<code
-              >prebuild</code
-            > scripts and the component. Then it builds once, so <strong
-              >the app runs before you add an icon</strong
-            >.
-          </p>
-          <pre aria-label="Install commands" class="code" role="region" tabindex="0"><code>pnpm add -D svgworm
-pnpm add @svgworm/react
-pnpm svgworm init</code></pre>
-        </li>
-        <li>
-          <h3>Drop SVGs in icons/ and build</h3>
-          <p>
-            Each run writes a hashed sprite to <code>public/icons/</code> and a typed
-            manifest to <code>svgworm/</code>. <strong
-              ><code>predev</code> and <code>prebuild</code> run it for you.</strong
-            >
-          </p>
-          <pre aria-label="Icons folder and build command" class="code" role="region" tabindex="0"><code>icons/
-├── home.svg
-├── search.svg
-└── brand/logo.svg
-
-pnpm svgworm</code></pre>
-        </li>
-        <li>
-          <h3>Render in a Server Component</h3>
-          <p>
-            <strong>Decorative by default.</strong> Pass <code>title</code> or
-            <code>label</code> for an accessible name.
-          </p>
-          <pre aria-label="Icon usage in a Server Component" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-tag">/&gt;</span>
-<span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-attr">title</span>=<span class="c-str">"Home"</span> <span class="c-tag">/&gt;</span></code></pre>
-        </li>
-      </ol>
-      <p class="more">
-        Caching, <code>basePath</code> and manual setup are in the{' '}
-        <a href="/docs/nextjs/">Next.js guide</a>. A complete app lives
-        in{' '}
-        <a href={`${REPO}/tree/main/examples/next-app-router`}>
-          examples/next-app-router
-        </a>
-        .
-      </p>
+  <section aria-labelledby="agents" class="section section-raised">
+    <div class="wrap agents">
+      <div>
+        <p class="kicker">Built for AI agents too</p>
+        <h2 id="agents">Your agent can set it up.</h2>
+        <p>
+          <strong>Everything works without a prompt:</strong> flags,
+          <code>--json</code>, stable exit codes, a JSON Schema for the config,
+          and <a href="/llms.txt">llms.txt</a>. The agent skills install svgworm
+          in a Next.js or an Astro app. They also explain each diagnostic code
+          with its fix.
+        </p>
+      </div>
+      <figure class="terminal terminal-small">
+        <div class="terminal-bar">
+          <span></span>
+          <span></span>
+          <span></span>
+          <Icon name="terminal" />
+        </div>
+        <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
+<span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
+      </figure>
+      <div class="agent-migrate">
+        <h3>Migrating from another icon library?</h3>
+        <p>Paste one of these prompts into your agent.</p>
+        {
+          migrationPrompts.map((prompt) => (
+            <div class="agent-prompt">
+              <p class="agent-prompt-label">{prompt.label}</p>
+              <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </section>
 
@@ -477,45 +460,62 @@ pnpm svgworm</code></pre>
     </div>
   </section>
 
-  <section aria-labelledby="agents" class="section">
-    <div class="wrap agents">
-      <div>
-        <p class="kicker">Built for AI agents too</p>
-        <h2 id="agents">Your agent can set it up.</h2>
-        <p>
-          <strong>Everything works without a prompt:</strong> flags,
-          <code>--json</code>, stable exit codes, a JSON Schema for the config,
-          and <a href="/llms.txt">llms.txt</a>. The agent skills install svgworm
-          in a Next.js or an Astro app. They also explain each diagnostic code
-          with its fix.
-        </p>
-      </div>
-      <figure class="terminal terminal-small">
-        <div class="terminal-bar">
-          <span></span>
-          <span></span>
-          <span></span>
-          <Icon name="terminal" />
-        </div>
-        <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
-<span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
-      </figure>
-      <div class="agent-migrate">
-        <h3>Migrating from another icon library?</h3>
-        <p>Paste one of these prompts into your agent.</p>
-        {
-          migrationPrompts.map((prompt) => (
-            <div class="agent-prompt">
-              <p class="agent-prompt-label">{prompt.label}</p>
-              <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
-            </div>
-          ))
-        }
-      </div>
+  <section aria-labelledby="start" class="section section-raised">
+    <div class="wrap">
+      <p class="kicker">Get started in Next.js</p>
+      <h2 id="start">Three steps, no bundler config.</h2>
+      <ol class="steps">
+        <li>
+          <h3>Install and set up</h3>
+          <p>
+            <code>init</code> writes the config, the <code>predev</code>/<code
+              >prebuild</code
+            > scripts and the component. Then it builds once, so <strong
+              >the app runs before you add an icon</strong
+            >.
+          </p>
+          <pre aria-label="Install commands" class="code" role="region" tabindex="0"><code>pnpm add -D svgworm
+pnpm add @svgworm/react
+pnpm svgworm init</code></pre>
+        </li>
+        <li>
+          <h3>Drop SVGs in icons/ and build</h3>
+          <p>
+            Each run writes a hashed sprite to <code>public/icons/</code> and a typed
+            manifest to <code>svgworm/</code>. <strong
+              ><code>predev</code> and <code>prebuild</code> run it for you.</strong
+            >
+          </p>
+          <pre aria-label="Icons folder and build command" class="code" role="region" tabindex="0"><code>icons/
+├── home.svg
+├── search.svg
+└── brand/logo.svg
+
+pnpm svgworm</code></pre>
+        </li>
+        <li>
+          <h3>Render in a Server Component</h3>
+          <p>
+            <strong>Decorative by default.</strong> Pass <code>title</code> or
+            <code>label</code> for an accessible name.
+          </p>
+          <pre aria-label="Icon usage in a Server Component" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-tag">/&gt;</span>
+<span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"home"</span> <span class="c-attr">title</span>=<span class="c-str">"Home"</span> <span class="c-tag">/&gt;</span></code></pre>
+        </li>
+      </ol>
+      <p class="more">
+        Caching, <code>basePath</code> and manual setup are in the{' '}
+        <a href="/docs/nextjs/">Next.js guide</a>. A complete app lives
+        in{' '}
+        <a href={`${REPO}/tree/main/examples/next-app-router`}>
+          examples/next-app-router
+        </a>
+        .
+      </p>
     </div>
   </section>
 
-  <section aria-labelledby="try" class="section section-raised cta">
+  <section aria-labelledby="try" class="section cta">
     <div class="wrap cta-inner">
       <h2 id="try">Point it at your icon folder.</h2>
       <p>
