@@ -5,9 +5,9 @@
 | Status | Count |
 |--------|-------|
 | Pending | 4 |
-| Active | 11 |
+| Active | 10 |
 | Blocked | 2 |
-| Complete | 70 |
+| Complete | 71 |
 
 ## Active Tasks
 
@@ -17,7 +17,6 @@
 - TSK-077: Landing: before/after demo, SVG folder to sprite to typed icon (P2)
 - TSK-078: Landing: lede says the problem first, visible stats caption (P2)
 - TSK-079: Reproducible client-JS comparison: svgworm vs an icon library and SVGR (P3)
-- TSK-081: name/case-folded: one warning per camelCase folder, not per file (P4)
 - TSK-082: Site: no horizontal page scroll at 360px (CTA install switch, docs install line) (P2)
 - TSK-083: Site: selected install tab contrast below 4.5:1 (P2)
 - TSK-084: Site: scrollable code, terminal and table regions keyboard-focusable (P3)

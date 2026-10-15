@@ -294,6 +294,23 @@ describe('compile: events', () => {
     ).toEqual([DiagnosticCode.CASE_FOLDED]);
   });
 
+  it('warns once per camelCase folder, whatever its file count', () => {
+    const result = success(
+      compile(
+        [
+          source('SocialMedia/a.svg'),
+          source('SocialMedia/b.svg'),
+          source('SocialMedia/GitHub.svg'),
+        ],
+        options,
+      ),
+    );
+    expect(result.warnings.map((item) => [item.code, item.file])).toEqual([
+      [DiagnosticCode.CASE_FOLDED, 'icons/SocialMedia'],
+      [DiagnosticCode.CASE_FOLDED, 'icons/SocialMedia/GitHub.svg'],
+    ]);
+  });
+
   it('applies color overrides by public name', () => {
     const rules = [{ match: 'ui/*', color: 'preserve' as const }];
     const result = success(

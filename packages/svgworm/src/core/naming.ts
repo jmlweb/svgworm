@@ -75,27 +75,41 @@ export const deriveName = (
 
 const CASE_BOUNDARY = /(\p{Ll})(\p{Lu})/gu;
 
+export type CaseFolded = {
+  readonly kind: 'file' | 'folder';
+  /** The relative path up to and including the segment, NFC and `/`-separated. */
+  readonly path: string;
+  readonly message: string;
+};
+
 /**
- * Warning for name segments where letter case carried meaning (ADR-0021). The name keeps
- * ADR-0007's case folding; the message suggests the file name that gives a readable one.
+ * Name segments where letter case carried meaning (ADR-0021). The name keeps ADR-0007's case
+ * folding; each message suggests the segment that gives a readable name. A folder is reported
+ * on its own, so callers can report it once instead of once per file inside it.
  */
-export const caseFoldedWarning = (
+export const caseFoldedSegments = (
   relativePath: string,
   options: { readonly flatten: boolean },
-): Diagnostic | undefined => {
-  const result = deriveName(relativePath, options);
-  if (!result.ok) return undefined;
+): readonly CaseFolded[] => {
+  if (!deriveName(relativePath, options).ok) return [];
   const file = toPosix(relativePath).normalize('NFC');
-  const kept = nameSegments(file, options);
-  if (!kept.some((segment) => /\p{Ll}\p{Lu}/u.test(segment))) return undefined;
-  const readable = kept
-    .map((segment) => normalizeSegment(segment.replace(CASE_BOUNDARY, '$1-$2')))
-    .join('/');
-  return {
-    code: DiagnosticCode.CASE_FOLDED,
-    file,
-    message: `letter case is not kept in names: "${result.name}"; rename the file to ${readable}.svg for "${readable}"`,
-  };
+  const segments = file.split('/').filter((s) => s !== '' && s !== '.');
+  const firstKept = options.flatten ? segments.length - 1 : 0;
+  return segments.flatMap((segment, index) => {
+    const isFile = index === segments.length - 1;
+    const stem = isFile ? segment.replace(SVG_EXTENSION, '') : segment;
+    if (index < firstKept || !/\p{Ll}\p{Lu}/u.test(stem)) return [];
+    const readable = normalizeSegment(stem.replace(CASE_BOUNDARY, '$1-$2'));
+    const kind = isFile ? 'file' : 'folder';
+    const renamed = isFile ? `${readable}.svg` : readable;
+    return [
+      {
+        kind,
+        path: segments.slice(0, index + 1).join('/'),
+        message: `letter case is not kept in names: ${kind} "${segment}" gives "${normalizeSegment(stem)}"; rename it to ${renamed} for "${readable}"`,
+      },
+    ];
+  });
 };
 
 const encodeChar = (char: string): string => {

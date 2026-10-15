@@ -22,7 +22,8 @@ import {
 } from './emit/manifest.ts';
 import { emitManifestJson, emitModule, emitTypes } from './emit/module.ts';
 import { DiagnosticCode, type Diagnostic } from './errors.ts';
-import { caseFoldedWarning, deriveName, toSymbolId } from './naming.ts';
+import { toPosix } from './fs.ts';
+import { caseFoldedSegments, deriveName, toSymbolId } from './naming.ts';
 import { ColorKind } from './svg/color/classify.ts';
 import { resolveColorMode } from './svg/color/overrides.ts';
 import { Delivery } from './svg/references.ts';
@@ -132,20 +133,31 @@ export const compile = (
 
   const errors: Diagnostic[] = [];
   const warnings: Diagnostic[] = [];
+  const reportedFolders = new Set<string>();
   const named = ordered.map((entry) => {
     const result = deriveName(entry.source.relativePath, {
       flatten: options.flatten,
     });
     if (!result.ok) errors.push({ ...result.error, file: entry.file });
-    const caseFolded = result.ok
-      ? caseFoldedWarning(entry.source.relativePath, {
-          flatten: options.flatten,
-        })
-      : undefined;
-    if (caseFolded !== undefined) {
-      const diagnostic = { ...caseFolded, file: entry.file };
-      warnings.push(diagnostic);
-      onEvent({ type: 'warning', diagnostic });
+    if (result.ok) {
+      const source = toPosix(entry.source.relativePath).normalize('NFC');
+      const base = entry.file.endsWith(source)
+        ? entry.file.slice(0, entry.file.length - source.length)
+        : '';
+      for (const item of caseFoldedSegments(entry.source.relativePath, {
+        flatten: options.flatten,
+      })) {
+        const file = `${base}${item.path}`;
+        if (item.kind === 'folder' && reportedFolders.has(file)) continue;
+        reportedFolders.add(file);
+        const diagnostic = {
+          code: DiagnosticCode.CASE_FOLDED,
+          file,
+          message: item.message,
+        };
+        warnings.push(diagnostic);
+        onEvent({ type: 'warning', diagnostic });
+      }
     }
     return { ...entry, name: result.ok ? result.name : undefined };
   });

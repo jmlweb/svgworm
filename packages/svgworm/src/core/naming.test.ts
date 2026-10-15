@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { caseFoldedWarning, deriveName, toSymbolId } from './naming.ts';
+import { caseFoldedSegments, deriveName, toSymbolId } from './naming.ts';
 
 const ok = (path: string, flatten = false) => {
   const result = deriveName(path, { flatten });
@@ -99,22 +99,77 @@ describe('deriveName and toSymbolId', () => {
   });
 });
 
-describe('caseFoldedWarning', () => {
-  const suggestion = (path: string, flatten = false) =>
-    caseFoldedWarning(path, { flatten })?.message;
+describe('caseFoldedSegments', () => {
+  const found = (path: string, flatten = false) =>
+    caseFoldedSegments(path, { flatten }).map(({ kind, path: at, message }) => [
+      kind,
+      at,
+      message,
+    ]);
 
   it.each([
-    ['ArrowLeft.svg', 'arrowleft', 'arrow-left.svg'],
-    ['arrowRight.svg', 'arrowright', 'arrow-right.svg'],
-    ['SocialMedia/x.svg', 'socialmedia/x', 'social-media/x.svg'],
-    ['icons/HomeFilled.svg', 'icons/homefilled', 'icons/home-filled.svg'],
-    ['ÉtatCivil.svg', 'étatcivil', 'état-civil.svg'],
-  ])('warns for %s (name %s, suggests %s)', (path, name, suggested) => {
-    const warning = caseFoldedWarning(path, { flatten: false });
-    expect(warning).toMatchObject({ code: 'name/case-folded', file: path });
-    expect(warning?.message).toBe(
-      `letter case is not kept in names: "${name}"; rename the file to ${suggested} for "${suggested.replace(/\.svg$/, '')}"`,
-    );
+    [
+      'ArrowLeft.svg',
+      'ArrowLeft.svg',
+      'ArrowLeft.svg',
+      'arrowleft',
+      'arrow-left.svg',
+      'arrow-left',
+    ],
+    [
+      'arrowRight.svg',
+      'arrowRight.svg',
+      'arrowRight.svg',
+      'arrowright',
+      'arrow-right.svg',
+      'arrow-right',
+    ],
+    [
+      'icons/HomeFilled.svg',
+      'icons/HomeFilled.svg',
+      'HomeFilled.svg',
+      'homefilled',
+      'home-filled.svg',
+      'home-filled',
+    ],
+    [
+      'ÉtatCivil.svg',
+      'ÉtatCivil.svg',
+      'ÉtatCivil.svg',
+      'étatcivil',
+      'état-civil.svg',
+      'état-civil',
+    ],
+  ])(
+    'warns for the file %s',
+    (path, at, segment, folded, renamed, readable) => {
+      expect(found(path)).toEqual([
+        [
+          'file',
+          at,
+          `letter case is not kept in names: file "${segment}" gives "${folded}"; rename it to ${renamed} for "${readable}"`,
+        ],
+      ]);
+    },
+  );
+
+  it('warns once for a camelCase folder, at the folder path', () => {
+    expect(found('brand/SocialMedia/x.svg')).toEqual([
+      [
+        'folder',
+        'brand/SocialMedia',
+        'letter case is not kept in names: folder "SocialMedia" gives "socialmedia"; rename it to social-media for "social-media"',
+      ],
+    ]);
+  });
+
+  it('reports a camelCase folder and a camelCase file separately', () => {
+    expect(
+      found('SocialMedia/GitHub.svg').map(([kind, at]) => [kind, at]),
+    ).toEqual([
+      ['folder', 'SocialMedia'],
+      ['file', 'SocialMedia/GitHub.svg'],
+    ]);
   });
 
   it.each([
@@ -123,31 +178,42 @@ describe('caseFoldedWarning', () => {
     'HOME.svg',
     'Arrow Left.svg',
     'ΟΔΟΣ.ΚΑΤΩ.svg',
+    'Social Media/home.svg',
   ])('does not warn for %s', (path) => {
-    expect(caseFoldedWarning(path, { flatten: false })).toBeUndefined();
+    expect(found(path)).toEqual([]);
   });
 
-  it('checks only the segments that reach the name with flatten', () => {
-    expect(suggestion('SocialMedia/x.svg', true)).toBeUndefined();
-    expect(suggestion('social/GitHubMark.svg', true)).toContain(
-      'rename the file to git-hub-mark.svg',
-    );
+  it('ignores folders that do not reach the name with flatten', () => {
+    expect(found('SocialMedia/x.svg', true)).toEqual([]);
+    expect(found('social/GitHubMark.svg', true).map(([kind]) => kind)).toEqual([
+      'file',
+    ]);
   });
 
-  it('suggests a path whose derived name is the promised one', () => {
+  it('suggests segments whose derived name is the promised one', () => {
     for (const path of [
       'ArrowLeft.svg',
       'SocialMedia/BrandX.svg',
       'aB/cD.svg',
     ]) {
-      const message = suggestion(path) ?? '';
-      const suggested = /rename the file to (\S+) for "([^"]+)"/.exec(message);
-      expect(suggested).not.toBeNull();
-      const derived = deriveName(suggested?.[1] ?? '', { flatten: false });
-      expect(derived).toEqual({ ok: true, name: suggested?.[2] });
-      expect(
-        caseFoldedWarning(suggested?.[1] ?? '', { flatten: false }),
-      ).toBeUndefined();
+      const renamed = path
+        .split('/')
+        .map((segment, index, all) => {
+          const hit = caseFoldedSegments(path, { flatten: false }).find(
+            (item) => item.path === all.slice(0, index + 1).join('/'),
+          );
+          return hit === undefined
+            ? segment
+            : (/rename it to (\S+) for/.exec(hit.message)?.[1] ?? '');
+        })
+        .join('/');
+      const derived = deriveName(renamed, { flatten: false });
+      expect(derived.ok).toBe(true);
+      expect(caseFoldedSegments(renamed, { flatten: false })).toEqual([]);
+      const promised = caseFoldedSegments(path, { flatten: false })
+        .map((item) => /for "([^"]+)"$/.exec(item.message)?.[1])
+        .at(-1);
+      expect(derived.ok && derived.name.endsWith(promised ?? '')).toBe(true);
     }
   });
 });
