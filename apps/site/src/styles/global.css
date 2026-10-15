@@ -426,11 +426,12 @@ pre {
   font-weight: 700;
 }
 
-/* Soil band with the worm. Pure CSS motion; it stops for reduced motion. */
+/* Soil band with the worm. SMIL motion; Soil.astro pauses it on request and for reduced motion. */
 
 .soil {
   position: relative;
-  height: clamp(120px, 14.6vw, 210px);
+  /* The art's aspect ratio: a lower cap would crop the bottom layer on wide screens. */
+  height: max(120px, 16.4vw);
   margin-top: calc(-1 * var(--space-12));
   overflow: hidden;
 }
@@ -454,6 +455,10 @@ pre {
   fill: #8a5a3c;
 }
 
+.stratum-bedrock {
+  fill: var(--terra);
+}
+
 @media (prefers-color-scheme: dark) {
   .stratum-1 {
     fill: var(--night);
@@ -466,63 +471,92 @@ pre {
   .stratum-3 {
     fill: #5e3d2b;
   }
+
+  .stratum-bedrock {
+    fill: var(--night);
+  }
 }
 
-.worm-body,
-.worm-rings,
-.worm-saddle {
+.worm-tunnel {
+  fill: none;
+  stroke: rgb(26 17 13 / 0.4);
+  stroke-width: 34;
+  stroke-linecap: round;
+}
+
+/* Layers share one animated path through <use>, so strokes are set on the <use> and inherited. */
+.worm use {
   fill: none;
   stroke-width: 22;
   stroke-linecap: round;
 }
 
-.worm-body {
-  stroke: var(--worm);
+.worm .worm-shadow {
+  stroke: rgb(0 0 0 / 0.5);
+  stroke-width: 20;
 }
 
-.worm-rings {
+.worm .worm-rim {
+  stroke: color-mix(in oklab, var(--worm) 55%, var(--worm-deep));
+}
+
+.worm .worm-body {
+  stroke: var(--worm);
+  stroke-width: 15;
+}
+
+.worm .worm-rings {
   stroke: rgb(147 58 67 / 0.35);
   stroke-dasharray: 0.6 3.4;
   stroke-linecap: butt;
-  animation: crawl 1.6s linear infinite;
 }
 
-.worm-saddle {
+.worm .worm-saddle {
   stroke: var(--clitellum);
   stroke-dasharray: 0 26 9 100;
   stroke-linecap: butt;
 }
 
-.worm {
-  animation: wiggle 3.2s ease-in-out infinite;
-  transform-origin: 575px 104px;
+.worm .worm-shine {
+  stroke: rgb(255 236 230 / 0.45);
+  stroke-width: 4;
 }
 
-@keyframes crawl {
-  to {
-    stroke-dashoffset: -4;
-  }
+.soil-toggle {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgb(234 219 196 / 0.3);
+  border-radius: 50%;
+  background: rgb(26 17 13 / 0.45);
+  color: var(--dune);
+  cursor: pointer;
 }
 
-@keyframes wiggle {
-  50% {
-    transform: translateX(14px) scaleY(0.92);
-  }
+.soil-toggle:hover {
+  background: rgb(26 17 13 / 0.7);
+}
+
+.soil-toggle:focus-visible {
+  outline: 2px solid var(--worm);
+  outline-offset: 2px;
+}
+
+.soil-toggle[hidden],
+.soil-toggle[aria-pressed='true'] .soil-toggle-pause,
+.soil-toggle[aria-pressed='false'] .soil-toggle-play {
+  display: none;
 }
 
 .pebble {
-  position: absolute;
-  display: grid;
-  place-items: center;
   color: rgb(234 219 196 / 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .worm,
-  .worm-rings {
-    animation: none;
-  }
-
   html {
     scroll-behavior: auto;
   }
@@ -530,7 +564,11 @@ pre {
 
 /* Stats */
 
+/* The soil's bedrock layer is the top of this band. The -1px overlap hides a subpixel seam;
+   position puts the band above the soil, which is positioned too. */
 .stats {
+  position: relative;
+  margin-top: -1px;
   background: var(--terra);
   color: var(--dune);
 }
@@ -545,7 +583,9 @@ pre {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-6);
-  padding-block: var(--space-6) var(--space-12);
+  /* The bedrock above adds about 21 of the soil's 236 viewBox units, so the bottom padding
+     adds it too to center the stats in the dark area, minus 10px that reads better. */
+  padding-block: var(--space-8) calc(var(--space-8) + max(11px, 1.46vw) - 10px);
 }
 
 .stats-grid div {
@@ -1008,15 +1048,8 @@ h1 {
 
 /* Accessibility (TSK-036 audit) */
 
-/* WCAG 2.2.2: motion that starts on its own stops within 5 seconds. */
-.worm-rings {
-  animation-iteration-count: 3;
-}
-
-.worm {
-  animation-iteration-count: 1.5;
-}
-
+/* WCAG 2.2.2: motion that starts on its own stops within 5 seconds. The worm loops but has
+   a pause button (Soil.astro). */
 .caret {
   animation-iteration-count: 4;
 }

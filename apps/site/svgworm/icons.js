@@ -4,8 +4,8 @@ export const manifest = {
   "sprites": {
     "icons": {
       "sprite": {
-        "file": "icons.7ced95d4.svg",
-        "url": "/icons/icons.7ced95d4.svg"
+        "file": "icons.3668e769.svg",
+        "url": "/icons/icons.3668e769.svg"
       },
       "stack": null
     }
@@ -112,6 +112,20 @@ export const manifest = {
     "package": {
       "sprite": "icons",
       "id": "i-package",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "pause": {
+      "sprite": "icons",
+      "id": "i-pause",
+      "viewBox": "0 0 24 24",
+      "color": "mono",
+      "delivery": "use"
+    },
+    "play": {
+      "sprite": "icons",
+      "id": "i-play",
       "viewBox": "0 0 24 24",
       "color": "mono",
       "delivery": "use"

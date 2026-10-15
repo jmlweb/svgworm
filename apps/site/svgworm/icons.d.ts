@@ -15,6 +15,8 @@ export type IconName =
   | "git-branch"
   | "layers"
   | "package"
+  | "pause"
+  | "play"
   | "server"
   | "shield-check"
   | "terminal"
