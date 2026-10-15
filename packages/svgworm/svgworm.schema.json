@@ -47,9 +47,7 @@
                     }
                   }
                 },
-                "required": [
-                  "dir"
-                ],
+                "required": ["dir"],
                 "additionalProperties": false
               }
             ]
@@ -88,28 +86,18 @@
           },
           "color": {
             "type": "string",
-            "enum": [
-              "auto",
-              "mono",
-              "preserve"
-            ],
+            "enum": ["auto", "mono", "preserve"],
             "description": "\"auto\" classifies the icon, \"mono\" forces currentColor, \"preserve\" keeps the colors."
           }
         },
-        "required": [
-          "match",
-          "color"
-        ],
+        "required": ["match", "color"],
         "additionalProperties": false
       }
     },
     "crossOrigin": {
       "description": "Default \"none\": sprites are served same-origin with zero client JS. \"inject\" allows an https:// publicPath on another origin (a CDN) and emits a small loader script that fetches the sprite with CORS and integrity and injects it (ADR-0027). Icons need JS in that mode.",
       "type": "string",
-      "enum": [
-        "none",
-        "inject"
-      ]
+      "enum": ["none", "inject"]
     }
   },
   "additionalProperties": false
