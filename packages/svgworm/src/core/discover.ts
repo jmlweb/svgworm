@@ -3,6 +3,7 @@ import { join, relative } from 'node:path';
 
 import { comparePaths, toDisplayPath } from './collisions.ts';
 import { ConfigError, DiagnosticCode, type Diagnostic } from './errors.ts';
+import { toPosix } from './fs.ts';
 
 export type DiscoveredFile = {
   /** Path from `cwd` as found on disk, `/`-separated. Used in messages. */
@@ -84,7 +85,7 @@ export const discoverSvgFiles = async (
     if (stats?.isDirectory() !== true) {
       throw new ConfigError(`source folder not found: ${source}`);
     }
-    const prefix = relative(cwd, directory).replaceAll('\\', '/');
+    const prefix = toPosix(relative(cwd, directory));
     await walk(directory, '', prefix, out);
   }
   return {

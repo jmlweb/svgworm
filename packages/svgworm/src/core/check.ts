@@ -1,4 +1,3 @@
-import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import type { CompileResult, CompileSuccess, OutputFile } from './compile.ts';
@@ -7,6 +6,7 @@ import type { BuildEventHandler } from './events.ts';
 
 import { compileFromDisk } from './build.ts';
 import { compareCodePoints } from './compare-code-units.ts';
+import { listDirectory, readIfPresent } from './fs.ts';
 import { isOwnedFile, toReportPath } from './write.ts';
 
 export const CheckStatus = {
@@ -47,25 +47,13 @@ export type CheckResult =
   | CheckOutcome
   | Extract<CompileResult, { readonly ok: false }>;
 
-// Only a missing file is "missing"; a permission or type error is reported, not hidden.
-const readBytes = async (path: string): Promise<Uint8Array | undefined> => {
-  try {
-    return await readFile(path);
-  } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      return undefined;
-    }
-    throw error;
-  }
-};
-
 const sameBytes = (a: Uint8Array, b: Uint8Array): boolean =>
   a.byteLength === b.byteLength && Buffer.from(a).equals(b);
 
 const committedIconNames = async (
   path: string,
 ): Promise<readonly string[] | undefined> => {
-  const bytes = await readBytes(path);
+  const bytes = await readIfPresent(path);
   if (bytes === undefined) return undefined;
   try {
     const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes));
@@ -106,7 +94,7 @@ const compareExpected = async (
   const entries: CheckEntry[] = [];
   for (const file of files) {
     const path = join(config.cwd, config[file.target], file.name);
-    const onDisk = await readBytes(path);
+    const onDisk = await readIfPresent(path);
     if (onDisk === undefined) {
       entries.push({
         path: toReportPath(config.cwd, path),
@@ -130,7 +118,8 @@ const findStaleSprites = async (
   const kept = new Set(
     files.filter((file) => file.target === 'outDir').map((file) => file.name),
   );
-  const names = await readdir(folder).catch(() => [] as string[]);
+  // A missing outDir has no stale sprites; an unreadable one is an error, not a clean check.
+  const names = await listDirectory(folder);
   return names
     .filter((name) => isOwnedFile(name) && !kept.has(name))
     .toSorted(compareCodePoints)

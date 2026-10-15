@@ -1,5 +1,5 @@
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { chmod, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { platform, tmpdir, userInfo } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -34,7 +34,25 @@ const config = (): ResolvedConfig =>
 const hashless = (path: string): string =>
   path.replace(/\.[0-9a-f]{8}\./, '.H.');
 
+// chmod has no effect on Windows, and root reads everything.
+const canDenyRead = platform() !== 'win32' && userInfo().uid !== 0;
+
 describe('check', () => {
+  it.runIf(canDenyRead)(
+    'reports an unreadable output folder instead of calling the check clean',
+    async () => {
+      await put('icons/home.svg');
+      await build(config());
+      const outDir = join(root, 'public/icons');
+      await chmod(outDir, 0o000);
+      try {
+        await expect(check(config())).rejects.toThrow(/EACCES|EPERM/);
+      } finally {
+        await chmod(outDir, 0o755);
+      }
+    },
+  );
+
   it('reports every file as missing before the first build', async () => {
     await put('icons/home.svg');
     const result = await check(config());

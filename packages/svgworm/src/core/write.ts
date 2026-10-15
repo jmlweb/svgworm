@@ -1,17 +1,10 @@
-import { randomUUID } from 'node:crypto';
-import {
-  lstat,
-  mkdir,
-  readdir,
-  readFile,
-  rename,
-  rm,
-  writeFile,
-} from 'node:fs/promises';
+import { lstat, mkdir, readdir, rm } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 
 import type { OutputFile } from './compile.ts';
 import type { BuildEventHandler } from './events.ts';
+
+import { readIfPresent, replaceFile, toPosix } from './fs.ts';
 
 // The only files svgworm may delete: its own content-hashed sprite and stack (R-15).
 const OWNED_FILE = /^icons(?:\.stack)?\.[0-9a-f]{8}\.svg$/;
@@ -35,38 +28,7 @@ export type WriteResult = {
 
 /** A path from `cwd` with `/` separators, as events and results report it. */
 export const toReportPath = (cwd: string, absolute: string): string =>
-  relative(cwd, absolute).replaceAll('\\', '/');
-
-const isMissing = (error: unknown): boolean =>
-  error instanceof Error && 'code' in error && error.code === 'ENOENT';
-
-const readIfPresent = async (path: string): Promise<Buffer | undefined> => {
-  try {
-    return await readFile(path);
-  } catch (error) {
-    if (isMissing(error)) return undefined;
-    throw error;
-  }
-};
-
-/**
- * Writes through a temporary file in the same folder and renames it over the target, so a
- * reader never sees a half-written module and a symlink at the target is replaced, not
- * followed.
- */
-const replaceFile = async (
-  path: string,
-  content: Uint8Array,
-): Promise<void> => {
-  const temporary = `${path}.${randomUUID().slice(0, 8)}.tmp`;
-  try {
-    await writeFile(temporary, content, { flag: 'wx' });
-    await rename(temporary, path);
-  } catch (error) {
-    await rm(temporary, { force: true });
-    throw error;
-  }
-};
+  toPosix(relative(cwd, absolute));
 
 const folderOf = (targets: WriteTargets, file: OutputFile): string =>
   join(targets.cwd, targets[file.target]);

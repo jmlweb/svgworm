@@ -5,6 +5,7 @@ import type { ResolvedConfig } from './config/resolve.ts';
 import type { BuildEventHandler } from './events.ts';
 
 import { build, type BuildResult } from './build.ts';
+import { toPosix } from './fs.ts';
 import { createTransformCache } from './svg/cache.ts';
 
 export type Watcher = { readonly close: () => void };
@@ -52,7 +53,7 @@ const createFsWatcher: WatcherFactory = (path, onChange, onError) => {
 /** Only `.svg` files and folders (which may hold icons) can change the output. */
 const mayHoldIcons = (fileName: string | null): boolean => {
   if (fileName === null) return true;
-  const name = basename(fileName.replaceAll('\\', '/'));
+  const name = basename(toPosix(fileName));
   if (name.startsWith('.')) return false;
   return /\.svg$/i.test(name) || !name.includes('.');
 };

@@ -7,7 +7,12 @@ import {
   assembleStack,
   type SymbolMarkup,
 } from './assemble/sprite.ts';
-import { comparePaths, findCollisions, toDisplayPath } from './collisions.ts';
+import {
+  compareDiagnostics,
+  comparePaths,
+  findCollisions,
+  toDisplayPath,
+} from './collisions.ts';
 import { compareCodePoints } from './compare-code-units.ts';
 import { ColorMode, type ColorRule } from './config/schema.ts';
 import {
@@ -74,12 +79,7 @@ const byteLength = (text: string): number =>
   new TextEncoder().encode(text).byteLength;
 
 const sortDiagnostics = (items: readonly Diagnostic[]): readonly Diagnostic[] =>
-  items.toSorted(
-    (a, b) =>
-      comparePaths(a.file, b.file) ||
-      compareCodePoints(a.code, b.code) ||
-      compareCodePoints(a.message, b.message),
-  );
+  items.toSorted(compareDiagnostics);
 
 type Processed = {
   readonly source: SourceInput;

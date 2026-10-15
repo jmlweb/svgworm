@@ -4,8 +4,7 @@ import type { ResolvedConfig } from './config/resolve.ts';
 import type { BuildEventHandler } from './events.ts';
 import type { TransformCache } from './svg/cache.ts';
 
-import { comparePaths } from './collisions.ts';
-import { compareCodePoints } from './compare-code-units.ts';
+import { compareDiagnostics } from './collisions.ts';
 import {
   compile,
   type CompileResult,
@@ -72,12 +71,7 @@ const readAll = async (
 };
 
 const sortErrors = (errors: readonly Diagnostic[]): readonly Diagnostic[] =>
-  errors.toSorted(
-    (a, b) =>
-      comparePaths(a.file, b.file) ||
-      compareCodePoints(a.code, b.code) ||
-      compareCodePoints(a.message, b.message),
-  );
+  errors.toSorted(compareDiagnostics);
 
 /** Discovers and compiles, without writing. Shared by `build` and `check`. */
 export const compileFromDisk = async (

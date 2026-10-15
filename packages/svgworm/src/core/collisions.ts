@@ -1,11 +1,11 @@
 import { compareCodePoints } from './compare-code-units.ts';
 import { DiagnosticCode, type Diagnostic } from './errors.ts';
+import { toPosix } from './fs.ts';
 
 export type NamedPath = { readonly name: string; readonly path: string };
 
 /** Messages show a path as found on disk, with `/` separators (output contract). */
-export const toDisplayPath = (path: string): string =>
-  path.replaceAll('\\', '/');
+export const toDisplayPath = (path: string): string => toPosix(path);
 
 /** Sort key: NFC, so the order never depends on how the file system stored the name. */
 export const toSortKey = (path: string): string =>
@@ -14,6 +14,12 @@ export const toSortKey = (path: string): string =>
 /** NFC order first, raw bytes as the tie-break for NFC and NFD twins. */
 export const comparePaths = (a: string, b: string): number =>
   compareCodePoints(toSortKey(a), toSortKey(b)) || compareCodePoints(a, b);
+
+/** Diagnostics are output too, so their order is fixed: file, then code, then message. */
+export const compareDiagnostics = (a: Diagnostic, b: Diagnostic): number =>
+  comparePaths(a.file, b.file) ||
+  compareCodePoints(a.code, b.code) ||
+  compareCodePoints(a.message, b.message);
 
 /** One error per name produced by more than one file, listing every file (R-03). */
 export const findCollisions = (

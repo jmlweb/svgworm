@@ -3,6 +3,7 @@ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { z } from 'zod';
 
 import { ConfigError } from '../errors.ts';
+import { isMissing } from '../fs.ts';
 import {
   configSchema,
   normalizePublicPath,
@@ -109,9 +110,6 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
   };
 };
 
-const isMissingError = (error: unknown): boolean =>
-  error instanceof Error && 'code' in error && error.code === 'ENOENT';
-
 /** The nearest folder above `cwd` that holds a default config file, if any. */
 const findConfigAbove = async (cwd: string): Promise<string | undefined> => {
   let dir = dirname(cwd);
@@ -152,10 +150,10 @@ const readConfigFile = async (
   try {
     text = await readFile(path, 'utf8');
   } catch (error) {
-    const isMissing = isMissingError(error);
-    if (isMissing && !explicit) return undefined;
+    const missing = isMissing(error);
+    if (missing && !explicit) return undefined;
     throw new ConfigError(
-      isMissing
+      missing
         ? `Config file not found: ${configFile ?? ''}`
         : `Cannot read config file ${configFile ?? DEFAULT_CONFIG_FILE}`,
     );

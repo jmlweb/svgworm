@@ -1,4 +1,4 @@
-import { open, readdir, readFile, stat } from 'node:fs/promises';
+import { open, readdir, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 
@@ -8,6 +8,7 @@ import {
 } from '../../core/config/resolve.ts';
 import { discoverSvgFiles } from '../../core/discover.ts';
 import { ConfigError } from '../../core/errors.ts';
+import { listDirectory, readTextIfPresent, toPosix } from '../../core/fs.ts';
 import { SAMPLE_ICON_NAME, SAMPLE_ICON_SVG } from './sample-icon.ts';
 
 export const Framework = { REACT: 'react', ASTRO: 'astro' } as const;
@@ -120,19 +121,8 @@ export const defaultInitOptions = (): InitOptions => ({
   addAgentsMd: false,
 });
 
-const toPosix = (path: string): string => path.replaceAll('\\', '/');
-
-// Only a missing file is "missing"; an unreadable one must not be treated as free to create.
-const readText = async (path: string): Promise<string | undefined> => {
-  try {
-    return await readFile(path, 'utf8');
-  } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-      return undefined;
-    }
-    throw error;
-  }
-};
+// An unreadable file must not be treated as free to create, so only ENOENT means "absent".
+const readText = readTextIfPresent;
 
 const isDirectory = async (path: string): Promise<boolean> =>
   stat(path).then(
@@ -328,7 +318,7 @@ export const inspectProject = async (
   cwd: string,
   options: InitOptions,
 ): Promise<ProjectFacts> => {
-  const names = await readdir(cwd).catch(() => [] as string[]);
+  const names = await listDirectory(cwd);
   const packageText = await readText(join(cwd, 'package.json'));
   const packageJson =
     packageText === undefined ? undefined : parsePackageJson(packageText);

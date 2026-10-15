@@ -1,9 +1,9 @@
-import { randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 import type { FirstBuild } from './first-build.ts';
 
+import { hasErrorCode, readTextIfPresent, replaceFile } from '../../core/fs.ts';
 import { InitStatus, type InitAction, type InitPlan } from './plan.ts';
 
 export type InitResult = Pick<
@@ -13,30 +13,6 @@ export type InitResult = Pick<
 
 /** What `init` reports: the files it looked at, then the first build. */
 export type InitReport = InitResult & { readonly build: FirstBuild };
-
-const hasCode = (error: unknown, code: string): boolean =>
-  error instanceof Error && 'code' in error && error.code === code;
-
-const readIfPresent = async (path: string): Promise<string | undefined> => {
-  try {
-    return await readFile(path, 'utf8');
-  } catch (error) {
-    if (hasCode(error, 'ENOENT')) return undefined;
-    throw error;
-  }
-};
-
-/** Temp file plus rename: a crash leaves the old file intact, and a symlink is replaced, not followed. */
-const replaceFile = async (path: string, content: string): Promise<void> => {
-  const temporary = `${path}.${randomUUID().slice(0, 8)}.tmp`;
-  try {
-    await writeFile(temporary, content, { flag: 'wx' });
-    await rename(temporary, path);
-  } catch (error) {
-    await rm(temporary, { force: true });
-    throw error;
-  }
-};
 
 const skipped = (action: InitAction, reason: string): InitAction => ({
   path: action.path,
@@ -61,12 +37,12 @@ const applyOne = async (
       // `wx` fails on anything already at the path, a symlink included.
       await writeFile(path, action.content, { flag: 'wx' });
     } catch (error) {
-      if (!hasCode(error, 'EEXIST')) throw error;
+      if (!hasErrorCode(error, 'EEXIST')) throw error;
       return skipped(action, 'appeared while init was running; run init again');
     }
     return reported;
   }
-  if ((await readIfPresent(path)) !== action.previous) {
+  if ((await readTextIfPresent(path)) !== action.previous) {
     return skipped(action, 'changed while init was running; run init again');
   }
   await replaceFile(path, action.content);

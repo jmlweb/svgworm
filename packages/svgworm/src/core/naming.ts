@@ -1,4 +1,5 @@
 import { DiagnosticCode, type Diagnostic } from './errors.ts';
+import { toPosix } from './fs.ts';
 
 const SVG_EXTENSION = /\.svg$/i;
 const REPLACEMENT_CHAR = '�';
@@ -34,7 +35,7 @@ export const deriveName = (
   relativePath: string,
   options: { readonly flatten: boolean },
 ): NameResult => {
-  const file = relativePath.replaceAll('\\', '/').normalize('NFC');
+  const file = toPosix(relativePath).normalize('NFC');
   if (relativePath.includes(REPLACEMENT_CHAR) || !relativePath.isWellFormed()) {
     return fail(
       DiagnosticCode.INVALID_PATH_ENCODING,
