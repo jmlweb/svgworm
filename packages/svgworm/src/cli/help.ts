@@ -10,7 +10,7 @@ Commands:
   build                   Write the sprite, manifest and types (default)
   check                   Exit 1 if the committed output is stale. Writes nothing (CI)
   watch                   Build, then rebuild on every change in the source folders
-  init                    Set a project up: config, predev/prebuild scripts, Icon wiring.
+  init                    Set a project up: config, package.json scripts, Icon wiring.
                           Asks on a terminal; flags answer everything otherwise. Idempotent
 
 Options:
@@ -31,7 +31,7 @@ Init options:
   --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx or Icon.astro
                           (under src/components/ when src/ exists)
   --no-component          Skip the Icon wiring (default: written when react, next or astro is a dependency)
-  --no-scripts            Do not add predev and prebuild scripts to package.json
+  --no-scripts            Do not run svgworm from package.json scripts (predev/prebuild, or dev/build on Yarn 2+)
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents
   -y, --yes               Take the defaults and flags without asking
 

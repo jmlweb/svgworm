@@ -54,7 +54,7 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 | `--framework <name>`      | `react` or `astro`. Default: detected from the dependencies; Astro wins when both are present (a terminal asks)             |
 | `--component-file <path>` | Where to create the `Icon` component. The extension must match the framework (`.tsx`/`.jsx` or `.astro`), or `init` exits 2 |
 | `--no-component`          | Skip the component                                                                                                          |
-| `--no-scripts`            | Skip the `predev` and `prebuild` scripts                                                                                    |
+| `--no-scripts`            | Leave the package.json scripts alone (`predev` and `prebuild`, or `dev` and `build` on Yarn 2+)                             |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
@@ -63,6 +63,10 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons. Then it builds once from the config on disk, so the manifest and types exist before the app first imports them; `--json` reports it as `build`. If that build fails, `init` keeps the files it wrote and exits like `svgworm` would (1 for invalid icons, 2 for a setup problem).
 
 It never overwrites a file that differs from what it would write, so re-running it is safe.
+
+### Yarn 2+
+
+Yarn 2 and later (Berry, including Plug'n'Play) never run `pre` and `post` scripts, so a `prebuild` script would be skipped without an error and the app would ship without a sprite. When `init` finds Yarn 2+ (a `packageManager` of `yarn@2` or later, a `.yarnrc.yml`, or a Berry `yarn.lock`, also at a workspace root), it puts svgworm in front of the scripts themselves instead: `"build": "svgworm && next build"`. It skips a script that is missing or that uses `||`, `;` or `&`, because a prefix would change what it does, and prints a warning that names it. Then add `svgworm &&` to that script by hand.
 
 ## check
 

@@ -58,7 +58,9 @@ export const askInitOptions = async (
   );
   const addScripts = orCancel(
     await confirm({
-      message: 'Add predev and prebuild scripts that run svgworm?',
+      message: facts.runsScriptHooks
+        ? 'Add predev and prebuild scripts that run svgworm?'
+        : 'Run svgworm at the start of the dev and build scripts? (Yarn 2+ skips predev and prebuild)',
       initialValue: options.addScripts,
     }),
   );

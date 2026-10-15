@@ -14,7 +14,7 @@ import { askInitOptions, InitCancelledError } from '../init/prompts.ts';
 import { FatalCode, type Reporter } from '../reporters/types.ts';
 
 /**
- * Sets a project up: config file, predev/prebuild scripts, the Icon wiring, a sample icon when
+ * Sets a project up: config file, package.json scripts, the Icon wiring, a sample icon when
  * the sources are empty and, on request, an AGENTS.md section. Then it builds once, so the app
  * runs and type-checks before the user adds an icon. Prompts only on an interactive terminal;
  * flags drive it otherwise (R-56). Re-running is idempotent.

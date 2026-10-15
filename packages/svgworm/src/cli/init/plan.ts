@@ -1,4 +1,5 @@
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { open, readdir, readFile, stat } from 'node:fs/promises';
+import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 
 import {
@@ -24,7 +25,7 @@ export type InitOptions = {
   readonly publicPath: string | undefined;
   readonly moduleDir: string | undefined;
   readonly flatten: boolean | undefined;
-  /** Add `predev` and `prebuild` scripts to package.json. */
+  /** Run svgworm from package.json scripts: `predev` and `prebuild`, or `dev` and `build` on Yarn 2+. */
   readonly addScripts: boolean;
   /** `--framework`. `undefined` means "detect it from the dependencies" (ADR-0017). */
   readonly framework: Framework | undefined;
@@ -62,6 +63,8 @@ export type ProjectFacts = {
   readonly usesAstro: boolean;
   readonly hasSrcFolder: boolean;
   readonly packageManager: PackageManager;
+  /** The package manager runs `pre<name>` scripts. Yarn 2+ dropped them for user scripts. */
+  readonly runsScriptHooks: boolean;
   readonly existing: Readonly<Record<string, string>>;
   /** Some source folder already holds an SVG that `build` would read. */
   readonly sourcesHaveIcons: boolean;
@@ -85,6 +88,8 @@ export type InitAction = {
   /** What the file held when it was planned, for `updated`; apply refuses to overwrite anything else. */
   readonly previous?: string;
   readonly reason?: string;
+  /** Something the user must fix by hand, even though the file itself was handled. */
+  readonly warning?: string;
 };
 
 export type InitPlan = {
@@ -183,6 +188,75 @@ const detectPackageManager = (
   return PackageManager.NPM;
 };
 
+const LOCKFILES = [
+  'package-lock.json',
+  'pnpm-lock.yaml',
+  'bun.lock',
+  'bun.lockb',
+] as const;
+
+// Berry lockfiles open with a `__metadata:` block; classic ones say `yarn lockfile v1`.
+const isBerryLockfile = async (path: string): Promise<boolean> => {
+  const file = await open(path, 'r');
+  try {
+    const { buffer, bytesRead } = await file.read({
+      buffer: Buffer.alloc(1024),
+    });
+    return /^__metadata:/m.test(buffer.toString('utf8', 0, bytesRead));
+  } finally {
+    await file.close();
+  }
+};
+
+/** What one folder says about Yarn 2+: yes, no, or nothing (look at the parent). */
+const berrySignal = async (
+  dir: string,
+  names: readonly string[],
+  pkg: PackageJson | undefined,
+): Promise<boolean | undefined> => {
+  const declared = pkg?.value['packageManager'];
+  if (typeof declared === 'string') {
+    const yarn = /^yarn@(\d+)/.exec(declared);
+    return yarn !== null && Number(yarn[1]) >= 2;
+  }
+  if (names.includes('.yarnrc.yml')) return true;
+  if (names.includes('yarn.lock')) {
+    return isBerryLockfile(join(dir, 'yarn.lock'));
+  }
+  if (LOCKFILES.some((name) => names.includes(name))) return false;
+  return undefined;
+};
+
+/**
+ * Yarn 2+ skips `predev` and `prebuild`, silently. A workspace package keeps its Yarn config at
+ * the monorepo root, so the search walks up to the repository root. The home folder is skipped:
+ * a global `~/.yarnrc.yml` says nothing about this project.
+ */
+const detectYarnBerry = async (
+  cwd: string,
+  names: readonly string[],
+  pkg: PackageJson | undefined,
+): Promise<boolean> => {
+  const home = resolve(homedir());
+  let dir = resolve(cwd);
+  let dirNames = names;
+  let dirPkg = pkg;
+  for (;;) {
+    if (dir !== home) {
+      const signal = await berrySignal(dir, dirNames, dirPkg);
+      if (signal !== undefined) return signal;
+    }
+    const parent = dirname(dir);
+    if (dirNames.includes('.git') || parent === dir) return false;
+    dir = parent;
+    dirNames = await readdir(dir).catch(() => [] as string[]);
+    const text = dirNames.includes('package.json')
+      ? await readText(join(dir, 'package.json')).catch(() => undefined)
+      : undefined;
+    dirPkg = text === undefined ? undefined : parsePackageJson(text);
+  }
+};
+
 type FrameworkFacts = Pick<ProjectFacts, 'usesReact' | 'usesAstro'>;
 
 /** Flag first, then the dependencies. Astro wins when both are present: the choice is reported, never silent. */
@@ -267,6 +341,8 @@ export const inspectProject = async (
     hasSrcFolder,
     resolveFramework(options, { usesReact, usesAstro }).framework,
   );
+  const isYarnBerry = await detectYarnBerry(cwd, names, packageJson);
+  const localManager = detectPackageManager(names, packageJson);
   const existing: Record<string, string> = {};
   for (const path of [options.configFile, componentFile, 'AGENTS.md']) {
     const text = await readText(join(cwd, path));
@@ -278,7 +354,12 @@ export const inspectProject = async (
     usesReact,
     usesAstro,
     hasSrcFolder,
-    packageManager: detectPackageManager(names, packageJson),
+    // A workspace package with no signal of its own follows the Yarn 2+ root above it.
+    packageManager:
+      isYarnBerry && localManager === PackageManager.NPM
+        ? PackageManager.YARN
+        : localManager,
+    runsScriptHooks: !isYarnBerry,
     existing,
     sourcesHaveIcons: await hasIcons(cwd, options.sources),
   };
@@ -343,9 +424,14 @@ const planFile = (
 };
 
 const SCRIPT_HOOKS = ['predev', 'prebuild'] as const;
+const HOOKED_SCRIPTS = ['dev', 'build'] as const;
 
 // `svgworm` as a command word, not as part of `svgworm-foo` or `my-svgworm-wrapper`.
 const RUNS_SVGWORM = /(?:^|[\s&|;(])svgworm(?=$|[\s&|;)])/;
+
+// `svgworm && a || b` runs `b` when svgworm fails, `svgworm && a; b` too, and `svgworm && a & b`
+// starts `b` without waiting. Pipes and `&&` chains keep their meaning behind the prefix.
+const UNSAFE_TO_PREFIX = /\|\||;|\n|(?<!&)&(?!&)/;
 
 /** The build command the scripts and docs should run: plain, or with the custom config file. */
 const buildCommand = (options: InitOptions): string =>
@@ -353,45 +439,130 @@ const buildCommand = (options: InitOptions): string =>
     ? 'svgworm'
     : `svgworm --config ${options.configFile}`;
 
-const planScripts = (facts: ProjectFacts, command: string): InitAction => {
+type ScriptsPlan = {
+  readonly action: InitAction;
+  /** svgworm runs before both `dev` and `build`, so the next steps can say so. */
+  readonly runsBeforeDevAndBuild: boolean;
+};
+
+type ScriptEdit = {
+  readonly scripts: Record<string, unknown>;
+  readonly changed: boolean;
+  readonly problems: readonly string[];
+};
+
+// npm, pnpm, Yarn 1 and Bun run `pre<name>` before `<name>`, so svgworm goes there.
+const addHooks = (
+  scripts: Record<string, unknown>,
+  command: string,
+): ScriptEdit =>
+  SCRIPT_HOOKS.reduce<ScriptEdit>(
+    (edit, hook) => {
+      const current = edit.scripts[hook];
+      if (current === undefined || current === '') {
+        return {
+          ...edit,
+          scripts: { ...edit.scripts, [hook]: command },
+          changed: true,
+        };
+      }
+      if (typeof current === 'string' && !RUNS_SVGWORM.test(current)) {
+        // Keep what is there, run svgworm first so the output exists before the app starts.
+        return {
+          ...edit,
+          scripts: { ...edit.scripts, [hook]: `${command} && ${current}` },
+          changed: true,
+        };
+      }
+      return edit;
+    },
+    { scripts, changed: false, problems: [] },
+  );
+
+// Yarn 2+ never runs `pre<name>` for user scripts, so svgworm goes in front of `dev` and `build`.
+const prefixScripts = (
+  scripts: Record<string, unknown>,
+  command: string,
+): ScriptEdit =>
+  HOOKED_SCRIPTS.reduce<ScriptEdit>(
+    (edit, name) => {
+      const current = edit.scripts[name];
+      if (typeof current !== 'string' || current.trim() === '') {
+        return {
+          ...edit,
+          problems: [...edit.problems, `there is no "${name}" script`],
+        };
+      }
+      if (RUNS_SVGWORM.test(current)) return edit;
+      if (UNSAFE_TO_PREFIX.test(current)) {
+        return {
+          ...edit,
+          problems: [
+            ...edit.problems,
+            `"${name}" uses ||, ; or & and cannot be prefixed safely`,
+          ],
+        };
+      }
+      return {
+        ...edit,
+        scripts: { ...edit.scripts, [name]: `${command} && ${current}` },
+        changed: true,
+      };
+    },
+    { scripts, changed: false, problems: [] },
+  );
+
+const planScripts = (facts: ProjectFacts, command: string): ScriptsPlan => {
   const path = 'package.json';
   const pkg = facts.packageJson;
   if (pkg === undefined) {
     return {
-      path,
-      status: InitStatus.SKIPPED,
-      reason: facts.hasPackageJson
-        ? 'package.json is not a JSON object'
-        : 'no package.json in this folder',
+      action: {
+        path,
+        status: InitStatus.SKIPPED,
+        reason: facts.hasPackageJson
+          ? 'package.json is not a JSON object'
+          : 'no package.json in this folder',
+      },
+      runsBeforeDevAndBuild: false,
     };
   }
   const scripts =
     typeof pkg.value['scripts'] === 'object' && pkg.value['scripts'] !== null
       ? { ...(pkg.value['scripts'] as Record<string, unknown>) }
       : {};
-  let changed = false;
-  for (const hook of SCRIPT_HOOKS) {
-    const current = scripts[hook];
-    if (current === undefined || current === '') {
-      scripts[hook] = command;
-      changed = true;
-    } else if (typeof current === 'string' && !RUNS_SVGWORM.test(current)) {
-      // Keep what is there, run svgworm first so the output exists before the app starts.
-      scripts[hook] = `${command} && ${current}`;
-      changed = true;
-    }
+  const edit = facts.runsScriptHooks
+    ? addHooks(scripts, command)
+    : prefixScripts(scripts, command);
+  const warning =
+    edit.problems.length === 0
+      ? undefined
+      : `Yarn 2+ does not run predev or prebuild, and ${edit.problems.join(' and ')}: run \`${command}\` before your dev server and build by hand`;
+  const result = { runsBeforeDevAndBuild: warning === undefined };
+  if (!edit.changed) {
+    return {
+      ...result,
+      action: {
+        path,
+        status: InitStatus.UNCHANGED,
+        ...(warning === undefined ? {} : { warning }),
+      },
+    };
   }
-  if (!changed) return { path, status: InitStatus.UNCHANGED };
-  const next = { ...pkg.value, scripts };
+  const next = { ...pkg.value, scripts: edit.scripts };
   // Like npm itself: re-serialized with the file's own indent and line endings.
   const text =
     JSON.stringify(next, null, pkg.indent).replaceAll('\n', pkg.newline) +
     (pkg.hasTrailingNewline ? pkg.newline : '');
   return {
-    path,
-    status: InitStatus.UPDATED,
-    content: text,
-    previous: pkg.text,
+    ...result,
+    action: {
+      path,
+      status: InitStatus.UPDATED,
+      content: text,
+      previous: pkg.text,
+      ...(warning === undefined ? {} : { warning }),
+    },
   };
 };
 
@@ -539,6 +710,7 @@ const agentsSection = (
   options: InitOptions,
   componentFile: string | undefined,
   command: string,
+  runsBeforeDevAndBuild: boolean,
 ): string => {
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
   const outDir = options.outDir ?? 'public/icons';
@@ -547,7 +719,7 @@ const agentsSection = (
     '## Icons (svgworm)',
     '',
     `- SVG icons live in \`${options.sources.join('`, `')}\`. Do not edit the generated files.`,
-    `- \`${command}\` (runs before \`dev\` and \`build\`) writes the hashed sprite to \`${outDir}/\` and the manifest and types to \`${moduleDir}/\`.`,
+    `- \`${command}\`${runsBeforeDevAndBuild ? ' (runs before `dev` and `build`)' : ''} writes the hashed sprite to \`${outDir}/\` and the manifest and types to \`${moduleDir}/\`.`,
     ...(componentFile === undefined
       ? []
       : [
@@ -713,7 +885,9 @@ export const planInit = (
       content: SAMPLE_ICON_SVG,
     });
   }
-  if (options.addScripts) actions.push(planScripts(facts, command));
+  const scripts = options.addScripts ? planScripts(facts, command) : undefined;
+  if (scripts !== undefined) actions.push(scripts.action);
+  const runsBeforeDevAndBuild = scripts?.runsBeforeDevAndBuild ?? false;
   if (addComponent) {
     actions.push(
       planFile(
@@ -739,6 +913,7 @@ export const planInit = (
           options,
           addComponent ? componentFile : undefined,
           command,
+          runsBeforeDevAndBuild,
         ),
         facts.existing['AGENTS.md'],
       ),
@@ -764,7 +939,9 @@ export const planInit = (
     ...install.map((line) => `Install: ${line}`),
     samplePath === undefined
       ? `Put SVG files in ${options.sources.join(', ')}/ and run: ${runner} svgworm${configFlag}`
-      : `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${configFlag})`,
+      : runsBeforeDevAndBuild
+        ? `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${configFlag})`
+        : `Replace the sample ${samplePath} with your own SVG files and run: ${runner} svgworm${configFlag}`,
     ...(addComponent && framework === Framework.ASTRO
       ? [
           `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,

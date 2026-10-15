@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   defaultInitOptions,
@@ -6,6 +9,7 @@ import {
   frameworkProblem,
   FrameworkSource,
   InitStatus,
+  inspectProject,
   PackageManager,
   planInit,
   validateInitOptions,
@@ -20,6 +24,7 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   usesAstro: false,
   hasSrcFolder: false,
   packageManager: PackageManager.NPM,
+  runsScriptHooks: true,
   existing: {},
   sourcesHaveIcons: true,
   ...overrides,
@@ -517,7 +522,11 @@ describe('planInit: sample icon', () => {
   it('adds a sample icon to the first source when no source has an SVG yet', () => {
     const plan = planInit(
       { ...defaultInitOptions(), sources: ['assets/icons/', 'brand'] },
-      facts({ usesReact: true, sourcesHaveIcons: false }),
+      facts({
+        usesReact: true,
+        sourcesHaveIcons: false,
+        packageJson: pkg({ name: 'app' }),
+      }),
     );
     expect(statusOf(plan, 'assets/icons/svgworm.svg')).toMatchObject({
       status: InitStatus.CREATED,
@@ -525,6 +534,15 @@ describe('planInit: sample icon', () => {
     });
     expect(plan.nextSteps).toContain(
       'Replace the sample assets/icons/svgworm.svg with your own SVG files; svgworm runs before dev and build (or run: npx svgworm)',
+    );
+    // Without a package.json no script runs svgworm, so the step must not claim one does.
+    expect(
+      planInit(
+        defaultInitOptions(),
+        facts({ usesReact: true, sourcesHaveIcons: false }),
+      ).nextSteps,
+    ).toContain(
+      'Replace the sample icons/svgworm.svg with your own SVG files and run: npx svgworm',
     );
     expect(plan.nextSteps.join('\n')).toContain('<Icon name="svgworm" />');
   });
@@ -608,5 +626,205 @@ describe('validateInitOptions', () => {
         cwd,
       )[0],
     ).toContain('overlap');
+  });
+});
+
+const scriptsOf = (plan: ReturnType<typeof planInit>) =>
+  (
+    JSON.parse(statusOf(plan, 'package.json')?.content ?? '') as {
+      scripts: Record<string, string>;
+    }
+  ).scripts;
+
+describe('planInit: package.json scripts per package manager', () => {
+  const app = {
+    name: 'app',
+    scripts: { dev: 'next dev', build: 'next build' },
+  };
+
+  it.each([
+    ['npm', PackageManager.NPM],
+    ['pnpm', PackageManager.PNPM],
+    ['yarn 1', PackageManager.YARN],
+  ])('runs svgworm from predev and prebuild with %s', (_, packageManager) => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ packageJson: pkg(app), packageManager, runsScriptHooks: true }),
+    );
+    expect(scriptsOf(plan)).toEqual({
+      ...app.scripts,
+      predev: 'svgworm',
+      prebuild: 'svgworm',
+    });
+    expect(statusOf(plan, 'package.json')?.warning).toBeUndefined();
+  });
+
+  const berry = (value: Record<string, unknown>) =>
+    facts({
+      sourcesHaveIcons: false,
+      packageJson: pkg(value),
+      packageManager: PackageManager.YARN,
+      runsScriptHooks: false,
+    });
+
+  it('puts svgworm in front of dev and build with yarn 4, which skips pre scripts', () => {
+    const plan = planInit(defaultInitOptions(), berry(app));
+    const action = statusOf(plan, 'package.json');
+    expect(action?.status).toBe(InitStatus.UPDATED);
+    expect(action?.warning).toBeUndefined();
+    expect(scriptsOf(plan)).toEqual({
+      dev: 'svgworm && next dev',
+      build: 'svgworm && next build',
+    });
+    expect(plan.nextSteps.join('\n')).toContain(
+      'svgworm runs before dev and build',
+    );
+  });
+
+  it('is idempotent with yarn 4, and fixes a project an earlier init gave pre scripts', () => {
+    const first = planInit(defaultInitOptions(), berry(app));
+    const again = planInit(
+      defaultInitOptions(),
+      berry({ ...app, scripts: scriptsOf(first) }),
+    );
+    expect(statusOf(again, 'package.json')?.status).toBe(InitStatus.UNCHANGED);
+
+    const earlier = planInit(
+      defaultInitOptions(),
+      berry({
+        ...app,
+        scripts: { ...app.scripts, predev: 'svgworm', prebuild: 'svgworm' },
+      }),
+    );
+    expect(scriptsOf(earlier)).toEqual({
+      dev: 'svgworm && next dev',
+      build: 'svgworm && next build',
+      predev: 'svgworm',
+      prebuild: 'svgworm',
+    });
+  });
+
+  it('passes a custom config file to the yarn 4 scripts', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), configFile: 'config/icons.json' },
+      berry(app),
+    );
+    expect(scriptsOf(plan)['build']).toBe(
+      'svgworm --config config/icons.json && next build',
+    );
+  });
+
+  it('warns with yarn 4 when a script is missing or cannot be prefixed safely', () => {
+    const plan = planInit(
+      { ...defaultInitOptions(), addAgentsMd: true },
+      berry({
+        name: 'app',
+        scripts: { build: 'tsc || echo failed', start: 'node .' },
+      }),
+    );
+    const action = statusOf(plan, 'package.json');
+    expect(action?.status).toBe(InitStatus.UNCHANGED);
+    expect(action?.warning).toBe(
+      'Yarn 2+ does not run predev or prebuild, and there is no "dev" script and "build" uses ||, ; or & and cannot be prefixed safely: run `svgworm` before your dev server and build by hand',
+    );
+    expect(plan.nextSteps.join('\n')).not.toContain('runs before dev');
+    expect(statusOf(plan, 'AGENTS.md')?.content).not.toContain('runs before');
+  });
+
+  it.each(['a; b', 'a & b', 'a\nb'])(
+    'does not prefix "%s" with yarn 4',
+    (build) => {
+      const plan = planInit(
+        defaultInitOptions(),
+        berry({ scripts: { dev: 'vite', build } }),
+      );
+      expect(scriptsOf(plan)).toEqual({ dev: 'svgworm && vite', build });
+      expect(statusOf(plan, 'package.json')?.warning).toContain('"build"');
+    },
+  );
+
+  it('prefixes && chains and pipes with yarn 4', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      berry({ scripts: { dev: 'vite | tee log', build: 'tsc && vite build' } }),
+    );
+    expect(scriptsOf(plan)).toEqual({
+      dev: 'svgworm && vite | tee log',
+      build: 'svgworm && tsc && vite build',
+    });
+  });
+});
+
+describe('inspectProject: Yarn 2+ detection', () => {
+  let root: string;
+
+  beforeEach(async () => {
+    root = await mkdtemp(join(tmpdir(), 'svgworm-yarn-'));
+  });
+
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true });
+  });
+
+  const put = async (path: string, content = '') => {
+    await mkdir(dirname(join(root, path)), { recursive: true });
+    await writeFile(join(root, path), content);
+  };
+
+  const inspect = (dir = '') =>
+    inspectProject(join(root, dir), defaultInitOptions());
+
+  const BERRY_LOCK =
+    '# This file is generated by running "yarn install" inside your project.\n# Manual changes might be lost - proceed with caution!\n\n__metadata:\n  version: 8\n  cacheKey: 10c0\n';
+  const CLASSIC_LOCK =
+    '# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.\n# yarn lockfile v1\n';
+
+  it.each([
+    ['yarn@4.9.0', false],
+    ['yarn@4.9.0+sha512.abc', false],
+    ['yarn@1.22.22', true],
+    ['pnpm@10.34.0', true],
+  ])('reads packageManager %s', async (packageManager, runsScriptHooks) => {
+    await put('package.json', JSON.stringify({ name: 'app', packageManager }));
+    // The declared version wins over any file.
+    await put('.yarnrc.yml', 'nodeLinker: pnp\n');
+    expect((await inspect()).runsScriptHooks).toBe(runsScriptHooks);
+  });
+
+  it('reads .yarnrc.yml and the lockfile format', async () => {
+    await put('package.json', '{ "name": "app" }');
+    await put('yarn.lock', CLASSIC_LOCK);
+    expect(await inspect()).toMatchObject({
+      packageManager: PackageManager.YARN,
+      runsScriptHooks: true,
+    });
+    await put('yarn.lock', BERRY_LOCK);
+    expect((await inspect()).runsScriptHooks).toBe(false);
+    await put('yarn.lock', CLASSIC_LOCK);
+    await put('.yarnrc.yml', 'nodeLinker: node-modules\n');
+    expect((await inspect()).runsScriptHooks).toBe(false);
+  });
+
+  it('follows the Yarn 2+ root of a workspace package', async () => {
+    await put('package.json', JSON.stringify({ packageManager: 'yarn@4.9.0' }));
+    await put('yarn.lock', BERRY_LOCK);
+    await put('apps/web/package.json', '{ "name": "web" }');
+    expect(await inspect('apps/web')).toMatchObject({
+      packageManager: PackageManager.YARN,
+      runsScriptHooks: false,
+    });
+  });
+
+  it('stops at the repository root and at another lockfile', async () => {
+    await put('.yarnrc.yml', 'nodeLinker: pnp\n');
+    await put('repo/.git/HEAD', 'ref: refs/heads/main\n');
+    await put('repo/package.json', '{ "name": "app" }');
+    expect(await inspect('repo')).toMatchObject({
+      packageManager: PackageManager.NPM,
+      runsScriptHooks: true,
+    });
+    await put('other/package-lock.json', '{}');
+    expect((await inspect('other')).runsScriptHooks).toBe(true);
+    expect((await inspect()).runsScriptHooks).toBe(false);
   });
 });

@@ -24,7 +24,7 @@ Facts an agent should rely on:
    # npm install -D svgworm
    ```
 
-2. **Run init.** It writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm`, and creates `src/components/Icon.astro` (or `components/Icon.astro` without `src/`). Pass `--source <dir>` if the icons are not in `icons/`, and `--framework astro` if `astro` is not yet a dependency. When no source folder has an SVG, it adds a sample `icons/svgworm.svg` (icon name `svgworm`). Then it builds once, so the manifest and types exist right away; it exits 1 if that build fails. It never overwrites a file that differs, and re-running it is safe.
+2. **Run init.** It writes `svgworm.config.json`, adds `predev` and `prebuild` scripts that run `svgworm` (on Yarn 2+, which skips pre scripts, it prefixes `dev` and `build` with `svgworm &&` and warns about a script it cannot change), and creates `src/components/Icon.astro` (or `components/Icon.astro` without `src/`). Pass `--source <dir>` if the icons are not in `icons/`, and `--framework astro` if `astro` is not yet a dependency. When no source folder has an SVG, it adds a sample `icons/svgworm.svg` (icon name `svgworm`). Then it builds once, so the manifest and types exist right away; it exits 1 if that build fails. It never overwrites a file that differs, and re-running it is safe.
 
    ```bash
    pnpm svgworm init --yes --agents-md

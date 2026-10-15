@@ -299,6 +299,22 @@ describe('run: init (R-56)', () => {
     );
   });
 
+  it('runs svgworm inside dev and build on Yarn 2+, and warns about a script it cannot reach', async () => {
+    await put(
+      'package.json',
+      '{ "name": "app", "packageManager": "yarn@4.9.0", "scripts": { "build": "next build" } }\n',
+    );
+    const { code, stdout, stderr } = await exec(['init']);
+    expect(code).toBe(ExitCode.OK);
+    expect(stdout).toContain('init package.json updated');
+    expect(stderr).toContain(
+      'warning package.json: Yarn 2+ does not run predev or prebuild, and there is no "dev" script',
+    );
+    expect((await readJson('package.json'))['scripts']).toEqual({
+      build: 'svgworm && next build',
+    });
+  });
+
   it('is idempotent: a second run changes nothing', async () => {
     await put(
       'package.json',

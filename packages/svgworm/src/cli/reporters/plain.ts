@@ -90,6 +90,11 @@ export const createPlainReporter = (io: CliIo): Reporter => {
             ? `init ${action.path} ${action.status}`
             : `init ${action.path} ${action.status} (${action.reason})`,
         );
+        if (action.warning !== undefined) {
+          err(
+            `${style('yellow', 'warning')} ${action.path}: ${action.warning}`,
+          );
+        }
       });
       if (result.framework !== undefined) {
         out(

@@ -30,7 +30,7 @@ export type FirstBuild =
 
 /**
  * Builds from the config on disk, not from the init options: a config init skipped because
- * it differs is still the one `predev` and `prebuild` will use.
+ * it differs is still the one the package.json scripts will use.
  */
 export const runFirstBuild = async (
   cwd: string,

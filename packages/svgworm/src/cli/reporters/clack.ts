@@ -112,6 +112,7 @@ export const createClackReporter = (io: CliIo): Reporter => {
         const line = `${action.status.padEnd(width)}  ${action.path}${action.reason === undefined ? '' : ` (${action.reason})`}`;
         if (action.status === 'skipped') log.warn(line);
         else log.success(line);
+        if (action.warning !== undefined) log.warn(action.warning);
       });
       if (result.framework !== undefined) {
         log.info(
