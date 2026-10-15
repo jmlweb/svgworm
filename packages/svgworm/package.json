@@ -1,6 +1,6 @@
 {
   "name": "svgworm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Turn a folder of SVG files into type-safe, cacheable SVG sprites.",
   "license": "MIT",
   "author": "svgworm contributors",
