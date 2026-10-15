@@ -12,7 +12,7 @@ Set svgworm up in a Vite and React app in three steps. You end up with:
 
 Vite serves `public/` as it is and copies it into `dist/`, so **the sprite needs no plugin**.
 
-Requires Node `^22.20 || >=24.11`. The [working example](#working-example) uses Vite 8.
+Requires Node `^22.20 || >=24.11` and React 19 (`@svgworm/react` has `react ^19` as a peer). The [working example](#working-example) uses Vite 8.
 
 A Vite app renders on the client, so `Icon` runs in the browser. The sprite is a separate cached file and is not JavaScript. But the manifest ships in your bundle: every icon's id, viewBox and delivery, about 200 bytes per icon before compression. **Keep the source folder to the icons you use.** For zero client JS, use [Next.js](/docs/nextjs/) Server Components or [Astro](/docs/astro/).
 

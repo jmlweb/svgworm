@@ -4,6 +4,8 @@
 
 **React Server Component `Icon` for [svgworm](https://github.com/jmlweb/svgworm) sprites.** No hooks, no `'use client'`, zero client JavaScript, icon names checked at compile time.
 
+Requires React 19 (a peer dependency), so Next.js 15 or later.
+
 ```tsx
 import { createIcon } from '@svgworm/react';
 

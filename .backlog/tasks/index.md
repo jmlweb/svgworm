@@ -5,14 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 6 |
-| Active | 2 |
-| Blocked | 2 |
-| Complete | 83 |
+| Active | 4 |
+| Blocked | 0 |
+| Complete | 85 |
 
 ## Active Tasks
 
-- TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
-- TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
+- TSK-019: Launch outreach for svgworm v0.1 (P2)
+- TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-089: Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) (P3)
 - TSK-090: Site: framework guide cards and help links (P3)
 

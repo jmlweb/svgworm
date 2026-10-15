@@ -972,3 +972,30 @@ describe('planInit: CDN on another origin (--cdn-url, ADR-0027)', () => {
     ).toContain('--cdn-url replaces --public-path');
   });
 });
+
+// RPT-007: generated code lands in the user's repo under their linter. ESLint's default max-len
+// is 80, and a 110-character comment in icon.tsx broke `next build` in a real starter.
+describe('planInit: generated components fit in 80 columns', () => {
+  const cdnOptions = {
+    ...defaultInitOptions(),
+    cdnUrl: 'https://cdn.example.com/icons',
+  };
+  it.each([
+    ['next', defaultInitOptions(), facts({ usesReact: true, usesNext: true })],
+    ['react', defaultInitOptions(), facts({ usesReact: true })],
+    ['astro', defaultInitOptions(), facts({ usesAstro: true })],
+    ['react cdn', cdnOptions, facts({ usesReact: true })],
+    ['astro cdn', cdnOptions, facts({ usesAstro: true })],
+  ])('%s', (_label, options, projectFacts) => {
+    const long = planInit(options, projectFacts)
+      .actions.filter((action) => /\.(?:tsx?|jsx?|astro)$/.test(action.path))
+      .flatMap((action) =>
+        (action.content ?? '')
+          .split('\n')
+          .map((line, index) => ({ path: action.path, index, line }))
+          .filter(({ line }) => line.length > 80),
+      )
+      .map(({ path, index, line }) => `${path}:${String(index + 1)}: ${line}`);
+    expect(long).toEqual([]);
+  });
+});

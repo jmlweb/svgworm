@@ -174,6 +174,8 @@ describe('resolveConfig', () => {
   it('rejects an output folder inside a source folder', () => {
     const issues = issuesOf(() => resolveConfig({ sources: ['public'] }, cwd));
     expect(issues.join('\n')).toMatch(/outDir.*inside.*source/);
+    // RPT-007: the message names a fix, not only the problem.
+    expect(issues.join('\n')).toMatch(/--out-dir|move the icons/);
   });
 
   it('rejects moduleDir inside outDir', () => {

@@ -21,6 +21,7 @@ Still blank everywhere? Open the sprite URL from the manifest in a tab. A 404 me
 **Every icon is missing**, and the network tab shows a 404 for `/icons/icons.<hash>.svg`.
 
 - **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base` and Vite `base` are not added to the URLs svgworm writes. With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](/docs/vite/#base)).
+- **`outDir` is inside a source folder.** For example `--source public/icons` with the default `outDir` `public/icons`: the next build would read the sprites as icons, so the config is refused. Keep the SVG files outside `public/` (`icons/` is the default) and let svgworm write to `public/icons`, or pick another output with `--out-dir`.
 - **`outDir` and `publicPath` disagree.** A custom `outDir` must be served at `publicPath`. Under `public/` svgworm derives it (`public/sprites` gives `/sprites`), so pass `publicPath` only to add a mount point. For an `outDir` outside `public/`, **pass both flags together**: the config refuses `outDir` on its own.
 - **The deploy replaced the sprite under cached HTML.** Each build writes a new hashed file and removes the old one. HTML from the previous deploy that a CDN still serves points at a hash that is gone. A tab that already loaded the sprite is fine, because every icon is in that one file.
 
@@ -97,7 +98,7 @@ The CLI prints each one as `[code] file: message` on stderr. `--json` lists them
 | `svg/forbidden-attribute`  | error   | `on*` event handlers and `javascript:` values are rejected. Remove them                                                                                                    |
 | `svg/external-reference`   | error   | `href` or `url(…)` points outside the file (another file, a URL). Inline the asset or remove the reference                                                                 |
 | `style/unscopable`         | error   | A `<style>` has an at-rule (`@media`, `@keyframes`) that cannot be inlined. Convert it to attributes, or drop it                                                           |
-| `style/leftover`           | error   | A `<style>` has rules that cannot be inlined (`:hover`, selectors with no match). Convert them to attributes, or drop them                                                 |
+| `style/leftover`           | error   | A `<style>` has rules that cannot be inlined, such as `:hover` on an element that exists. The message lists them. Rules that match nothing are dropped, so unused Illustrator classes are fine |
 | `viewbox/underivable`      | error   | No `viewBox`, and `width`/`height` are not plain numbers or `px`. Add a `viewBox`                                                                                          |
 | `viewbox/invalid`          | error   | The `viewBox` is not four numbers with a positive width and height. Fix it                                                                                                 |
 | `viewbox/derived`          | warning | The `viewBox` was derived from `width` and `height`. Fine; add a `viewBox` to the file to silence it                                                                       |

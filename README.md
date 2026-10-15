@@ -37,7 +37,7 @@ const nope = <Icon name="nope" />; // type error: "nope" is not an icon name
 
 ## Get started
 
-Requires Node `^22.20 || >=24.11`. The example uses Next.js App Router.
+Requires Node `^22.20 || >=24.11`, and React 19 for `@svgworm/react`. The example uses Next.js App Router.
 
 **1. Install and set up**
 

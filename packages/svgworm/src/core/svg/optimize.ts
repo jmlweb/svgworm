@@ -11,6 +11,11 @@ import {
 // Phase one: every <style> rule and style="" declaration becomes a presentation attribute,
 // so later passes read colors from a single place and no stylesheet can leak between symbols.
 const STYLE_PLUGINS: readonly PluginConfig[] = [
+  // Design tools export every document class (Illustrator's .st0….st36) into each file. Rules
+  // whose selectors match nothing are harmless, so drop them rather than fail on them as
+  // leftovers (RPT-007). It must run before inlining: inlining removes the class attributes, and
+  // a rule such as an @media variant of an inlined class would then look unused and vanish.
+  'minifyStyles',
   {
     name: 'inlineStyles',
     params: { onlyMatchedOnce: false, removeMatchedSelectors: true },
@@ -66,7 +71,12 @@ export const findLeftoverStyles = (
   const errors: Diagnostic[] = [];
   walkElements(root, (element) => {
     if (element.name !== 'style') return;
-    const hasAtRule = getTextContent(element).includes('@');
+    const text = getTextContent(element);
+    const hasAtRule = text.includes('@');
+    const selectors = [...text.matchAll(/([^{}]+)\{/g)]
+      .map(([, selector = '']) => selector.trim())
+      .filter((selector) => selector !== '' && !selector.startsWith('@'))
+      .join(', ');
     errors.push({
       code: hasAtRule
         ? DiagnosticCode.UNSCOPABLE_STYLE
@@ -74,7 +84,7 @@ export const findLeftoverStyles = (
       file,
       message: hasAtRule
         ? '<style> has an at-rule (such as @media) that cannot be inlined, and a raw <style> leaks between icons in a sprite'
-        : '<style> has rules that cannot be inlined (such as :hover), and a raw <style> leaks between icons in a sprite',
+        : `<style> has rules that cannot be inlined (${selectors}), and a raw <style> leaks between icons in a sprite. Remove those rules, or move their effect into attributes`,
     });
   });
   return errors;

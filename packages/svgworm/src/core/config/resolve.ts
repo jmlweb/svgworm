@@ -114,7 +114,7 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
   const outPath = resolve(absoluteCwd, outDir);
   if (sourcePaths.some((source) => isInside(source, outPath))) {
     issues.push(
-      `outDir: "${outDir}" is inside a source folder, so the next build would read the sprites as icons`,
+      `outDir: "${outDir}" is inside a source folder, so the next build would read the sprites as icons. Move the icons out of that folder (for example to icons/), or write the sprites elsewhere with --out-dir or "outDir"`,
     );
   }
   if (isInside(outPath, resolve(absoluteCwd, moduleDir))) {

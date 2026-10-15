@@ -4,7 +4,7 @@
 
 Use it when a Next.js App Router (or any) app has its own folder of SVG icons and needs: no client JS, icon names checked at compile time, correct colors per icon (mono follows currentColor, multicolor is kept), gradients/masks/filters that render in Chromium, Firefox and WebKit, and byte-identical output on every OS.
 
-Requires Node ^22.20 || >=24.11. Any package manager: `pnpm add -D svgworm` or `npm install -D svgworm` (plus `@svgworm/react` as a dependency for React and Next.js), then `pnpm svgworm` or `npx svgworm`. The examples use pnpm.
+Requires Node ^22.20 || >=24.11. Any package manager: `pnpm add -D svgworm` or `npm install -D svgworm` (plus `@svgworm/react` as a dependency for React and Next.js; it needs React 19, so Next.js 15 or later), then `pnpm svgworm` or `npx svgworm`. The examples use pnpm.
 
 ## How to use it
 

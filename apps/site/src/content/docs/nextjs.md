@@ -10,7 +10,7 @@ Set svgworm up in a Next.js App Router app in three steps. You end up with:
 - **typed icon names**;
 - an `Icon` component that **runs only on the server**.
 
-Requires Node `^22.20 || >=24.11`.
+Requires Node `^22.20 || >=24.11` and React 19 (`@svgworm/react` has `react ^19` as a peer), so Next.js 15 or later. On React 18 the package manager only warns about the peer, and nothing tests that setup.
 
 ## Steps
 

@@ -32,7 +32,8 @@ describe('normalizeStyles', () => {
     const output = normalizeStyles(
       '<svg viewBox="0 0 1 1"><path style="fill:#f00;stroke:#00f" d="M0 0h1v1z"/></svg>',
     );
-    expect(output).toContain('fill="#f00"');
+    // minifyStyles may spell the color as its CSS name; normalizeColor maps both back.
+    expect(output).toMatch(/fill="(#f00|red)"/);
     expect(output).toContain('stroke="#00f"');
     expect(output).not.toContain('style=');
   });
@@ -49,6 +50,28 @@ describe('findLeftoverStyles', () => {
     expect(leftoverCodes(fixture('style/unscopable-media.svg'))).toEqual([
       'style/unscopable',
     ]);
+  });
+
+  // RPT-007: Illustrator exports carry every document class (.st0….st36), most unused.
+  it('drops rules whose selectors match nothing instead of failing', () => {
+    expect(
+      leftoverCodes(
+        '<svg viewBox="0 0 1 1"><style>.st0{fill:#000}.st1{fill:red}.st2:hover{fill:blue}</style><path class="st0" d="M0 0h1v1z"/></svg>',
+      ),
+    ).toEqual([]);
+  });
+
+  it('names the selectors left in the message', () => {
+    const parsed = parseSvgTree(
+      normalizeStyles(
+        '<svg viewBox="0 0 1 1"><style>.a:hover{fill:red}</style><path class="a" d="M0 0h1v1z"/></svg>',
+      ),
+    );
+    if (!parsed.ok) throw new Error(parsed.message);
+    const [error] = findLeftoverStyles(parsed.root, 'x.svg');
+    expect(error?.code).toBe('style/leftover');
+    expect(error?.message).toContain('.a:hover');
+    expect(error?.message).not.toContain('such as');
   });
 
   it('flags a rule that cannot be inlined', () => {
