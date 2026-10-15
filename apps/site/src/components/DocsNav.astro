@@ -1,12 +1,19 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
+type Section = {
+  readonly slug: string;
+  readonly text: string;
+};
+
 type Props = {
   readonly current: string;
   readonly docs: readonly CollectionEntry<'docs'>[];
+  /** The current page's second-level headings, listed under its entry. */
+  readonly sections?: readonly Section[];
 };
 
-const { current, docs } = Astro.props;
+const { current, docs, sections = [] } = Astro.props;
 const REPO = 'https://github.com/jmlweb/svgworm';
 ---
 
@@ -14,16 +21,28 @@ const REPO = 'https://github.com/jmlweb/svgworm';
   <p class="docs-nav-title">Docs</p>
   <ul>
     {
-      docs.map((doc) => (
-        <li>
-          <a
-            aria-current={current === `/docs/${doc.id}/` ? 'page' : undefined}
-            href={`/docs/${doc.id}/`}
-          >
-            {doc.data.title}
-          </a>
-        </li>
-      ))
+      docs.map((doc) => {
+        const isCurrent = current === `/docs/${doc.id}/`;
+        return (
+          <li>
+            <a
+              aria-current={isCurrent ? 'page' : undefined}
+              href={`/docs/${doc.id}/`}
+            >
+              {doc.data.navTitle ?? doc.data.title}
+            </a>
+            {isCurrent && sections.length > 0 && (
+              <ul aria-label="On this page" class="docs-toc">
+                {sections.map((section) => (
+                  <li>
+                    <a href={`#${section.slug}`}>{section.text}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })
     }
   </ul>
   <p class="docs-nav-title">Reference</p>

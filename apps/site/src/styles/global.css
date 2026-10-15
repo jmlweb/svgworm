@@ -53,6 +53,22 @@
   --term-bg: #1f1510;
   --term-ink: #eadbc4;
   --term-muted: #a88a70;
+  --term-tag: var(--worm);
+  --term-attr: #f0c27b;
+  --term-string: #8fd1a6;
+
+  /* Shiki (css-variables theme) in the docs: the same palette as the hand-colored landing samples. */
+  --astro-code-foreground: var(--term-ink);
+  --astro-code-background: var(--term-bg);
+  --astro-code-token-constant: var(--term-attr);
+  --astro-code-token-string: var(--term-string);
+  --astro-code-token-comment: var(--term-muted);
+  --astro-code-token-keyword: var(--term-tag);
+  --astro-code-token-parameter: var(--term-ink);
+  --astro-code-token-function: var(--term-attr);
+  --astro-code-token-string-expression: var(--term-string);
+  --astro-code-token-punctuation: #c4a88c;
+  --astro-code-token-link: var(--term-string);
 
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
@@ -217,7 +233,8 @@ pre {
   text-decoration: none;
 }
 
-.site-header nav a:hover {
+.site-header nav a:hover,
+.site-header nav a[aria-current='page'] {
   color: var(--accent);
 }
 
@@ -612,15 +629,15 @@ pre {
 }
 
 .c-tag {
-  color: var(--worm);
+  color: var(--term-tag);
 }
 
 .c-attr {
-  color: #f0c27b;
+  color: var(--term-attr);
 }
 
 .c-str {
-  color: #8fd1a6;
+  color: var(--term-string);
 }
 
 .c-comment {
@@ -868,6 +885,14 @@ pre {
   flex-wrap: wrap;
   gap: var(--space-4);
   margin-left: auto;
+}
+
+/* Tablets: the bento in two columns, the tall tile beside the two feature tiles. */
+
+@media (max-width: 1040px) {
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* Small screens */
@@ -1220,6 +1245,23 @@ h1 {
   font-weight: 600;
 }
 
+/* The current page's sections, nested under its entry. */
+.docs-toc {
+  margin: var(--space-1) 0 var(--space-2) var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--hairline);
+  font-size: 14px;
+}
+
+.docs-toc a {
+  padding-block: 4px;
+  color: var(--ink-muted);
+}
+
+.docs-toc a:hover {
+  color: var(--ink);
+}
+
 .docs-main {
   min-width: 0;
   max-width: 760px;
@@ -1265,8 +1307,8 @@ h1 {
   line-height: 1.55;
 }
 
-/* Shiki sets its own colors inline, so the block stays dark in both themes like the terminals. */
-.prose pre:not(.astro-code) {
+/* Dark in both themes like the terminals; Shiki reads the same --astro-code-* tokens. */
+.prose pre {
   background: var(--term-bg);
   color: var(--term-ink);
 }
@@ -1375,5 +1417,10 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1) var(--space-2);
+  }
+
+  /* Headings are a tap away on the page itself; the chip row stays short. */
+  .docs-toc {
+    display: none;
   }
 }

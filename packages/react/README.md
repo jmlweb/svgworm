@@ -14,13 +14,13 @@ export const Icon = createIcon(manifest);
 // <Icon name="home" /> or <Icon name="home" title="Go home" width={32} height={32} />
 ```
 
-- ♿ The icon is `aria-hidden` unless you pass `title` or `label`.
-- 🎛️ Size, `className` and `style` are standard props.
-- 📦 Peer dependency: `react` ^19.
+- The icon is `aria-hidden` unless you pass `title` or `label`.
+- Size, `className` and `style` are standard props.
+- Peer dependency: `react` ^19.
 
 ## Docs
 
-- 🚀 [Get started](https://github.com/jmlweb/svgworm#get-started)
-- 🧭 [Next.js setup, caching and `basePath`](https://svgworm.com/docs/nextjs/)
+- [Get started](https://github.com/jmlweb/svgworm#get-started)
+- [Next.js setup, caching and `basePath`](https://svgworm.com/docs/nextjs/)
 
 > **Status:** 0.x, versioned together with `svgworm`. The props can still change in a minor version before 1.0; see the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/react/CHANGELOG.md).

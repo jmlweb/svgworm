@@ -10,4 +10,7 @@ export default defineConfig({
   // Inline the small stylesheet: one request fewer.
   build: { inlineStylesheets: 'always' },
   integrations: [sitemap()],
+  // Shiki colors come from --astro-code-* custom properties (global.css), so docs code blocks
+  // share the landing page's terminal palette instead of a stock theme.
+  markdown: { shikiConfig: { theme: 'css-variables' } },
 });
