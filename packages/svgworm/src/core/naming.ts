@@ -30,6 +30,20 @@ const fail = (
   message: string,
 ): NameResult => ({ ok: false, error: { code, file, message } });
 
+/** The path segments that make up the name, without the extension. */
+const nameSegments = (
+  file: string,
+  options: { readonly flatten: boolean },
+): readonly string[] => {
+  const segments = file.split('/').filter((s) => s !== '' && s !== '.');
+  const last = segments.at(-1) ?? '';
+  const withoutExtension = [
+    ...segments.slice(0, -1),
+    last.replace(SVG_EXTENSION, ''),
+  ];
+  return options.flatten ? withoutExtension.slice(-1) : withoutExtension;
+};
+
 /** Public name from a path relative to its source folder (output contract, "Public name"). */
 export const deriveName = (
   relativePath: string,
@@ -43,16 +57,10 @@ export const deriveName = (
       'file name is not valid Unicode (undecodable bytes or lone surrogates)',
     );
   }
-  const segments = file.split('/').filter((s) => s !== '' && s !== '.');
-  const last = segments.at(-1) ?? '';
-  if (!SVG_EXTENSION.test(last)) {
+  if (!SVG_EXTENSION.test(file.split('/').at(-1) ?? '')) {
     return fail(DiagnosticCode.NOT_SVG_FILE, file, 'not an .svg file');
   }
-  const withoutExtension = [
-    ...segments.slice(0, -1),
-    last.replace(SVG_EXTENSION, ''),
-  ];
-  const kept = options.flatten ? withoutExtension.slice(-1) : withoutExtension;
+  const kept = nameSegments(file, options);
   const normalized = kept.map(normalizeSegment);
   const emptyIndex = normalized.indexOf('');
   if (emptyIndex !== -1) {
@@ -63,6 +71,31 @@ export const deriveName = (
     );
   }
   return { ok: true, name: normalized.join('/') };
+};
+
+const CASE_BOUNDARY = /(\p{Ll})(\p{Lu})/gu;
+
+/**
+ * Warning for name segments where letter case carried meaning (ADR-0021). The name keeps
+ * ADR-0007's case folding; the message suggests the file name that gives a readable one.
+ */
+export const caseFoldedWarning = (
+  relativePath: string,
+  options: { readonly flatten: boolean },
+): Diagnostic | undefined => {
+  const result = deriveName(relativePath, options);
+  if (!result.ok) return undefined;
+  const file = toPosix(relativePath).normalize('NFC');
+  const kept = nameSegments(file, options);
+  if (!kept.some((segment) => /\p{Ll}\p{Lu}/u.test(segment))) return undefined;
+  const readable = kept
+    .map((segment) => normalizeSegment(segment.replace(CASE_BOUNDARY, '$1-$2')))
+    .join('/');
+  return {
+    code: DiagnosticCode.CASE_FOLDED,
+    file,
+    message: `letter case is not kept in names: "${result.name}"; rename the file to ${readable}.svg for "${readable}"`,
+  };
 };
 
 const encodeChar = (char: string): string => {

@@ -22,7 +22,7 @@ import {
 } from './emit/manifest.ts';
 import { emitManifestJson, emitModule, emitTypes } from './emit/module.ts';
 import { DiagnosticCode, type Diagnostic } from './errors.ts';
-import { deriveName, toSymbolId } from './naming.ts';
+import { caseFoldedWarning, deriveName, toSymbolId } from './naming.ts';
 import { ColorKind } from './svg/color/classify.ts';
 import { resolveColorMode } from './svg/color/overrides.ts';
 import { Delivery } from './svg/references.ts';
@@ -137,6 +137,16 @@ export const compile = (
       flatten: options.flatten,
     });
     if (!result.ok) errors.push({ ...result.error, file: entry.file });
+    const caseFolded = result.ok
+      ? caseFoldedWarning(entry.source.relativePath, {
+          flatten: options.flatten,
+        })
+      : undefined;
+    if (caseFolded !== undefined) {
+      const diagnostic = { ...caseFolded, file: entry.file };
+      warnings.push(diagnostic);
+      onEvent({ type: 'warning', diagnostic });
+    }
     return { ...entry, name: result.ok ? result.name : undefined };
   });
   errors.push(

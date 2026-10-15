@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { deriveName, toSymbolId } from './naming.ts';
+import { caseFoldedWarning, deriveName, toSymbolId } from './naming.ts';
 
 const ok = (path: string, flatten = false) => {
   const result = deriveName(path, { flatten });
@@ -95,6 +95,59 @@ describe('deriveName and toSymbolId', () => {
   it('produces ids that are valid NCNames', () => {
     for (const [, name] of table) {
       expect(toSymbolId(name)).toMatch(/^i-[a-z0-9_-]+$/);
+    }
+  });
+});
+
+describe('caseFoldedWarning', () => {
+  const suggestion = (path: string, flatten = false) =>
+    caseFoldedWarning(path, { flatten })?.message;
+
+  it.each([
+    ['ArrowLeft.svg', 'arrowleft', 'arrow-left.svg'],
+    ['arrowRight.svg', 'arrowright', 'arrow-right.svg'],
+    ['SocialMedia/x.svg', 'socialmedia/x', 'social-media/x.svg'],
+    ['icons/HomeFilled.svg', 'icons/homefilled', 'icons/home-filled.svg'],
+    ['ÉtatCivil.svg', 'étatcivil', 'état-civil.svg'],
+  ])('warns for %s (name %s, suggests %s)', (path, name, suggested) => {
+    const warning = caseFoldedWarning(path, { flatten: false });
+    expect(warning).toMatchObject({ code: 'name/case-folded', file: path });
+    expect(warning?.message).toBe(
+      `letter case is not kept in names: "${name}"; rename the file to ${suggested} for "${suggested.replace(/\.svg$/, '')}"`,
+    );
+  });
+
+  it.each([
+    'home.svg',
+    'IC_Close.SVG',
+    'HOME.svg',
+    'Arrow Left.svg',
+    'ΟΔΟΣ.ΚΑΤΩ.svg',
+  ])('does not warn for %s', (path) => {
+    expect(caseFoldedWarning(path, { flatten: false })).toBeUndefined();
+  });
+
+  it('checks only the segments that reach the name with flatten', () => {
+    expect(suggestion('SocialMedia/x.svg', true)).toBeUndefined();
+    expect(suggestion('social/GitHubMark.svg', true)).toContain(
+      'rename the file to git-hub-mark.svg',
+    );
+  });
+
+  it('suggests a path whose derived name is the promised one', () => {
+    for (const path of [
+      'ArrowLeft.svg',
+      'SocialMedia/BrandX.svg',
+      'aB/cD.svg',
+    ]) {
+      const message = suggestion(path) ?? '';
+      const suggested = /rename the file to (\S+) for "([^"]+)"/.exec(message);
+      expect(suggested).not.toBeNull();
+      const derived = deriveName(suggested?.[1] ?? '', { flatten: false });
+      expect(derived).toEqual({ ok: true, name: suggested?.[2] });
+      expect(
+        caseFoldedWarning(suggested?.[1] ?? '', { flatten: false }),
+      ).toBeUndefined();
     }
   });
 });

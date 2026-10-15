@@ -3,6 +3,7 @@ export const DiagnosticCode = {
   NOT_SVG_FILE: 'path/not-svg',
   EMPTY_NAME: 'name/empty-segment',
   NAME_COLLISION: 'name/collision',
+  CASE_FOLDED: 'name/case-folded',
   INVALID_ENCODING: 'svg/invalid-encoding',
   INVALID_XML: 'svg/invalid-xml',
   NOT_SVG_ROOT: 'svg/not-svg-root',

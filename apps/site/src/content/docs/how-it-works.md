@@ -53,7 +53,7 @@ The exact shape of these files is the [output contract](https://github.com/jmlwe
 
 ## Names
 
-An icon's name is a pure function of its path inside the source folder ([ADR-0007](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0007-icon-naming-and-collision-policy.md)): `icons/brand/sunset.svg` is `brand/sunset`. Folders become namespaces (unless `flatten` is on), each segment is lower-cased and Unicode-normalized, and every run of spaces, `_`, `.` or other punctuation becomes one `-`. Accented and non-Latin names stay as they are (`café`), so they work as TypeScript string literals.
+An icon's name is a pure function of its path inside the source folder ([ADR-0007](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0007-icon-naming-and-collision-policy.md)): `icons/brand/sunset.svg` is `brand/sunset`. Folders become namespaces (unless `flatten` is on), each segment is lower-cased and Unicode-normalized, and every run of spaces, `_`, `.` or other punctuation becomes one `-`. Accented and non-Latin names stay as they are (`café`), so they work as TypeScript string literals. Letter case is never split: `ArrowLeft.svg` is `arrowleft`, and the build prints a `name/case-folded` warning that suggests renaming it to `arrow-left.svg` ([ADR-0021](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0021-no-camel-case-splitting-warn-when-case-carried-meaning.md)).
 
 The symbol id in the sprite is derived from the name: `i-` plus the name with `/` as `--` and any non-ASCII character as `_<hex>_` (`i-brand--sunset`, `i-caf_e9_`). It is always a valid HTML id, CSS identifier and URL fragment. Two files that produce the same name are an error that lists both; svgworm never renames or numbers anything silently.
 

@@ -149,7 +149,7 @@ Input: the file's path relative to the source folder it was found in.
 What this implies:
 
 - The name never contains ASCII uppercase, `_`, `.`, whitespace, invisible characters, `--`, or a leading or trailing `-`. A segment never starts or ends with `-`, and never starts with a combining mark.
-- **No camelCase splitting.** `ArrowLeft.svg` becomes `arrowleft`, not `arrow-left`. Case can't carry meaning, because case-insensitive file systems and git (`core.ignorecase`) don't reliably keep case-only renames.
+- **No camelCase splitting.** `ArrowLeft.svg` becomes `arrowleft`, not `arrow-left`. Case can't carry meaning, because case-insensitive file systems and git (`core.ignorecase`) don't reliably keep case-only renames. A segment with a lowercase letter followed by an uppercase one gets a `name/case-folded` warning that suggests the readable file name ([ADR-0021](adr/0021-no-camel-case-splitting-warn-when-case-carried-meaning.md)); the name itself does not change.
 - **No transliteration and no compatibility folding.** `café` stays `café`. Full-width `１２` is not the same name as `12`, and look-alike characters from different scripts stay distinct. Non-ASCII names are valid TS string literals.
 - No length limit beyond the file system's own.
 - Names may start with a digit (`2fa`, `24/add`). No name is reserved. Adapters look names up with `Map` or `Object.hasOwn`, never with a bare `obj[name]`, so a name like `constructor` is safe.

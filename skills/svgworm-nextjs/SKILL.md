@@ -99,6 +99,7 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 | Code | Fix |
 |------|-----|
 | `name/collision` | Two files map to one name (`arrow_left.svg` and `arrow-left.svg`, or the same name in two folders with `flatten`). Rename one; svgworm never renames silently |
+| `name/case-folded` (warning) | `ArrowLeft.svg` is named `arrowleft`: letter case is never split. Rename the file to the suggested `arrow-left.svg` if the readable name matters, and update the `name` props |
 | `svg/not-svg-root`, `svg/invalid-xml`, `svg/invalid-encoding` | The file is not a valid UTF-8 SVG. Re-export it |
 | `svg/forbidden-element`, `svg/forbidden-attribute`, `svg/external-reference` | `<script>`, `on*` event handlers and references to other files (`href`, `url(...)`) are rejected. Remove them or inline the asset |
 | `viewbox/underivable` | No `viewBox` and no plain-number `width`/`height`. Add a `viewBox` |

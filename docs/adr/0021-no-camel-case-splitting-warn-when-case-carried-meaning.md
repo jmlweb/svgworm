@@ -1,6 +1,6 @@
 # 0021. No camelCase splitting in icon names; warn when letter case carried meaning
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-15
 - **Task:** TSK-064
 - **Resolves:** Q-31 (re-examined after dogfooding)
@@ -30,7 +30,7 @@
 
 - ADR-0007's reasoning and its spike ([TSK-006](../../spikes/TSK-006-icon-naming/RESULTS.md)) on case-only renames and `core.ignorecase`.
 - TSK-064 dogfooding: PascalCase exports are common enough that the silent `arrowright` was reported as a bug.
-- `naming.test.ts` and `compile.test.ts` cover the warning: `ArrowLeft.svg` suggests `arrow-left.svg`, `IC_Close.SVG` and `home.svg` warn nothing, and the fixture corpus (no camelCase file) still builds without warnings.
+- `naming.test.ts` and `compile.test.ts` cover the warning: `ArrowLeft.svg` suggests `arrow-left.svg`, `SocialMedia/x.svg` suggests `social-media/x.svg` (only the kept segment with `flatten`), `IC_Close.SVG`, `HOME.svg`, `ΟΔΟΣ.ΚΑΤΩ.svg` and `home.svg` warn nothing, the suggested path always derives the promised name and warns nothing itself, and the fixture corpus (no camelCase file) still builds with its one `viewbox/derived` warning.
 
 ## Consequences
 

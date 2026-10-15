@@ -273,6 +273,27 @@ describe('compile: events', () => {
     expect(events.filter((event) => event.type === 'warning')).toHaveLength(1);
   });
 
+  it('warns once per camelCase file without changing its name', () => {
+    const events: BuildEvent[] = [];
+    const result = success(
+      compile([source('ArrowLeft.svg'), source('home.svg')], options, (event) =>
+        events.push(event),
+      ),
+    );
+    expect(result.icons.map((icon) => icon.name)).toEqual([
+      'arrowleft',
+      'home',
+    ]);
+    expect(result.warnings.map((item) => [item.code, item.file])).toEqual([
+      [DiagnosticCode.CASE_FOLDED, 'icons/ArrowLeft.svg'],
+    ]);
+    expect(
+      events.flatMap((event) =>
+        event.type === 'warning' ? [event.diagnostic.code] : [],
+      ),
+    ).toEqual([DiagnosticCode.CASE_FOLDED]);
+  });
+
   it('applies color overrides by public name', () => {
     const rules = [{ match: 'ui/*', color: 'preserve' as const }];
     const result = success(

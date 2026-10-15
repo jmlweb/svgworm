@@ -4,15 +4,15 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 17 |
-| Active | 2 |
-| Blocked | 0 |
-| Complete | 61 |
+| Pending | 16 |
+| Active | 0 |
+| Blocked | 2 |
+| Complete | 62 |
 
 ## Active Tasks
 
-- TSK-019: Launch outreach for svgworm v0.1 (P2)
-- TSK-030: Target repo list and direct migration PRs (P2)
+- TSK-019: Launch outreach for svgworm v0.1 (P2) [BLOCKED: Maintainer outreach: launch post publishing and launch date need the maintainer]
+- TSK-030: Target repo list and direct migration PRs (P2) [BLOCKED: Maintainer outreach: migration PRs to external repos must be opened by the maintainer]
 
 ## Pending Tasks
 
@@ -28,7 +28,6 @@
 | TSK-035 | Browser rendering matrix on product output (Playwright) | P3 | testing, browsers, ci, post-v0.1 | 2026-10-12 |
 | TSK-051 | Site font weight and font caching | P3 | site, performance | 2026-10-15 |
 | TSK-053 | Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes | P2 | launch, outreach | 2026-10-15 |
-| TSK-064 | Naming: split camelCase/PascalCase file names into kebab-case | P4 | naming, output-contract, adr | 2026-10-15 |
 | TSK-065 | Keep the previous hashed sprite to avoid 404s across deploys | P4 | output, deploy, caching | 2026-10-15 |
 | TSK-067 | Opt-in cross-origin (CDN) sprites via a minimal injecting loader | P3 |  | 2026-10-15 |
 | TSK-077 | Landing: before/after demo, SVG folder to sprite to typed icon | P2 | site, landing, adoption | 2026-10-15 |
