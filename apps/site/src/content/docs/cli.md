@@ -17,8 +17,10 @@ svgworm init [options]       Set a project up: config, predev/prebuild scripts, 
   --out-dir <dir>         Where sprite files are written. Default: public/icons
   --public-path <path>    URL path the sprites are served from. Default: /icons
   --module-dir <dir>      Where the manifest and types are written. Default: svgworm
-  --flatten               Drop folder names from icon names
+  --flatten               Drop folder names from icon names (--no-flatten to undo)
   --json                  Print one JSON document on stdout and nothing else
+  -h, --help              Show this help
+  -v, --version           Show the version
 ```
 
 Flags override the config file. The same options are available as [config keys](/docs/config/).
@@ -54,7 +56,7 @@ At the end of a build the CLI prints stats (icons, sprites, sizes, savings, time
 | `--no-component`          | Skip the component                                                                                                          |
 | `--no-scripts`            | Skip the `predev` and `prebuild` scripts                                                                                    |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
-| `--yes`                   | Accept every default without asking                                                                                         |
+| `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
 `init` reports the framework it chose and why (`flag` or `detected`) in the plain output and as `framework` and `frameworkSource` in `--json`. For Astro it writes `Icon.astro` instead of the React wiring; see the [Astro setup](/docs/astro/).
 

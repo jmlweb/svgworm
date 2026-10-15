@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://svgworm.com/sitemap-index.xml

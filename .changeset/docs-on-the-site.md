@@ -3,4 +3,4 @@
 '@svgworm/react': patch
 ---
 
-The npm package pages link to the docs on the website, https://svgworm.com/docs, instead of to the Markdown files on GitHub.
+The npm package pages link to the docs on the website, https://svgworm.com/docs, instead of to the Markdown files on GitHub, and the `svgworm` README mentions the Astro setup.

@@ -112,7 +112,7 @@ For an Astro site, use `--skill svgworm-astro`.
 ## Status
 
 > [!NOTE]
-> v0.1, on npm since 2026-10-13. Before 1.0 the output contract and flags can still change in a minor version; each change is in the [changelog](packages/svgworm/CHANGELOG.md).
+> 0.x, on npm since 2026-10-13. Before 1.0 the output contract and flags can still change in a minor version; each change is in the [changelog](packages/svgworm/CHANGELOG.md).
 
 ## Contributing
 

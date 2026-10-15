@@ -1,4 +1,6 @@
 ---
+import { version } from 'svgworm/package.json';
+
 import { manifest } from '../../svgworm/icons.js';
 import type { IconName } from '../../svgworm/icons.js';
 import Icon from './Icon.astro';
@@ -58,7 +60,7 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <p class="eyebrow">
-          <span class="dot"></span> v0.1 on npm · MIT · Node 22.20+
+          <span class="dot"></span> v{version} on npm · MIT · Node 22.20+
         </p>
         <h1>
           One sprite.
@@ -68,16 +70,16 @@ const terminalComment = `// <svg aria-hidden="true"><use href="${spriteUrl}#${te
         <p class="lede">
           svgworm digs through your folder of SVG files and leaves one
           type-safe, content-hashed sprite behind. Render it from React Server
-          Components in the Next.js App Router, and ship no icon code to the
-          browser.
+          Components in the Next.js App Router or from a plain Astro component,
+          and ship no icon code to the browser.
         </p>
         <Install />
         <div class="actions">
           <a class="button" href="/docs/nextjs/">
             Get started <Icon name="arrow-right" />
           </a>
-          <a class="button button-ghost" href="/docs/nextjs/">
-            <Icon name="book-open" /> Next.js guide
+          <a class="button button-ghost" href="/docs/astro/">
+            <Icon name="book-open" /> Astro guide
           </a>
         </div>
       </div>
@@ -313,8 +315,8 @@ pnpm svgworm init</code></pre>
         <p>
           Everything works without a prompt: flags, <code>--json</code>, stable
           exit codes, a JSON Schema for the config, and{' '}
-          <a href="/llms.txt">llms.txt</a>. The agent skill
-          installs svgworm in a Next.js app and fixes every error code.
+          <a href="/llms.txt">llms.txt</a>. The agent skills install
+          svgworm in a Next.js or an Astro app and fix every error code.
         </p>
       </div>
       <figure class="terminal terminal-small">
