@@ -2,7 +2,8 @@
 // Proves the site's claims after `astro build` (TSK-036, ADR-0016, TSK-038, ADR-0018):
 //   1. the icons come from the hashed sprite: every <use href> points at a sprite in the
 //      manifest, the sprite file is in dist/, and every icon in the manifest is used;
-//   2. _headers serves /icons/* immutable;
+//   2. _headers serves /icons/* immutable and every response with HSTS, a referrer policy and a
+//      Content-Security-Policy whose script hashes were filled in (TSK-052);
 //   3. every doc in src/content/docs has a page, and every page has a title, a description,
 //      a canonical URL and a sitemap entry;
 //   4. /llms.txt and /llms-full.txt are served, and llms-full.txt holds every doc.
@@ -116,6 +117,18 @@ if (
   )
 )
   problems.push('_headers does not serve /icons/* immutable');
+for (const name of [
+  'Strict-Transport-Security',
+  'Referrer-Policy',
+  'Content-Security-Policy',
+]) {
+  if (!new RegExp(`^/\\*\n(?:\\s+.*\n)*?\\s+${name}: `, 'm').test(headers))
+    problems.push(`_headers does not set ${name} on /*`);
+}
+if (headers.includes('__SCRIPT_HASHES__'))
+  problems.push(
+    '_headers still holds __SCRIPT_HASHES__; run scripts/csp-headers.mjs',
+  );
 
 if (problems.length > 0) {
   for (const problem of problems) console.error(problem);
@@ -124,5 +137,5 @@ if (problems.length > 0) {
 console.log(
   `checked ${String(files.length)} file(s) and ${String(pages.length)} page(s): ` +
     `${String(usedIds.size)} icon(s) from the hashed sprite, ${String(docSlugs.length)} doc(s) ` +
-    'with a page, title, description and sitemap entry, llms.txt and llms-full.txt, immutable /icons/*',
+    'with a page, title, description and sitemap entry, llms.txt and llms-full.txt, immutable /icons/*, security headers',
 );

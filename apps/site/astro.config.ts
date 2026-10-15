@@ -7,8 +7,12 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://svgworm.com',
   output: 'static',
-  // Inline the small stylesheet: one request fewer.
-  build: { inlineStylesheets: 'always' },
+  // The stylesheet is about 25 KB and the docs are nine pages (TSK-052): as a hashed file under
+  // /_astro/ it is fetched once and served immutable (public/_headers), instead of travelling
+  // inline with every page. The first visit pays one same-origin request, which HTTP/2 makes
+  // cheap; every docs navigation after it saves the 25 KB. 'auto' keeps inlining anything
+  // under 4 KB.
+  build: { inlineStylesheets: 'auto' },
   integrations: [sitemap()],
   // Shiki colors come from --astro-code-* custom properties (global.css), so docs code blocks
   // share the landing page's terminal palette instead of a stock theme.

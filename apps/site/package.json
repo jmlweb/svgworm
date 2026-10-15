@@ -10,7 +10,7 @@
   "scripts": {
     "icons": "svgworm",
     "dev": "svgworm && astro dev",
-    "build": "svgworm && astro build",
+    "build": "svgworm && astro build && node scripts/csp-headers.mjs",
     "preview": "astro preview",
     "check": "svgworm check",
     "check:output": "node scripts/check-output.mjs",
