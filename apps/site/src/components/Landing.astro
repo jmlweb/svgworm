@@ -53,7 +53,19 @@ const features: readonly Feature[] = [
   },
 ];
 
-const swatches = ['#933a43', '#b07a52', '#3d7a5c', '#3b5f9a'] as const;
+// The live color demo: radios pick a text color, :has() applies it to the stage (no JS).
+const swatches = [
+  { id: 'clay', label: 'Red clay', color: '#933a43' },
+  { id: 'sienna', label: 'Sienna', color: '#b07a52' },
+  { id: 'moss', label: 'Moss', color: '#3d7a5c' },
+  { id: 'river', label: 'River blue', color: '#3b5f9a' },
+] as const;
+const swatchStyle = swatches
+  .map(
+    (swatch) =>
+      `.color-demo:has(#swatch-${swatch.id}:checked) .color-stage{color:${swatch.color}}`,
+  )
+  .join('');
 const suggestions = ['terminal'] as const;
 const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`;
 ---
@@ -75,7 +87,7 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           type-safe, content-hashed sprite behind. Render it in Next.js Server
           Components or Astro, with no icon code in the browser.
         </p>
-        <Install />
+        <Install id="hero" />
         <div class="actions">
           <a class="button" href="/docs/">
             Get started <Icon name="arrow-right" />
@@ -300,21 +312,33 @@ pnpm svgworm</code></pre>
         </ul>
       </div>
       <div class="color-demo">
+        <style set:html={swatchStyle} />
         <p>
           Same sprite, same <code>&lt;use href&gt;</code>, decided per icon.
-          Each swatch sets a different text color: the mono folder follows it,
-          the multicolor snail keeps its own colors.
+          Pick a text color: the mono folder follows it, the multicolor snail
+          keeps its own colors. No JavaScript, only CSS <code>color</code>.
         </p>
-        <div class="swatches">
+        <fieldset class="swatches">
+          <legend class="visually-hidden">Text color</legend>
           {
-            swatches.map((color) => (
-              <span style={`color:${color}`}>
-                <Icon height={36} name="folder-open" width={36} />
-                <Icon height={36} name="emoji/snail" width={36} />
-              </span>
+            swatches.map((swatch, index) => (
+              <label class="swatch" style={`--swatch:${swatch.color}`}>
+                <input
+                  checked={index === 0}
+                  id={`swatch-${swatch.id}`}
+                  name="swatch"
+                  type="radio"
+                  value={swatch.id}
+                />
+                <span class="visually-hidden">{swatch.label}</span>
+              </label>
             ))
           }
-        </div>
+        </fieldset>
+        <p class="color-stage">
+          <Icon height={56} name="folder-open" width={56} />
+          <Icon height={56} name="emoji/snail" width={56} />
+        </p>
       </div>
     </div>
   </section>
@@ -352,7 +376,7 @@ pnpm svgworm</code></pre>
         One <code>init</code>, Next.js or Astro, and your icons ship as one
         cached file.
       </p>
-      <Install />
+      <Install id="cta" />
       <div class="actions">
         <a class="button" href="/docs/">
           Get started <Icon name="arrow-right" />
