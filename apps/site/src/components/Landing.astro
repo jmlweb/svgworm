@@ -128,19 +128,24 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <span class="dot"></span> v{version} on npm · MIT · Node ^22.20 || >=24.11
         </p>
         <h1>
-          One sprite.
+          Your SVGs.
           <br />
-          <span class="squiggle">Zero client JS.</span>
+          <span class="squiggle">One sprite.</span>
         </h1>
         <p class="lede">
-          Icon libraries ship every icon as JavaScript. svgworm digs through
-          your SVG folder and leaves <strong
-            >one type-safe, content-hashed sprite</strong
-          > behind. Render it in Next.js Server Components or Astro with <strong
+          Drop in the SVGs your designers export. svgworm writes <strong
+            >one content-hashed sprite</strong
+          > and a type with every icon name. Logos keep their colors, mono icons
+          follow <code>currentColor</code>, and a typo fails <code>tsc</code>.
+          Render it in Next.js Server Components, Vite or Astro with <strong
             >zero client JS</strong
-          > for icons.
+          >, and no Turbopack plugin.
         </p>
         <Install id="hero" />
+        <p class="hero-fit">
+          Only using lucide or another icon set? Its React package is fine.
+          svgworm is for the icons you own.
+        </p>
         <div class="agent-prompt">
           <p class="agent-prompt-label">Or paste this into your coding agent</p>
           <pre aria-label="Prompt for your coding agent" class="code" data-copy role="region" tabindex="0"><code>{setupPrompt}</code></pre>
@@ -261,20 +266,21 @@ svgworm/icons.d.ts
   <section aria-labelledby="why" class="section">
     <div class="wrap">
       <p class="kicker">Why svgworm</p>
-      <h2 id="why">Icons that stay out of your bundle.</h2>
+      <h2 id="why">Icons that render right, with no config.</h2>
       <p class="section-lede">
-        The usual way is one React component per icon. Every icon ships as
-        JavaScript, and its path data repeats in the HTML on every render.
-        svgworm ships <strong>one cached file and a name</strong>. Nothing else
-        reaches the browser.{' '}
-        <a href="/docs/comparison/">How it compares with SVGR and @neodx/svg</a>.
+        A sprite tool has to decide, per icon, whether to turn its fills into
+        <code>currentColor</code>. Do it for the whole folder and logos turn
+        into black blobs; never do it and mono icons ignore dark mode. svgworm
+        decides per icon: on 31,390 icons it agreed with the rendering 99.98%
+        of the time, and it <strong>recolored 0 multicolor icons</strong>.{' '}
+        <a href="https://github.com/jmlweb/svgworm/blob/main/docs/posts/per-icon-color.md"
+          >How it decides</a
+        >.
       </p>
       <p class="section-lede">
-        Measured with the same 20 Lucide icons in Next.js 16. On a server page,
-        <strong>svgworm adds no client JS</strong>; lucide-react still ships a
-        chunk. In a client component, svgworm adds the least. The gap is 1 to
-        3 KiB gzip at this size.{' '}
-        <a href="/docs/comparison/#client-js-measured">Method and numbers</a>.
+        Everything else stays out of your bundle: SVGR turns every icon into
+        JavaScript, svgworm ships <strong>one cached file and a name</strong>.{' '}
+        <a href="/docs/comparison/">How it compares with SVGR and @neodx/svg</a>.
       </p>
       <div class="bento">
         <article class="tile tile-wide">
@@ -367,8 +373,8 @@ svgworm/icons.d.ts
 <span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
       </figure>
       <div class="agent-migrate">
-        <h3>Migrating from another icon library?</h3>
-        <p>Paste one of these prompts into your agent.</p>
+        <h3>Moving from SVGR, or mixing an icon set with your own SVGs?</h3>
+        <p>Move them into one sprite. Paste one of these prompts into your agent.</p>
         {
           migrationPrompts.map((prompt) => (
             <div class="agent-prompt">

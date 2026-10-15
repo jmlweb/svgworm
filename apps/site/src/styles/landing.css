@@ -1024,6 +1024,14 @@
   }
 }
 
+/* Who svgworm is not for, under the hero install box: stated up front so the right people stay. */
+.hero-fit {
+  margin: var(--space-3) 0 var(--space-6);
+  color: var(--ink-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 /* Prompts to paste into a coding agent (TSK-089): wrapped, so the whole prompt shows without
    horizontal scrolling. */
 .agent-prompt {

@@ -7,7 +7,14 @@ export const setupPrompt = `Set up svgworm in this project for my SVG icons. Rea
 const migrationPrompt = (from: string) =>
   `Migrate this project from ${from} to svgworm. Read ${LLMS_TXT} first and set svgworm up with the guide for this project's framework. Then copy the SVG source of each ${from} icon the code uses into the icons folder, replace every ${from} import with the svgworm icon component, and remove ${from} from package.json once nothing imports it. Run the build and the type check to confirm every icon name still resolves.`;
 
+const svgrPrompt = `Migrate this project's SVG icons from SVGR to svgworm. Read ${LLMS_TXT} first and set svgworm up with the guide for this project's framework, with the folder that holds the SVG files SVGR imports as the svgworm source. Replace every SVGR icon import and its component with the svgworm icon component, keeping the same icons. Remove the SVGR loader rules from the bundler config and @svgr/webpack from package.json once nothing uses them. Run the build and the type check to confirm every icon name resolves.`;
+
 export const migrationPrompts = [
+  {
+    id: 'svgr',
+    label: 'From SVGR',
+    text: svgrPrompt,
+  },
   {
     id: 'lucide-react',
     label: 'From lucide-react',
