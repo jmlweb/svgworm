@@ -1194,6 +1194,10 @@ h1 {
 
 /* Framework switch for the install command (TSK-049): radios plus :has(), no script. */
 .install-switch {
+  /* A grid item (the CTA) does not shrink below its nowrap command without this; the command
+     then scrolls inside its own box. */
+  min-width: 0;
+  max-width: 100%;
   margin: 0 0 var(--space-6);
 }
 
@@ -1259,6 +1263,11 @@ h1 {
   color: var(--term-ink);
   font-family: var(--font-mono);
   font-size: 14px;
+}
+
+/* `.prose p` caps paragraphs at 68ch, which beats `.install`'s own cap; keep the command in the column. */
+.prose p.install {
+  max-width: 100%;
 }
 
 .install code {
