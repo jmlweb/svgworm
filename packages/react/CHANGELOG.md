@@ -1,5 +1,21 @@
 # @svgworm/react
 
+## 0.4.1
+
+### Patch Changes
+
+- 09b883e: Smoother first run on real projects:
+  
+  - SVGs exported by Illustrator and other design tools no longer fail with `style/leftover` because of unused classes in their `<style>`. Rules that match nothing are dropped. A rule that really cannot be inlined (such as `:hover` on an element that exists) still fails, and the message now lists those selectors.
+  - Every CSS named color is recognized when deciding mono or multicolor (before, only 31 names were known).
+  - The `outDir is inside a source folder` error says how to fix it: move the icons out of `public/`, or write the sprites elsewhere with `--out-dir`.
+  - The components `svgworm init` writes (`icon.tsx`, `Icon.astro`, `SvgwormLoader.astro`) fit in 80 columns, so they pass a default ESLint `max-len`.
+  - The docs state that `@svgworm/react` needs React 19 (Next.js 15 or later).
+- 03351f0: Faster builds: each icon now goes through svgo once instead of five times. A cold build of lucide-static 1.57 (2,154 icons) spends about 25% less time transforming icons. The output is byte-identical and the errors are the same, in the same order.
+- 51fb894: Fix icons whose `viewBox` does not start at `0 0` (for example `19 19 106 106`, common in cropped logos and flags) rendering shifted and clipped. `Icon` from `@svgworm/react` and the `Icon.astro` that `svgworm init` writes now give the `<svg>` only the viewBox size (`viewBox="0 0 106 106"`), and the symbol in the sprite keeps the origin ([ADR-0030](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0030-consumer-viewbox-keeps-only-the-size.md)).
+  
+  Astro projects: `svgworm init` never overwrites a component you may have edited, so regenerate it. Delete `src/components/Icon.astro` (or `components/Icon.astro`) and run `svgworm init --yes`.
+
 ## 0.4.0
 
 No changes in this release.
