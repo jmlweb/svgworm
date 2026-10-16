@@ -1,6 +1,6 @@
 # 0033. Optional Vite plugin as a `svgworm/vite` subpath
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-16
 - **Task:** TSK-091
 - **Resolves:** none (follows Q-21, answered by TSK-024)
