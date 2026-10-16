@@ -51,3 +51,4 @@
 | LRN-045 | A new vite version in any workspace package splits vitest's vite peer and untypes vitest configs | tooling, vite, vitest, pnpm, lint | active | 2026-10-15 |
 | LRN-046 | An XML-illegal character in a spike payload makes DOMParser reject the whole sprite | security, svg, spike, testing | active | 2026-10-15 |
 | LRN-047 | <use> draws a symbol at 0,0: the consumer viewBox must not carry the icon's origin | svg, use, viewbox, render, fixtures | active | 2026-10-15 |
+| LRN-048 | svgo plugins can carry svgworm's own steps through one optimize() run | svgo, perf, core, errors | active | 2026-10-16 |

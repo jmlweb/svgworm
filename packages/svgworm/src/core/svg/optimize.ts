@@ -10,7 +10,7 @@ import {
 
 // Phase one: every <style> rule and style="" declaration becomes a presentation attribute,
 // so later passes read colors from a single place and no stylesheet can leak between symbols.
-const STYLE_PLUGINS: readonly PluginConfig[] = [
+export const STYLE_PLUGINS: readonly PluginConfig[] = [
   // Design tools export every document class (Illustrator's .st0….st36) into each file. Rules
   // whose selectors match nothing are harmless, so drop them rather than fail on them as
   // leftovers (RPT-007). It must run before inlining: inlining removes the class attributes, and
@@ -26,7 +26,7 @@ const STYLE_PLUGINS: readonly PluginConfig[] = [
 // Phase two is the pinned optimizer config (contract: "SVG bytes come from the pinned svgo
 // version with the core's fixed config"). Changing it changes output bytes, so it needs a
 // changeset and a review of the contract snapshots.
-const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
+export const OPTIMIZE_PLUGINS: readonly PluginConfig[] = [
   // SVG 2 `href` works in every supported browser, and it lets removeUnusedNS drop the
   // xlink namespace so the sprite root needs no extra declarations.
   'removeXlink',

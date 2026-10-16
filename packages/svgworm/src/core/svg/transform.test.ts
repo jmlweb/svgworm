@@ -1,21 +1,44 @@
+import { optimize, type CustomPlugin } from 'svgo';
 import { describe, expect, it, vi } from 'vitest';
 
+import type * as classifyModule from './color/classify.ts';
 import type * as optimizeModule from './optimize.ts';
-import type * as treeModule from './tree.ts';
 
 import { ColorMode } from '../config/schema.ts';
 import { DiagnosticCode } from '../errors.ts';
-import { normalizeStyles } from './optimize.ts';
+import { classifyIcon } from './color/classify.ts';
 import { transformIcon } from './transform.ts';
-import { mutateSvgTree } from './tree.ts';
 
-vi.mock('./tree.ts', async (importOriginal) => {
-  const actual = await importOriginal<typeof treeModule>();
-  return { ...actual, mutateSvgTree: vi.fn(actual.mutateSvgTree) };
+// Nothing in the fixtures makes a style or optimize plugin throw, so a test plugin at the end
+// of each list throws on demand.
+const { throwIn, throwingPlugin } = vi.hoisted(() => {
+  const state = { stage: undefined as string | undefined };
+  return {
+    throwIn: state,
+    throwingPlugin: (stage: string): CustomPlugin => ({
+      name: `test-throw-${stage}`,
+      fn: () => {
+        if (state.stage === stage) {
+          state.stage = undefined;
+          throw new Error('Unexpected token in CSS');
+        }
+        return null;
+      },
+    }),
+  };
+});
+
+vi.mock('./color/classify.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof classifyModule>();
+  return { ...actual, classifyIcon: vi.fn(actual.classifyIcon) };
 });
 vi.mock('./optimize.ts', async (importOriginal) => {
   const actual = await importOriginal<typeof optimizeModule>();
-  return { ...actual, normalizeStyles: vi.fn(actual.normalizeStyles) };
+  return {
+    ...actual,
+    STYLE_PLUGINS: [...actual.STYLE_PLUGINS, throwingPlugin('style')],
+    OPTIMIZE_PLUGINS: [...actual.OPTIMIZE_PLUGINS, throwingPlugin('optimize')],
+  };
 });
 
 const input = {
@@ -66,18 +89,14 @@ describe('transformIcon: failure boundaries (RPT-001)', () => {
   });
 
   it('throws on an internal failure instead of blaming the icon', () => {
-    vi.mocked(mutateSvgTree).mockImplementationOnce(() => {
-      throw new Error('svgo did not run the transform');
+    vi.mocked(classifyIcon).mockImplementationOnce(() => {
+      throw new Error('classify broke');
     });
-    expect(() => transformIcon(input)).toThrow(
-      'svgo did not run the transform',
-    );
+    expect(() => transformIcon(input)).toThrow('classify broke');
   });
 
   it('reports an svgo failure on the input as a diagnostic on the file', () => {
-    vi.mocked(normalizeStyles).mockImplementationOnce(() => {
-      throw new Error('Unexpected token in CSS');
-    });
+    throwIn.stage = 'style';
     const result = transformIcon(input);
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -88,5 +107,91 @@ describe('transformIcon: failure boundaries (RPT-001)', () => {
         message: 'svgo could not process the file: Unexpected token in CSS',
       },
     ]);
+  });
+});
+
+describe('transformIcon: one svgo run, same error precedence (TSK-096)', () => {
+  const NS = 'xmlns="http://www.w3.org/2000/svg"';
+  const MEDIA = '<style>@media (min-width:1px){path{fill:red}}</style>';
+  const codesOf = (markup: string, stage?: string) => {
+    throwIn.stage = stage;
+    const result = transformIcon({
+      ...input,
+      content: new TextEncoder().encode(markup),
+    });
+    throwIn.stage = undefined;
+    return result.ok ? [] : result.errors.map((error) => error.code);
+  };
+
+  it('pins that svgo lets a plugin throw leave optimize as is, unwrapped', () => {
+    const sentinel = new Error('stop');
+    const plugin: CustomPlugin = {
+      name: 'throw-sentinel',
+      fn: () => {
+        throw sentinel;
+      },
+    };
+    let caught: unknown;
+    try {
+      optimize(`<svg ${NS}/>`, { plugins: [plugin, 'preset-default'] });
+    } catch (error) {
+      caught = error;
+    }
+    expect(caught).toBe(sentinel);
+  });
+
+  it('reports a parse error first, with its line and column', () => {
+    const result = transformIcon({
+      ...input,
+      content: new TextEncoder().encode(`<svg ${NS}><script>`),
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors.map((error) => error.code)).toEqual([
+      DiagnosticCode.INVALID_XML,
+    ]);
+    expect(result.errors[0]?.message).toMatch(/^line \d+, column \d+: /);
+  });
+
+  it('reports validation before the viewBox, styles and svgo', () => {
+    expect(codesOf(`<svg ${NS}>${MEDIA}<script/></svg>`, 'style')).toEqual([
+      DiagnosticCode.FORBIDDEN_ELEMENT,
+    ]);
+  });
+
+  it('reports the viewBox before styles and svgo', () => {
+    expect(
+      codesOf(`<svg ${NS}>${MEDIA}<path d="M0 0"/></svg>`, 'style'),
+    ).toEqual([DiagnosticCode.MISSING_VIEWBOX]);
+  });
+
+  it('reports a style plugin failure before leftover styles', () => {
+    expect(
+      codesOf(
+        `<svg ${NS} viewBox="0 0 24 24">${MEDIA}<path d="M0 0"/></svg>`,
+        'style',
+      ),
+    ).toEqual([DiagnosticCode.INVALID_XML]);
+  });
+
+  it('reports leftover styles before an optimize plugin failure', () => {
+    expect(
+      codesOf(
+        `<svg ${NS} viewBox="0 0 24 24">${MEDIA}<path d="M0 0"/></svg>`,
+        'optimize',
+      ),
+    ).toEqual([DiagnosticCode.UNSCOPABLE_STYLE]);
+  });
+
+  it('reports an optimize plugin failure as svgo failing on the file', () => {
+    const result = (() => {
+      throwIn.stage = 'optimize';
+      return transformIcon(input);
+    })();
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors[0]?.message).toBe(
+      'svgo could not process the file: Unexpected token in CSS',
+    );
   });
 });

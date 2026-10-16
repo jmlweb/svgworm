@@ -12,6 +12,13 @@ export type ParseResult =
   | { readonly ok: true; readonly root: XastRoot }
   | { readonly ok: false; readonly message: string };
 
+/** svgo names the document "<input>"; the diagnostic already names the file. */
+export const describeParseError = (error: unknown): string =>
+  (error instanceof Error ? error.message : String(error)).replace(
+    /^<input>:(\d+):(\d+): /,
+    'line $1, column $2: ',
+  );
+
 /**
  * svgo 4 has no public parse function (LRN-015). A capture plugin on a no-op run hands us
  * the parsed tree, and the parser's error is the only XML validation we need.
@@ -31,14 +38,7 @@ export const parseSvgTree = (text: string): ParseResult => {
       ],
     });
   } catch (error) {
-    return {
-      ok: false,
-      // svgo names the document "<input>"; the diagnostic already names the file.
-      message: (error instanceof Error ? error.message : String(error)).replace(
-        /^<input>:(\d+):(\d+): /,
-        'line $1, column $2: ',
-      ),
-    };
+    return { ok: false, message: describeParseError(error) };
   }
   return captured === undefined
     ? { ok: false, message: 'svgo did not produce a tree' }

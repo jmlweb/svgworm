@@ -1,3 +1,5 @@
+import { optimize, type CustomPlugin } from 'svgo';
+
 import { ColorMode } from '../config/schema.ts';
 import { DiagnosticCode, type Diagnostic } from '../errors.ts';
 import { classifyIcon, ColorKind } from './color/classify.ts';
@@ -6,8 +8,8 @@ import { rewriteToCurrentColor } from './color/rewrite.ts';
 import { renameIds } from './ids.ts';
 import {
   findLeftoverStyles,
-  normalizeStyles,
-  optimizeMarkup,
+  OPTIMIZE_PLUGINS,
+  STYLE_PLUGINS,
 } from './optimize.ts';
 import {
   dropNoopClips,
@@ -17,10 +19,10 @@ import {
 } from './references.ts';
 import {
   collectLicenseComments,
+  describeParseError,
   getDocumentElement,
-  mutateSvgTree,
-  parseSvgTree,
   removeAttribute,
+  SERIALIZE_OPTIONS,
   walkElements,
 } from './tree.ts';
 import { decodeSource, validateTree } from './validate.ts';
@@ -82,30 +84,28 @@ const fail = (errors: readonly Diagnostic[]): TransformResult => ({
 });
 
 /**
- * svgo plugins can throw on odd but well-formed input (CSS it cannot parse, for one).
- * That is the user's file, so it comes back as a diagnostic. Nothing else in the
- * pipeline is caught: a failure there is a svgworm bug and must surface as one.
+ * Ends the single svgo run from one of svgworm's plugins with diagnostics on the file. svgo 4.1
+ * lets a plugin's throw leave `optimize` as is, without wrapping it (pinned in
+ * transform.test.ts), so the catch can tell it apart from a failure inside svgo.
  */
-const runSvgo = (
-  pass: (text: string) => string,
-  text: string,
-  file: string,
-):
-  | { readonly ok: true; readonly text: string }
-  | { readonly ok: false; readonly error: Diagnostic } => {
-  try {
-    return { ok: true, text: pass(text) };
-  } catch (error) {
-    return {
-      ok: false,
-      error: {
-        code: DiagnosticCode.INVALID_XML,
-        file,
-        message: `svgo could not process the file: ${error instanceof Error ? error.message : String(error)}`,
-      },
-    };
+class Rejection extends Error {
+  readonly errors: readonly Diagnostic[];
+  constructor(errors: readonly Diagnostic[]) {
+    super('svgworm rejected the icon');
+    this.name = 'Rejection';
+    this.errors = errors;
   }
-};
+}
+
+// Which code was running when the svgo run threw. svgo plugins can throw on odd but
+// well-formed input (CSS they cannot parse, for one); that is the user's file, so it comes
+// back as a diagnostic. A throw from svgworm's own steps is a svgworm bug and surfaces as one.
+const Stage = {
+  PARSE: 'parse',
+  SVGWORM: 'svgworm',
+  SVGO: 'svgo',
+} as const;
+type Stage = (typeof Stage)[keyof typeof Stage];
 
 export type TransformInput = {
   readonly content: Uint8Array;
@@ -125,83 +125,127 @@ export const transformIcon = (input: TransformInput): TransformResult => {
   const decoded = decodeSource(input.content, file);
   if (!decoded.ok) return fail([decoded.error]);
 
-  const raw = parseSvgTree(decoded.text);
-  if (!raw.ok) {
-    return fail([
-      { code: DiagnosticCode.INVALID_XML, file, message: raw.message },
-    ]);
-  }
-  const rawErrors = validateTree(raw.root, file);
-  if (rawErrors.length > 0) return fail(rawErrors);
-  // Read before svgo runs: its preset strips every comment, license or not.
-  const licenses = collectLicenseComments(raw.root);
+  // One svgo run per icon (TSK-096): every pass used to be a full parse and stringify. The
+  // plugin order keeps the old order of checks: parse, validate, viewBox, styles, leftover
+  // styles, optimize, then recolor and rename.
+  // Widened on purpose: the plugins reassign it inside closures, which TypeScript does not track.
+  let stage = Stage.PARSE as Stage;
+  let licenses: readonly string[] = [];
+  let viewBox = { viewBox: '', isDerived: false };
+  let outcome:
+    | {
+        readonly color: ColorKind;
+        readonly hasReferences: boolean;
+        readonly attributes: readonly (readonly [string, string])[];
+      }
+    | undefined;
 
-  const rootAttributes = getDocumentElement(raw.root)?.attributes ?? {};
-  const viewBox = resolveViewBox(rootAttributes, file);
-  if (!viewBox.ok) return fail([viewBox.error]);
+  const intake: CustomPlugin = {
+    name: 'svgworm-intake',
+    fn: (root) => {
+      stage = Stage.SVGWORM;
+      const errors = validateTree(root, file);
+      if (errors.length > 0) throw new Rejection(errors);
+      // Read before the optimize plugins run: the preset strips every comment, license or not.
+      licenses = collectLicenseComments(root);
+      // A copy, because the style plugins write to the root's attributes.
+      const resolved = resolveViewBox(
+        { ...getDocumentElement(root)?.attributes },
+        file,
+      );
+      if (!resolved.ok) throw new Rejection([resolved.error]);
+      viewBox = resolved;
+      stage = Stage.SVGO;
+      return null;
+    },
+  };
 
-  const styled = runSvgo(normalizeStyles, decoded.text, file);
-  if (!styled.ok) return fail([styled.error]);
-  const styledTree = parseSvgTree(styled.text);
-  if (!styledTree.ok) {
+  const leftover: CustomPlugin = {
+    name: 'svgworm-leftover',
+    fn: (root) => {
+      stage = Stage.SVGWORM;
+      const errors = findLeftoverStyles(root, file);
+      if (errors.length > 0) throw new Rejection(errors);
+      stage = Stage.SVGO;
+      return null;
+    },
+  };
+
+  const finish: CustomPlugin = {
+    name: 'svgworm-transform',
+    fn: (root) => {
+      stage = Stage.SVGWORM;
+      const document = getDocumentElement(root);
+      const classification = classifyIcon(root);
+      const isForced = input.mode === ColorMode.MONO;
+      if (isForced && classification.flags.length > 0) {
+        throw new Rejection([
+          {
+            code: DiagnosticCode.FORCED_MONO_UNSAFE,
+            file,
+            message: `color "mono" is forced, but the icon has ${classification.flags.map(describePaintFlag).join(' and ')}, which cannot follow currentColor`,
+          },
+        ]);
+      }
+      const isRecolored =
+        isForced ||
+        (input.mode === ColorMode.AUTO &&
+          classification.kind === ColorKind.MONO);
+      if (isRecolored) rewriteToCurrentColor(root, classification);
+
+      walkElements(root, (element) => {
+        removeAttribute(element, 'class');
+      });
+      dropNoopClips(root, viewBox.viewBox);
+      renameIds(root, input.symbolId);
+
+      // Checked while the root still carries its attributes: a filter or mask can sit there.
+      const hasReferences = hasUrlReferences(root);
+      const attributes = Object.entries(document?.attributes ?? {}).filter(
+        ([name]) => !isRootOnly(name),
+      );
+      // Leave `<svg>` bare so the inner markup can be sliced out of the serialization.
+      Object.keys(document?.attributes ?? {}).forEach((name) => {
+        if (document !== undefined) removeAttribute(document, name);
+      });
+      outcome = {
+        color: isRecolored ? ColorKind.MONO : ColorKind.MULTICOLOR,
+        hasReferences,
+        attributes,
+      };
+      return null;
+    },
+  };
+
+  let serialized: string;
+  try {
+    serialized = optimize(decoded.text, {
+      multipass: false,
+      js2svg: SERIALIZE_OPTIONS,
+      plugins: [
+        intake,
+        ...STYLE_PLUGINS,
+        leftover,
+        ...OPTIMIZE_PLUGINS,
+        finish,
+      ],
+    }).data;
+  } catch (error) {
+    if (error instanceof Rejection) return fail(error.errors);
+    if (stage === Stage.SVGWORM) throw error;
     return fail([
       {
         code: DiagnosticCode.INVALID_XML,
         file,
-        message: styledTree.message,
+        message:
+          stage === Stage.PARSE
+            ? describeParseError(error)
+            : `svgo could not process the file: ${error instanceof Error ? error.message : String(error)}`,
       },
     ]);
   }
-  const leftover = findLeftoverStyles(styledTree.root, file);
-  if (leftover.length > 0) return fail(leftover);
-
-  const optimized = runSvgo(optimizeMarkup, styled.text, file);
-  if (!optimized.ok) return fail([optimized.error]);
-
-  const outcome = mutateSvgTree(optimized.text, (root) => {
-    const document = getDocumentElement(root);
-    const classification = classifyIcon(root);
-    const isForced = input.mode === ColorMode.MONO;
-    if (isForced && classification.flags.length > 0) {
-      return {
-        ok: false as const,
-        error: {
-          code: DiagnosticCode.FORCED_MONO_UNSAFE,
-          file,
-          message: `color "mono" is forced, but the icon has ${classification.flags.map(describePaintFlag).join(' and ')}, which cannot follow currentColor`,
-        },
-      };
-    }
-    const isRecolored =
-      isForced ||
-      (input.mode === ColorMode.AUTO && classification.kind === ColorKind.MONO);
-    if (isRecolored) rewriteToCurrentColor(root, classification);
-
-    walkElements(root, (element) => {
-      removeAttribute(element, 'class');
-    });
-    dropNoopClips(root, viewBox.viewBox);
-    renameIds(root, input.symbolId);
-
-    // Checked while the root still carries its attributes: a filter or mask can sit there.
-    const hasReferences = hasUrlReferences(root);
-    const attributes = Object.entries(document?.attributes ?? {}).filter(
-      ([name]) => !isRootOnly(name),
-    );
-    // Leave `<svg>` bare so the inner markup can be sliced out of the serialization.
-    Object.keys(document?.attributes ?? {}).forEach((name) => {
-      if (document !== undefined) removeAttribute(document, name);
-    });
-    return {
-      ok: true as const,
-      color: isRecolored ? ColorKind.MONO : ColorKind.MULTICOLOR,
-      hasReferences,
-      attributes,
-    };
-  });
-
-  if (!outcome.result.ok) return fail([outcome.result.error]);
-  const { color, hasReferences, attributes } = outcome.result;
+  if (outcome === undefined) throw new Error('svgo did not run the transform');
+  const { color, hasReferences, attributes } = outcome;
   return {
     ok: true,
     icon: {
@@ -211,7 +255,7 @@ export const transformIcon = (input: TransformInput): TransformResult => {
       delivery: toDelivery(color, hasReferences),
       licenses,
       attributes,
-      inner: sliceInner(outcome.data),
+      inner: sliceInner(serialized),
     },
   };
 };
