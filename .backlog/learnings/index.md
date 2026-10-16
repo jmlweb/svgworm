@@ -52,3 +52,4 @@
 | LRN-046 | An XML-illegal character in a spike payload makes DOMParser reject the whole sprite | security, svg, spike, testing | active | 2026-10-15 |
 | LRN-047 | <use> draws a symbol at 0,0: the consumer viewBox must not carry the icon's origin | svg, use, viewbox, render, fixtures | active | 2026-10-15 |
 | LRN-048 | svgo plugins can carry svgworm's own steps through one optimize() run | svgo, perf, core, errors | active | 2026-10-16 |
+| LRN-049 | Worker threads cost ~100 ms each to boot svgo; not worth it under ~2k icons | perf, core, svgo, spike | active | 2026-10-16 |
