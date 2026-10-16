@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 8 |
 | Active | 4 |
 | Blocked | 0 |
 | Complete | 85 |
@@ -26,6 +26,8 @@
 | TSK-091 | @svgworm/vite plugin: rebuild the sprite during vite dev | P3 | vite, adapter, dx, competitors, adr | 2026-10-15 |
 | TSK-092 | Vue and Svelte icon components through init --framework | P3 | init, adapter, vue, svelte, solid, competitors, adr | 2026-10-15 |
 | TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | P3 | migration, svgr, codemod, docs, cli, competitors | 2026-10-15 |
+| TSK-096 | Fuse svgo passes in transformIcon (5 optimize() rounds to 1) | P3 | perf, core, svgo | 2026-10-16 |
+| TSK-097 | Spike: worker_threads pool for large icon sets | P4 | perf, spike, adr, core | 2026-10-16 |
 
 ## Recently Completed
 
