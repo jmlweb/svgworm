@@ -57,3 +57,7 @@
 | LRN-051 | Vite replays a pre-connect error payload to the first client only | vite, plugin, dev-server | active | 2026-10-16 |
 | LRN-052 | A bundler plugin must not derive output the CLI cannot reproduce | vite, plugin, config, determinism | active | 2026-10-16 |
 | LRN-053 | Real fs.watch in Vitest plugin tests aborted the macOS CI runner | testing, ci, macos, watch, vite | active | 2026-10-16 |
+| LRN-054 | Vue SSR lowercases attribute names bound through a v-bind object | vue, ssr, svg, conformance | active | 2026-10-16 |
+| LRN-055 | Svelte SSR adds inline onload/onerror replay handlers to an img with spread attributes | svelte, ssr, csp, img, conformance | active | 2026-10-16 |
+| LRN-056 | SvelteKit serves static/, not public/: sprite outDir must follow | sveltekit, svelte, init, outdir, public-path | active | 2026-10-16 |
+| LRN-057 | Server-render Vue SFCs and Svelte components in Vitest without bundler plugins | testing, vue, svelte, ssr, conformance, vitest | active | 2026-10-16 |

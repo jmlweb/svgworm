@@ -40,6 +40,7 @@ User stories, with no implementation detail. IDs (R-xx) are referenced from task
 - **R-43** Size and color are set through standard SVG props or CSS. No custom styling API. _[v0.1]_
 - **R-44** Works with multiple sprites or namespaces without the caller knowing which sprite an icon lives in. _[v0.1 single sprite; several sprites are one config per sprite, [ADR-0023](adr/0023-several-sprites-through-one-config-per-sprite.md)]_
 - **R-45** `svgworm init` can generate a dependency-free `Icon.astro` with the same delivery forms, accessibility defaults and typed names as the React `Icon`. _[v0.2]_ Rules: [ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md).
+- **R-46** `svgworm init` can generate a dependency-free `Icon.vue` (Vue 3.5, Nuxt) or `Icon.svelte` (Svelte 5, SvelteKit) with the same delivery forms, accessibility defaults and typed names as the React `Icon`. _[v0.5]_ Rules: [ADR-0034](adr/0034-vue-and-svelte-support-through-init-generated-components.md).
 
 ## Non-functional
 

@@ -91,6 +91,8 @@ export default defineConfig({
     '**/.next/**',
     'examples/*/svgworm/**',
     'apps/*/svgworm/**',
+    // A fixture in the shape of generated output (docs/output-contract.md).
+    'tests/conformance/types/svgworm/**',
     '**/.astro/**',
     'evals/agent/fixture/**',
     'fixtures/**',
@@ -117,6 +119,11 @@ export default defineConfig({
     {
       // These scripts and the bin shim import build output that does not exist at lint time.
       files: ['scripts/**', 'packages/*/bin/**', 'evals/**/*.mjs'],
+      rules: { 'n/no-missing-import': 'off' },
+    },
+    {
+      // The type-check project imports the components the test generates before it runs.
+      files: ['tests/conformance/types/**'],
       rules: { 'n/no-missing-import': 'off' },
     },
     {

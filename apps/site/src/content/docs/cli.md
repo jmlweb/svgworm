@@ -1,7 +1,7 @@
 ---
 title: CLI reference
 description: "Every svgworm command, flag and exit code: build sprites, check committed output in CI, watch for changes and set a project up, with stable --json output."
-order: 5
+order: 7
 ---
 
 One command builds everything. The others check, watch, and set a project up.
@@ -156,7 +156,7 @@ One build document per build, the first one for the initial build. Nothing is pr
 }
 ```
 
-- **`framework`:** `react`, `astro` or `null`.
+- **`framework`:** `react`, `astro`, `vue`, `svelte` or `null`.
 - **`frameworkSource`:** says why (`flag`, `prompt`, `detected` or `null`).
 - **`actions`:** each action is a file `init` looked at. It has a `status` of `created`, `updated`, `unchanged` or `skipped`, a `reason` when skipped, and a `warning` when the user must finish something by hand (a script `init` would not touch).
 - **`build`:** the first build, either `{ "ok": true, "icons", "written" }` or `{ "ok": false }` with the diagnostics in `errors`.
@@ -173,16 +173,16 @@ Fields are only added, never reordered, so read them by name. `durationMs` varie
 
 | Flag                      | Effect                                                                                                                      |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `--framework <name>`      | `react` or `astro`. Default: detected from the dependencies; Astro wins when both are present (a terminal asks)             |
-| `--component-file <path>` | Where to create the `Icon` component. The extension must match the framework (`.tsx`/`.jsx` or `.astro`), or `init` exits 2 |
-| `--component`             | Write the component even when `react`, `next` or `astro` is not a dependency yet                                            |
+| `--framework <name>`      | `react`, `astro`, `vue` or `svelte`. Default: detected from the dependencies (`vue` or `nuxt` is Vue, `svelte` or `@sveltejs/kit` is Svelte). With several, a terminal asks; otherwise the first of Astro, Vue, Svelte, React wins |
+| `--component-file <path>` | Where to create the `Icon` component. The extension must match the framework (`.tsx`/`.jsx`, `.astro`, `.vue` or `.svelte`), or `init` exits 2 |
+| `--component`             | Write the component even when no supported framework is a dependency yet                                                    |
 | `--no-component`          | Skip the component                                                                                                          |
 | `--no-scripts`            | Leave the package.json scripts alone (`predev` and `prebuild`, or `dev` and `build` on Yarn 2+)                             |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
-| `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no |
+| `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no. React and Astro only: with Vue or Svelte, `init` exits 2 |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
-`init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output. In `--json` they are `framework` and `frameworkSource`. For Astro it writes `Icon.astro` instead of the React wiring. See the [Astro setup](/docs/astro/).
+`init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output. In `--json` they are `framework` and `frameworkSource`. For Astro, Vue and Svelte it writes `Icon.astro`, `Icon.vue` or `Icon.svelte` instead of the React wiring. See the [Astro](/docs/astro/), [Vue](/docs/vue/) and [Svelte](/docs/svelte/) setups. For SvelteKit it also writes the sprites to `static/icons/`.
 
 When no source folder has an SVG yet, `init` adds a sample `icons/svgworm.svg` (CC0, icon name `svgworm`) to the first source. It never adds one to a folder that already has icons.
 

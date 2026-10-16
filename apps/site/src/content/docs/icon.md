@@ -1,11 +1,11 @@
 ---
 title: Icon component reference
 navTitle: Icon component
-description: "Every prop of the React Icon and the generated Icon.astro, the markup each icon delivery renders (svg, img or a CSS mask), and how to size and color icons with CSS."
-order: 4
+description: "Every prop of the React Icon and the generated Icon.astro, Icon.vue and Icon.svelte, the markup each icon delivery renders (svg, img or a CSS mask), and how to size and color icons with CSS."
+order: 6
 ---
 
-`Icon` is the one component svgworm gives you: `createIcon(manifest)` from `@svgworm/react`, or the `Icon.astro` that `svgworm init` writes. Both read the manifest and render the same markup with **no client JavaScript**. A test in this repository keeps them in step ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md)). This page covers both.
+`Icon` is the one component svgworm gives you: `createIcon(manifest)` from `@svgworm/react`, or the `Icon.astro`, `Icon.vue` or `Icon.svelte` that `svgworm init` writes. All of them read the manifest and render the same markup with **no client JavaScript of their own**. Tests in this repository keep them in step ([ADR-0017](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0017-astro-support-via-generated-icon-astro.md), [ADR-0034](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0034-vue-and-svelte-support-through-init-generated-components.md)). This page covers them all.
 
 ```tsx
 <Icon name="home" />
@@ -17,12 +17,12 @@ order: 4
 
 | Prop                                 | Type                                                               | Default  | Meaning                                                                                                                          |
 | ------------------------------------ | ------------------------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `name`                               | `IconName`                                                         | required | An icon from the manifest. The type is the union of every name, so a typo is a compile error (`tsc` or `astro check`)            |
+| `name`                               | `IconName`                                                         | required | An icon from the manifest. The type is the union of every name, so a typo is a compile error (`tsc`, `astro check`, `vue-tsc` or `svelte-check`) |
 | `title`                              | `string`                                                           |          | Accessible name. Renders a `<title>` inside the `<svg>` (or `alt` / `aria-label` for the other deliveries) and sets `role="img"` |
 | `label`                              | `string`                                                           |          | Accessible name as `aria-label`, with `role="img"`. Use `title` or `label`, not both; `title` wins                               |
 | `width`, `height`                    | `number \| string`                                                 | `1em`    | Size. A bare number is pixels. `1em` follows the font size of the parent, so an icon next to text scales with it                 |
-| `className` (React), `class` (Astro) | `string`                                                           |          | Passed to the rendered element, whatever it is                                                                                   |
-| `style`                              | React: object. Astro: string or object                             |          | Passed to the rendered element. On a mask icon it is merged after the mask declarations, so it can override them                 |
+| `className` (React), `class` (others) | `string`                                                          |          | Passed to the rendered element, whatever it is                                                                                   |
+| `style`                              | React: object. Astro: string or object. Vue: any style binding. Svelte: string |          | Passed to the rendered element. On a mask icon it is merged after the mask declarations, so it can override them                 |
 | any other SVG prop                   | `SVGProps<SVGSVGElement>` minus `children`, `ref`, `title`, `name` |          | `id`, `data-*`, `aria-*`, `onClick` and so on. On the `img` and `mask` deliveries only HTML attributes carry over                |
 
 Without `title` or `label` the icon is **decorative**: `aria-hidden="true"` on the `<svg>` and the `<span>`, `alt=""` on the `<img>`. The `<svg>` also gets `focusable="false"` so old Edge does not tab into it.
@@ -102,12 +102,12 @@ Give the icon a class and target that, never the element name:
 <Icon name="home" className="icon" />
 ```
 
-In Astro the prop is `class`. Both components put the class on the element they render, whichever it is.
+In Astro, Vue and Svelte the prop is `class`. Every component puts the class on the element it renders, whichever it is.
 
 ## Errors
 
 - **Unknown name:** a `name` that is not in the manifest is a type error. At runtime (an untyped name, or a stale manifest) the component throws `Unknown icon "…"`, with the closest names in React.
-- **`Unsupported svgworm manifest version`:** the manifest was written by a newer svgworm than the adapter reads. Update `@svgworm/react`, or re-run `svgworm init` for a fresh `Icon.astro`.
+- **`Unsupported svgworm manifest version`:** the manifest was written by a newer svgworm than the adapter reads. Update `@svgworm/react`, or delete the generated `Icon.astro`, `Icon.vue` or `Icon.svelte` and re-run `svgworm init`.
 - **`Icon "…" needs the stack file …, but the manifest has none`:** the manifest is from an older build. Run `svgworm` again.
 
 See [Troubleshooting](/docs/troubleshooting/) for icons that render blank or in the wrong color.

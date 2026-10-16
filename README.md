@@ -9,7 +9,7 @@
 </h1>
 
 **Turn a folder of SVG files into type-safe, cacheable SVG sprites.**<br>
-Zero client JavaScript, deterministic output, and adapters for Next.js Server Components and Astro.
+Zero client JavaScript, deterministic output, and adapters for Next.js Server Components, Astro, Vue and Svelte.
 
 [![npm](https://img.shields.io/npm/v/svgworm?label=svgworm)](https://www.npmjs.com/package/svgworm)
 [![npm](https://img.shields.io/npm/v/@svgworm/react?label=%40svgworm%2Freact)](https://www.npmjs.com/package/@svgworm/react)
@@ -78,7 +78,7 @@ export const Nav = () => (
 
 Commit `public/icons/` and `svgworm/` and run `svgworm check` in CI, or ignore both folders and rely on the `predev`/`prebuild` scripts. The [Next.js guide](https://svgworm.com/docs/nextjs/#what-to-commit) weighs the two.
 
-Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.astro`, see the [Astro guide](https://svgworm.com/docs/astro/). Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](https://svgworm.com/docs/nextjs/). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
+Also works with Astro, Vue (Nuxt) and Svelte (SvelteKit): `svgworm init` detects them and writes a React-free `Icon.astro`, `Icon.vue` or `Icon.svelte`, see the [Astro](https://svgworm.com/docs/astro/), [Vue](https://svgworm.com/docs/vue/) and [Svelte](https://svgworm.com/docs/svelte/) guides. Doing it by hand, long-term caching, and `basePath` are in the [Next.js guide](https://svgworm.com/docs/nextjs/). A complete app, built with Turbopack and checked for zero client JS in CI, is in [examples/next-app-router](examples/next-app-router).
 
 ## How it compares
 
@@ -96,6 +96,8 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 - [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
 - [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
 - [Vite guide](https://svgworm.com/docs/vite/): Vite + React, the optional `svgworm/vite` plugin, `base`, caching, [examples/vite-react](examples/vite-react)
+- [Vue guide](https://svgworm.com/docs/vue/): the generated `Icon.vue` for Vue and Nuxt, `base`
+- [Svelte guide](https://svgworm.com/docs/svelte/): the generated `Icon.svelte` for Svelte and SvelteKit (`static/`), `paths.base`
 - [Icon component](https://svgworm.com/docs/icon/): props, the markup per delivery, sizing and coloring
 - [How it works](https://svgworm.com/docs/how-it-works/): sprite, stack, delivery forms, manifest, determinism
 - ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`

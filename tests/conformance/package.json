@@ -1,0 +1,26 @@
+{
+  "name": "svgworm-conformance",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.20.0 || >=24.11.0"
+  },
+  "description": "Conformance tests: the Vue and Svelte components svgworm init writes render the same markup as @svgworm/react (ADR-0034).",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@svgworm/react": "workspace:*",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "svelte": "5.57.2",
+    "svelte-check": "4.7.7",
+    "typescript": "6.0.3",
+    "vitest": "5.0.1",
+    "vue": "3.5.44",
+    "vue-tsc": "3.3.13"
+  }
+}

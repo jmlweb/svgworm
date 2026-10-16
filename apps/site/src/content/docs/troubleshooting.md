@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 description: "Fixes for the problems people hit with svgworm: a blank icon in Safari, a sprite that 404s, an icon in the wrong color, name collisions, svgworm check failing in CI, and every diagnostic code with its fix."
-order: 7
+order: 9
 ---
 
 Start with the symptom. The [diagnostic codes](#diagnostic-codes) at the end cover every error and warning the CLI prints.
@@ -20,7 +20,7 @@ Still blank everywhere? Open the sprite URL from the manifest in a tab. A 404 me
 
 **Every icon is missing**, and the network tab shows a 404 for `/icons/icons.<hash>.svg`.
 
-- **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base` and Vite `base` are not added to the URLs svgworm writes (the `svgworm/vite` plugin stops with an error instead). With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](/docs/vite/#base)).
+- **A mount point is missing from `publicPath`.** Next `basePath`, Astro `base`, Vite `base`, Nuxt `app.baseURL` and SvelteKit `paths.base` are not added to the URLs svgworm writes (the `svgworm/vite` plugin stops with an error instead). With a base of `/docs`, set `--public-path /docs/icons` or `"publicPath": "/docs/icons"` in `svgworm.config.json`, then rebuild ([Next.js](/docs/nextjs/#basepath), [Astro](/docs/astro/#base), [Vite](/docs/vite/#base), [Vue](/docs/vue/#base), [Svelte](/docs/svelte/#base)).
 - **`outDir` is inside a source folder.** For example `--source public/icons` with the default `outDir` `public/icons`: the next build would read the sprites as icons, so the config is refused. Keep the SVG files outside `public/` (`icons/` is the default) and let svgworm write to `public/icons`, or pick another output with `--out-dir`.
 - **`outDir` and `publicPath` disagree.** A custom `outDir` must be served at `publicPath`. Under `public/` svgworm derives it (`public/sprites` gives `/sprites`), so pass `publicPath` only to add a mount point. For an `outDir` outside `public/`, **pass both flags together**: the config refuses `outDir` on its own.
 - **The deploy replaced the sprite under cached HTML.** Each build writes a new hashed file and removes the old one. HTML from the previous deploy that a CDN still serves points at a hash that is gone. A tab that already loaded the sprite is fine, because every icon is in that one file.

@@ -1,7 +1,7 @@
 ---
 title: Config
 description: Every svgworm.config.json key and its default, per-icon color overrides, and the JSON Schema that editors and AI agents validate against.
-order: 6
+order: 8
 ---
 
 `svgworm.config.json` is optional. Every key has a default, and CLI flags can replace the file entirely. With no file, svgworm reads the `icons/` folder and prints `svgworm: using default source icons/`.

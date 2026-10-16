@@ -153,12 +153,19 @@ describe('parseCliArgs', () => {
       kind: 'init',
       options: { framework: 'astro' },
     });
+    for (const framework of ['react', 'vue', 'svelte']) {
+      expect(parseCliArgs(['init', '--framework', framework])).toMatchObject({
+        kind: 'init',
+        options: { framework },
+      });
+    }
     expect(parseCliArgs(['init'])).toMatchObject({
       options: { framework: undefined },
     });
-    expect(parseCliArgs(['init', '--framework', 'vue'])).toMatchObject({
+    expect(parseCliArgs(['init', '--framework', 'solid'])).toMatchObject({
       kind: 'usage-error',
-      message: expect.stringContaining('--framework') as string,
+      message:
+        '--framework must be one of: react, astro, vue, svelte (got "solid")',
     });
   });
 
