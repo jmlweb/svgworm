@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 7 |
 | Active | 2 |
 | Blocked | 0 |
 | Complete | 92 |
@@ -24,6 +24,7 @@
 | TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | P3 | migration, svgr, codemod, docs, cli, competitors | 2026-10-15 |
 | TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | P3 | spike, vue, svelte, cross-origin, init, adr | 2026-10-16 |
 | TSK-100 | Conformance type check: generate the icons fixture from the core build | P4 | testing, conformance, types | 2026-10-16 |
+| TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
 
 ## Recently Completed
 
