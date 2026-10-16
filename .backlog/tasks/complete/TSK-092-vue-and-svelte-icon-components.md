@@ -1,13 +1,14 @@
 ---
 id: TSK-092
 title: Vue and Svelte icon components through init --framework
-status: active
+status: complete
 priority: P3
 tags: [init, adapter, vue, svelte, solid, competitors, adr]
 created: 2026-10-15
 source: manual
 depends-on: []
 started: 2026-10-16
+completed: 2026-10-16
 ---
 
 # Vue and Svelte icon components through init --framework
@@ -32,6 +33,10 @@ Do after RPT-007.
 
 ## Learnings
 
+- LRN-054: Vue SSR lowercases attribute names bound through a v-bind object
+- LRN-055: Svelte SSR adds inline onload/onerror replay handlers to an img with spread attributes
+- LRN-056: SvelteKit serves static/, not public/: sprite outDir must follow
+- LRN-057: Server-render Vue SFCs and Svelte components in Vitest without bundler plugins
 ## Progress Log
 
 - [2026-10-15] Created
@@ -40,3 +45,4 @@ Do after RPT-007.
 - [2026-10-16] Added tests/conformance workspace: 34 markup cases vs createIcon, vue-tsc and svelte-check with an invalid-name check. Updated docs (vue, svelte, cli, icon, troubleshooting, comparison), landing cards, llms.txt, READMEs, context7.json, AGENTS.md, architecture.md, help; changeset added.
 - [2026-10-16] Next: user accepts ADR-0034 and picks a branch; add follow-up task for Vue/Svelte CDN loaders.
 - [2026-10-16] ADR-0034 accepted by the maintainer.
+- [2026-10-16] Completed
