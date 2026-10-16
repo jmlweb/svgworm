@@ -38,7 +38,7 @@ export type ResolvedConfig = {
   readonly isDefaultSources: boolean;
   /**
    * True when `publicPath` was not set, so it is derived from `outDir` or defaulted. The
-   * Vite plugin then prefixes Vite's `base` (ADR-0033); an explicit `publicPath` is kept.
+   * Vite plugin then fails when Vite has a `base`, which the URL would miss (ADR-0033).
    */
   readonly isDefaultPublicPath: boolean;
 };

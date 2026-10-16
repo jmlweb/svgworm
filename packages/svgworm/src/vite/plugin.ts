@@ -9,6 +9,7 @@ import {
   type BuildResult,
   type Diagnostic,
   type ResolvedConfig,
+  type WatcherFactory,
 } from '../core/index.ts';
 
 export type SvgwormPluginOptions = {
@@ -63,34 +64,67 @@ const warnWith =
     }
   };
 
-/** Runs `watch` for the dev server's lifetime and resolves once the first build is done. */
-const startWatching = async (
+type ErrorPayload = {
+  readonly type: 'error';
+  readonly err: { message: string; stack: string; plugin: string };
+};
+
+type WatchSession = {
+  /** Resolves once the first build has finished, whatever its outcome. */
+  readonly ready: Promise<void>;
+  /** Resolves after the signal aborts and any build in flight has finished. */
+  readonly stopped: Promise<void>;
+};
+
+/** Tests replace the file watcher; users never pass this. */
+export type PluginInternals = {
+  readonly createWatcher?: WatcherFactory;
+};
+
+/** Runs `watch` until `signal` aborts. Returns at once, so a close during the first build stops it. */
+const startWatching = (
   config: ResolvedConfig,
   server: ViteDevServer,
-): Promise<() => Promise<void>> => {
+  signal: AbortSignal,
+  internals: PluginInternals,
+): WatchSession => {
+  if (signal.aborted) {
+    return { ready: Promise.resolve(), stopped: Promise.resolve() };
+  }
   const { logger } = server.config;
-  const controller = new AbortController();
-  let hasFailed = false;
+  let lastError: ErrorPayload | undefined;
   let markReady = (): void => undefined;
   const ready = new Promise<void>((resolve) => {
     markReady = resolve;
   });
 
+  // Vite replays an error sent before any client connects to the first client only, so a
+  // reload or a second tab would miss it.
+  server.ws.on(
+    'vite:client:connect',
+    (
+      _data: unknown,
+      client: { readonly send: (payload: ErrorPayload) => void },
+    ) => {
+      if (lastError !== undefined) client.send(lastError);
+    },
+  );
+
   const showError = (message: string): void => {
-    hasFailed = true;
-    logger.error(`svgworm: ${message}`, { timestamp: true });
-    server.ws.send({
+    lastError = {
       type: 'error',
       err: { message, stack: '', plugin: PLUGIN_NAME },
-    });
+    };
+    logger.error(`svgworm: ${message}`, { timestamp: true });
+    server.ws.send(lastError);
   };
   const onResult = (result: BuildResult): void => {
     if (result.ok) {
       logger.info(`svgworm: ${describeSuccess(result)}`, { timestamp: true });
       // A fix may write nothing (same output as before the error), so no HMR update would
       // clear the overlay.
-      if (hasFailed) server.ws.send({ type: 'full-reload' });
-      hasFailed = false;
+      if (lastError !== undefined) server.ws.send({ type: 'full-reload' });
+      lastError = undefined;
     } else {
       showError(describeFailure(result.errors));
     }
@@ -101,30 +135,37 @@ const startWatching = async (
     markReady();
   };
 
-  const watching = watch(config, {
-    signal: controller.signal,
+  const stopped = watch(config, {
+    signal,
     onResult,
     onError,
     onEvent: warnWith(logger),
-  }).catch(onError);
-  await ready;
-  return async () => {
-    controller.abort();
-    await watching;
-  };
+    ...(internals.createWatcher === undefined
+      ? {}
+      : { createWatcher: internals.createWatcher }),
+  }).catch((error: unknown) => {
+    // `watch` rejects only when it cannot go on (a source folder cannot be watched), so
+    // later icon changes would be ignored without this hint.
+    onError(
+      new Error(
+        `${error instanceof Error ? error.message : String(error)}
+  svgworm stopped watching; restart vite dev to rebuild icons on change`,
+      ),
+    );
+  });
+  return { ready, stopped };
 };
 
-/**
- * Builds svgworm output inside Vite: once before `vite build`, and on every icon change
- * during `vite dev` (ADR-0033). Optional sugar over the CLI, which stays the documented path
- * for every other bundler.
- */
-export const svgworm = (options: SvgwormPluginOptions = {}): Plugin => {
+/** {@link svgworm} with test seams. Not exported from `svgworm/vite`. */
+export const createSvgwormPlugin = (
+  options: SvgwormPluginOptions,
+  internals: PluginInternals,
+): Plugin => {
   let root = process.cwd();
   let base = '/';
   let logger: Logger | undefined;
   let isBuild = false;
-  let hasBuilt = false;
+  let building: Promise<BuildResult> | undefined;
   let stop: (() => Promise<void>) | undefined;
 
   const resolveSvgwormConfig = async (): Promise<ResolvedConfig> => {
@@ -148,23 +189,43 @@ export const svgworm = (options: SvgwormPluginOptions = {}): Plugin => {
       ({ logger } = config);
     },
     async configureServer(server) {
+      // Created before any await, so a close while the config loads or the first build runs
+      // still stops the watcher.
+      const controller = new AbortController();
+      const starting = resolveSvgwormConfig().then((config) =>
+        startWatching(config, server, controller.signal, internals),
+      );
+      stop = async () => {
+        controller.abort();
+        const session = await starting.catch(() => undefined);
+        await session?.stopped;
+      };
       // A config error stops `vite dev` before it listens, like the CLI's exit code 2.
-      stop = await startWatching(await resolveSvgwormConfig(), server);
+      await (
+        await starting
+      ).ready;
     },
     async closeServer() {
       await stop?.();
       stop = undefined;
     },
     async buildStart() {
-      // Dev builds come from the watcher; `vite build --app` calls this per environment.
-      if (!isBuild || hasBuilt) return;
-      hasBuilt = true;
-      const config = await resolveSvgwormConfig();
-      const result = await build(
-        config,
-        logger === undefined ? undefined : warnWith(logger),
+      // Dev builds come from the watcher. `vite build --app` calls this once per
+      // environment: each call waits for the one build, so none reads the manifest early.
+      if (!isBuild) return;
+      building ??= resolveSvgwormConfig().then((config) =>
+        build(config, logger === undefined ? undefined : warnWith(logger)),
       );
+      const result = await building;
       if (!result.ok) this.error(describeFailure(result.errors));
     },
   };
 };
+
+/**
+ * Builds svgworm output inside Vite: once before `vite build`, and on every icon change
+ * during `vite dev` (ADR-0033). Optional sugar over the CLI, which stays the documented path
+ * for every other bundler.
+ */
+export const svgworm = (options: SvgwormPluginOptions = {}): Plugin =>
+  createSvgwormPlugin(options, {});

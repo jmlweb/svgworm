@@ -3,8 +3,8 @@ import { svgworm } from 'svgworm/vite';
 import { defineConfig } from 'vite';
 
 // svgworm builds before `vite build` and rebuilds on icon changes in `vite dev` (ADR-0033).
-// `base` stays a CLI flag (`vite build --base /app/`) so one config serves every mount point;
-// the plugin prefixes it to the sprite URLs, so svgworm needs no matching --public-path.
+// The app is served at `/`. A fixed `base` needs the matching `publicPath` in the svgworm
+// config, or the plugin fails the build: see vite.base.config.ts.
 export default defineConfig({
   plugins: [react(), svgworm()],
 });
