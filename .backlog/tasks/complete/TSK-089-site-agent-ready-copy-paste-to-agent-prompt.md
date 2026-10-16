@@ -1,13 +1,14 @@
 ---
 id: TSK-089
 title: Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts)
-status: active
+status: complete
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-005
 depends-on: []
 started: 2026-10-15
+completed: 2026-10-16
 ---
 
 # Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts)
@@ -52,7 +53,7 @@ Make the landing page ready for agents and easy to copy from, following the patt
 - [x] Install.astro has a Vite tab, a copy button that copies the checked variant, and the stale client-JS comment removed
 - [x] Hero shows one generic paste-into-your-agent prompt
 - [x] #agents keeps skill commands and adds lucide-react and react-icons migration prompts
-- [ ] Each migration prompt passes an eval (evals/agent or by hand) or is dropped
+- [x] Each migration prompt passes an eval (evals/agent or by hand) or is dropped — evidence: by hand with the evals/agent method: claude -p, same limited tools, $3 cap, published svgworm, one Next.js 16 app per prompt with 8 icons → svgr, lucide-react and react-icons all pass (2026-10-16) (2026-10-16)
 - [x] CSP still covers all inline scripts (built _headers hash count checked)
 - [x] llms.txt and README in sync if a prompt is shared
 - [x] pnpm site:check passes
@@ -66,3 +67,7 @@ Make the landing page ready for agents and easy to copy from, following the patt
 - [2026-10-15] Created
 - [2026-10-15] Started
 - [2026-10-15] Implemented: prompts.ts, CopyButtons.astro (shared inline script, `[data-copy]` + `.prose pre`), copy styles moved to base.css, Vite tab, hero prompt, #agents migration prompts, #try copy names Vite. site:check passes (3 CSP hashes); checked 1280 and 360 widths. Migration-prompt eval NOT run (evals/agent has no migration mode, costs tokens). `pnpm lint` fails on a clean tree too (ESLint JSON parse), pre-existing.
+- [2026-10-16] Migration prompts evaluated (2026-10-16). Pass criteria were fixed before the run: pnpm build and tsc --noEmit pass, evals/agent/check.mjs finds all 8 icons through the sprite in the prerendered page and no icon code in client chunks, the old package is gone from package.json, and no old import or SVGR config remains.
+- [2026-10-16] Setup: three scratch Next.js 16 apps built from evals/agent/fixture, each using 8 icons (lucide-react 1.57.0, react-icons 5.7.0 across fa6/fi/hi/io5/md, and SVGR 8.1.0 through turbopack.rules with lucide-static SVG files). Each agent got only the prompt text from prompts.ts. It ran `claude -p` with the evals/agent tool set plus cp and mkdir, with a $3 budget and published svgworm.
+- [2026-10-16] Results: svgr pass ($0.53, 22 turns, 87 s); lucide-react pass ($0.79, 32 turns, 131 s); react-icons pass ($1.29, 31 turns, 217 s). No prompt dropped. The scratch apps and runner are not committed, since evals/agent has no migration mode yet.
+- [2026-10-16] Completed
