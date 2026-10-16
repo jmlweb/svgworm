@@ -41,6 +41,4 @@ export const normalize = (html: string): string =>
       },
     )
     .replace(/>\s+</g, '><')
-    // Elements without children: `<span></span>` and `<span/>` are the same markup.
-    .replace(/<(\w+)([^>]*)><\/\1>/g, '<$1$2>')
     .trim();

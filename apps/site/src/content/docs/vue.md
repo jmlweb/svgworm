@@ -23,7 +23,8 @@ Requires Node `^22.20 || >=24.11` and Vue 3.5 (Nuxt 4 runs on it).
    - **Files:** writes `svgworm.config.json`, the `predev`/`prebuild` scripts and the component. Then it builds once.
    - **Where the component goes:**
      - Nuxt 4: `app/components/Icon.vue`.
-     - Nuxt without an `app/` folder: `components/Icon.vue`.
+     - Nuxt 3, or Nuxt 4 that keeps the Nuxt 3 layout (no `app/` folder, or `app.vue` at the root): `components/Icon.vue`.
+     - With `@nuxt/icon` or Nuxt UI, the file is `SvgIcon.vue` instead, rendered as `<SvgIcon>`, because those modules already register `<Icon>`.
      - Otherwise: `src/components/Icon.vue`.
    - **Sample icon:** if `icons/` is missing or empty, it adds `icons/svgworm.svg` so the first build works.
    - **Flags:** with `--yes` it asks nothing. Use `--framework vue` when the project has no `vue` dependency yet.
@@ -60,7 +61,7 @@ Requires Node `^22.20 || >=24.11` and Vue 3.5 (Nuxt 4 runs on it).
    - **Decorative by default:** the icon is `aria-hidden` unless you pass `title` or `label`.
    - **Attributes pass through:** `class`, `style` (a string, an object or an array, as in any Vue template), `id`, `data-*` and `aria-*` land on the rendered element.
 
-**`@nuxt/icon` (and Nuxt UI, which uses it) also registers a global `<Icon>`.** Two components with one name is a conflict. Either rename that one with its `icon.componentName` option (for example `NuxtIcon`), or give svgworm's another name: `svgworm init --component-file app/components/SvgIcon.vue` is auto-imported as `<SvgIcon>`.
+**`@nuxt/icon` (and Nuxt UI, which uses it) registers a global `<Icon>`.** When either is a dependency, `init` names the file `SvgIcon.vue`, which Nuxt auto-imports as `<SvgIcon>`. If you add the module later, rename one of the two: its `icon.componentName` option (for example `NuxtIcon`), or your file.
 
 `Icon.vue` is your file, and **`init` never overwrites it**. To refresh it after upgrading svgworm, delete it and run `svgworm init` again.
 

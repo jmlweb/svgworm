@@ -29,7 +29,8 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   usesSvelte: false,
   usesSvelteKit: false,
   hasSrcFolder: false,
-  hasAppFolder: false,
+  usesNuxtAppDir: false,
+  usesNuxtIcon: false,
   packageManager: PackageManager.NPM,
   runsScriptHooks: true,
   existing: {},
@@ -537,7 +538,7 @@ describe('planInit: Vue and Svelte (ADR-0034)', () => {
     const action = statusOf(plan, 'src/components/Icon.vue');
     expect(action?.status).toBe(InitStatus.CREATED);
     expect(action?.content).toContain(
-      "import { manifest } from '../../svgworm/icons.js';",
+      "import { manifest, type IconName } from '../../svgworm/icons.js';",
     );
     expect(action?.content).toContain('name: IconName;');
     expect(action?.content).toContain('<script setup lang="ts">');
@@ -550,7 +551,7 @@ describe('planInit: Vue and Svelte (ADR-0034)', () => {
     const action = statusOf(plan, 'components/Icon.svelte');
     expect(action?.status).toBe(InitStatus.CREATED);
     expect(action?.content).toContain(
-      "import { manifest } from '../svgworm/icons.js';",
+      "import { manifest, type IconName } from '../svgworm/icons.js';",
     );
     expect(action?.content).toContain('$props()');
     expect(action?.content).toContain('name: IconName;');
@@ -583,13 +584,31 @@ describe('planInit: Vue and Svelte (ADR-0034)', () => {
   it('puts Icon.vue in app/components for Nuxt 4, where Nuxt auto-imports it', () => {
     const plan = planInit(
       defaultInitOptions(),
-      facts({ usesVue: true, usesNuxt: true, hasAppFolder: true }),
+      facts({ usesVue: true, usesNuxt: true, usesNuxtAppDir: true }),
     );
     expect(statusOf(plan, 'app/components/Icon.vue')?.status).toBe(
       InitStatus.CREATED,
     );
     expect(plan.nextSteps.join('\n')).toContain(
       'Nuxt auto-imports app/components/Icon.vue: render <Icon name="…" /> in any page or component',
+    );
+  });
+
+  it('names it SvgIcon.vue when @nuxt/icon or Nuxt UI already registers <Icon>', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({
+        usesVue: true,
+        usesNuxt: true,
+        usesNuxtAppDir: true,
+        usesNuxtIcon: true,
+      }),
+    );
+    expect(statusOf(plan, 'app/components/SvgIcon.vue')?.status).toBe(
+      InitStatus.CREATED,
+    );
+    expect(plan.nextSteps.join('\n')).toContain(
+      'Nuxt auto-imports app/components/SvgIcon.vue: render <SvgIcon name="…" /> in any page or component (<Icon> is taken by @nuxt/icon)',
     );
   });
 
@@ -611,10 +630,10 @@ describe('planInit: Vue and Svelte (ADR-0034)', () => {
     const action = statusOf(plan, 'src/lib/components/Icon.svelte');
     expect(action?.status).toBe(InitStatus.CREATED);
     expect(action?.content).toContain(
-      "import { manifest } from '../../../svgworm/icons.js';",
+      "import { manifest, type IconName } from '../../../svgworm/icons.js';",
     );
     expect(plan.nextSteps.join('\n')).toContain(
-      'In a .svelte file, import Icon from \'$lib/components/Icon.svelte\' and render <Icon name="…" />',
+      `In a .svelte file, import Icon from '$lib/components/Icon.svelte' and render <Icon name="…" />`,
     );
   });
 
@@ -728,12 +747,40 @@ describe('inspectProject: framework detection', () => {
     );
   });
 
-  it('notices the Nuxt 4 app/ folder', async () => {
-    await mkdir(join(root, 'app'));
+  // Nuxt 4 resolves components from app/ unless the project keeps the Nuxt 3 layout (a root
+  // app.vue). Nuxt 3 uses app/ only for router.options.ts and the like.
+  it.each([
+    ['^4.6.2', ['app/app.vue'], true],
+    ['latest', ['app/app.vue'], true],
+    ['^4.6.2', [], false],
+    ['^4.6.2', ['app/router.options.ts', 'app.vue'], false],
+    ['^3.17.0', ['app/router.options.ts'], false],
+  ])('nuxt %s with %j: srcDir app/ is %s', async (version, files, expected) => {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ dependencies: { nuxt: version } }),
+    );
+    for (const file of files) {
+      await mkdir(dirname(join(root, file)), { recursive: true });
+      await writeFile(join(root, file), '');
+    }
     expect(
-      (await inspectProject(root, defaultInitOptions())).hasAppFolder,
-    ).toBe(true);
+      (await inspectProject(root, defaultInitOptions())).usesNuxtAppDir,
+    ).toBe(expected);
   });
+
+  it.each(['@nuxt/icon', '@nuxt/ui'])(
+    'notices %s, which registers a global <Icon>',
+    async (name) => {
+      await writeFile(
+        join(root, 'package.json'),
+        JSON.stringify({ dependencies: { nuxt: '^4.6.2', [name]: '1.0.0' } }),
+      );
+      expect(
+        (await inspectProject(root, defaultInitOptions())).usesNuxtIcon,
+      ).toBe(true);
+    },
+  );
 });
 
 describe('frameworkProblem', () => {

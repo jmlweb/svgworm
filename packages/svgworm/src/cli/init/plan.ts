@@ -87,8 +87,10 @@ export type ProjectFacts = {
   readonly usesSvelte: boolean;
   readonly usesSvelteKit: boolean;
   readonly hasSrcFolder: boolean;
-  /** Nuxt 4 keeps components under `app/`. */
-  readonly hasAppFolder: boolean;
+  /** Nuxt resolves components from `app/` (its Nuxt 4 srcDir), not from the project root. */
+  readonly usesNuxtAppDir: boolean;
+  /** `@nuxt/icon` (also through Nuxt UI) registers a global `<Icon>`. */
+  readonly usesNuxtIcon: boolean;
   readonly packageManager: PackageManager;
   /** The package manager runs `pre<name>` scripts. Yarn 2+ dropped them for user scripts. */
   readonly runsScriptHooks: boolean;
@@ -192,6 +194,39 @@ const dependencyNames = (pkg: PackageJson | undefined): ReadonlySet<string> => {
   }
   return names;
 };
+
+const dependencyRange = (
+  pkg: PackageJson | undefined,
+  name: string,
+): string | undefined => {
+  for (const field of ['dependencies', 'devDependencies', 'peerDependencies']) {
+    const deps = pkg?.value[field];
+    if (typeof deps !== 'object' || deps === null) continue;
+    const range: unknown = (deps as Record<string, unknown>)[name];
+    if (typeof range === 'string') return range;
+  }
+  return undefined;
+};
+
+/**
+ * Nuxt 4 resolves components from `app/` (its srcDir), but it keeps the Nuxt 3 layout when
+ * there is no `app/` or the root still has `app.vue`. Nuxt 3 uses `app/` only for files such
+ * as `router.options.ts`. A range with no major (`latest`, `workspace:*`) is taken as 4.
+ */
+const detectNuxtAppDir = async (
+  cwd: string,
+  pkg: PackageJson | undefined,
+): Promise<boolean> => {
+  const major = /\d+/.exec(dependencyRange(pkg, 'nuxt') ?? '')?.[0];
+  if (major !== undefined && Number(major) < 4) return false;
+  return (
+    (await isDirectory(join(cwd, 'app'))) &&
+    !(await isFile(join(cwd, 'app.vue')))
+  );
+};
+
+// Each registers a global <Icon> component (Nuxt UI through @nuxt/icon).
+const NUXT_ICON_MODULES = ['@nuxt/icon', '@nuxt/ui', 'nuxt-icon'] as const;
 
 const detectPackageManager = (
   names: readonly string[],
@@ -374,9 +409,24 @@ const COMPONENT_NAME = {
   [Framework.SVELTE]: 'Icon.svelte',
 } as const;
 
+// Nuxt auto-imports a component by its file name, and @nuxt/icon already owns <Icon>.
+const NUXT_ICON_FALLBACK = 'SvgIcon.vue';
+
+const componentName = (
+  layout: Pick<ProjectFacts, 'usesNuxt' | 'usesNuxtIcon'>,
+  framework: Framework | undefined,
+): string =>
+  framework === Framework.VUE && layout.usesNuxt && layout.usesNuxtIcon
+    ? NUXT_ICON_FALLBACK
+    : COMPONENT_NAME[framework ?? Framework.REACT];
+
 type LayoutFacts = Pick<
   ProjectFacts,
-  'hasSrcFolder' | 'hasAppFolder' | 'usesNuxt' | 'usesSvelteKit'
+  | 'hasSrcFolder'
+  | 'usesNuxtAppDir'
+  | 'usesNuxt'
+  | 'usesNuxtIcon'
+  | 'usesSvelteKit'
 >;
 
 const componentDir = (
@@ -389,7 +439,7 @@ const componentDir = (
     return 'src/lib/components';
   }
   if (framework === Framework.VUE && layout.usesNuxt) {
-    return layout.hasAppFolder ? 'app/components' : 'components';
+    return layout.usesNuxtAppDir ? 'app/components' : 'components';
   }
   return layout.hasSrcFolder ? 'src/components' : 'components';
 };
@@ -401,7 +451,7 @@ export const componentFileFor = (
 ): string =>
   toPosix(
     options.componentFile ??
-      `${componentDir(layout, framework)}/${COMPONENT_NAME[framework ?? Framework.REACT]}`,
+      `${componentDir(layout, framework)}/${componentName(layout, framework)}`,
   );
 
 // Same walk as `build`, so "has icons" agrees with what the build will find. A missing folder is empty.
@@ -445,18 +495,20 @@ export const inspectProject = async (
     packageText === undefined ? undefined : parsePackageJson(packageText);
   const deps = dependencyNames(packageJson);
   const hasSrcFolder = await isDirectory(join(cwd, 'src'));
-  const hasAppFolder = await isDirectory(join(cwd, 'app'));
   const usesReact = deps.has('react') || deps.has('next');
   const usesNext = deps.has('next');
   const usesAstro = deps.has('astro');
   const usesNuxt = deps.has('nuxt');
+  const usesNuxtAppDir = usesNuxt && (await detectNuxtAppDir(cwd, packageJson));
+  const usesNuxtIcon =
+    usesNuxt && NUXT_ICON_MODULES.some((name) => deps.has(name));
   const usesVue = deps.has('vue') || usesNuxt;
   const usesSvelteKit = deps.has('@sveltejs/kit');
   const usesSvelte = deps.has('svelte') || usesSvelteKit;
   const detection = { usesReact, usesAstro, usesVue, usesSvelte };
   const componentFile = componentFileFor(
     options,
-    { hasSrcFolder, hasAppFolder, usesNuxt, usesSvelteKit },
+    { hasSrcFolder, usesNuxtAppDir, usesNuxt, usesNuxtIcon, usesSvelteKit },
     resolveFramework(options, detection).framework,
   );
   const isYarnBerry = await detectYarnBerry(cwd, names, packageJson);
@@ -479,7 +531,8 @@ export const inspectProject = async (
     usesSvelte,
     usesSvelteKit,
     hasSrcFolder,
-    hasAppFolder,
+    usesNuxtAppDir,
+    usesNuxtIcon,
     // A workspace package with no signal of its own follows the Yarn 2+ root above it.
     packageManager:
       isYarnBerry && localManager === PackageManager.NPM
@@ -963,8 +1016,7 @@ export const vueComponentContent = (
 // delivery logic in step with that adapter.
 import { computed, useAttrs } from 'vue';
 
-import type { IconName } from '${specifier}';
-import { manifest } from '${specifier}';
+import { manifest, type IconName } from '${specifier}';
 
 type ManifestFile = { readonly url: string };
 type ManifestIcon = {
@@ -1109,8 +1161,7 @@ export const svelteComponentContent = (
   // delivery logic in step with that adapter.
   import type { SVGAttributes } from 'svelte/elements';
 
-  import type { IconName } from '${specifier}';
-  import { manifest } from '${specifier}';
+  import { manifest, type IconName } from '${specifier}';
 
   type ManifestFile = { readonly url: string };
   type ManifestIcon = {
@@ -1411,6 +1462,16 @@ const installCommand = (manager: PackageManager): readonly string[] => {
   }
 };
 
+const nuxtUsageStep = (
+  componentFile: string,
+  isIconTaken: boolean,
+  iconExample: string,
+): string => {
+  const tag = posix.basename(componentFile, '.vue');
+  const example = iconExample.replace('<Icon ', `<${tag} `);
+  return `Nuxt auto-imports ${componentFile}: render ${example} in any page or component${isIconTaken ? ' (<Icon> is taken by @nuxt/icon)' : ''}`;
+};
+
 /** How to render the generated component, per framework. */
 const usageSteps = (
   framework: Framework | undefined,
@@ -1426,10 +1487,11 @@ const usageSteps = (
       ];
     case Framework.VUE:
       return [
-        // Nuxt names a component after its path under components/, so only the default is <Icon>.
+        // Nuxt names a component after its path under components/, so only a top-level file
+        // keeps its own name as the tag.
         facts.usesNuxt &&
-        /^(?:app\/)?components\/Icon\.vue$/.test(componentFile)
-          ? `Nuxt auto-imports ${componentFile}: render ${iconExample} in any page or component`
+        /^(?:app\/)?components\/(?:Svg)?Icon\.vue$/.test(componentFile)
+          ? nuxtUsageStep(componentFile, facts.usesNuxtIcon, iconExample)
           : `In a .vue file, import Icon from the path of ${componentFile} and render ${iconExample}`,
       ];
     case Framework.SVELTE:
