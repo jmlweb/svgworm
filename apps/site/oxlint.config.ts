@@ -14,5 +14,10 @@ export default defineConfig({
       env: { node: true },
       rules: { 'no-console': 'off' },
     },
+    {
+      // Workers load the module's default export (ADR-0032).
+      files: ['worker/**'],
+      rules: { 'import/no-default-export': 'off' },
+    },
   ],
 });

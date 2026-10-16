@@ -8,7 +8,8 @@
 //      a canonical URL and a sitemap entry;
 //   4. every /fonts/* file name carries the first 8 hex of its own SHA-256 (the year-long immutable
 //      cache is only safe for hashed names), and each is referenced by the stylesheet;
-//   5. /llms.txt and /llms-full.txt are served, and llms-full.txt holds every doc.
+//   5. /llms.txt and /llms-full.txt are served, and llms-full.txt holds every doc;
+//   6. every page has the markdown file the Worker serves for Accept: text/markdown (ADR-0032).
 // The site itself may ship client JS; only its icons must need none (they are `<use>` refs).
 // Exit 1 with every problem found. Same approach as the Next.js example's check.
 import { createHash } from 'node:crypto';
@@ -183,6 +184,15 @@ if (headers.includes('__SCRIPT_HASHES__'))
     '_headers still holds __SCRIPT_HASHES__; run scripts/csp-headers.mjs',
   );
 
+for (const file of [
+  'index.md',
+  'docs.md',
+  ...docSlugs.map((slug) => `docs/${slug}.md`),
+]) {
+  if (!files.includes(file))
+    problems.push(`${file} is missing, so the page has no markdown for agents`);
+}
+
 if (problems.length > 0) {
   for (const problem of problems) console.error(problem);
   process.exit(1);
@@ -190,5 +200,5 @@ if (problems.length > 0) {
 console.log(
   `checked ${String(files.length)} file(s) and ${String(pages.length)} page(s): ` +
     `${String(usedIds.size)} icon(s) from the hashed sprite, ${String(docSlugs.length)} doc(s) ` +
-    'with a page, title, description and sitemap entry, llms.txt and llms-full.txt, immutable /icons/*, hashed /fonts/*, security headers',
+    'with a page, title, description, sitemap entry and markdown, llms.txt and llms-full.txt, immutable /icons/*, hashed /fonts/*, security headers',
 );
