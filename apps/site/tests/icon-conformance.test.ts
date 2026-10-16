@@ -1,14 +1,21 @@
 import { createIcon } from '@svgworm/react';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { cp, mkdir, rm } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-// The generated src/components/Icon.astro (ADR-0017) must render what createIcon renders.
-// It is copied next to a fixture manifest with every delivery, because its manifest import is relative.
+import { astroComponentContent } from '../../../packages/svgworm/src/cli/init/plan.ts';
+
+// The Icon.astro that `svgworm init` writes today (ADR-0017) must render what createIcon
+// renders. It comes from the template in plan.ts, not from a committed copy (RPT-008), and is
+// written next to a fixture manifest with every delivery, because its manifest import is relative.
+const generatedIcon = astroComponentContent(
+  'src/components/Icon.astro',
+  'svgworm',
+);
 const root = fileURLToPath(new URL('..', import.meta.url));
 const scratch = join(root, 'tests/.generated');
 
@@ -22,10 +29,7 @@ beforeAll(async () => {
   await rm(scratch, { recursive: true, force: true });
   await mkdir(join(scratch, 'src/components'), { recursive: true });
   await mkdir(join(scratch, 'svgworm'), { recursive: true });
-  await cp(
-    join(root, 'src/components/Icon.astro'),
-    join(scratch, 'src/components/Icon.astro'),
-  );
+  await writeFile(join(scratch, 'src/components/Icon.astro'), generatedIcon);
   await cp(
     join(root, 'tests/fixtures/icons.js'),
     join(scratch, 'svgworm/icons.js'),
@@ -157,6 +161,14 @@ const renderAstro = (props: Record<string, unknown>) =>
 
 const renderReact = (props: Record<string, unknown>) =>
   renderToStaticMarkup(createElement(ReactIcon as never, props));
+
+describe("the site's Icon.astro", () => {
+  it('is what svgworm init writes today', async () => {
+    expect(
+      await readFile(join(root, 'src/components/Icon.astro'), 'utf8'),
+    ).toBe(generatedIcon);
+  });
+});
 
 describe('Icon.astro matches createIcon', () => {
   it.each(cases)('$label', async ({ name, react, astro }) => {

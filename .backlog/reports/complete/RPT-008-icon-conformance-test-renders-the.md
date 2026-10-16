@@ -3,8 +3,10 @@ id: RPT-008
 title: Icon conformance test renders the site's older Icon.astro, not the current init template
 type: finding
 severity: low
-status: pending
+status: triaged
 created: 2026-10-15
+triaged: 2026-10-16
+task-id: TSK-098
 ---
 
 ## Summary

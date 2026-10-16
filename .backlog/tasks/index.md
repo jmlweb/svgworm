@@ -7,7 +7,7 @@
 | Pending | 6 |
 | Active | 4 |
 | Blocked | 0 |
-| Complete | 87 |
+| Complete | 88 |
 
 ## Active Tasks
 
@@ -33,6 +33,7 @@
 |----|-------|-----------|
 | TSK-096 | Fuse svgo passes in transformIcon (5 optimize() rounds to 1) | 2026-10-16 |
 | TSK-097 | Spike: worker_threads pool for large icon sets | 2026-10-16 |
+| TSK-098 | Icon conformance test renders the current init Icon.astro template | 2026-10-16 |
 | TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |
 | TSK-022 | Inline sprite output | 2026-10-15 |
 | TSK-024 | Vite recipe | 2026-10-15 |
@@ -40,4 +41,3 @@
 | TSK-026 | CSS-variable multicolor mode | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
 | TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |
-| TSK-035 | Browser rendering matrix on product output (Playwright) | 2026-10-15 |

@@ -681,7 +681,7 @@ const loaders =
 `;
 };
 
-const astroComponentContent = (
+export const astroComponentContent = (
   componentFile: string,
   moduleDir: string,
 ): string => {
