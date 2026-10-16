@@ -36,6 +36,11 @@ export type ResolvedConfig = {
   readonly crossOrigin: CrossOrigin;
   /** True when `sources` was not set and {@link DEFAULT_SOURCE} stands in for it. */
   readonly isDefaultSources: boolean;
+  /**
+   * True when `publicPath` was not set, so it is derived from `outDir` or defaulted. The
+   * Vite plugin then prefixes Vite's `base` (ADR-0033); an explicit `publicPath` is kept.
+   */
+  readonly isDefaultPublicPath: boolean;
 };
 
 export type ConfigOverrides = Partial<ConfigInput>;
@@ -143,6 +148,7 @@ export const resolveConfig = (input: unknown, cwd: string): ResolvedConfig => {
     color: value.color ?? [],
     crossOrigin,
     isDefaultSources,
+    isDefaultPublicPath: value.publicPath === undefined,
   };
 };
 

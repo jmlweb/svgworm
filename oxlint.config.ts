@@ -17,6 +17,11 @@ const coreImportBoundary = [
           'src/core must not depend on any UI framework (architecture.md).',
       },
       {
+        name: 'vite',
+        message:
+          'src/core must not depend on a bundler. The Vite plugin lives in src/vite (ADR-0033).',
+      },
+      {
         name: 'process',
         message:
           'src/core must not touch the process streams. Use the event callback.',
@@ -36,6 +41,31 @@ const coreImportBoundary = [
         group: ['**/cli', '**/cli/**'],
         message:
           'src/core must not import src/cli. The CLI consumes the core, never the reverse.',
+      },
+      {
+        group: ['vite/*', '../vite', '../../vite', '**/vite/**'],
+        message:
+          'src/core must not import src/vite or Vite. The plugin consumes the core, never the reverse.',
+      },
+    ],
+  },
+];
+
+// The Vite plugin (ADR-0033) is a second thin shell over the core, beside the CLI.
+const viteImportBoundary = [
+  'error',
+  {
+    paths: [
+      {
+        name: '@clack/prompts',
+        message: 'src/vite reports through the Vite logger, not the CLI UX.',
+      },
+    ],
+    patterns: [
+      {
+        group: ['**/cli', '**/cli/**'],
+        message:
+          'src/vite must not import src/cli. Both consume the core public API.',
       },
     ],
   },
@@ -88,6 +118,10 @@ export default defineConfig({
       // These scripts and the bin shim import build output that does not exist at lint time.
       files: ['scripts/**', 'packages/*/bin/**', 'evals/**/*.mjs'],
       rules: { 'n/no-missing-import': 'off' },
+    },
+    {
+      files: ['packages/svgworm/src/vite/**/*.ts'],
+      rules: { 'eslint/no-restricted-imports': viteImportBoundary },
     },
     {
       files: ['packages/svgworm/src/core/**/*.ts'],

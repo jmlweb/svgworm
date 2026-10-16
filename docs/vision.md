@@ -21,7 +21,9 @@ A CLI that generates cacheable, hashed sprite files, a manifest, and types from 
 
 ## Positioning
 
-"Icon sprites for Next.js App Router and Server Components, correct with zero config: drop in your design team's SVGs and they theme and render correctly, with zero client JS and no bundler plugin."
+"Icon sprites for Next.js App Router and Server Components, correct with zero config: drop in your design team's SVGs and they theme and render correctly, with zero client JS and no bundler plugin required."
+
+The optional `svgworm/vite` plugin ([ADR-0033](adr/0033-optional-vite-plugin-as-a-svgworm-vite-subpath.md)) rebuilds icons inside `vite dev`. It is sugar over the CLI, never the only working path.
 
 Decided in [ADR-0005](adr/0005-build-standalone-with-kill-criteria.md), after the competitor review ([viability.md](viability.md#neodxsvg-in-detail)).
 

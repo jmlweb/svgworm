@@ -20,7 +20,7 @@ Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main
 | ------------ | -------------- | ----------------------------------------------------------------------------------------------- |
 | `sources`    | `icons`        | Folders with the SVG files: a path, or `{ "dir", "include", "exclude" }` to pick files by glob. One folder may be a plain string |
 | `outDir`     | `public/icons` | Where sprite files go. `publicPath` is derived when it is under `public/` (`public/sprites` gives `/sprites`), otherwise required |
-| `publicPath` | `/icons`       | Same-origin URL path the sprites are served from. Add a Next `basePath` or an Astro/Vite `base` by hand |
+| `publicPath` | `/icons`       | Same-origin URL path the sprites are served from. Add a Next `basePath` or an Astro/Vite `base` by hand (the [Vite plugin](/docs/vite/#base) fails when a Vite `base` is missing from it) |
 | `moduleDir`  | `svgworm`      | Where the manifest and types go                                                                 |
 | `flatten`    | `false`        | Drop folder names from icon names                                                               |
 | `color`      | `[]`           | Per-icon color overrides (see [Color overrides](#color-overrides)). The last matching rule wins |

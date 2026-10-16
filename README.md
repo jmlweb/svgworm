@@ -32,7 +32,7 @@ const nope = <Icon name="nope" />; // type error: "nope" is not an icon name
 - **Icons that render right, with no config.** Each icon is mono (follows `currentColor`) or multicolor (keeps its colors). Gradients, masks and filters render in Chromium, Firefox and WebKit.
 - **Zero client JS.** The browser fetches one hashed sprite and caches it.
 - **Type-safe names.** A wrong icon name fails `tsc`.
-- **No bundler plugin.** It is a CLI that writes files, so it works with Turbopack, webpack and Vite.
+- **No bundler plugin required.** It is a CLI that writes files, so it works with Turbopack, webpack and Vite. Vite users can add the optional `svgworm/vite` plugin to rebuild icons inside `vite dev`.
 - **Deterministic.** The same input gives byte-identical output on every OS.
 
 ## Get started
@@ -86,7 +86,7 @@ Also works with Astro: `svgworm init` detects it and writes a React-free `Icon.a
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Have your own icon folder in a Next.js App Router app          | **svgworm**                                                                                  |
 | Want one tree-shaken component per icon and accept the JS cost | [SVGR](https://github.com/gregberge/svgr)                                                    |
-| Need several sprites or a webpack/Vite plugin today            | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
+| Need several sprites or a webpack plugin today                 | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
 | Use Vite and all your icons are single-color                   | [vite-plugin-icons-spritesheet](https://github.com/forge42dev/vite-plugin-icons-spritesheet) |
 
 The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers and says where each tool is the better choice.
@@ -95,7 +95,7 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 
 - [Next.js guide](https://svgworm.com/docs/nextjs/): manual setup, caching for a year, `basePath`
 - [Astro guide](https://svgworm.com/docs/astro/): the generated `Icon.astro`, caching, `base`
-- [Vite guide](https://svgworm.com/docs/vite/): Vite + React, `base`, caching, [examples/vite-react](examples/vite-react)
+- [Vite guide](https://svgworm.com/docs/vite/): Vite + React, the optional `svgworm/vite` plugin, `base`, caching, [examples/vite-react](examples/vite-react)
 - [Icon component](https://svgworm.com/docs/icon/): props, the markup per delivery, sizing and coloring
 - [How it works](https://svgworm.com/docs/how-it-works/): sprite, stack, delivery forms, manifest, determinism
 - ⌨️ [CLI](https://svgworm.com/docs/cli/): commands, flags, exit codes, `check` in CI, `watch`

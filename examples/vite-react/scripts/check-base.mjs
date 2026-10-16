@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Proves the Vite `base` recipe (TSK-024): with `base: '/app/'`, svgworm must write
-// `--public-path /app/icons`, or every icon 404s. Builds into dist-base/ with that pair and runs
+// Proves the Vite `base` recipe (TSK-024, ADR-0033): an app mounted at /app/ needs
+// `"publicPath": "/app/icons"` in its svgworm config, or every icon 404s. Builds with
+// vite.base.config.ts (base /app/, svgworm.base.config.json) into dist-base/ and runs
 // check-dist against it. The committed output uses the default `/`, so the finally block
 // rebuilds it and the script leaves the working tree as it found it.
 import { execFileSync } from 'node:child_process';
@@ -13,12 +14,11 @@ const run = (args) =>
   });
 
 try {
-  run(['svgworm', '--public-path', `${base}icons`]);
   run([
     'vite',
     'build',
-    '--base',
-    base,
+    '--config',
+    'vite.base.config.ts',
     '--outDir',
     'dist-base',
     '--emptyOutDir',

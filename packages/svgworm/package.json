@@ -40,6 +40,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite/index.js"
+    },
     "./package.json": "./package.json",
     "./schema.json": "./svgworm.schema.json"
   },
@@ -59,5 +63,16 @@
     "@clack/prompts": "1.8.0",
     "svgo": "4.1.0",
     "zod": "4.6.6"
+  },
+  "peerDependencies": {
+    "vite": "^8.3.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "vite": "8.3.3"
   }
 }
