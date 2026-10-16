@@ -36,7 +36,17 @@ describe('resolveConfig', () => {
       color: [],
       crossOrigin: 'none',
       isDefaultSources: false,
+      isDefaultPublicPath: true,
     });
+  });
+
+  it.each([
+    [{ sources: 'icons' }, true],
+    [{ sources: 'icons', outDir: 'public/sprites' }, true],
+    [{ sources: 'icons', publicPath: '/icons' }, false],
+    [{ sources: 'icons', outDir: 'static', publicPath: '/static' }, false],
+  ])('marks whether publicPath was set (%j)', (input, expected) => {
+    expect(resolveConfig(input, cwd).isDefaultPublicPath).toBe(expected);
   });
 
   it('defaults sources to the icons folder and marks it', () => {

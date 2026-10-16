@@ -13,5 +13,5 @@
     "isolatedModules": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "svgworm", "vite.config.ts"]
+  "include": ["src", "svgworm", "vite.config.ts", "vite.base.config.ts"]
 }

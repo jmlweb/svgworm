@@ -19,14 +19,14 @@ Versions, dates and download counts come from npm on 2026-10-08 ([competitive la
 | Have your own icon folder in Next.js (App Router) or Astro and want zero client JS, no glue | **svgworm**                                                                                  |
 | Want one component per icon, tree-shaken, and accept the JS cost                          | [SVGR](https://github.com/gregberge/svgr)                                                    |
 | Use Vite, want a sprite plus types, and your icons are all single-color                   | [vite-plugin-icons-spritesheet](https://github.com/forge42dev/vite-plugin-icons-spritesheet) |
-| Need several sprites, a watcher, or a webpack/Vite plugin today                           | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
+| Need several sprites, a watcher, or a webpack plugin today                                | [@neodx/svg](https://neodx.pages.dev/svg/)                                                   |
 | Want icons from public sets (Lucide, Material, …) without owning SVG files                | [unplugin-icons](https://github.com/unplugin/unplugin-icons) / Iconify                       |
 
 ## What svgworm does differently
 
 - **Per-icon color.** Each icon is classified as mono or multicolor. Mono icons follow `currentColor`; multicolor icons keep their colors. In [TSK-003](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-003-color-classification/RESULTS.md) the classifier agreed with rendering on 99.98% of 31,390 icons and recolored no multicolor icon.
 - **Gradients, masks and filters render in every engine.** WebKit resolves no `url(#…)` reference inside an external `<use>` sprite ([TSK-002](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-002-external-use/RESULTS.md)). Gradient, mask and filter icons come out blank there. svgworm puts those icons in a second "stack" file and delivers them as `<img>` (multicolor) or a CSS mask (mono). [TSK-004](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-004-sprite-url/RESULTS.md) renders all of them in Chromium, Firefox and WebKit with JavaScript disabled.
-- **No bundler plugin.** It is a CLI that writes files, so it works the same under Turbopack, webpack and Vite.
+- **No bundler plugin required.** It is a CLI that writes files, so it works the same under Turbopack, webpack and Vite. In Vite, the optional [`svgworm/vite` plugin](/docs/vite/#rebuild-in-vite-dev-optional-plugin) rebuilds in `vite dev`.
 - **Deterministic output.** The same input gives byte-identical files. Names are Unicode-normalized, so an NFC and an NFD `café.svg` give the same name and id ([TSK-006](https://github.com/jmlweb/svgworm/blob/main/spikes/TSK-006-icon-naming/RESULTS.md)).
 - **Errors, not silent fixes.** Name collisions and invalid SVGs stop the build and write nothing.
 
@@ -84,7 +84,7 @@ We reported the three findings upstream on 2026-10-12, before publishing this pa
 
 </aside>
 
-**Pick neodx when** you need multiple sprites or a Vite/webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable. What we hit is the default behavior, not a hard limit. It has about 2k weekly downloads.
+**Pick neodx when** you need multiple sprites or a webpack plugin now, or you are happy to set color rules by hand. Its defaults are tunable. What we hit is the default behavior, not a hard limit. It has about 2k weekly downloads.
 
 ## SVGR
 

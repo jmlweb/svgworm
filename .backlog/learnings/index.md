@@ -53,3 +53,7 @@
 | LRN-047 | <use> draws a symbol at 0,0: the consumer viewBox must not carry the icon's origin | svg, use, viewbox, render, fixtures | active | 2026-10-15 |
 | LRN-048 | svgo plugins can carry svgworm's own steps through one optimize() run | svgo, perf, core, errors | active | 2026-10-16 |
 | LRN-049 | Worker threads cost ~100 ms each to boot svgo; not worth it under ~2k icons | perf, core, svgo, spike | active | 2026-10-16 |
+| LRN-050 | Vite's closeServer plugin hook first ships in 8.3.0 | vite, plugin, tooling | active | 2026-10-16 |
+| LRN-051 | Vite replays a pre-connect error payload to the first client only | vite, plugin, dev-server | active | 2026-10-16 |
+| LRN-052 | A bundler plugin must not derive output the CLI cannot reproduce | vite, plugin, config, determinism | active | 2026-10-16 |
+| LRN-053 | Real fs.watch in Vitest plugin tests aborted the macOS CI runner | testing, ci, macos, watch, vite | active | 2026-10-16 |

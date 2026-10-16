@@ -19,7 +19,7 @@ SVG sources ─▶ core (parse, normalize, id, optimize, classify color, assembl
 
 ## Packages (ADR-0008)
 
-- `packages/svgworm`: core in `src/core`, CLI in `src/cli`. `src/core` must not import `src/cli`, `@clack/prompts`, or `react`, and must not write to stdout. It reports progress through an event callback. A lint rule enforces this.
+- `packages/svgworm`: core in `src/core`, CLI in `src/cli`, optional Vite plugin in `src/vite` (`svgworm/vite`, ADR-0033; `vite` is an optional peer, not a dependency). `src/core` must not import `src/cli`, `src/vite`, `vite`, `@clack/prompts`, or `react`, and must not write to stdout. It reports progress through an event callback. `src/vite` uses only the core's public entry, never `src/cli`. Lint rules enforce this.
 - `packages/react` (`@svgworm/react`): zero dependencies, `react` as a peer only, and no import from `svgworm`.
 - Astro (ADR-0017): no package. `svgworm init` writes a dependency-free `Icon.astro` from a template in `src/cli/init`; it must render the same markup as `@svgworm/react`.
 - `apps/site` (private, ADR-0016): the landing page. It consumes the output contract like any user and is never published.

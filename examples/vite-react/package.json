@@ -8,9 +8,7 @@
     "node": "^22.20.0 || >=24.11.0"
   },
   "scripts": {
-    "predev": "svgworm",
     "dev": "vite",
-    "prebuild": "svgworm",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
