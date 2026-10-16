@@ -5,16 +5,15 @@
 | Status | Count |
 |--------|-------|
 | Pending | 6 |
-| Active | 4 |
+| Active | 3 |
 | Blocked | 0 |
-| Complete | 88 |
+| Complete | 89 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
 - TSK-089: Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) (P3)
-- TSK-090: Site: framework guide cards and help links (P3)
 
 ## Pending Tasks
 
@@ -31,6 +30,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-090 | Site: framework guide cards and help links | 2026-10-16 |
 | TSK-096 | Fuse svgo passes in transformIcon (5 optimize() rounds to 1) | 2026-10-16 |
 | TSK-097 | Spike: worker_threads pool for large icon sets | 2026-10-16 |
 | TSK-098 | Icon conformance test renders the current init Icon.astro template | 2026-10-16 |
@@ -40,4 +40,3 @@
 | TSK-025 | Alias map for icon name collisions | 2026-10-15 |
 | TSK-026 | CSS-variable multicolor mode | 2026-10-15 |
 | TSK-028 | Pre-launch post: per-icon color result | 2026-10-15 |
-| TSK-031 | Agent discoverability: Context7, agent skill, AGENTS.md snippet | 2026-10-15 |

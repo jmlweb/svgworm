@@ -1,13 +1,14 @@
 ---
 id: TSK-090
 title: Site: framework guide cards and help links
-status: active
+status: complete
 priority: P3
 tags: []
 created: 2026-10-15
 source: idea/PLN-007
 depends-on: []
 started: 2026-10-15
+completed: 2026-10-16
 ---
 
 # Site: framework guide cards and help links
@@ -53,7 +54,7 @@ Help visitors find their next step, following rea.tools' target-guide and help-l
 - [x] SiteFooter links Troubleshooting, GitHub issues and GitHub Discussions; no new HelpRow section
 - [x] #try CTA copy names Vite, consistent with TSK-089
 - [x] Linked example paths are verified (check-output.mjs) or only docs pages are linked
-- [ ] pnpm site:check passes; keyboard focus, light/dark and phone width checked
+- [x] pnpm site:check passes; keyboard focus, light/dark and phone width checked — evidence: pnpm site:check → exit 0 (3 CSP hashes); Playwright Chromium on the built site: 360 and 1280 px, light and dark, no horizontal overflow, cards in one row at 1280 and stacked at 360; Tab reaches every card and footer link with a 2px outline (light rgb(147,58,67), dark rgb(222,143,138)); screenshots read by eye (2026-10-16) (2026-10-16)
 
 ## Notes
 
@@ -64,3 +65,5 @@ Help visitors find their next step, following rea.tools' target-guide and help-l
 - [2026-10-15] Created
 - [2026-10-15] Started
 - [2026-10-15] Added GuideCards.astro (after #start), footer help links, example-path check in check-output.mjs; #try CTA already named Vite. site:check passes. Left: visual check (focus, light/dark, phone).
+- [2026-10-16] Visual check done after the hero, og-image and colors-tile commits. Placement note: da483ce (2026-10-15, moving #agents after Why svgworm) moved #start below #proof, so GuideCards now sits after #agents and before #proof, not after #start as criterion 3 says. Left as is, because the reorder is the maintainer's later decision; move <GuideCards /> after #start if that was not intended.
+- [2026-10-16] Completed
