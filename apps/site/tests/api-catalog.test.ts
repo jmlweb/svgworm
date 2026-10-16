@@ -42,3 +42,18 @@ describe('api-catalog', () => {
     );
   });
 });
+
+describe('homepage Link header', () => {
+  it('points agents at the catalog, schema, docs and llms.txt (RFC 8288)', async () => {
+    const headers = await readFile(`${publicDir}_headers`, 'utf8');
+    const block = /^\/\n((?:\s+.+\n?)+)/m.exec(headers)?.[1] ?? '';
+    const link = /^\s+Link: (.+)$/m.exec(block)?.[1] ?? '';
+    for (const rel of [
+      'api-catalog',
+      'service-desc',
+      'service-doc',
+      'describedby',
+    ])
+      expect(link).toContain(`rel="${rel}"`);
+  });
+});
