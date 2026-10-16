@@ -67,3 +67,4 @@ Help visitors find their next step, following rea.tools' target-guide and help-l
 - [2026-10-15] Added GuideCards.astro (after #start), footer help links, example-path check in check-output.mjs; #try CTA already named Vite. site:check passes. Left: visual check (focus, light/dark, phone).
 - [2026-10-16] Visual check done after the hero, og-image and colors-tile commits. Placement note: da483ce (2026-10-15, moving #agents after Why svgworm) moved #start below #proof, so GuideCards now sits after #agents and before #proof, not after #start as criterion 3 says. Left as is, because the reorder is the maintainer's later decision; move <GuideCards /> after #start if that was not intended.
 - [2026-10-16] Completed
+- [2026-10-16] Moved <GuideCards /> after #start, as criterion 3 says (maintainer confirmed). site:check passes.
