@@ -12,7 +12,12 @@ import { ConfigError } from '../../core/errors.ts';
 import { listDirectory, readTextIfPresent, toPosix } from '../../core/fs.ts';
 import { SAMPLE_ICON_NAME, SAMPLE_ICON_SVG } from './sample-icon.ts';
 
-export const Framework = { REACT: 'react', ASTRO: 'astro' } as const;
+export const Framework = {
+  REACT: 'react',
+  ASTRO: 'astro',
+  VUE: 'vue',
+  SVELTE: 'svelte',
+} as const;
 export type Framework = (typeof Framework)[keyof typeof Framework];
 
 export const FrameworkSource = {
@@ -39,7 +44,7 @@ export type InitOptions = {
   readonly frameworkSource?: Exclude<FrameworkSource, 'detected'>;
   /** Write the icon component. `undefined` means "when a supported framework is found". */
   readonly addComponent: boolean | undefined;
-  /** Where the wiring goes. `undefined` picks `icon.tsx` or `Icon.astro` under `src/components/` or `components/`. */
+  /** Where the wiring goes. `undefined` picks the framework's file name and folder (`componentFileFor`). */
   readonly componentFile: string | undefined;
   /** Append a svgworm section to AGENTS.md (opt-in, TSK-031). */
   readonly addAgentsMd: boolean;
@@ -75,7 +80,15 @@ export type ProjectFacts = {
   /** Next.js: the component is a Server Component and the public path may carry a basePath. */
   readonly usesNext: boolean;
   readonly usesAstro: boolean;
+  /** `vue` or `nuxt` (ADR-0034). */
+  readonly usesVue: boolean;
+  readonly usesNuxt: boolean;
+  /** `svelte` or `@sveltejs/kit` (ADR-0034). */
+  readonly usesSvelte: boolean;
+  readonly usesSvelteKit: boolean;
   readonly hasSrcFolder: boolean;
+  /** Nuxt 4 keeps components under `app/`. */
+  readonly hasAppFolder: boolean;
   readonly packageManager: PackageManager;
   /** The package manager runs `pre<name>` scripts. Yarn 2+ dropped them for user scripts. */
   readonly runsScriptHooks: boolean;
@@ -266,9 +279,34 @@ const detectYarnBerry = async (
   }
 };
 
-type FrameworkFacts = Pick<ProjectFacts, 'usesReact' | 'usesAstro'>;
+type FrameworkFacts = Pick<
+  ProjectFacts,
+  'usesReact' | 'usesAstro' | 'usesVue' | 'usesSvelte'
+>;
 
-/** Flag first, then the dependencies. Astro wins when both are present: the choice is reported, never silent. */
+// Meta-frameworks first: an Astro site may carry vue or svelte integrations, and a Vue or
+// Svelte app may still depend on react for one widget (ADR-0034).
+const PRECEDENCE = [
+  Framework.ASTRO,
+  Framework.VUE,
+  Framework.SVELTE,
+  Framework.REACT,
+] as const;
+
+const IS_DETECTED = {
+  [Framework.ASTRO]: (facts: FrameworkFacts) => facts.usesAstro,
+  [Framework.VUE]: (facts: FrameworkFacts) => facts.usesVue,
+  [Framework.SVELTE]: (facts: FrameworkFacts) => facts.usesSvelte,
+  [Framework.REACT]: (facts: FrameworkFacts) => facts.usesReact,
+} as const;
+
+/** Every framework found in the dependencies, in precedence order. */
+export const detectedFrameworks = (
+  facts: FrameworkFacts,
+): readonly Framework[] =>
+  PRECEDENCE.filter((framework) => IS_DETECTED[framework](facts));
+
+/** Flag first, then the dependencies by precedence. The choice is reported, never silent. */
 export const resolveFramework = (
   options: InitOptions,
   facts: FrameworkFacts,
@@ -282,43 +320,89 @@ export const resolveFramework = (
       source: options.frameworkSource ?? FrameworkSource.FLAG,
     };
   }
-  if (facts.usesAstro) {
-    return { framework: Framework.ASTRO, source: FrameworkSource.DETECTED };
-  }
-  if (facts.usesReact) {
-    return { framework: Framework.REACT, source: FrameworkSource.DETECTED };
-  }
-  return { framework: undefined, source: undefined };
+  const [detected] = detectedFrameworks(facts);
+  return detected === undefined
+    ? { framework: undefined, source: undefined }
+    : { framework: detected, source: FrameworkSource.DETECTED };
 };
 
 const COMPONENT_EXTENSION = {
-  [Framework.REACT]: /\.[jt]sx$/,
-  [Framework.ASTRO]: /\.astro$/,
+  [Framework.REACT]: { pattern: /\.[jt]sx$/, label: '.tsx or .jsx' },
+  [Framework.ASTRO]: { pattern: /\.astro$/, label: '.astro' },
+  [Framework.VUE]: { pattern: /\.vue$/, label: '.vue' },
+  [Framework.SVELTE]: { pattern: /\.svelte$/, label: '.svelte' },
 } as const;
 
-/** `--component-file` must carry the extension of the framework `init` writes for. */
+// The loader of crossOrigin "inject" needs a script in the page, which Vue templates refuse and
+// Svelte only replays on hydration. Until a spike settles it, init says so (ADR-0034).
+const HAS_CDN_LOADER = {
+  [Framework.REACT]: true,
+  [Framework.ASTRO]: true,
+  [Framework.VUE]: false,
+  [Framework.SVELTE]: false,
+} as const;
+
+/** `init` writes a sprite loader for this framework, so `--cdn-url` works with it. */
+export const hasCdnLoader = (framework: Framework): boolean =>
+  HAS_CDN_LOADER[framework];
+
+/**
+ * Framework choices `init` cannot honor: a `--component-file` without the framework's
+ * extension, or `--cdn-url` for a framework with no generated loader.
+ */
 export const frameworkProblem = (
   options: InitOptions,
   facts: FrameworkFacts,
 ): string | undefined => {
   const { framework } = resolveFramework(options, facts);
+  if (framework === undefined) return undefined;
   const file = options.componentFile;
-  if (framework === undefined || file === undefined) return undefined;
-  if (COMPONENT_EXTENSION[framework].test(file)) return undefined;
-  return `--component-file "${file}" does not match the ${framework} component (${framework === Framework.ASTRO ? '.astro' : '.tsx or .jsx'})`;
+  const extension = COMPONENT_EXTENSION[framework];
+  if (file !== undefined && !extension.pattern.test(file)) {
+    return `--component-file "${file}" does not match the ${framework} component (${extension.label})`;
+  }
+  if (options.cdnUrl !== undefined && !hasCdnLoader(framework)) {
+    return `--cdn-url is not supported for ${framework} yet: init does not write its sprite loader (see https://svgworm.com/docs/${framework})`;
+  }
+  return undefined;
+};
+
+const COMPONENT_NAME = {
+  [Framework.REACT]: 'icon.tsx',
+  [Framework.ASTRO]: 'Icon.astro',
+  [Framework.VUE]: 'Icon.vue',
+  [Framework.SVELTE]: 'Icon.svelte',
+} as const;
+
+type LayoutFacts = Pick<
+  ProjectFacts,
+  'hasSrcFolder' | 'hasAppFolder' | 'usesNuxt' | 'usesSvelteKit'
+>;
+
+const componentDir = (
+  layout: LayoutFacts,
+  framework: Framework | undefined,
+): string => {
+  // SvelteKit resolves `$lib` to src/lib; Nuxt auto-imports components/ under its srcDir,
+  // which is app/ in Nuxt 4 and the project root in Nuxt 3.
+  if (framework === Framework.SVELTE && layout.usesSvelteKit) {
+    return 'src/lib/components';
+  }
+  if (framework === Framework.VUE && layout.usesNuxt) {
+    return layout.hasAppFolder ? 'app/components' : 'components';
+  }
+  return layout.hasSrcFolder ? 'src/components' : 'components';
 };
 
 export const componentFileFor = (
   options: InitOptions,
-  hasSrcFolder: boolean,
+  layout: LayoutFacts,
   framework: Framework | undefined,
-): string => {
-  const name = framework === Framework.ASTRO ? 'Icon.astro' : 'icon.tsx';
-  return toPosix(
+): string =>
+  toPosix(
     options.componentFile ??
-      (hasSrcFolder ? `src/components/${name}` : `components/${name}`),
+      `${componentDir(layout, framework)}/${COMPONENT_NAME[framework ?? Framework.REACT]}`,
   );
-};
 
 // Same walk as `build`, so "has icons" agrees with what the build will find. A missing folder is empty.
 const hasIcons = async (
@@ -361,13 +445,19 @@ export const inspectProject = async (
     packageText === undefined ? undefined : parsePackageJson(packageText);
   const deps = dependencyNames(packageJson);
   const hasSrcFolder = await isDirectory(join(cwd, 'src'));
+  const hasAppFolder = await isDirectory(join(cwd, 'app'));
   const usesReact = deps.has('react') || deps.has('next');
   const usesNext = deps.has('next');
   const usesAstro = deps.has('astro');
+  const usesNuxt = deps.has('nuxt');
+  const usesVue = deps.has('vue') || usesNuxt;
+  const usesSvelteKit = deps.has('@sveltejs/kit');
+  const usesSvelte = deps.has('svelte') || usesSvelteKit;
+  const detection = { usesReact, usesAstro, usesVue, usesSvelte };
   const componentFile = componentFileFor(
     options,
-    hasSrcFolder,
-    resolveFramework(options, { usesReact, usesAstro }).framework,
+    { hasSrcFolder, hasAppFolder, usesNuxt, usesSvelteKit },
+    resolveFramework(options, detection).framework,
   );
   const isYarnBerry = await detectYarnBerry(cwd, names, packageJson);
   const localManager = detectPackageManager(names, packageJson);
@@ -384,7 +474,12 @@ export const inspectProject = async (
     usesReact,
     usesNext,
     usesAstro,
+    usesVue,
+    usesNuxt,
+    usesSvelte,
+    usesSvelteKit,
     hasSrcFolder,
+    hasAppFolder,
     // A workspace package with no signal of its own follows the Yarn 2+ root above it.
     packageManager:
       isYarnBerry && localManager === PackageManager.NPM
@@ -607,14 +702,22 @@ const planScripts = (facts: ProjectFacts, command: string): ScriptsPlan => {
   };
 };
 
+const manifestSpecifier = (
+  componentFile: string,
+  moduleDir: string,
+): string => {
+  const target = toPosix(
+    relative(dirname(componentFile), join(moduleDir, 'icons.js')),
+  );
+  return target.startsWith('.') ? target : `./${target}`;
+};
+
 const componentContent = (
   componentFile: string,
   moduleDir: string,
   isCdn: boolean,
 ): string => {
-  const fromDir = dirname(componentFile);
-  const target = toPosix(relative(fromDir, join(moduleDir, 'icons.js')));
-  const specifier = target.startsWith('.') ? target : `./${target}`;
+  const specifier = manifestSpecifier(componentFile, moduleDir);
   return [
     isCdn
       ? "import { createIcon, createSpriteLoader } from '@svgworm/react';"
@@ -643,10 +746,7 @@ const astroLoaderContent = (
   componentFile: string,
   moduleDir: string,
 ): string => {
-  const target = toPosix(
-    relative(dirname(componentFile), join(moduleDir, 'icons.js')),
-  );
-  const specifier = target.startsWith('.') ? target : `./${target}`;
+  const specifier = manifestSpecifier(componentFile, moduleDir);
   return `---
 // Generated by \`svgworm init\`. The sprites are on a CDN
 // (crossOrigin "inject", ADR-0027): render <SvgwormLoader /> once, in the
@@ -685,10 +785,7 @@ export const astroComponentContent = (
   componentFile: string,
   moduleDir: string,
 ): string => {
-  const target = toPosix(
-    relative(dirname(componentFile), join(moduleDir, 'icons.js')),
-  );
-  const specifier = target.startsWith('.') ? target : `./${target}`;
+  const specifier = manifestSpecifier(componentFile, moduleDir);
   return `---
 // Generated by \`svgworm init\`. Renders the same markup as \`createIcon\`
 // from @svgworm/react, with no client JavaScript. Keep the delivery logic in
@@ -854,6 +951,311 @@ const maskStyle =
 `;
 };
 
+/** `Icon.vue` for Vue 3.5 and Nuxt (ADR-0034). */
+export const vueComponentContent = (
+  componentFile: string,
+  moduleDir: string,
+): string => {
+  const specifier = manifestSpecifier(componentFile, moduleDir);
+  return `<script setup lang="ts">
+// Generated by \`svgworm init\`. Renders the same markup as \`createIcon\`
+// from @svgworm/react, with no client JavaScript of its own. Keep the
+// delivery logic in step with that adapter.
+import { computed, useAttrs } from 'vue';
+
+import type { IconName } from '${specifier}';
+import { manifest } from '${specifier}';
+
+type ManifestFile = { readonly url: string };
+type ManifestIcon = {
+  readonly sprite: string;
+  readonly id: string;
+  readonly viewBox: string;
+  readonly delivery: 'use' | 'img' | 'mask';
+};
+type IconManifest = {
+  readonly version: number;
+  readonly sprites: Readonly<
+    Record<
+      string,
+      {
+        readonly sprite: ManifestFile | null;
+        readonly stack: ManifestFile | null;
+      }
+    >
+  >;
+  readonly icons: Readonly<Record<string, ManifestIcon>>;
+};
+
+defineOptions({ inheritAttrs: false });
+
+const props = withDefaults(
+  defineProps<{
+    name: IconName;
+    /** Accessible name rendered as a <title>; makes the icon non-decorative. */
+    title?: string;
+    /** Accessible name as aria-label; makes the icon non-decorative. */
+    label?: string;
+    width?: string | number;
+    height?: string | number;
+  }>(),
+  { title: undefined, label: undefined, width: '1em', height: '1em' },
+);
+const attrs = useAttrs();
+
+const { icons, sprites, version } = manifest as IconManifest;
+if (version !== 1 && version !== 2) {
+  throw new Error(
+    \`Unsupported svgworm manifest version \${String(version)}; \` +
+      'this component reads versions 1 and 2. Update svgworm and run it again.',
+  );
+}
+
+const icon = computed((): ManifestIcon => {
+  // An own property only: a runtime name such as "constructor" must not find
+  // Object.prototype.
+  const found = Object.hasOwn(icons, props.name)
+    ? icons[props.name]
+    : undefined;
+  if (!found) {
+    throw new Error(
+      \`Unknown icon "\${props.name}". It is not in the svgworm manifest.\`,
+    );
+  }
+  return found;
+});
+
+const fileUrl = (kind: 'sprite' | 'stack'): string => {
+  const { sprite, id } = icon.value;
+  const file = sprites[sprite]?.[kind];
+  if (!file) {
+    throw new Error(
+      \`Icon "\${props.name}" needs the \${kind} file of "\${sprite}", \` +
+        'but the manifest has none. Run svgworm again.',
+    );
+  }
+  // Version 2 is crossOrigin "inject": a loader puts the sprite in the page
+  // (ADR-0027).
+  return kind === 'sprite' && version === 2 ? \`#\${id}\` : \`\${file.url}#\${id}\`;
+};
+
+// <use> draws the symbol at 0,0, so the svg gets only the viewBox size; the
+// symbol keeps the origin (ADR-0030).
+const viewBoxSize = computed(() => {
+  const [, , width, height] = icon.value.viewBox.trim().split(/[\\s,]+/);
+  return \`0 0 \${width} \${height}\`;
+});
+
+const accessibleName = computed(() => props.title ?? props.label);
+const a11y = computed(() =>
+  accessibleName.value === undefined
+    ? ({ 'aria-hidden': true } as const)
+    : ({ role: 'img' } as const),
+);
+// A bare number is pixels, as in React's style prop.
+const length = (value: string | number): string =>
+  typeof value === 'number' ? \`\${value}px\` : value;
+const maskStyle = computed(() =>
+  [
+    'display:inline-block',
+    \`width:\${length(props.width)}\`,
+    \`height:\${length(props.height)}\`,
+    'background-color:currentColor',
+    \`mask:url("\${fileUrl('stack')}") center / contain no-repeat\`,
+  ].join(';'),
+);
+</script>
+
+<template>
+  <img
+    v-if="icon.delivery === 'img'"
+    v-bind="attrs"
+    :alt="accessibleName ?? ''"
+    :height="height"
+    :src="fileUrl('stack')"
+    :width="width"
+  />
+  <span
+    v-else-if="icon.delivery === 'mask'"
+    v-bind="{ ...attrs, ...a11y, style: undefined }"
+    :aria-label="accessibleName"
+    :style="[maskStyle, attrs.style]"
+  />
+  <svg
+    v-else
+    focusable="false"
+    :height="height"
+    :viewBox="viewBoxSize"
+    :width="width"
+    :aria-label="label"
+    v-bind="{ ...a11y, ...attrs }"
+  >
+    <title v-if="title !== undefined">{{ title }}</title>
+    <use :href="fileUrl('sprite')" />
+  </svg>
+</template>
+`;
+};
+
+/** `Icon.svelte` for Svelte 5 and SvelteKit (ADR-0034). */
+export const svelteComponentContent = (
+  componentFile: string,
+  moduleDir: string,
+): string => {
+  const specifier = manifestSpecifier(componentFile, moduleDir);
+  return `<script module lang="ts">
+  // Generated by \`svgworm init\`. Renders the same markup as \`createIcon\`
+  // from @svgworm/react, with no client JavaScript of its own. Keep the
+  // delivery logic in step with that adapter.
+  import type { SVGAttributes } from 'svelte/elements';
+
+  import type { IconName } from '${specifier}';
+  import { manifest } from '${specifier}';
+
+  type ManifestFile = { readonly url: string };
+  type ManifestIcon = {
+    readonly sprite: string;
+    readonly id: string;
+    readonly viewBox: string;
+    readonly delivery: 'use' | 'img' | 'mask';
+  };
+  type IconManifest = {
+    readonly version: number;
+    readonly sprites: Readonly<
+      Record<
+        string,
+        {
+          readonly sprite: ManifestFile | null;
+          readonly stack: ManifestFile | null;
+        }
+      >
+    >;
+    readonly icons: Readonly<Record<string, ManifestIcon>>;
+  };
+
+  export interface Props
+    extends Omit<SVGAttributes<SVGSVGElement>, 'name' | 'title' | 'style'> {
+    name: IconName;
+    /** Accessible name rendered as a <title>; makes the icon non-decorative. */
+    title?: string;
+    /** Accessible name as aria-label; makes the icon non-decorative. */
+    label?: string;
+    style?: string;
+  }
+
+  const { icons, sprites, version } = manifest as IconManifest;
+  if (version !== 1 && version !== 2) {
+    throw new Error(
+      \`Unsupported svgworm manifest version \${String(version)}; \` +
+        'this component reads versions 1 and 2. ' +
+        'Update svgworm and run it again.',
+    );
+  }
+
+  // A bare number is pixels, as in React's style prop.
+  const length = (value: string | number | null | undefined): string =>
+    typeof value === 'number' ? \`\${value}px\` : (value ?? '');
+</script>
+
+<script lang="ts">
+  let {
+    name,
+    title,
+    label,
+    width = '1em',
+    height = '1em',
+    style,
+    ...rest
+  }: Props = $props();
+
+  const icon = $derived.by((): ManifestIcon => {
+    // An own property only: a runtime name such as "constructor" must not
+    // find Object.prototype.
+    const found = Object.hasOwn(icons, name) ? icons[name] : undefined;
+    if (!found) {
+      throw new Error(
+        \`Unknown icon "\${name}". It is not in the svgworm manifest.\`,
+      );
+    }
+    return found;
+  });
+
+  const fileUrl = (kind: 'sprite' | 'stack'): string => {
+    const file = sprites[icon.sprite]?.[kind];
+    if (!file) {
+      throw new Error(
+        \`Icon "\${name}" needs the \${kind} file of "\${icon.sprite}", \` +
+          'but the manifest has none. Run svgworm again.',
+      );
+    }
+    // Version 2 is crossOrigin "inject": a loader puts the sprite in the page
+    // (ADR-0027).
+    return kind === 'sprite' && version === 2
+      ? \`#\${icon.id}\`
+      : \`\${file.url}#\${icon.id}\`;
+  };
+
+  // <use> draws the symbol at 0,0, so the svg gets only the viewBox size;
+  // the symbol keeps the origin (ADR-0030).
+  const viewBoxSize = $derived.by(() => {
+    const [, , width, height] = icon.viewBox.trim().split(/[\\s,]+/);
+    return \`0 0 \${width} \${height}\`;
+  });
+
+  const accessibleName = $derived(title ?? label);
+  const a11y = $derived(
+    accessibleName === undefined
+      ? ({ 'aria-hidden': true } as const)
+      : ({ role: 'img' } as const),
+  );
+  const maskStyle = $derived(
+    icon.delivery === 'mask'
+      ? [
+          'display:inline-block',
+          \`width:\${length(width)}\`,
+          \`height:\${length(height)}\`,
+          'background-color:currentColor',
+          \`mask:url("\${fileUrl('stack')}") center / contain no-repeat\`,
+          style ?? '',
+        ].join(';')
+      : undefined,
+  );
+</script>
+
+{#if icon.delivery === 'img'}
+  <img
+    {...rest as Record<string, unknown>}
+    alt={accessibleName ?? ''}
+    {height}
+    src={fileUrl('stack')}
+    {style}
+    {width}
+  />
+{:else if icon.delivery === 'mask'}
+  <span
+    {...rest as Record<string, unknown>}
+    {...a11y}
+    aria-label={accessibleName}
+    style={maskStyle}
+  ></span>
+{:else}
+  <svg
+    focusable="false"
+    {height}
+    viewBox={viewBoxSize}
+    {width}
+    {...a11y}
+    aria-label={label}
+    {style}
+    {...rest}
+  >
+    {#if title !== undefined}<title>{title}</title>{/if}
+    <use href={fileUrl('sprite')} />
+  </svg>
+{/if}
+`;
+};
+
 const agentsSection = (
   options: InitOptions,
   componentFile: string | undefined,
@@ -1009,22 +1411,73 @@ const installCommand = (manager: PackageManager): readonly string[] => {
   }
 };
 
+/** How to render the generated component, per framework. */
+const usageSteps = (
+  framework: Framework | undefined,
+  componentFile: string,
+  facts: ProjectFacts,
+  iconExample: string,
+): readonly string[] => {
+  switch (framework) {
+    case Framework.ASTRO:
+      return [
+        `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,
+        'If astro.config sets "base", write the sprites under it: set "publicPath": "<base>/icons" in svgworm.config.json (init never edits an existing config)',
+      ];
+    case Framework.VUE:
+      return [
+        // Nuxt names a component after its path under components/, so only the default is <Icon>.
+        facts.usesNuxt &&
+        /^(?:app\/)?components\/Icon\.vue$/.test(componentFile)
+          ? `Nuxt auto-imports ${componentFile}: render ${iconExample} in any page or component`
+          : `In a .vue file, import Icon from the path of ${componentFile} and render ${iconExample}`,
+      ];
+    case Framework.SVELTE:
+      return [
+        facts.usesSvelteKit && componentFile.startsWith('src/lib/')
+          ? `In a .svelte file, import Icon from '$lib/${componentFile.slice('src/lib/'.length)}' and render ${iconExample}`
+          : `In a .svelte file, import Icon from the path of ${componentFile} and render ${iconExample}`,
+      ];
+    case Framework.REACT:
+    case undefined:
+      return [
+        `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a ${facts.usesNext ? 'Server Component' : 'component'} and render ${iconExample}`,
+      ];
+  }
+};
+
+/**
+ * SvelteKit serves `static/`, not `public/`, so its sprites go there unless `--out-dir` says
+ * otherwise (ADR-0034). Every other framework serves the `public/icons` default.
+ */
+export const withFrameworkDefaults = (
+  options: InitOptions,
+  facts: Pick<ProjectFacts, 'usesSvelteKit'>,
+  framework: Framework | undefined,
+): InitOptions =>
+  framework === Framework.SVELTE &&
+  facts.usesSvelteKit &&
+  options.outDir === undefined
+    ? {
+        ...options,
+        outDir: 'static/icons',
+        publicPath: options.publicPath ?? '/icons',
+      }
+    : options;
+
 /** Pure: turns options and facts into the files to write. Nothing is touched here. */
 export const planInit = (
-  options: InitOptions,
+  requested: InitOptions,
   facts: ProjectFacts,
 ): InitPlan => {
-  const configPath = toPosix(options.configFile);
   const { framework, source: frameworkSource } = resolveFramework(
-    options,
+    requested,
     facts,
   );
+  const options = withFrameworkDefaults(requested, facts, framework);
+  const configPath = toPosix(options.configFile);
   const addComponent = options.addComponent ?? framework !== undefined;
-  const componentFile = componentFileFor(
-    options,
-    facts.hasSrcFolder,
-    framework,
-  );
+  const componentFile = componentFileFor(options, facts, framework);
   const moduleDir = options.moduleDir ?? DEFAULT_MODULE_DIR;
   const command = buildCommand(options);
   const isCdn = options.cdnUrl !== undefined;
@@ -1061,7 +1514,11 @@ export const planInit = (
         componentFile,
         framework === Framework.ASTRO
           ? astroComponentContent(componentFile, moduleDir)
-          : componentContent(componentFile, moduleDir, isCdn),
+          : framework === Framework.VUE
+            ? vueComponentContent(componentFile, moduleDir)
+            : framework === Framework.SVELTE
+              ? svelteComponentContent(componentFile, moduleDir)
+              : componentContent(componentFile, moduleDir, isCdn),
         facts.existing[componentFile],
       ),
     );
@@ -1083,7 +1540,7 @@ export const planInit = (
       path: componentFile,
       status: InitStatus.SKIPPED,
       reason:
-        'no react, next or astro dependency found; pass --component to write it anyway',
+        'no react, next, astro, vue, nuxt, svelte or @sveltejs/kit dependency found; pass --component to write it anyway',
     });
   }
   if (options.addAgentsMd) {
@@ -1105,7 +1562,7 @@ export const planInit = (
     index === 0
       ? !deps.has('svgworm')
       : addComponent &&
-        framework !== Framework.ASTRO &&
+        (framework ?? Framework.REACT) === Framework.REACT &&
         !deps.has('@svgworm/react'),
   );
   const runner =
@@ -1120,16 +1577,9 @@ export const planInit = (
       : runsBeforeDevAndBuild
         ? `Replace the sample ${samplePath} with your own SVG files; svgworm runs before dev and build (or run: ${runner} svgworm${flag})`
         : `Replace the sample ${samplePath} with your own SVG files and run: ${runner} svgworm${flag}`,
-    ...(addComponent && framework === Framework.ASTRO
-      ? [
-          `In an .astro file, import Icon from the path of ${componentFile} and render ${iconExample}`,
-          'If astro.config sets "base", write the sprites under it: set "publicPath": "<base>/icons" in svgworm.config.json (init never edits an existing config)',
-        ]
-      : addComponent
-        ? [
-            `Import { Icon } from ${posix.join('.', componentFile.replace(/\.tsx?$/, ''))} in a ${facts.usesNext ? 'Server Component' : 'component'} and render ${iconExample}`,
-          ]
-        : []),
+    ...(addComponent
+      ? usageSteps(framework, componentFile, facts, iconExample)
+      : []),
     ...(isCdn
       ? [
           addComponent && framework === Framework.ASTRO

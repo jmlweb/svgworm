@@ -2,7 +2,7 @@
 title: How svgworm works
 navTitle: How it works
 description: "The model behind the files svgworm writes: one external sprite plus a stack file, why each icon gets a use, img or mask delivery, what the manifest and types carry, how names are derived, and why the output is byte-identical everywhere."
-order: 8
+order: 10
 ---
 
 svgworm is **a build step, not a runtime**. It reads a folder of SVG files and writes four kinds of files. The `Icon` component only reads them. Knowing what each file is for makes a blank icon or a wrong color easy to place.

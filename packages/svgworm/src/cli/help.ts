@@ -31,14 +31,17 @@ Flags override the config file. --out-dir needs --public-path, unless it is unde
 (public/sprites gives /sprites).
 
 Init options:
-  --framework <name>      react or astro. Default: detected from the dependencies (astro wins when both)
-  --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx or Icon.astro
-                          (under src/components/ when src/ exists)
+  --framework <name>      react, astro, vue or svelte. Default: detected from the dependencies
+                          (astro, then vue or nuxt, then svelte, then react or next)
+  --component-file <path> Where the Icon wiring goes. Default: components/icon.tsx, Icon.astro,
+                          Icon.vue or Icon.svelte (under src/components/ when src/ exists;
+                          src/lib/components/ for SvelteKit, app/components/ for Nuxt 4)
   --component             Write the Icon wiring even when no framework dependency is found
-  --no-component          Skip the Icon wiring (default: written when react, next or astro is a dependency)
+  --no-component          Skip the Icon wiring (default: written when a framework is a dependency)
+  --cdn-url <https-url>   Serve sprites from a CDN on another origin (crossOrigin: inject).
+                          React and Astro only
   --no-scripts            Do not run svgworm from package.json scripts (predev/prebuild, or dev/build on Yarn 2+)
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents
-  --cdn-url <https-url>   Serve sprites from a CDN on another origin (crossOrigin: inject)
   -y, --yes               Take the defaults and flags without asking
 
 Exit codes:

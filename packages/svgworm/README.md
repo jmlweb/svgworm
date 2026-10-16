@@ -11,16 +11,18 @@ pnpm svgworm init        # config, predev/prebuild scripts, Icon component, firs
 pnpm svgworm             # write the sprite, manifest and types
 ```
 
-`@svgworm/react` is only for React and Next.js; an Astro project needs just `svgworm`.
+`@svgworm/react` is only for React and Next.js; an Astro, Vue or Svelte project needs just `svgworm`.
 
 ![svgworm turns a folder of SVG files into a hashed sprite, a manifest and types](https://raw.githubusercontent.com/jmlweb/svgworm/main/docs/assets/pipeline.svg)
 
-Pair it with [`@svgworm/react`](https://github.com/jmlweb/svgworm/tree/main/packages/react) for a Server Component `Icon` where a wrong name is a type error. In an Astro project, `init` writes a React-free `Icon.astro` instead.
+Pair it with [`@svgworm/react`](https://github.com/jmlweb/svgworm/tree/main/packages/react) for a Server Component `Icon` where a wrong name is a type error. In an Astro, Vue or Svelte project, `init` writes a React-free `Icon.astro`, `Icon.vue` or `Icon.svelte` instead.
 
 ## Docs
 
 - [Next.js setup](https://svgworm.com/docs/nextjs/)
 - [Astro setup](https://svgworm.com/docs/astro/)
+- [Vue and Nuxt setup](https://svgworm.com/docs/vue/)
+- [Svelte and SvelteKit setup](https://svgworm.com/docs/svelte/)
 - [Vite setup](https://svgworm.com/docs/vite/), with the optional `svgworm/vite` plugin
 - [Sprites on a CDN](https://svgworm.com/docs/config/#sprites-on-a-cdn): proxy them, or opt into `crossOrigin: "inject"`
 - ⌨️ [CLI reference](https://svgworm.com/docs/cli/)

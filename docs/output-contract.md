@@ -261,4 +261,4 @@ Paths are relative to the source folder. Checked by `spikes/TSK-006-icon-naming/
 - Adds `aria-hidden="true"` unless a title or label is given; with a title it renders `role="img"` and a `<title>`
 - Takes no part in SVG processing
 
-The `Icon.astro` that `svgworm init` generates for Astro ([ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md)) follows the same rules and renders the same markup.
+The `Icon.astro` that `svgworm init` generates for Astro ([ADR-0017](adr/0017-astro-support-via-generated-icon-astro.md)), and the `Icon.vue` and `Icon.svelte` it generates for Vue and Svelte ([ADR-0034](adr/0034-vue-and-svelte-support-through-init-generated-components.md)), follow the same rules and render the same markup. `init` writes no loader for Vue and Svelte yet.

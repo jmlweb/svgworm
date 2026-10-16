@@ -2,7 +2,7 @@
 title: svgworm compared with other SVG icon tools
 navTitle: Comparison
 description: "svgworm compared with SVGR, @neodx/svg, vite-plugin-icons-spritesheet and unplugin-icons: reproducible numbers and when to pick each tool."
-order: 9
+order: 11
 ---
 
 An honest comparison. For each tool it says what it does well and when to pick it instead of svgworm.
@@ -34,7 +34,7 @@ Versions, dates and download counts come from npm on 2026-10-08 ([competitive la
 
 <p class="alert-title">Note</p>
 
-What it does **not** do yet: several sprites in one build ([one config per sprite](/docs/config/#several-sprites) works), an inline sprite (left out on purpose: it would ride on every page's HTML, [ADR-0024](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0024-no-inline-sprite-output.md)), and frameworks other than React and Astro. See the [open questions](https://github.com/jmlweb/svgworm/blob/main/docs/open-questions.md).
+What it does **not** do yet: several sprites in one build ([one config per sprite](/docs/config/#several-sprites) works), an inline sprite (left out on purpose: it would ride on every page's HTML, [ADR-0024](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0024-no-inline-sprite-output.md)), and frameworks other than React, Astro, Vue and Svelte. See the [open questions](https://github.com/jmlweb/svgworm/blob/main/docs/open-questions.md).
 
 </aside>
 

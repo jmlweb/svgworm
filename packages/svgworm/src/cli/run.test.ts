@@ -551,7 +551,7 @@ describe('run: init (R-56)', () => {
     await put('package.json', '{ "name": "api" }\n');
     const skipped = await exec(['init']);
     expect(skipped.stdout).toContain(
-      'init components/icon.tsx skipped (no react, next or astro dependency',
+      'init components/icon.tsx skipped (no react, next, astro, vue, nuxt, svelte or @sveltejs/kit dependency',
     );
     const forced = await exec([
       'init',
@@ -612,6 +612,58 @@ describe('run: init (R-56)', () => {
         const { code, stderr } = await exec(['init', ...flags]);
         expect(code).toBe(ExitCode.USAGE);
         expect(stderr).toContain(file);
+        expect(await exists('svgworm.config.json')).toBe(false);
+      },
+    );
+  });
+
+  describe('with Vue and Svelte (ADR-0034)', () => {
+    it.each([
+      [{ nuxt: '4.6.2' }, 'vue', 'app/components/Icon.vue', ['app']],
+      [{ vue: '3.5.44' }, 'vue', 'src/components/Icon.vue', ['src']],
+      [
+        { '@sveltejs/kit': '3.1.0', svelte: '5.57.2' },
+        'svelte',
+        'src/lib/components/Icon.svelte',
+        ['src'],
+      ],
+      [{ svelte: '5.57.2' }, 'svelte', 'components/Icon.svelte', []],
+    ])(
+      'writes the component for %o and reports it in plain and --json output',
+      async (devDependencies, framework, file, folders) => {
+        await put('package.json', JSON.stringify({ devDependencies }));
+        for (const folder of folders) await put(`${folder}/.keep`, '');
+        const plain = await exec(['init']);
+        expect(plain.code).toBe(ExitCode.OK);
+        expect(plain.stdout).toContain(`init ${file} created`);
+        expect(plain.stdout).toContain(
+          `init framework ${framework} (detected)`,
+        );
+        expect(plain.stdout).not.toContain('@svgworm/react');
+        expect(await exists(file)).toBe(true);
+
+        const json = await exec(['init', '--json']);
+        expect(JSON.parse(json.stdout)).toMatchObject({
+          ok: true,
+          framework,
+          frameworkSource: 'detected',
+        });
+      },
+    );
+
+    it.each(['vue', 'svelte'])(
+      'exits 2 and writes nothing for --cdn-url with %s',
+      async (framework) => {
+        await put('package.json', JSON.stringify({}));
+        const { code, stderr } = await exec([
+          'init',
+          '--framework',
+          framework,
+          '--cdn-url',
+          'https://cdn.example.com/icons',
+        ]);
+        expect(code).toBe(ExitCode.USAGE);
+        expect(stderr).toContain(`--cdn-url is not supported for ${framework}`);
         expect(await exists('svgworm.config.json')).toBe(false);
       },
     );

@@ -8,25 +8,40 @@ const guides = [
     icon: 'server',
     name: 'Next.js',
     line: 'Server Components, zero client JS, Turbopack.',
-    docs: '/docs/nextjs/',
-    example: `${REPO}/tree/main/examples/next-app-router`,
-    exampleLabel: 'examples/next-app-router',
+    links: [
+      { href: '/docs/nextjs/', label: 'Next.js guide' },
+      {
+        href: `${REPO}/tree/main/examples/next-app-router`,
+        label: 'examples/next-app-router',
+      },
+    ],
   },
   {
     icon: 'zap',
     name: 'Vite + React',
     line: 'Hashed sprite that follows your base path.',
-    docs: '/docs/vite/',
-    example: `${REPO}/tree/main/examples/vite-react`,
-    exampleLabel: 'examples/vite-react',
+    links: [
+      { href: '/docs/vite/', label: 'Vite + React guide' },
+      {
+        href: `${REPO}/tree/main/examples/vite-react`,
+        label: 'examples/vite-react',
+      },
+    ],
   },
   {
     icon: 'file-code',
     name: 'Astro',
     line: 'A dependency-free Icon.astro written by init.',
-    docs: '/docs/astro/',
-    example: null,
-    exampleLabel: '',
+    links: [{ href: '/docs/astro/', label: 'Astro guide' }],
+  },
+  {
+    icon: 'layers',
+    name: 'Vue and Svelte',
+    line: 'Icon.vue or Icon.svelte written by init, Nuxt and SvelteKit too.',
+    links: [
+      { href: '/docs/vue/', label: 'Vue guide' },
+      { href: '/docs/svelte/', label: 'Svelte guide' },
+    ],
   },
 ] as const;
 ---
@@ -47,10 +62,9 @@ const guides = [
             </div>
             <p>{guide.line}</p>
             <p class="guide-links">
-              <a href={guide.docs}>{guide.name} guide</a>
-              {guide.example && (
-                <a href={guide.example}>{guide.exampleLabel}</a>
-              )}
+              {guide.links.map((link) => (
+                <a href={link.href}>{link.label}</a>
+              ))}
             </p>
           </article>
         ))

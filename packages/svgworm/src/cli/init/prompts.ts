@@ -5,9 +5,12 @@ import type { InitOptions, ProjectFacts } from './plan.ts';
 import { normalizePublicPath } from '../../core/config/schema.ts';
 import {
   componentFileFor,
+  detectedFrameworks,
   Framework,
   FrameworkSource,
+  hasCdnLoader,
   resolveFramework,
+  withFrameworkDefaults,
 } from './plan.ts';
 
 /** Thrown when the user cancels a prompt; the command maps it to exit 2 with no files written. */
@@ -22,6 +25,31 @@ const orCancel = <T>(value: T | symbol): T => {
   if (isCancel(value)) throw new InitCancelledError();
   return value as T;
 };
+
+const CHOICE_LABEL = {
+  [Framework.ASTRO]: 'Astro (Icon.astro)',
+  [Framework.VUE]: 'Vue (Icon.vue)',
+  [Framework.SVELTE]: 'Svelte (Icon.svelte)',
+  [Framework.REACT]: 'React (Server Component)',
+} as const;
+
+const WIRING_LABEL = {
+  [Framework.ASTRO]: 'Astro',
+  [Framework.VUE]: 'Vue',
+  [Framework.SVELTE]: 'Svelte',
+  [Framework.REACT]: 'React Server Component',
+} as const;
+
+const basePathHint = (facts: ProjectFacts): string =>
+  facts.usesNext
+    ? ' (include the Next basePath, if any)'
+    : facts.usesAstro
+      ? ' (include the Astro base, if any)'
+      : facts.usesNuxt
+        ? ' (include the Nuxt app.baseURL, if any)'
+        : facts.usesSvelteKit
+          ? ' (include the SvelteKit paths.base, if any)'
+          : '';
 
 /**
  * Fills the options a TTY user did not pass as flags. Flags are the defaults of each prompt,
@@ -48,10 +76,28 @@ export const askInitOptions = async (
             }),
           ),
         ];
-  // Never on by default: inject mode makes icons need JS (ADR-0027).
+  // Only a real ambiguity is asked: no flag, and several frameworks are dependencies.
+  const detected = detectedFrameworks(facts);
+  const isAsked = options.framework === undefined && detected.length > 1;
+  const framework = isAsked
+    ? orCancel(
+        await select({
+          message: `${detected.slice(0, -1).join(', ')} and ${detected.at(-1) ?? ''} are dependencies. Which one renders icons?`,
+          options: detected.map((value) => ({
+            value,
+            label: CHOICE_LABEL[value],
+          })),
+          initialValue: detected[0],
+        }),
+      )
+    : options.framework;
+  const resolved = resolveFramework({ ...options, framework }, facts).framework;
+  // Never on by default: inject mode makes icons need JS (ADR-0027). Not offered where init
+  // writes no loader (ADR-0034).
   const isCdn =
     options.cdnUrl !== undefined ||
     (options.publicPath === undefined &&
+      (resolved === undefined || hasCdnLoader(resolved)) &&
       orCancel(
         await confirm({
           message:
@@ -82,13 +128,7 @@ export const askInitOptions = async (
     ? '/icons'
     : orCancel(
         await text({
-          message: `URL path the sprites are served from${
-            facts.usesNext
-              ? ' (include the Next basePath, if any)'
-              : facts.usesAstro
-                ? ' (include the Astro base, if any)'
-                : ''
-          }`,
+          message: `URL path the sprites are served from${basePathHint(facts)}`,
           defaultValue: options.publicPath ?? '/icons',
           placeholder: options.publicPath ?? '/icons',
           validate: (value) => {
@@ -106,26 +146,9 @@ export const askInitOptions = async (
       initialValue: options.addScripts,
     }),
   );
-  // Only a real ambiguity is asked: no flag, and both frameworks are dependencies.
-  const isAsked =
-    options.framework === undefined && facts.usesReact && facts.usesAstro;
-  const framework = isAsked
-    ? orCancel(
-        await select({
-          message:
-            'Both react and astro are dependencies. Which one renders icons?',
-          options: [
-            { value: Framework.ASTRO, label: 'Astro (Icon.astro)' },
-            { value: Framework.REACT, label: 'React (Server Component)' },
-          ],
-          initialValue: Framework.ASTRO,
-        }),
-      )
-    : options.framework;
-  const resolved = resolveFramework({ ...options, framework }, facts).framework;
   const addComponent = orCancel(
     await confirm({
-      message: `Write the ${resolved === Framework.ASTRO ? 'Astro' : 'React Server Component'} wiring (${componentFileFor(options, facts.hasSrcFolder, resolved)})?`,
+      message: `Write the ${WIRING_LABEL[resolved ?? Framework.REACT]} wiring (${componentFileFor(options, facts, resolved)})?`,
       initialValue: options.addComponent ?? resolved !== undefined,
     }),
   );
@@ -142,7 +165,11 @@ export const askInitOptions = async (
     publicPath: publicPath === '/icons' ? options.publicPath : publicPath,
     // A custom publicPath needs an outDir the app serves there; keep the default folder.
     ...(publicPath !== '/icons' && options.outDir === undefined
-      ? { outDir: 'public/icons' }
+      ? {
+          outDir:
+            withFrameworkDefaults(options, facts, resolved).outDir ??
+            'public/icons',
+        }
       : {}),
     framework,
     ...(isAsked ? { frameworkSource: FrameworkSource.PROMPT } : {}),

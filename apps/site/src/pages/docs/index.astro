@@ -18,7 +18,13 @@ const pick = (id: string): CollectionEntry<'docs'> => {
   if (!doc) throw new Error(`docs index: no doc with id "${id}"`);
   return doc;
 };
-const setup = [pick('nextjs'), pick('astro'), pick('vite')];
+const setup = [
+  pick('nextjs'),
+  pick('astro'),
+  pick('vite'),
+  pick('vue'),
+  pick('svelte'),
+];
 const reference = [
   pick('icon'),
   pick('cli'),

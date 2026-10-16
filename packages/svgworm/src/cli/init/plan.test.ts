@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
   defaultInitOptions,
+  detectedFrameworks,
   Framework,
   frameworkProblem,
   FrameworkSource,
@@ -23,7 +24,12 @@ const facts = (overrides: Partial<ProjectFacts> = {}): ProjectFacts => ({
   usesReact: false,
   usesNext: false,
   usesAstro: false,
+  usesVue: false,
+  usesNuxt: false,
+  usesSvelte: false,
+  usesSvelteKit: false,
   hasSrcFolder: false,
+  hasAppFolder: false,
   packageManager: PackageManager.NPM,
   runsScriptHooks: true,
   existing: {},
@@ -520,11 +526,225 @@ describe('planInit: prompts and monorepos', () => {
   });
 });
 
+describe('planInit: Vue and Svelte (ADR-0034)', () => {
+  it('writes Icon.vue for a vue dependency, typed with IconName, with no React', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesVue: true, hasSrcFolder: true }),
+    );
+    expect(plan.framework).toBe(Framework.VUE);
+    expect(plan.frameworkSource).toBe(FrameworkSource.DETECTED);
+    const action = statusOf(plan, 'src/components/Icon.vue');
+    expect(action?.status).toBe(InitStatus.CREATED);
+    expect(action?.content).toContain(
+      "import { manifest } from '../../svgworm/icons.js';",
+    );
+    expect(action?.content).toContain('name: IconName;');
+    expect(action?.content).toContain('<script setup lang="ts">');
+    expect(action?.content).not.toMatch(/import .*react/i);
+  });
+
+  it('writes Icon.svelte for a svelte dependency, with Svelte 5 props', () => {
+    const plan = planInit(defaultInitOptions(), facts({ usesSvelte: true }));
+    expect(plan.framework).toBe(Framework.SVELTE);
+    const action = statusOf(plan, 'components/Icon.svelte');
+    expect(action?.status).toBe(InitStatus.CREATED);
+    expect(action?.content).toContain(
+      "import { manifest } from '../svgworm/icons.js';",
+    );
+    expect(action?.content).toContain('$props()');
+    expect(action?.content).toContain('name: IconName;');
+  });
+
+  it.each([
+    ['vue', facts({ usesVue: true })],
+    ['svelte', facts({ usesSvelte: true })],
+  ])(
+    '%s mirrors the createIcon contract: version check, unknown name, a11y defaults',
+    (_label, projectFacts) => {
+      const content =
+        planInit(defaultInitOptions(), projectFacts).actions.at(-1)?.content ??
+        '';
+      expect(content).toContain('!== 1');
+      expect(content).toContain('Object.hasOwn(');
+      expect(content).toContain('Unknown icon');
+      expect(content).toContain("'1em'");
+      expect(content).toContain('focusable="false"');
+      expect(content).toContain("'aria-hidden': true");
+      expect(content).toContain("delivery === 'img'");
+      expect(content).toContain("delivery === 'mask'");
+      // RPT-006: like createIcon, the consumer svg gets only the viewBox size.
+      expect(content).toContain('`0 0 ${');
+      // A bare number is pixels in the mask style, as in React.
+      expect(content).toContain('px');
+    },
+  );
+
+  it('puts Icon.vue in app/components for Nuxt 4, where Nuxt auto-imports it', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesVue: true, usesNuxt: true, hasAppFolder: true }),
+    );
+    expect(statusOf(plan, 'app/components/Icon.vue')?.status).toBe(
+      InitStatus.CREATED,
+    );
+    expect(plan.nextSteps.join('\n')).toContain(
+      'Nuxt auto-imports app/components/Icon.vue: render <Icon name="…" /> in any page or component',
+    );
+  });
+
+  it('puts Icon.vue in components/ for Nuxt without an app/ folder', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesVue: true, usesNuxt: true, hasSrcFolder: true }),
+    );
+    expect(statusOf(plan, 'components/Icon.vue')?.status).toBe(
+      InitStatus.CREATED,
+    );
+  });
+
+  it('puts Icon.svelte in src/lib/components for SvelteKit and imports it through $lib', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesSvelte: true, usesSvelteKit: true, hasSrcFolder: true }),
+    );
+    const action = statusOf(plan, 'src/lib/components/Icon.svelte');
+    expect(action?.status).toBe(InitStatus.CREATED);
+    expect(action?.content).toContain(
+      "import { manifest } from '../../../svgworm/icons.js';",
+    );
+    expect(plan.nextSteps.join('\n')).toContain(
+      'In a .svelte file, import Icon from \'$lib/components/Icon.svelte\' and render <Icon name="…" />',
+    );
+  });
+
+  it('writes the SvelteKit sprites to static/, which SvelteKit serves, not public/', () => {
+    const plan = planInit(
+      defaultInitOptions(),
+      facts({ usesSvelte: true, usesSvelteKit: true, hasSrcFolder: true }),
+    );
+    expect(
+      JSON.parse(statusOf(plan, 'svgworm.config.json')?.content ?? '{}'),
+    ).toMatchObject({ outDir: 'static/icons', publicPath: '/icons' });
+    expect(plan.nextSteps.join('\n')).toContain('Commit static/icons/');
+    const custom = planInit(
+      {
+        ...defaultInitOptions(),
+        outDir: 'static/sprites',
+        publicPath: '/sprites',
+      },
+      facts({ usesSvelte: true, usesSvelteKit: true }),
+    );
+    expect(
+      JSON.parse(statusOf(custom, 'svgworm.config.json')?.content ?? '{}'),
+    ).toMatchObject({ outDir: 'static/sprites', publicPath: '/sprites' });
+  });
+
+  it('names the import in the next steps and installs no React adapter', () => {
+    const vue = planInit(
+      defaultInitOptions(),
+      facts({ usesVue: true, hasSrcFolder: true }),
+    ).nextSteps.join('\n');
+    expect(vue).toContain(
+      'In a .vue file, import Icon from the path of src/components/Icon.vue and render <Icon name="…" />',
+    );
+    expect(vue).not.toContain('@svgworm/react');
+    const svelte = planInit(
+      defaultInitOptions(),
+      facts({ usesSvelte: true }),
+    ).nextSteps.join('\n');
+    expect(svelte).toContain(
+      'In a .svelte file, import Icon from the path of components/Icon.svelte and render <Icon name="…" />',
+    );
+    expect(svelte).not.toContain('@svgworm/react');
+  });
+
+  it.each([
+    [facts({ usesAstro: true, usesVue: true }), Framework.ASTRO],
+    [facts({ usesVue: true, usesSvelte: true }), Framework.VUE],
+    [facts({ usesSvelte: true, usesReact: true }), Framework.SVELTE],
+    [facts({ usesVue: true, usesReact: true }), Framework.VUE],
+  ])(
+    'picks by precedence when several are dependencies (%#)',
+    (projectFacts, framework) => {
+      const plan = planInit(defaultInitOptions(), projectFacts);
+      expect(plan.framework).toBe(framework);
+      expect(plan.frameworkSource).toBe(FrameworkSource.DETECTED);
+    },
+  );
+
+  it('lists every detected framework in precedence order, for the prompt', () => {
+    expect(
+      detectedFrameworks(
+        facts({
+          usesReact: true,
+          usesSvelte: true,
+          usesVue: true,
+          usesAstro: true,
+        }),
+      ),
+    ).toEqual([
+      Framework.ASTRO,
+      Framework.VUE,
+      Framework.SVELTE,
+      Framework.REACT,
+    ]);
+    expect(detectedFrameworks(facts())).toEqual([]);
+  });
+
+  it('names every supported dependency when no framework is found', () => {
+    expect(
+      statusOf(planInit(defaultInitOptions(), facts()), 'components/icon.tsx')
+        ?.reason,
+    ).toBe(
+      'no react, next, astro, vue, nuxt, svelte or @sveltejs/kit dependency found; pass --component to write it anyway',
+    );
+  });
+});
+
+describe('inspectProject: framework detection', () => {
+  let root: string;
+
+  beforeEach(async () => {
+    root = await mkdtemp(join(tmpdir(), 'svgworm-framework-'));
+  });
+
+  afterEach(async () => {
+    await rm(root, { recursive: true, force: true });
+  });
+
+  it.each([
+    [{ vue: '^3.5.0' }, { usesVue: true, usesNuxt: false }],
+    [{ nuxt: '^4.0.0' }, { usesVue: true, usesNuxt: true }],
+    [{ svelte: '^5.0.0' }, { usesSvelte: true, usesSvelteKit: false }],
+    [{ '@sveltejs/kit': '^3.0.0' }, { usesSvelte: true, usesSvelteKit: true }],
+  ])('reads %o', async (dependencies, expected) => {
+    await writeFile(
+      join(root, 'package.json'),
+      JSON.stringify({ devDependencies: dependencies }),
+    );
+    expect(await inspectProject(root, defaultInitOptions())).toMatchObject(
+      expected,
+    );
+  });
+
+  it('notices the Nuxt 4 app/ folder', async () => {
+    await mkdir(join(root, 'app'));
+    expect(
+      (await inspectProject(root, defaultInitOptions())).hasAppFolder,
+    ).toBe(true);
+  });
+});
+
 describe('frameworkProblem', () => {
   it.each([
     [Framework.ASTRO, 'ui/icon.tsx'],
     [Framework.ASTRO, 'ui/icon.jsx'],
     [Framework.REACT, 'ui/Icon.astro'],
+    [Framework.REACT, 'ui/Icon.vue'],
+    [Framework.VUE, 'ui/Icon.svelte'],
+    [Framework.VUE, 'ui/icon.tsx'],
+    [Framework.SVELTE, 'ui/Icon.vue'],
   ])('rejects --framework %s with --component-file %s', (framework, file) => {
     expect(
       frameworkProblem(
@@ -533,6 +753,24 @@ describe('frameworkProblem', () => {
       ),
     ).toContain(file);
   });
+
+  it.each([Framework.VUE, Framework.SVELTE])(
+    'rejects --cdn-url for %s: its loader is not generated yet',
+    (framework) => {
+      expect(
+        frameworkProblem(
+          {
+            ...defaultInitOptions(),
+            framework,
+            cdnUrl: 'https://cdn.example.com/icons',
+          },
+          facts(),
+        ),
+      ).toBe(
+        `--cdn-url is not supported for ${framework} yet: init does not write its sprite loader (see https://svgworm.com/docs/${framework})`,
+      );
+    },
+  );
 
   it('checks the detected framework too', () => {
     expect(
@@ -986,9 +1224,13 @@ describe('planInit: generated components fit in 80 columns', () => {
     ['astro', defaultInitOptions(), facts({ usesAstro: true })],
     ['react cdn', cdnOptions, facts({ usesReact: true })],
     ['astro cdn', cdnOptions, facts({ usesAstro: true })],
+    ['vue', defaultInitOptions(), facts({ usesVue: true })],
+    ['svelte', defaultInitOptions(), facts({ usesSvelte: true })],
   ])('%s', (_label, options, projectFacts) => {
     const long = planInit(options, projectFacts)
-      .actions.filter((action) => /\.(?:tsx?|jsx?|astro)$/.test(action.path))
+      .actions.filter((action) =>
+        /\.(?:tsx?|jsx?|astro|vue|svelte)$/.test(action.path),
+      )
       .flatMap((action) =>
         (action.content ?? '')
           .split('\n')

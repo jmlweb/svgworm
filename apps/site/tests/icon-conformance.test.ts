@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { astroComponentContent } from '../../../packages/svgworm/src/cli/init/plan.ts';
+import { normalize } from '../../../tests/conformance/normalize.ts';
 
 // The Icon.astro that `svgworm init` writes today (ADR-0017) must render what createIcon
 // renders. It comes from the template in plan.ts, not from a committed copy (RPT-008), and is
@@ -49,47 +50,6 @@ beforeAll(async () => {
 afterAll(async () => {
   await rm(scratch, { recursive: true, force: true });
 });
-
-const decode = (value: string): string =>
-  value
-    .replaceAll('&quot;', '"')
-    .replaceAll('&#x27;', "'")
-    .replaceAll('&#39;', "'")
-    .replaceAll('&amp;', '&');
-
-const normalizeStyle = (style: string): string =>
-  decode(style)
-    .split(';')
-    .map((declaration) => declaration.replace(/\s*:\s*/, ':').trim())
-    .filter((declaration) => declaration !== '')
-    .toSorted()
-    .join(';');
-
-// Attribute order, entity style, self-closing slashes, whitespace and React 19's hoisted
-// <link rel="preload"> (LRN-027) are not part of the contract; everything else is.
-const normalize = (html: string): string =>
-  html
-    .replace(/<link rel="preload"[^>]*>/g, '')
-    .replace(/<!--.*?-->/gs, '')
-    // Dev-only attributes the Astro container adds to every element.
-    .replace(/\sdata-astro-source-(?:file|loc)="[^"]*"/g, '')
-    .replace(
-      /<(\w+)((?:\s+[^\s=>/]+(?:="[^"]*")?)*)\s*\/?>/g,
-      (_, tag: string, attrs: string) => {
-        const pairs = [...attrs.matchAll(/([^\s=]+)(?:="([^"]*)")?/g)]
-          .map(
-            ([, name = '', value = '']) =>
-              [
-                name,
-                name === 'style' ? normalizeStyle(value) : decode(value),
-              ] as const,
-          )
-          .toSorted(([a], [b]) => (a < b ? -1 : 1));
-        return `<${tag}${pairs.map(([n, v]) => ` ${n}="${v}"`).join('')}>`;
-      },
-    )
-    .replace(/>\s+</g, '><')
-    .trim();
 
 type Case = {
   readonly label: string;
