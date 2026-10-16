@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+
+import type { DocEntry } from '../lib/webmcp';
+
+// WebMCP tools for agents in the browser (src/lib/webmcp.ts). The doc index travels in the page
+// as JSON; doc bodies are fetched from /llms-full.txt only when a tool needs them. Without the
+// API nothing is registered and the page is unchanged.
+const docs: DocEntry[] = (await getCollection('docs'))
+  .toSorted((a, b) => a.data.order - b.data.order)
+  .map((doc) => ({
+    slug: doc.id,
+    title: doc.data.title,
+    description: doc.data.description,
+  }));
+const docsJson = JSON.stringify(docs).replaceAll('<', '\\u003c');
+---
+
+<script type="application/json" id="webmcp-docs" set:html={docsJson} />
+<script>
+  import {
+    type DocEntry,
+    type WithModelContext,
+    findModelContext,
+    registerSiteTools,
+  } from '../lib/webmcp';
+
+  const docs = JSON.parse(
+    globalThis.document.querySelector('#webmcp-docs')?.textContent ?? '[]',
+  ) as DocEntry[];
+
+  let controller: AbortController | undefined;
+
+  const register = () => {
+    const context = findModelContext(
+      globalThis.document as WithModelContext,
+      globalThis.navigator as WithModelContext,
+    );
+    if (!context) return;
+    controller = new globalThis.AbortController();
+    registerSiteTools(context, docs, {
+      origin: globalThis.location.origin,
+      signal: controller.signal,
+      fetchText: async (path) => {
+        const response = await globalThis.fetch(path);
+        if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+        return response.text();
+      },
+      navigate: (url) => globalThis.location.assign(url),
+    }).catch(() => {
+      // An API that changed shape must not break the page.
+    });
+  };
+
+  // Unregister when the page goes away; a page restored from the back/forward cache
+  // registers again.
+  globalThis.addEventListener('pagehide', () => controller?.abort());
+  globalThis.addEventListener('pageshow', (event) => {
+    if (event.persisted) register();
+  });
+  register();
+</script>

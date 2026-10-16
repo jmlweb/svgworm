@@ -3,6 +3,7 @@ import { URL } from 'node:url';
 
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import WebMcp from '../components/WebMcp.astro';
 
 type Props = {
   readonly title: string;
@@ -70,5 +71,6 @@ const ogImageAlt =
     <SiteHeader path={path} />
     <slot />
     <SiteFooter />
+    <WebMcp />
   </body>
 </html>
