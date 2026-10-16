@@ -5,15 +5,14 @@
 | Status | Count |
 |--------|-------|
 | Pending | 5 |
-| Active | 3 |
+| Active | 2 |
 | Blocked | 0 |
-| Complete | 90 |
+| Complete | 91 |
 
 ## Active Tasks
 
 - TSK-019: Launch outreach for svgworm v0.1 (P2)
 - TSK-030: Target repo list and direct migration PRs (P2)
-- TSK-091: @svgworm/vite plugin: rebuild the sprite during vite dev (P3)
 
 ## Pending Tasks
 
@@ -31,6 +30,7 @@
 |----|-------|-----------|
 | TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | 2026-10-16 |
 | TSK-090 | Site: framework guide cards and help links | 2026-10-16 |
+| TSK-091 | @svgworm/vite plugin: rebuild the sprite during vite dev | 2026-10-16 |
 | TSK-096 | Fuse svgo passes in transformIcon (5 optimize() rounds to 1) | 2026-10-16 |
 | TSK-097 | Spike: worker_threads pool for large icon sets | 2026-10-16 |
 | TSK-098 | Icon conformance test renders the current init Icon.astro template | 2026-10-16 |
@@ -38,4 +38,3 @@
 | TSK-022 | Inline sprite output | 2026-10-15 |
 | TSK-024 | Vite recipe | 2026-10-15 |
 | TSK-025 | Alias map for icon name collisions | 2026-10-15 |
-| TSK-026 | CSS-variable multicolor mode | 2026-10-15 |

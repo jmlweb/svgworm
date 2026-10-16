@@ -1,13 +1,14 @@
 ---
 id: TSK-091
 title: @svgworm/vite plugin: rebuild the sprite during vite dev
-status: active
+status: complete
 priority: P3
 tags: [vite, adapter, dx, competitors, adr]
 created: 2026-10-15
 source: manual
 depends-on: []
 started: 2026-10-16
+completed: 2026-10-16
 ---
 
 # @svgworm/vite plugin: rebuild the sprite during vite dev
@@ -32,6 +33,10 @@ Do after RPT-007 (first-run friction), which matters more for adoption. Needs an
 
 ## Learnings
 
+- LRN-050: Vite's closeServer plugin hook first ships in 8.3.0
+- LRN-051: Vite replays a pre-connect error payload to the first client only
+- LRN-052: A bundler plugin must not derive output the CLI cannot reproduce
+- LRN-053: Real fs.watch in Vitest plugin tests aborted the macOS CI runner
 ## Progress Log
 
 - [2026-10-15] Created
@@ -40,3 +45,5 @@ Do after RPT-007 (first-run friction), which matters more for adoption. Needs an
 - [2026-10-16] Found and documented: with a fixed base and committed output, plugin-derived URLs make plain `svgworm check` exit 1; guide and ADR-0033 now say to set publicPath in the config in that case.
 - [2026-10-16] Maintainer rejected base derivation after the check conflict. The plugin now never rewrites publicPath; with a root-path base and no publicPath it throws a ConfigError (vite dev and vite build stop). Example check:base uses vite.base.config.ts + svgworm.base.config.json. ADR-0033 and docs rewritten; ADR-0029 kept as is. All gates pass.
 - [2026-10-16] PR #13 review: fixed macOS SIGABRT (fake watcher, server.watch null, no sleeps), closeServer during first build, cached buildStart promise for vite build --app, error overlay replay to late clients, restart hint when watch() gives up; stale comments; peer range reason in ADR-0033. vite build --watch stays documented as building once.
+- [2026-10-16] ADR-0033 accepted by the maintainer; criterion 1 ticked. Fresh: pnpm verify exit 0 (733 passed, 1 skipped), pnpm example:vite:check exit 0. PR #13 CI: 23/23 checks pass. Architecture artifact updated (version 11).
+- [2026-10-16] Completed
