@@ -19,3 +19,8 @@
 # Astro hashes everything under _astro/ (logo SVGs), so the same rule is safe there.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# RFC 9727 API catalog (no file extension, so the type is set here). svgworm has no HTTP API:
+# the catalog points at the config JSON Schema and the docs.
+/.well-known/api-catalog
+  Content-Type: application/linkset+json

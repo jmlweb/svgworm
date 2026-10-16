@@ -1,0 +1,20 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://svgworm.com/docs/config",
+      "service-desc": [
+        {
+          "href": "https://unpkg.com/svgworm/svgworm.schema.json",
+          "type": "application/schema+json"
+        }
+      ],
+      "service-doc": [
+        { "href": "https://svgworm.com/docs/config", "type": "text/html" },
+        { "href": "https://svgworm.com/docs/cli", "type": "text/html" }
+      ],
+      "describedby": [
+        { "href": "https://svgworm.com/llms.txt", "type": "text/plain" }
+      ]
+    }
+  ]
+}
