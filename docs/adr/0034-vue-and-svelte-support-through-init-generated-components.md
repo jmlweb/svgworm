@@ -1,6 +1,6 @@
 # 0034. Vue and Svelte support through init-generated components
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-10-16
 - **Task:** TSK-092
 - **Resolves:** no open question; the Vue and Svelte gap ADR-0017 left (TSK-092)

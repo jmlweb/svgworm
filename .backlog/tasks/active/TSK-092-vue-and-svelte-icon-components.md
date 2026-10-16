@@ -39,3 +39,4 @@ Do after RPT-007.
 - [2026-10-16] Implemented init --framework vue|svelte (Icon.vue, Icon.svelte), detection precedence astro>vue>svelte>react, SvelteKit static/icons default, --cdn-url limit (exit 2); ADR-0034 written (proposed).
 - [2026-10-16] Added tests/conformance workspace: 34 markup cases vs createIcon, vue-tsc and svelte-check with an invalid-name check. Updated docs (vue, svelte, cli, icon, troubleshooting, comparison), landing cards, llms.txt, READMEs, context7.json, AGENTS.md, architecture.md, help; changeset added.
 - [2026-10-16] Next: user accepts ADR-0034 and picks a branch; add follow-up task for Vue/Svelte CDN loaders.
+- [2026-10-16] ADR-0034 accepted by the maintainer.
