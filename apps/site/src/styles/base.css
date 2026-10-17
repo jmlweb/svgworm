@@ -379,7 +379,9 @@ h1 {
   overflow-x: auto;
   padding: 0;
   background: none;
-  white-space: nowrap;
+  /* Wraps at spaces when the box is narrow: scrolled, the end of the command hid behind the copy
+     button with no hint that more followed. */
+  white-space: normal;
   user-select: all;
 }
 

@@ -765,6 +765,11 @@
   white-space: nowrap;
 }
 
+/* Except the install command, which wraps when it does not fit (base.css). */
+.landing .install code {
+  white-space: normal;
+}
+
 /* Editor-style autocomplete in the type-safe tile. */
 .suggest {
   overflow: hidden;
