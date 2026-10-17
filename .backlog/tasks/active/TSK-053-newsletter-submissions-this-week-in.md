@@ -1,12 +1,13 @@
 ---
 id: TSK-053
 title: Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes
-status: pending
+status: active
 priority: P2
 tags: [launch, outreach]
 created: 2026-10-15
 source: manual
 depends-on: [TSK-019]
+started: 2026-10-16
 ---
 
 # Newsletter submissions: This Week in React, React Status, JavaScript Weekly, Bytes
@@ -44,3 +45,4 @@ Never resubmit the same link to the same newsletter. Later rounds need new conte
 - [2026-10-15] Blocked: Maintainer outreach: newsletter submissions need the maintainer's accounts and a published article
 - [2026-10-15] Unblocked: Maintainer chose to keep maintainer-only outreach active; agent prepares paste-ready material, maintainer publishes
 - [2026-10-15] React Status added to the launch.md submissions table; newsletter blurb drafted in the launch kit.
+- [2026-10-16] Started
