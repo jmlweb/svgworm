@@ -446,6 +446,11 @@ pre[data-copy]:hover .copy-button,
   outline-offset: 2px;
 }
 
+/* A prompt block exists to be copied: its button shows without hover. */
+pre[data-copy] .copy-button {
+  opacity: 1;
+}
+
 /* The install command is one short line: its button sits in the row and is always visible. */
 .install .copy-button {
   position: static;
