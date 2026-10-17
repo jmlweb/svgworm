@@ -142,14 +142,6 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           >, and no Turbopack plugin.
         </p>
         <Install id="hero" />
-        <p class="hero-fit">
-          Only using lucide or another icon set? Its React package is fine.
-          svgworm is for the icons you own.
-        </p>
-        <div class="agent-prompt">
-          <p class="agent-prompt-label">Or paste this into your coding agent</p>
-          <pre aria-label="Prompt for your coding agent" class="code" data-copy role="region" tabindex="0"><code>{setupPrompt}</code></pre>
-        </div>
         <div class="actions">
           <a class="button" href="/docs/">
             Get started <Icon name="arrow-right" />
@@ -157,6 +149,14 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <a class="button button-ghost" href={REPO}>
             <Icon name="star" /> Star on GitHub
           </a>
+        </div>
+        <p class="hero-fit">
+          Only using lucide or another icon set? Its React package is fine.
+          svgworm is for the icons you own.
+        </p>
+        <div class="agent-prompt">
+          <p class="agent-prompt-label">Or paste this into your coding agent</p>
+          <pre aria-label="Prompt for your coding agent" class="code" data-copy role="region" tabindex="0"><code>{setupPrompt}</code></pre>
         </div>
       </div>
 
