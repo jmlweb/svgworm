@@ -104,6 +104,7 @@ The full [comparison](https://svgworm.com/docs/comparison/) has spike numbers an
 - [Config](https://svgworm.com/docs/config/): `svgworm.config.json` and its [JSON Schema](packages/svgworm/svgworm.schema.json)
 - [Output contract](docs/output-contract.md): exact shape of the generated files
 - [Comparison](https://svgworm.com/docs/comparison/): SVGR, @neodx/svg and others, with the numbers behind each claim
+- [Migrate from SVGR](https://svgworm.com/docs/migrate-from-svgr/): `npx svgworm migrate svgr` rewrites the imports into `<Icon name="…" />`
 - [Troubleshooting](https://svgworm.com/docs/troubleshooting/): blank icons, 404s, wrong colors, collisions, every diagnostic code
 
 ## For AI agents

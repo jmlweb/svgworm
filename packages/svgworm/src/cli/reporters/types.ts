@@ -5,6 +5,7 @@ import type {
   Diagnostic,
 } from '../../core/api.ts';
 import type { InitReport } from '../init/apply.ts';
+import type { MigrationReport } from '../migrate/run.ts';
 
 /** Machine-readable cause of a failure that has no file to point at. */
 export const FatalCode = {
@@ -32,4 +33,6 @@ export type Reporter = {
   readonly watching: (sources: readonly string[]) => void;
   /** `init` finished: what it wrote, skipped or left alone, the first build, and what to do next. */
   readonly initialized: (result: InitReport) => void;
+  /** `migrate svgr` finished: the rewrites (made, or planned in a dry run) and the imports left. */
+  readonly migrated: (result: MigrationReport) => void;
 };

@@ -23,7 +23,7 @@ SVG sources ─▶ core (parse, normalize, id, optimize, classify color, assembl
 - `packages/react` (`@svgworm/react`): zero dependencies, `react` as a peer only, and no import from `svgworm`.
 - Astro (ADR-0017), Vue and Svelte (ADR-0034): no package. `svgworm init` writes a dependency-free `Icon.astro`, `Icon.vue` or `Icon.svelte` from a template in `src/cli/init`; each must render the same markup as `@svgworm/react`. The conformance tests in `apps/site` (Astro) and `tests/conformance` (Vue, Svelte) fail on drift, so a change to the delivery logic touches all four.
 - `apps/site` (private, ADR-0016): the landing page. It consumes the output contract like any user and is never published.
-- At most 3 direct runtime dependencies in `svgworm`: svgo, zod, @clack/prompts. Prefer `node:` built-ins (`util.parseArgs`, `util.styleText`, `fs.glob`, `path.matchesGlob`, `fs.watch`, `crypto`).
+- At most 3 direct runtime dependencies in `svgworm`: svgo, zod, @clack/prompts. Optional peers: `vite` for `src/vite`, and `typescript` (`>=5`, TypeScript 5 or 6 checked at run time) for the `migrate svgr` codemod in `src/cli/migrate`, loaded at run time from the project (ADR-0035). Prefer `node:` built-ins (`util.parseArgs`, `util.styleText`, `fs.glob`, `path.matchesGlob`, `fs.watch`, `crypto`).
 - Sort with a code-unit comparator, never `localeCompare`. Convert `\` to `/` in every path from `fs.glob` before using it.
 
 ## Determinism

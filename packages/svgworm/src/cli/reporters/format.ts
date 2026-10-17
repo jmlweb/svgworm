@@ -1,6 +1,7 @@
 import { styleText } from 'node:util';
 
 import type { BuildStats, CheckOutcome } from '../../core/api.ts';
+import type { MigrationReport } from '../migrate/run.ts';
 
 type Format = Parameters<typeof styleText>[0];
 
@@ -67,4 +68,20 @@ export const describeStale = (result: CheckOutcome): string => {
       : [`icons removed: ${result.iconDiff.removed.join(', ')}`]),
   ];
   return `${parts.join('; ')}. Run "svgworm build" and commit the result`;
+};
+
+/** One sentence on what `migrate svgr` did, or would do in a dry run. */
+export const describeMigration = (result: MigrationReport): string => {
+  const uses = result.files.reduce((sum, file) => sum + file.changes.length, 0);
+  const left = result.skipped.length;
+  if (uses === 0 && left === 0) return 'migrate svgr: no SVGR imports found';
+  const rewritten = `${String(uses)} use(s) in ${String(result.files.length)} file(s)`;
+  const done = result.isWrite
+    ? `rewrote ${rewritten}`
+    : `${rewritten} would be rewritten`;
+  const remaining =
+    left === 0 ? '' : `, ${String(left)} import(s) left on SVGR (listed above)`;
+  const next =
+    !result.isWrite && uses > 0 ? '. Run again with --write to apply' : '';
+  return `migrate svgr: ${done}${remaining}${next}`;
 };

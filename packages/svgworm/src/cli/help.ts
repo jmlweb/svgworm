@@ -5,6 +5,7 @@ Usage:
   svgworm check [options]
   svgworm watch [options]
   svgworm init [options] [init options]
+  svgworm migrate svgr [options] [--write] [--component-file <path>]
 
 Commands:
   build                   Write the sprite, manifest and types (default)
@@ -12,6 +13,9 @@ Commands:
   watch                   Build, then rebuild on every change in the source folders
   init                    Set a project up: config, package.json scripts, Icon wiring.
                           Asks on a terminal; flags answer everything otherwise. Idempotent
+  migrate svgr            Rewrite SVGR imports (import Logo from './logo.svg') into
+                          <Icon name="logo" /> calls. A dry run unless --write. Needs
+                          TypeScript 5 or 6 in the project (or: npx -p typescript@6 -p svgworm)
 
 Options:
   --config <file>         Config file. Default: svgworm.config.json (optional)
@@ -44,9 +48,15 @@ Init options:
   --agents-md             Add a short svgworm section to AGENTS.md for AI agents
   -y, --yes               Take the defaults and flags without asking
 
+Migrate options:
+  --write                 Change the files. Without it, print what would change
+  --component-file <path> The Icon component to import. Default: src/components/icon.tsx
+                          or components/icon.tsx, as svgworm init writes it
+
 Exit codes:
   0  built, or check found the output up to date
-  1  invalid SVG, name collision, or I/O failure (nothing is written); or stale output (check)
+  1  invalid SVG, name collision, or I/O failure (nothing is written); or stale output (check);
+     or imports left on SVGR (migrate)
   2  usage or config error, or no SVG files found
 
 Example:
@@ -54,6 +64,7 @@ Example:
   svgworm --source assets/svg --out-dir static/sprites --public-path /sprites --json
   svgworm check --json
   svgworm init --source icons --agents-md --yes
+  svgworm migrate svgr --write
 
 Config (svgworm.config.json):
   { "sources": ["icons"], "color": [{ "match": "brand/*", "color": "preserve" }] }

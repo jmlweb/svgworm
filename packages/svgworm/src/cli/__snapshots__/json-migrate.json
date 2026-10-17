@@ -1,0 +1,58 @@
+{
+  "ok": false,
+  "sourcesDefaulted": false,
+  "write": false,
+  "componentFile": "src/components/icon.tsx",
+  "files": [
+    {
+      "file": "src/app/header.jsx",
+      "changes": [
+        {
+          "line": 3,
+          "from": "<BrandLogo {...props} />",
+          "to": "<Icon name=\"logo\" {...props} />"
+        }
+      ]
+    },
+    {
+      "file": "src/app/page.tsx",
+      "changes": [
+        {
+          "line": 8,
+          "from": "<Logo className=\"h-6 w-6\" aria-label=\"Home\" />",
+          "to": "<Icon name=\"logo\" className=\"h-6 w-6\" aria-label=\"Home\" />"
+        },
+        {
+          "line": 9,
+          "from": "<ArrowLeft></ArrowLeft>",
+          "to": "<Icon name=\"arrows/left\" />"
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "file": "src/app/loading.tsx",
+      "line": 2,
+      "specifier": "../icons/spinner.svg",
+      "binding": "Spinner",
+      "reason": "is animated; keep SVGR for it, because a <use> sprite icon cannot animate or style its inner paths"
+    },
+    {
+      "file": "src/app/loading.tsx",
+      "line": 3,
+      "specifier": "../../assets/legacy.svg",
+      "binding": "Legacy",
+      "reason": "is outside the configured sources (src/icons); add its folder to \"sources\""
+    },
+    {
+      "file": "src/app/loading.tsx",
+      "line": 12,
+      "specifier": "../icons/logo.svg",
+      "binding": "Logo",
+      "reason": "passes a ref; the svgworm Icon takes no ref"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

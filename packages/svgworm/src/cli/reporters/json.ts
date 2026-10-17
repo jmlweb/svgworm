@@ -95,5 +95,18 @@ export const createJsonReporter = (io: CliIo): Reporter => {
         errors: build.ok ? [] : build.errors,
       });
     },
+    migrated: (result) => {
+      diagnostics.migrated(result);
+      print({
+        ok: result.skipped.length === 0,
+        sourcesDefaulted,
+        write: result.isWrite,
+        componentFile: result.componentFile,
+        files: result.files,
+        skipped: result.skipped,
+        warnings: [],
+        errors: [],
+      });
+    },
   };
 };

@@ -4,6 +4,7 @@ import { Command, parseCliArgs } from './args.ts';
 import { runBuildCommand } from './commands/build.ts';
 import { runCheckCommand } from './commands/check.ts';
 import { runInitCommand } from './commands/init.ts';
+import { runMigrateCommand } from './commands/migrate.ts';
 import { runWatchCommand } from './commands/watch.ts';
 import { ExitCode } from './exit-codes.ts';
 import { USAGE } from './help.ts';
@@ -45,6 +46,16 @@ export const run = async (
         isInteractive,
       );
     }
+    case 'migrate':
+      return runMigrateCommand(
+        {
+          cwd: io.cwd,
+          configFile: args.configFile,
+          overrides: args.overrides,
+        },
+        { isWrite: args.isWrite, componentFile: args.componentFile },
+        selectReporter(io, { isJson: args.isJson }),
+      );
     case 'command': {
       const input = {
         cwd: io.cwd,

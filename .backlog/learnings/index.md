@@ -61,3 +61,5 @@
 | LRN-055 | Svelte SSR adds inline onload/onerror replay handlers to an img with spread attributes | svelte, ssr, csp, img, conformance | active | 2026-10-16 |
 | LRN-056 | SvelteKit serves static/, not public/: sprite outDir must follow | sveltekit, svelte, init, outdir, public-path | active | 2026-10-16 |
 | LRN-057 | Server-render Vue SFCs and Svelte components in Vitest without bundler plugins | testing, vue, svelte, ssr, conformance, vitest | active | 2026-10-16 |
+| LRN-058 | TypeScript 7 has no JS compiler API, and an optional peer upper bound still breaks npm install | typescript, peer-dependencies, npm, codemod | active | 2026-10-17 |
+| LRN-059 | getSymbolAtLocation on { Logo } and export { Logo } returns their own symbol, not the import | typescript, compiler-api, codemod | active | 2026-10-17 |

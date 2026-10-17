@@ -4,6 +4,7 @@ import type { Reporter } from './types.ts';
 
 import {
   createStyle,
+  describeMigration,
   describeStale,
   formatBytes,
   summaryRows,
@@ -134,6 +135,25 @@ export const createPlainReporter = (
       result.nextSteps.forEach((step, index) => {
         out(`  ${String(index + 1)}. ${step}`);
       });
+    },
+    migrated: (result) => {
+      result.files.forEach(({ file, changes }) => {
+        changes.forEach((change) => {
+          out(
+            `migrate ${file}:${String(change.line)} ${change.from} -> ${change.to}`,
+          );
+        });
+      });
+      result.skipped.forEach((skip) => {
+        err(
+          `${style('yellow', 'skip')} ${skip.file}:${String(skip.line)} ${skip.binding} from "${skip.specifier}" ${skip.reason}`,
+        );
+      });
+      if (result.skipped.length === 0) {
+        out(style('green', `svgworm: ${describeMigration(result)}`));
+      } else {
+        err(`${style('red', 'svgworm:')} ${describeMigration(result)}`);
+      }
     },
   };
 };
