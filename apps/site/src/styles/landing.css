@@ -1,5 +1,5 @@
 /* Landing page styles. base.css is inlined here at build time (one request, no ordering to get wrong). */
-@import "./base.css";
+@import './base.css';
 
 /* Hero */
 .hero {
@@ -289,8 +289,8 @@
 }
 
 .soil-toggle[hidden],
-.soil-toggle[aria-pressed="true"] .soil-toggle-pause,
-.soil-toggle[aria-pressed="false"] .soil-toggle-play {
+.soil-toggle[aria-pressed='true'] .soil-toggle-pause,
+.soil-toggle[aria-pressed='false'] .soil-toggle-play {
   display: none;
 }
 
@@ -921,6 +921,7 @@
 
 .install-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-1);
   width: fit-content;
   margin: 0 0 var(--space-2);
@@ -964,9 +965,11 @@
   margin-bottom: 0;
 }
 
-.install-switch:not(:has(input[value="next"]:checked)) .install-next,
-.install-switch:not(:has(input[value="vite"]:checked)) .install-vite,
-.install-switch:not(:has(input[value="astro"]:checked)) .install-astro {
+.install-switch:not(:has(input[value='next']:checked)) .install-next,
+.install-switch:not(:has(input[value='vite']:checked)) .install-vite,
+.install-switch:not(:has(input[value='astro']:checked)) .install-astro,
+.install-switch:not(:has(input[value='vue']:checked)) .install-vue,
+.install-switch:not(:has(input[value='svelte']:checked)) .install-svelte {
   display: none;
 }
 

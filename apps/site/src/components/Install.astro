@@ -11,41 +11,48 @@ const commands = {
   next: 'pnpm add -D svgworm && pnpm add @svgworm/react',
   vite: 'pnpm add -D svgworm && pnpm add @svgworm/react',
   astro: 'pnpm add -D svgworm',
+  vue: 'pnpm add -D svgworm',
+  svelte: 'pnpm add -D svgworm',
 } as const;
+const labels = {
+  next: 'Next.js',
+  vite: 'Vite',
+  astro: 'Astro',
+  vue: 'Vue',
+  svelte: 'Svelte',
+} as const;
+const frameworks = Object.keys(commands) as (keyof typeof commands)[];
 ---
 
 {/*
-  A CSS-only framework switch (TSK-049): two radios and :has() show the matching command, so an
-  Astro visitor never copies @svgworm/react. The copy button (CopyButtons.astro) is added by
+  A CSS-only framework switch (TSK-049): a radio per framework and :has() show the matching
+  command, so an Astro, Vue or Svelte visitor never copies @svgworm/react. The copy button (CopyButtons.astro) is added by
   script and copies the visible command, since the other variants are display: none. Without
   script, one click selects the whole command.
 */}
 <div class="install-switch">
   <fieldset class="install-tabs">
     <legend class="visually-hidden">Install command for</legend>
-    <label>
-      <input checked name={`install-${id}`} type="radio" value="next" />
-      Next.js
-    </label>
-    <label>
-      <input name={`install-${id}`} type="radio" value="vite" />
-      Vite
-    </label>
-    <label>
-      <input name={`install-${id}`} type="radio" value="astro" />
-      Astro
-    </label>
+    {
+      frameworks.map((framework, index) => (
+        <label>
+          <input
+            checked={index === 0}
+            name={`install-${id}`}
+            type="radio"
+            value={framework}
+          />
+          {labels[framework]}
+        </label>
+      ))
+    }
   </fieldset>
-  <p class="install install-next" data-copy>
-    <span aria-hidden="true" class="t-prompt">$</span>
-    <code aria-label={`${where} for Next.js`} role="region" tabindex="0">{commands.next}</code>
-  </p>
-  <p class="install install-vite" data-copy>
-    <span aria-hidden="true" class="t-prompt">$</span>
-    <code aria-label={`${where} for Vite`} role="region" tabindex="0">{commands.vite}</code>
-  </p>
-  <p class="install install-astro" data-copy>
-    <span aria-hidden="true" class="t-prompt">$</span>
-    <code aria-label={`${where} for Astro`} role="region" tabindex="0">{commands.astro}</code>
-  </p>
+  {
+    frameworks.map((framework) => (
+      <p class={`install install-${framework}`} data-copy>
+        <span aria-hidden="true" class="t-prompt">$</span>
+        <code aria-label={`${where} for ${labels[framework]}`} role="region" tabindex="0">{commands[framework]}</code>
+      </p>
+    ))
+  }
 </div>
