@@ -76,6 +76,14 @@ const swatchStyle = swatches
   .join('');
 const suggestions = ['terminal'] as const;
 
+// The migration prompts share one slot: the same radio and :has() switch as the install command.
+const migrateStyle = migrationPrompts
+  .map(
+    (prompt) =>
+      `.migrate-switch:not(:has(input[value='${prompt.id}']:checked)) .migrate-${prompt.id}{display:none}`,
+  )
+  .join('');
+
 // The curated before/after demo (TSK-077). The names are real icons of this site's icons/ folder:
 // building fails if one is renamed or removed, so the file tree cannot drift from the sprite.
 const demoNames = [
@@ -376,15 +384,33 @@ svgworm/icons.d.ts
       </figure>
       <div class="agent-migrate">
         <h3>Moving from SVGR, or mixing an icon set with your own SVGs?</h3>
-        <p>Move them into one sprite. Paste one of these prompts into your agent.</p>
-        {
-          migrationPrompts.map((prompt) => (
-            <div class="agent-prompt">
-              <p class="agent-prompt-label">{prompt.label}</p>
-              <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
-            </div>
-          ))
-        }
+        <p>Move them into one sprite. Pick where you come from and paste the prompt into your agent.</p>
+        <div class="migrate-switch">
+          <style set:html={migrateStyle} />
+          <fieldset class="install-tabs">
+            <legend class="visually-hidden">Migrate from</legend>
+            {
+              migrationPrompts.map((prompt, index) => (
+                <label>
+                  <input
+                    checked={index === 0}
+                    name="migrate"
+                    type="radio"
+                    value={prompt.id}
+                  />
+                  {prompt.label}
+                </label>
+              ))
+            }
+          </fieldset>
+          {
+            migrationPrompts.map((prompt) => (
+              <div class={`agent-prompt migrate-${prompt.id}`}>
+                <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>

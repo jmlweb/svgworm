@@ -1057,6 +1057,14 @@
   white-space: pre-wrap;
 }
 
+/* On phones a right gutter for the copy button costs a third of the line; it goes on top. */
+@media (max-width: 560px) {
+  .agent-prompt .code {
+    padding-top: 48px;
+    padding-right: var(--space-4);
+  }
+}
+
 .agent-migrate {
   grid-column: 1 / -1;
 }
