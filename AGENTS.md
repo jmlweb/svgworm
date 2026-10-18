@@ -98,4 +98,4 @@ Backlog lives in `.backlog/`. Always use the flowstate skills; never edit index 
 - `skills/svgworm-nextjs/SKILL.md`, `skills/svgworm-astro/SKILL.md`: the agent skills that set svgworm up in a Next.js or an Astro app
 - `llms.txt`: summary for AI agents (keep in sync with the README get started and the site's `cli` and `config` docs; the site serves it at `/llms.txt` and builds `/llms-full.txt` from it)
 - `docs/open-questions.md`: unknowns, each mapped to a task; `docs/adr/`: decisions, immutable once accepted (supersede, don't edit)
-- `.claude/rules/`: focused rules for architecture, decisions, and testing
+- `.claude/rules/`: focused rules for architecture, decisions, testing, agent workflow (worktree subagent brief, gates by change type), and docs and site writing
