@@ -81,7 +81,11 @@ export const describeMigration = (result: MigrationReport): string => {
     : `${rewritten} would be rewritten`;
   const remaining =
     left === 0 ? '' : `, ${String(left)} import(s) left on SVGR (listed above)`;
+  const unwritten =
+    result.writeErrors.length === 0
+      ? ''
+      : `, ${String(result.writeErrors.length)} file(s) could not be written (listed above)`;
   const next =
     !result.isWrite && uses > 0 ? '. Run again with --write to apply' : '';
-  return `migrate svgr: ${done}${remaining}${next}`;
+  return `migrate svgr: ${done}${remaining}${unwritten}${next}`;
 };

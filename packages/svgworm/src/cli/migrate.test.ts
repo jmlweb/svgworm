@@ -1,4 +1,11 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -307,4 +314,32 @@ describe('migrate svgr: usage errors', () => {
       '--write only applies to "svgworm migrate"',
     );
   });
+});
+
+describe('migrate svgr --write: a file that cannot be written', () => {
+  it.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
+    'writes the others, lists the failure and exits 1',
+    async () => {
+      await setUpProject({ withLeftovers: false });
+      await chmod(join(root, 'src/app/header.jsx'), 0o444);
+      const { code, stdout, stderr } = await exec([
+        'migrate',
+        'svgr',
+        '--write',
+        '--json',
+      ]);
+      expect(code).toBe(ExitCode.FAILED);
+      const document: unknown = JSON.parse(stdout);
+      expect(document).toMatchObject({
+        ok: false,
+        files: [{ file: 'src/app/page.tsx' }],
+        errors: [{ code: 'cli/unexpected', file: 'src/app/header.jsx' }],
+      });
+      expect(stderr).toContain(
+        'error src/app/header.jsx: could not write the rewrite, the file is unchanged:',
+      );
+      expect(await read('src/app/header.jsx')).toBe(HEADER);
+      expect(await read('src/app/page.tsx')).toContain('<Icon name="logo"');
+    },
+  );
 });

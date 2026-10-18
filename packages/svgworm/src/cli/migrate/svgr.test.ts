@@ -1,7 +1,12 @@
 import * as ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
-import { migrateSvgr, type IconLookup } from './svgr.ts';
+import {
+  applyEdits,
+  migrateSvgr,
+  OverlappingEditsError,
+  type IconLookup,
+} from './svgr.ts';
 
 const ICONS: Readonly<Record<string, string>> = {
   './logo.svg': 'logo',
@@ -410,5 +415,112 @@ describe('migrateSvgr: existing imports and line endings', () => {
         '',
       ].join('\r\n'),
     );
+  });
+});
+
+describe('migrateSvgr: nesting and import forms', () => {
+  it('rewrites an element with whitespace children that holds another icon in a prop', () => {
+    const result = migrate(
+      [
+        "import Logo from './logo.svg';",
+        "import Star from '@/icons/star.svg';",
+        'export const R = () => (',
+        '  <Logo aria-label="x" data-badge={<Star />}>',
+        '  </Logo>',
+        ');',
+        '',
+      ].join('\n'),
+    );
+    expect(result.output).toBe(
+      [
+        "import { Icon } from '../components/icon';",
+        'export const R = () => (',
+        '  <Icon name="logo" aria-label="x" data-badge={<Icon name="star" />} />',
+        ');',
+        '',
+      ].join('\n'),
+    );
+  });
+
+  it('ignores type-only imports', () => {
+    expect(
+      migrate(
+        [
+          "import type Logo from './logo.svg';",
+          "import { type ReactComponent as Star } from '@/icons/star.svg';",
+          'export type T = [Logo, Star];',
+          '',
+        ].join('\n'),
+      ),
+    ).toEqual({
+      file: 'app/page.tsx',
+      output: undefined,
+      changes: [],
+      skipped: [],
+    });
+  });
+
+  it('keeps a sibling of a multi-line import', () => {
+    const result = migrate(
+      [
+        'import logoUrl, {',
+        '  ReactComponent as Logo,',
+        "} from './logo.svg';",
+        'export const S = () => <><img src={logoUrl} /><Logo /></>;',
+        '',
+      ].join('\n'),
+    );
+    expect(result.output).toBe(
+      [
+        "import logoUrl from './logo.svg';",
+        "import { Icon } from '../components/icon';",
+        'export const S = () => <><img src={logoUrl} /><Icon name="logo" /></>;',
+        '',
+      ].join('\n'),
+    );
+  });
+
+  it('lists a component also used in a type position', () => {
+    const result = migrate(
+      [
+        "import Logo from './logo.svg?react';",
+        'type P = Parameters<typeof Logo>[0];',
+        'export const U = (p: P) => <Logo />;',
+        '',
+      ].join('\n'),
+    );
+    expect(result.output).toBe(undefined);
+    expect(result.skipped.map(({ line }) => line)).toEqual([1]);
+  });
+
+  it('rewrites JSX in a .js file', () => {
+    const result = migrate(
+      "import Logo from './logo.svg';\nexport const V = () => <Logo />;\n",
+      'app/legacy.js',
+    );
+    expect(result.output).toBe(
+      'import { Icon } from \'../components/icon\';\nexport const V = () => <Icon name="logo" />;\n',
+    );
+  });
+});
+
+describe('applyEdits', () => {
+  it('applies edits from the end, including an insertion where a replacement ends', () => {
+    expect(
+      applyEdits('abcdef', [
+        { start: 0, end: 2, text: 'X' },
+        { start: 2, end: 2, text: '+' },
+        { start: 4, end: 6, text: 'Y' },
+      ]),
+    ).toBe('X+cdY');
+  });
+
+  it('throws on overlapping edits instead of corrupting the text', () => {
+    expect(() =>
+      applyEdits('abcdef', [
+        { start: 0, end: 4, text: 'X' },
+        { start: 2, end: 3, text: 'Y' },
+      ]),
+    ).toThrow(OverlappingEditsError);
   });
 });

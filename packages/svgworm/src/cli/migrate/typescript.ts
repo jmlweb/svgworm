@@ -9,13 +9,21 @@ export type TypeScriptApi = typeof TypeScript;
 export const MISSING_TYPESCRIPT_HINT =
   'migrate svgr parses your code with the TypeScript compiler API (TypeScript 5 or 6), and none was found; TypeScript 7 has no JS compiler API yet.\n  run it with one: npx -p typescript@6 -p svgworm svgworm migrate svgr';
 
-// TypeScript 7 ships no JS compiler API in its main entry, only `unstable/*` IPC APIs, so
-// this check is what limits the codemod to TypeScript 5 and 6.
-const isApi = (value: unknown): value is TypeScriptApi =>
+const SUPPORTED_MAJORS: ReadonlySet<string> = new Set(['5', '6']);
+
+/**
+ * TypeScript 5 or 6, the range the codemod is tested with (ADR-0035). TypeScript 7 ships no
+ * JS compiler API in its main entry, only `unstable/*` IPC APIs. The peer range is
+ * open-ended so npm installs never conflict, which makes this check the real limit.
+ */
+export const isSupportedTypeScript = (value: unknown): value is TypeScriptApi =>
   typeof value === 'object' &&
   value !== null &&
   'createSourceFile' in value &&
-  typeof value.createSourceFile === 'function';
+  typeof value.createSourceFile === 'function' &&
+  'versionMajorMinor' in value &&
+  typeof value.versionMajorMinor === 'string' &&
+  SUPPORTED_MAJORS.has(value.versionMajorMinor.split('.')[0] ?? '');
 
 const loadFrom = async (base: string): Promise<TypeScriptApi | undefined> => {
   try {
@@ -25,7 +33,7 @@ const loadFrom = async (base: string): Promise<TypeScriptApi | undefined> => {
       typeof loaded === 'object' && loaded !== null && 'default' in loaded
         ? loaded.default
         : loaded;
-    return isApi(api) ? api : undefined;
+    return isSupportedTypeScript(api) ? api : undefined;
   } catch {
     return undefined;
   }

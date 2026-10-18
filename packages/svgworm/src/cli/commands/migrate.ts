@@ -31,7 +31,9 @@ export const runMigrateCommand = (
     try {
       const report = await runSvgrMigration(config, options, ts);
       reporter.migrated(report);
-      return report.skipped.length === 0 ? ExitCode.OK : ExitCode.FAILED;
+      return report.skipped.length === 0 && report.writeErrors.length === 0
+        ? ExitCode.OK
+        : ExitCode.FAILED;
     } catch (error) {
       if (error instanceof MissingComponentError) {
         reporter.fatal(error.message, FatalCode.USAGE);

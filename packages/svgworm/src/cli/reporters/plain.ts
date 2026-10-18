@@ -149,7 +149,12 @@ export const createPlainReporter = (
           `${style('yellow', 'skip')} ${skip.file}:${String(skip.line)} ${skip.binding} from "${skip.specifier}" ${skip.reason}`,
         );
       });
-      if (result.skipped.length === 0) {
+      result.writeErrors.forEach((failure) => {
+        err(
+          `${style('red', 'error')} ${failure.file}: could not write the rewrite, the file is unchanged: ${failure.message}`,
+        );
+      });
+      if (result.skipped.length === 0 && result.writeErrors.length === 0) {
         out(style('green', `svgworm: ${describeMigration(result)}`));
       } else {
         err(`${style('red', 'svgworm:')} ${describeMigration(result)}`);

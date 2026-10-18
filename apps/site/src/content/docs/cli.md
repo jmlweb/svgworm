@@ -188,6 +188,7 @@ One build document per build, the first one for the initial build. Nothing is pr
 - **`write`:** `true` when the files were changed, `false` for a dry run.
 - **`files`:** only the files with a rewrite, each with the old and new JSX (whitespace collapsed).
 - **`skipped`:** each import left on SVGR, with the line and why. `ok` is `false` when there is one.
+- **`errors`:** with `--write`, a file that could not be saved (`cli/unexpected`). It keeps its old content and is not in `files`; the other files are still written, and the exit code is 1.
 
 ### Stability
 

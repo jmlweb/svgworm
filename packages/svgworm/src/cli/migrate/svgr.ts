@@ -52,7 +52,7 @@ export type MigrateSvgrInput = {
 };
 
 type Node = TypeScript.Node;
-type Edit = {
+export type Edit = {
   readonly start: number;
   readonly end: number;
   readonly text: string;
@@ -209,35 +209,61 @@ const elementProblem = (
   return undefined;
 };
 
+export class OverlappingEditsError extends Error {
+  override readonly name = 'OverlappingEditsError';
+}
+
+/** Applies edits from the end, so earlier offsets stay valid. Overlaps are a bug: fail loudly. */
+export const applyEdits = (text: string, edits: readonly Edit[]): string => {
+  const sorted = edits.toSorted((a, b) => b.start - a.start || b.end - a.end);
+  sorted.forEach((edit, index) => {
+    const later = sorted[index - 1];
+    if (later !== undefined && edit.end > later.start) {
+      throw new OverlappingEditsError(
+        `edits overlap at offsets ${String(edit.start)}-${String(edit.end)} and ${String(later.start)}-${String(later.end)}`,
+      );
+    }
+  });
+  return sorted.reduce(
+    (result, edit) =>
+      result.slice(0, edit.start) + edit.text + result.slice(edit.end),
+    text,
+  );
+};
+
 const rewriteElement = (
   context: FileContext,
   element: Uses['tags'][number],
   name: string,
-): { readonly edit: Edit; readonly change: MigrationChange } => {
+): { readonly edits: readonly Edit[]; readonly change: MigrationChange } => {
   const { ts, source } = context;
   const text = source.text;
   const start = element.getStart(source);
   const opening = openingOf(ts, element);
-  const tag = `${ICON} name="${name}"`;
-  const edit: Edit = ts.isJsxElement(element)
-    ? {
-        start,
-        end: element.end,
-        // Only whitespace inside, so it becomes self-closing like any Icon.
-        text: `<${tag}${text.slice(opening.tagName.end, opening.attributes.end).trimEnd()} />`,
-      }
-    : {
-        start: opening.tagName.getStart(source),
-        end: opening.tagName.end,
-        text: tag,
-      };
+  // Two edits around the attributes, never one over them: an attribute can hold another
+  // converted icon (`title={<Star />}`), whose own edit must not overlap this one.
+  const edits: readonly Edit[] = [
+    {
+      start: opening.tagName.getStart(source),
+      end: opening.tagName.end,
+      text: `${ICON} name="${name}"`,
+    },
+    // Only whitespace inside, so it becomes self-closing like any Icon.
+    ...(ts.isJsxElement(element)
+      ? [{ start: opening.attributes.end, end: element.end, text: ' />' }]
+      : []),
+  ];
   const from = text.slice(start, element.end);
-  const to =
-    text.slice(start, edit.start) +
-    edit.text +
-    text.slice(edit.end, element.end);
+  const to = applyEdits(
+    from,
+    edits.map((edit) => ({
+      ...edit,
+      start: edit.start - start,
+      end: edit.end - start,
+    })),
+  );
   return {
-    edit,
+    edits,
     change: {
       line: lineOf(context, element),
       from: collapse(from),
@@ -303,7 +329,7 @@ const analyzeBinding = (
   );
   return {
     kind: 'convert',
-    edits: rewritten.map(({ edit }) => edit),
+    edits: rewritten.flatMap(({ edits }) => edits),
     changes: rewritten.map(({ change }) => change),
   };
 };
@@ -535,15 +561,6 @@ const keptClause = (
     ...(elements.length === 0 ? [] : [`{ ${elements.join(', ')} }`]),
   ].join(', ');
 };
-
-const applyEdits = (text: string, edits: readonly Edit[]): string =>
-  edits
-    .toSorted((a, b) => b.start - a.start)
-    .reduce(
-      (result, edit) =>
-        result.slice(0, edit.start) + edit.text + result.slice(edit.end),
-      text,
-    );
 
 const migrateFile = (context: FileContext): FileMigration => {
   const { ts, source, file } = context;

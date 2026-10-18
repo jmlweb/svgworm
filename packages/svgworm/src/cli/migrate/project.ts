@@ -123,13 +123,13 @@ export const indexIcons = async (
   return new Map(entries);
 };
 
-type PathAliases = {
+export type PathAliases = {
   readonly base: string;
   readonly paths: Readonly<Record<string, readonly string[]>>;
 };
 
 /** `compilerOptions.paths` from the project's tsconfig.json or jsconfig.json, `extends` included. */
-const readPathAliases = (
+export const readPathAliases = (
   ts: TypeScriptApi,
   cwd: string,
 ): PathAliases | undefined => {
@@ -194,7 +194,6 @@ const matchAlias = (
   );
 };
 
-/** Resolves an `.svg` import the way the bundler would: relative, tsconfig paths, then packages. */
 const CODE_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js', '.mts', '.mjs'];
 
 /** Where a relative or aliased specifier points, before any extension is added. */
@@ -214,11 +213,10 @@ const specifierTargets = (
  * the extension, as a folder index, or through a tsconfig `paths` alias.
  */
 export const createIconImportMatcher = (
-  ts: TypeScriptApi,
+  aliases: PathAliases | undefined,
   cwd: string,
   componentFile: string,
 ): ((specifier: string, fromAbsolutePath: string) => boolean) => {
-  const aliases = readPathAliases(ts, cwd);
   const target = resolve(cwd, componentFile);
   return (specifier, fromAbsolutePath) =>
     specifierTargets(aliases, specifier, fromAbsolutePath).some((base) => {
@@ -236,11 +234,10 @@ export const createIconImportMatcher = (
     });
 };
 
+/** Resolves an `.svg` import the way the bundler would: relative, tsconfig paths, then packages. */
 export const createSvgResolver = (
-  ts: TypeScriptApi,
-  cwd: string,
+  aliases: PathAliases | undefined,
 ): ((specifier: string, fromAbsolutePath: string) => string | undefined) => {
-  const aliases = readPathAliases(ts, cwd);
   return (specifier, fromAbsolutePath) => {
     const path = specifier.replace(/[?#].*$/, '');
     if (path.startsWith('./') || path.startsWith('../')) {

@@ -10,6 +10,7 @@ import {
   createIconImportMatcher,
   createLookup,
   createSvgResolver,
+  readPathAliases,
   DEFAULT_COMPONENT_FILES,
   findCodeFiles,
   indexIcons,
@@ -31,6 +32,11 @@ export type MigrationReport = {
   }[];
   /** Imports left on SVGR, with why. */
   readonly skipped: readonly MigrationSkip[];
+  /** `--write` could not save these files; they keep their old content. */
+  readonly writeErrors: readonly {
+    readonly file: string;
+    readonly message: string;
+  }[];
 };
 
 export type MigrationOptions = {
@@ -74,26 +80,38 @@ export const runSvgrMigration = async (
     indexIcons(config),
     findCodeFiles(config.cwd, [config.outDir, config.moduleDir]),
   ]);
+  // Parsed once: both the svg resolver and the Icon import matcher follow the same aliases.
+  const aliases = readPathAliases(ts, config.cwd);
   const results = migrateSvgr({
     ts,
     files: toSources(files, config.cwd, componentFile),
-    isIconImport: createIconImportMatcher(ts, config.cwd, componentFile),
-    lookup: createLookup(icons, createSvgResolver(ts, config.cwd), sourceDirs),
+    isIconImport: createIconImportMatcher(aliases, config.cwd, componentFile),
+    lookup: createLookup(icons, createSvgResolver(aliases), sourceDirs),
   });
+  // Every file is attempted, so one failure still reports what was written and what was not.
+  const writeErrors: { file: string; message: string }[] = [];
   if (options.isWrite) {
     for (const result of results) {
-      if (result.output !== undefined) {
+      if (result.output === undefined) continue;
+      try {
         // In place, so the file keeps its mode and a symlinked file stays linked.
         await writeFile(join(config.cwd, result.file), result.output);
+      } catch (error) {
+        writeErrors.push({
+          file: result.file,
+          message: error instanceof Error ? error.message : String(error),
+        });
       }
     }
   }
+  const failed = new Set(writeErrors.map(({ file }) => file));
   return {
     isWrite: options.isWrite,
     componentFile,
     files: results.flatMap(({ file, changes }) =>
-      changes.length === 0 ? [] : [{ file, changes }],
+      changes.length === 0 || failed.has(file) ? [] : [{ file, changes }],
     ),
     skipped: results.flatMap(({ skipped }) => skipped),
+    writeErrors,
   };
 };

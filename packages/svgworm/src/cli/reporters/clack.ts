@@ -172,6 +172,11 @@ export const createClackReporter = (io: CliIo): Reporter => {
           `${skip.file}:${String(skip.line)} ${skip.binding} from "${skip.specifier}" ${skip.reason}`,
         );
       });
+      result.writeErrors.forEach((failure) => {
+        log.error(
+          `${failure.file}: could not write the rewrite, the file is unchanged: ${failure.message}`,
+        );
+      });
       outro(describeMigration(result));
     },
   };
