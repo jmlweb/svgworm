@@ -8,7 +8,7 @@ created: 2026-10-18
 ---
 
 ## Context
-Session transcripts from 2026-10-07 to 2026-10-17 show 84 worktree-guard refusals in isolated subagents: 46 before LRN-021 was recorded on 2026-10-11 and 37 on 2026-10-15 alone, during a parallel backlog run. The refused commands were compound (`cd <dir>; …`, `&&` chains) or rewritten git porcelain.
+Session transcripts from 2026-10-07 to 2026-10-17 show 84 worktree-guard refusals in isolated subagents: 37 before LRN-021 was recorded (2026-10-07 and 2026-10-08), 9 on 2026-10-11, the day it was recorded, and 37 on 2026-10-15 alone, during a parallel backlog run. The refused commands were compound (`cd <dir>; …`, `&&` chains) or rewritten git porcelain.
 
 ## Insight
 Subagents don't read the backlog learnings or inherit the main session's rules, so a learning about subagent behaviour never reaches the subagent. LRN-016 and LRN-026 (worktrees based on the wrong branch) are obsolete since `main` became the default branch on 2026-10-13.
