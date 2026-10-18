@@ -1,7 +1,7 @@
 ---
 id: LRN-026
 title: Parallel worktree agents branched from main, not the current branch
-status: active
+status: archived
 tags: [worktree, parallel, flowstate, git]
 task: TSK-017
 created: 2026-10-12

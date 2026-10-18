@@ -1,7 +1,7 @@
 ---
 id: LRN-016
 title: Agent worktrees may be created from main, not next
-status: active
+status: archived
 tags: [workflow, agents, git]
 task: TSK-009
 created: 2026-10-07
