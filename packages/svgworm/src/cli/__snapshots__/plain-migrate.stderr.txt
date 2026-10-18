@@ -1,0 +1,4 @@
+skip src/app/loading.tsx:2 Spinner from "../icons/spinner.svg" is animated; keep SVGR for it, because a <use> sprite icon cannot animate or style its inner paths
+skip src/app/loading.tsx:3 Legacy from "../../assets/legacy.svg" is outside the configured sources (src/icons); add its folder to "sources"
+skip src/app/loading.tsx:12 Logo from "../icons/logo.svg" passes a ref; the svgworm Icon takes no ref
+svgworm: migrate svgr: 3 use(s) in 2 file(s) would be rewritten, 3 import(s) left on SVGR (listed above). Run again with --write to apply

@@ -96,6 +96,8 @@ Turns each SVG into a React component. It has 21.6M weekly downloads for `@svgr/
 
 **Pick SVGR when** you have a small icon set, need per-icon animation or props on inner paths, or you are not on a framework with Server Components.
 
+**Switching from SVGR:** `npx svgworm migrate svgr` rewrites the imports into `<Icon name="…" />` calls and lists any import it leaves. See [Migrate from SVGR](/docs/migrate-from-svgr/).
+
 ## vite-plugin-icons-spritesheet
 
 A Vite plugin that builds a sprite and types from a folder, and rebuilds on change. It has 248k weekly downloads.

@@ -13,17 +13,28 @@ export const Command = {
   CHECK: 'check',
   WATCH: 'watch',
   INIT: 'init',
+  MIGRATE: 'migrate',
 } as const;
 export type Command = (typeof Command)[keyof typeof Command];
 
 const COMMANDS: readonly string[] = Object.values(Command);
+
+export const MigrateTarget = {
+  SVGR: 'svgr',
+} as const;
+export type MigrateTarget = (typeof MigrateTarget)[keyof typeof MigrateTarget];
+
+const MIGRATE_TARGETS: readonly string[] = Object.values(MigrateTarget);
+
+const isMigrateTarget = (value: string): value is MigrateTarget =>
+  MIGRATE_TARGETS.includes(value);
 
 export type ParsedArgs =
   | { readonly kind: 'help' }
   | { readonly kind: 'version' }
   | {
       readonly kind: 'command';
-      readonly command: Exclude<Command, 'init'>;
+      readonly command: Exclude<Command, 'init' | 'migrate'>;
       readonly configFile: string | undefined;
       readonly overrides: ConfigOverrides;
       readonly isJson: boolean;
@@ -36,6 +47,16 @@ export type ParsedArgs =
       /** `--yes`: take the defaults and flags without prompting, even on a TTY. */
       readonly isYes: boolean;
       readonly isJson: boolean;
+    }
+  | {
+      readonly kind: 'migrate';
+      readonly target: MigrateTarget;
+      readonly configFile: string | undefined;
+      readonly overrides: ConfigOverrides;
+      readonly isJson: boolean;
+      /** `--write`: change the files. Without it, a dry run. */
+      readonly isWrite: boolean;
+      readonly componentFile: string | undefined;
     }
   | {
       readonly kind: 'usage-error';
@@ -63,17 +84,24 @@ const OPTIONS = {
   'agents-md': { type: 'boolean' },
   'cdn-url': { type: 'string' },
   yes: { type: 'boolean', short: 'y' },
+  // migrate only
+  write: { type: 'boolean' },
 } as const;
 
-const INIT_ONLY = [
-  'component-file',
-  'framework',
-  'component',
-  'scripts',
-  'agents-md',
-  'cdn-url',
-  'yes',
-] as const;
+// The commands each flag applies to, when it is not a build option every command takes.
+const SCOPED_FLAGS = {
+  'component-file': [Command.INIT, Command.MIGRATE],
+  framework: [Command.INIT],
+  component: [Command.INIT],
+  scripts: [Command.INIT],
+  'agents-md': [Command.INIT],
+  'cdn-url': [Command.INIT],
+  yes: [Command.INIT],
+  write: [Command.MIGRATE],
+} as const satisfies Partial<Record<keyof typeof OPTIONS, readonly Command[]>>;
+
+const describeScope = (commands: readonly Command[]): string =>
+  commands.map((command) => `"svgworm ${command}"`).join(' and ');
 
 const CROSS_ORIGINS: readonly string[] = Object.values(CrossOrigin);
 
@@ -126,7 +154,14 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
     if (values.help === true) return { kind: 'help' };
     if (values.version === true) return { kind: 'version' };
     const [command = Command.BUILD, ...extra] = positionals;
-    if (!isCommand(command) || extra.length > 0) {
+    if (command === Command.MIGRATE) {
+      const [target, ...rest] = extra;
+      if (target === undefined || !isMigrateTarget(target) || rest.length > 0) {
+        return usageError(
+          `migrate needs a source to migrate from: svgworm migrate ${MIGRATE_TARGETS.join('|')}`,
+        );
+      }
+    } else if (!isCommand(command) || extra.length > 0) {
       return usageError(
         `unknown command "${positionals.join(' ')}". Commands: ${COMMANDS.join(', ')}`,
       );
@@ -142,6 +177,25 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
         `--cross-origin must be one of: ${CROSS_ORIGINS.join(', ')} (got "${crossOrigin}")`,
       );
     }
+
+    const misplaced = Object.entries(SCOPED_FLAGS).find(
+      ([flag, commands]) =>
+        values[flag as keyof typeof SCOPED_FLAGS] !== undefined &&
+        !(commands as readonly Command[]).includes(command),
+    );
+    if (misplaced !== undefined) {
+      const [flag, commands] = misplaced;
+      return usageError(`--${flag} only applies to ${describeScope(commands)}`);
+    }
+    // Only given flags become overrides, so a flag never blanks a config value.
+    const overrides: ConfigOverrides = {
+      ...(sources === undefined ? {} : { sources }),
+      ...(outDir === undefined ? {} : { outDir }),
+      ...(publicPath === undefined ? {} : { publicPath }),
+      ...(moduleDir === undefined ? {} : { moduleDir }),
+      ...(flatten === undefined ? {} : { flatten }),
+      ...(crossOrigin === undefined ? {} : { crossOrigin }),
+    };
 
     if (command === Command.INIT) {
       if (crossOrigin !== undefined) {
@@ -177,11 +231,16 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
       };
     }
 
-    const misplaced = INIT_ONLY.filter((flag) => values[flag] !== undefined);
-    if (misplaced.length > 0) {
-      return usageError(
-        `--${misplaced[0] ?? ''} only applies to "svgworm init"`,
-      );
+    if (command === Command.MIGRATE) {
+      return {
+        kind: 'migrate',
+        target: MigrateTarget.SVGR,
+        configFile: values.config,
+        overrides,
+        isJson: values.json === true,
+        isWrite: values.write === true,
+        componentFile: values['component-file'],
+      };
     }
     return {
       kind: 'command',
@@ -189,15 +248,7 @@ export const parseCliArgs = (argv: readonly string[]): ParsedArgs => {
       configFile: values.config,
       isJson: values.json === true,
       isVerbose: values.verbose === true,
-      // Only given flags become overrides, so a flag never blanks a config value.
-      overrides: {
-        ...(sources === undefined ? {} : { sources }),
-        ...(outDir === undefined ? {} : { outDir }),
-        ...(publicPath === undefined ? {} : { publicPath }),
-        ...(moduleDir === undefined ? {} : { moduleDir }),
-        ...(flatten === undefined ? {} : { flatten }),
-        ...(crossOrigin === undefined ? {} : { crossOrigin }),
-      },
+      overrides,
     };
   } catch (error) {
     return usageError(describeParseError(error));

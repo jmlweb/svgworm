@@ -1,0 +1,11 @@
+import Link from 'next/link';
+import { Icon } from '../components/icon';
+
+export default function Page() {
+  return (
+    <Link href="/">
+      <Icon name="logo" className="h-6 w-6" aria-label="Home" />
+      <Icon name="arrows/left" />
+    </Link>
+  );
+}

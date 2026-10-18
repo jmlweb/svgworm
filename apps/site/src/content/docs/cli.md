@@ -8,6 +8,7 @@ One command builds everything. The others check, watch, and set a project up.
 
 ```text
 svgworm [build | check | watch | init] [options]
+svgworm migrate svgr [options] [--write] [--component-file <path>]
 ```
 
 | Command | What it does                                                                                                  |
@@ -16,6 +17,7 @@ svgworm [build | check | watch | init] [options]
 | `check` | Exit 1 if the committed output is stale. Writes nothing (for CI)                                              |
 | `watch` | Build, then rebuild on every change in the source folders                                                     |
 | `init`  | Set a project up: config, `predev`/`prebuild` scripts, Icon wiring (React or Astro), first build              |
+| `migrate svgr` | Rewrite SVGR imports into `<Icon name="…" />` calls. A dry run unless `--write` ([Migrate from SVGR](/docs/migrate-from-svgr/)) |
 
 | Option                 | Meaning                                                                    |
 | ---------------------- | -------------------------------------------------------------------------- |
@@ -48,8 +50,8 @@ Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgwor
 | Exit code | Meaning                                                                                         |
 | --------- | ----------------------------------------------------------------------------------------------- |
 | `0`       | Built, or `check` found the output up to date                                                   |
-| `1`       | Invalid SVG, name collision, or I/O failure (nothing is written); or `check` found stale output |
-| `2`       | Usage or config error, or no SVG files found                                                    |
+| `1`       | Invalid SVG, name collision, or I/O failure (nothing is written); or `check` found stale output; or `migrate svgr` left imports on SVGR |
+| `2`       | Usage or config error, or no SVG files found; for `migrate svgr`, also no Icon component or no TypeScript 5 or 6 |
 
 ## Output
 
@@ -161,6 +163,33 @@ One build document per build, the first one for the initial build. Nothing is pr
 - **`actions`:** each action is a file `init` looked at. It has a `status` of `created`, `updated`, `unchanged` or `skipped`, a `reason` when skipped, and a `warning` when the user must finish something by hand (a script `init` would not touch).
 - **`build`:** the first build, either `{ "ok": true, "icons", "written" }` or `{ "ok": false }` with the diagnostics in `errors`.
 
+### migrate document
+
+```json
+{
+  "ok": false,
+  "sourcesDefaulted": false,
+  "write": false,
+  "componentFile": "src/components/icon.tsx",
+  "files": [
+    {
+      "file": "src/app/page.tsx",
+      "changes": [{ "line": 8, "from": "<Logo className=\"h-6\" />", "to": "<Icon name=\"logo\" className=\"h-6\" />" }]
+    }
+  ],
+  "skipped": [
+    { "file": "src/app/loading.tsx", "line": 12, "specifier": "../icons/logo.svg", "binding": "Logo", "reason": "passes a ref; the svgworm Icon takes no ref" }
+  ],
+  "warnings": [],
+  "errors": []
+}
+```
+
+- **`write`:** `true` when the files were changed, `false` for a dry run.
+- **`files`:** only the files with a rewrite, each with the old and new JSX (whitespace collapsed).
+- **`skipped`:** each import left on SVGR, with the line and why. `ok` is `false` when there is one.
+- **`errors`:** with `--write`, a file that could not be saved (`cli/unexpected`). It keeps its old content and is not in `files`; the other files are still written, and the exit code is 1.
+
 ### Stability
 
 Before 1.0 the documents can change in a minor version, **never in a patch**. A removed or renamed field stays as a deprecated alias for one minor (as `stale` does now). Every change is listed in the [changelog](https://github.com/jmlweb/svgworm/blob/main/packages/svgworm/CHANGELOG.md) with its version.
@@ -201,6 +230,17 @@ When `init` finds Yarn 2+, it puts svgworm in front of the scripts themselves in
 - a Berry `yarn.lock`.
 
 It skips a script that is missing or that uses `||`, `;` or `&`, because a prefix would change what it does. It prints a warning that names the script. Then add `svgworm &&` to that script by hand.
+
+## migrate svgr
+
+`svgworm migrate svgr` rewrites SVGR component imports into `<Icon name="…" />` calls. The name is the one svgworm derives from the file's path in your sources. It prints what it would change and exits. Add `--write` to change the files.
+
+| Flag                      | Effect                                                                                                    |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `--write`                 | Change the files. Without it, nothing is written                                                          |
+| `--component-file <path>` | The Icon component to import. Default: `src/components/icon.tsx` or `components/icon.tsx`, as `init` writes it |
+
+It needs TypeScript 5 or 6 to parse your code: the project's own, or `npx -p typescript@6 -p svgworm svgworm migrate svgr`. TypeScript 7 has no JS compiler API yet. See [Migrate from SVGR](/docs/migrate-from-svgr/) for what it converts and what it leaves.
 
 ## check
 

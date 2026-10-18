@@ -1,8 +1,9 @@
 import type { BuildSuccess, Diagnostic } from '../../core/api.ts';
 import type { CliIo } from '../io.ts';
-import type { FatalCode, Reporter } from './types.ts';
+import type { Reporter } from './types.ts';
 
 import { createPlainReporter } from './plain.ts';
+import { FatalCode } from './types.ts';
 
 /**
  * One document on stdout and nothing else (R-56). The human diagnostics still go to
@@ -93,6 +94,23 @@ export const createJsonReporter = (io: CliIo): Reporter => {
         nextSteps: result.nextSteps,
         warnings: build.warnings,
         errors: build.ok ? [] : build.errors,
+      });
+    },
+    migrated: (result) => {
+      diagnostics.migrated(result);
+      print({
+        ok: result.skipped.length === 0 && result.writeErrors.length === 0,
+        sourcesDefaulted,
+        write: result.isWrite,
+        componentFile: result.componentFile,
+        files: result.files,
+        skipped: result.skipped,
+        warnings: [],
+        errors: result.writeErrors.map((failure) => ({
+          code: FatalCode.UNEXPECTED,
+          file: failure.file,
+          message: `could not write the rewrite, the file is unchanged: ${failure.message}`,
+        })),
       });
     },
   };

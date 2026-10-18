@@ -11,7 +11,7 @@ import type { Diagnostic } from '../../core/api.ts';
 import type { CliIo } from '../io.ts';
 import type { Reporter } from './types.ts';
 
-import { describeStale, summaryRows } from './format.ts';
+import { describeMigration, describeStale, summaryRows } from './format.ts';
 import { createPlainReporter } from './plain.ts';
 
 /**
@@ -149,6 +149,35 @@ export const createClackReporter = (io: CliIo): Reporter => {
           ? 'svgworm is set up'
           : `svgworm is set up, but the first build failed with ${String(result.build.errors.length)} error(s)`,
       );
+    },
+    migrated: (result) => {
+      intro(
+        result.isWrite
+          ? 'svgworm migrate svgr'
+          : 'svgworm migrate svgr (dry run)',
+      );
+      result.files.forEach(({ file, changes }) => {
+        log.success(
+          [
+            file,
+            ...changes.map(
+              (change) =>
+                `  ${String(change.line)}: ${change.from} -> ${change.to}`,
+            ),
+          ].join('\n'),
+        );
+      });
+      result.skipped.forEach((skip) => {
+        log.warn(
+          `${skip.file}:${String(skip.line)} ${skip.binding} from "${skip.specifier}" ${skip.reason}`,
+        );
+      });
+      result.writeErrors.forEach((failure) => {
+        log.error(
+          `${failure.file}: could not write the rewrite, the file is unchanged: ${failure.message}`,
+        );
+      });
+      outro(describeMigration(result));
     },
   };
 };

@@ -1,0 +1,3 @@
+migrate src/app/header.jsx:3 <BrandLogo {...props} /> -> <Icon name="logo" {...props} />
+migrate src/app/page.tsx:8 <Logo className="h-6 w-6" aria-label="Home" /> -> <Icon name="logo" className="h-6 w-6" aria-label="Home" />
+migrate src/app/page.tsx:9 <ArrowLeft></ArrowLeft> -> <Icon name="arrows/left" />

@@ -33,7 +33,10 @@ const reference = [
   pick('how-it-works'),
 ];
 const comparison = pick('comparison');
-const listed = new Set([...setup, ...reference, comparison].map((d) => d.id));
+const migration = pick('migrate-from-svgr');
+const listed = new Set(
+  [...setup, ...reference, comparison, migration].map((d) => d.id),
+);
 const unlisted = docs.filter((doc) => !listed.has(doc.id));
 if (unlisted.length > 0) {
   throw new Error(
@@ -102,7 +105,9 @@ const quickstart = 'pnpm add -D svgworm && pnpm svgworm init';
         <p class="docs-compare">
           Coming from SVGR, @neodx/svg or a Vite plugin? Read the{' '}
           <a href={`/docs/${comparison.id}/`}>{title(comparison)}</a>, with the
-          numbers behind each claim.
+          numbers behind each claim. On SVGR,{' '}
+          <a href={`/docs/${migration.id}/`}>{title(migration)}</a> rewrites your
+          imports with one command.
         </p>
       </article>
     </main>
