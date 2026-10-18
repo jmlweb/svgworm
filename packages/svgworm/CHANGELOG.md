@@ -1,5 +1,18 @@
 # svgworm
 
+## 0.5.0
+
+### Minor Changes
+
+- c8562fc: `svgworm init` sets up Vue, Nuxt, Svelte and SvelteKit apps. It detects `vue`, `nuxt`, `svelte` or `@sveltejs/kit` (or takes `--framework vue|svelte`). It writes a dependency-free `Icon.vue` (Vue 3.5, `<script setup>`) or `Icon.svelte` (Svelte 5 runes), typed with the generated `IconName`. Both render the same markup as `createIcon` from `@svgworm/react`.
+  
+  - **Nuxt 4:** the component goes to `app/components/`, where Nuxt auto-imports it. Nuxt 3, and Nuxt 4 with the Nuxt 3 layout, get `components/`. With `@nuxt/icon` or Nuxt UI, which already register `<Icon>`, the file is `SvgIcon.vue`.
+  - **SvelteKit:** the component goes to `src/lib/components/`, and the sprites go to `static/icons/`.
+  
+  When several frameworks are dependencies, a terminal asks which one to use. Otherwise the first of Astro, Vue, Svelte, React is picked and reported. `--component-file` must end in `.vue` or `.svelte` for those frameworks. `--cdn-url` is not supported for Vue and Svelte yet, and `init` exits 2 (ADR-0034).
+- e521cf2: Add `svgworm migrate svgr`, a codemod for apps on SVGR. It rewrites `import Logo from './logo.svg'`, `import { ReactComponent as Logo } from './logo.svg'` and `./logo.svg?react` imports, including tsconfig `paths` aliases, into `<Icon name="logo" />` calls with the name svgworm derives. Props carry over, the Icon import is added, and each fully converted `.svg` import is removed. It is a dry run by default, and `--write` applies the changes. `--component-file` picks the Icon component. Imports it cannot convert safely are listed with `file:line` and a reason, and their files are left untouched. These are values such as `styled(Logo)`, re-exports from a barrel, `ref`, children, `fill` or `stroke`, animated SVGs, and files outside `sources`. The command then exits 1. `--json` prints `{ ok, sourcesDefaulted, write, componentFile, files, skipped, warnings, errors }`. It parses code with TypeScript 5 or 6, an optional peer that the project usually has already. Without it, run `npx -p typescript@6 -p svgworm svgworm migrate svgr` (ADR-0035). Guide: https://svgworm.com/docs/migrate-from-svgr/
+- 3786557: Add an optional Vite plugin, `svgworm/vite`. Add `svgworm()` to `plugins` in `vite.config.ts`. It builds the sprite, manifest and types before `vite build`, and rebuilds them when an icon changes during `vite dev`, without a restart or a second `svgworm watch` process. A broken icon fails `vite build`, and in dev it shows in the terminal and the error overlay while the server keeps watching. When Vite has a `base` and `svgworm.config.json` sets no `publicPath`, the plugin stops `vite dev` and `vite build` with an error naming the `publicPath` to set, instead of letting every icon 404. `vite` (8.3 or later) is an optional peer; nothing changes for projects that do not use it. `ResolvedConfig` gains `isDefaultPublicPath` (ADR-0033).
+
 ## 0.4.1
 
 ### Patch Changes

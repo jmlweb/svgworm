@@ -1,5 +1,0 @@
----
-"svgworm": minor
----
-
-Add `svgworm migrate svgr`, a codemod for apps on SVGR. It rewrites `import Logo from './logo.svg'`, `import { ReactComponent as Logo } from './logo.svg'` and `./logo.svg?react` imports, including tsconfig `paths` aliases, into `<Icon name="logo" />` calls with the name svgworm derives. Props carry over, the Icon import is added, and each fully converted `.svg` import is removed. It is a dry run by default, and `--write` applies the changes. `--component-file` picks the Icon component. Imports it cannot convert safely are listed with `file:line` and a reason, and their files are left untouched. These are values such as `styled(Logo)`, re-exports from a barrel, `ref`, children, `fill` or `stroke`, animated SVGs, and files outside `sources`. The command then exits 1. `--json` prints `{ ok, sourcesDefaulted, write, componentFile, files, skipped, warnings, errors }`. It parses code with TypeScript 5 or 6, an optional peer that the project usually has already. Without it, run `npx -p typescript@6 -p svgworm svgworm migrate svgr` (ADR-0035). Guide: https://svgworm.com/docs/migrate-from-svgr/
