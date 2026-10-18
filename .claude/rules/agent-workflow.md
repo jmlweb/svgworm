@@ -47,7 +47,7 @@ When asked to work through the backlog without supervision:
 ## Outward actions
 
 - Before posting a PR comment, review, issue or any other public text, show the exact title and body and get a yes for each action.
-- Merging, deploying and editing CI workflows need the user's explicit request in the current turn.
+- Merging a PR, deploying to production, and changes that weaken required checks or the release approval need the user's explicit request.
 
 ## Library docs
 
