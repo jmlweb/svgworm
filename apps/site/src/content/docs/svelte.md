@@ -85,7 +85,9 @@ Svelte's server renderer adds `onload` and `onerror` attributes to an `<img>` wi
 
 ## Sprites on a CDN
 
-`init --cdn-url` is **not supported for Svelte yet**: crossOrigin `"inject"` needs a loader `<script>` in the page, and `init` does not write one for Svelte ([ADR-0034](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0034-vue-and-svelte-support-through-init-generated-components.md)). `Icon.svelte` already renders the in-page references that mode needs. Until it is, serve the sprites from your own origin.
+Serving the sprites from your own origin needs no JavaScript, so prefer it. To serve them from another origin anyway, see [Sprites on a CDN](/docs/config/#sprites-on-a-cdn).
+
+`svgworm init --cdn-url <https-url>` also writes `SvgwormLoader.svelte` next to `Icon.svelte`. **Render `<SvgwormLoader />` once, in the root layout** (`src/routes/+layout.svelte` in SvelteKit, `App.svelte` otherwise). It puts the loader `<script>` with its `integrity` in `<svelte:head>`. It works with server rendering and after a client-only `mount`, in SvelteKit with and without `ssr` ([ADR-0036](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0036-vue-and-svelte-cdn-loader-through-init-generated-components.md)).
 
 ## Cache for a year
 

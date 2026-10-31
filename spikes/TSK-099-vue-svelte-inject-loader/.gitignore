@@ -1,0 +1,9 @@
+node_modules/
+out/
+apps/*/src/generated/
+apps/nuxt/app/generated/
+apps/nuxt/.nuxt/
+apps/nuxt/.output*/
+apps/sveltekit/.svelte-kit/
+apps/sveltekit/build*/
+apps/sveltekit/src/lib/

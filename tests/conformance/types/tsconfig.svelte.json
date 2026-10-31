@@ -11,5 +11,10 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["App.svelte", "svelte-props.ts", "components/Icon.svelte"]
+  "include": [
+    "App.svelte",
+    "svelte-props.ts",
+    "components/Icon.svelte",
+    "components/SvgwormLoader.svelte"
+  ]
 }

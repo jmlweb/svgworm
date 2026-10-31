@@ -8,11 +8,14 @@ import { afterAll, beforeAll, describe, it } from 'vitest';
 
 import {
   svelteComponentContent,
+  svelteLoaderContent,
   vueComponentContent,
+  vueLoaderContent,
 } from '../../../packages/svgworm/src/cli/init/plan.ts';
 
 // Principle 4: the generated Icon.vue and Icon.svelte type-check, and an unknown icon name is a
-// type error (types/App.vue and types/svelte-props.ts expect one).
+// type error (types/App.vue and types/svelte-props.ts expect one). The SvgwormLoader files of
+// `init --cdn-url` (ADR-0036) type-check too.
 const run = promisify(execFile);
 const root = fileURLToPath(new URL('..', import.meta.url));
 const project = join(root, 'types');
@@ -40,6 +43,14 @@ beforeAll(async () => {
   await writeFile(
     join(project, 'components/Icon.svelte'),
     svelteComponentContent('components/Icon.svelte', 'svgworm'),
+  );
+  await writeFile(
+    join(project, 'components/SvgwormLoader.vue'),
+    vueLoaderContent('components/SvgwormLoader.vue', 'svgworm'),
+  );
+  await writeFile(
+    join(project, 'components/SvgwormLoader.svelte'),
+    svelteLoaderContent('components/SvgwormLoader.svelte', 'svgworm'),
   );
 });
 

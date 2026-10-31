@@ -109,7 +109,7 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 | `color/forced-mono-unsafe` | A `color: mono` rule would recolor a multicolor icon. Use `preserve` or drop the rule |
 | `build/no-icons` (exit 2) | The source folder has no `.svg` files. Check `sources` |
 | exit 2 with `publicPath` in the message | The path must start with `/`, be same-origin, and contain no `?`, `#`, `%` or whitespace. A CDN URL (`https://…`) needs `"crossOrigin": "inject"`, which makes icons need a loader script: prefer proxying `/icons/*` through the site (https://svgworm.com/docs/config/#sprites-on-a-cdn) |
-| `use` icons blank with `crossOrigin: "inject"` | The loader tag is missing (render it once: `createSpriteLoader(manifest)` in the root layout, or `SvgwormLoader.astro` in the layout head), or the console shows `svgworm: sprite not loaded from …` (CORS header or CSP `connect-src` missing on the CDN) |
+| `use` icons blank with `crossOrigin: "inject"` | The loader tag is missing (render it once: `createSpriteLoader(manifest)` in the root layout, or the `SvgwormLoader.astro`, `.vue` or `.svelte` that `init --cdn-url` writes, once in the layout), or the console shows `svgworm: sprite not loaded from …` (CORS header or CSP `connect-src` missing on the CDN) |
 
 If an icon renders black instead of following the text color, it was classified multicolor (it has more than one color). Add `{ "match": "<name>", "color": "mono" }` only if the icon really is single-color.
 

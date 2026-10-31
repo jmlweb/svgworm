@@ -64,3 +64,5 @@
 | LRN-058 | TypeScript 7 has no JS compiler API, and an optional peer upper bound still breaks npm install | typescript, peer-dependencies, npm, codemod | active | 2026-10-17 |
 | LRN-059 | getSymbolAtLocation on { Logo } and export { Logo } returns their own symbol, not the import | typescript, compiler-api, codemod | active | 2026-10-17 |
 | LRN-060 | Worktree-guard refusals continued after LRN-021: the rule must be in the agent prompt | workflow, worktree, agents, git | active | 2026-10-18 |
+| LRN-061 | Svelte 5 and Vue render functions run a <script> on client-only mounts | svelte, vue, cross-origin, init | active | 2026-10-31 |
+| LRN-062 | SvelteKit 3, Node 25 and NODE_ENV=production traps when checking generated components | svelte, vue, testing, spike | active | 2026-10-31 |

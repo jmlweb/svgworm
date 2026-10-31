@@ -801,8 +801,9 @@ describe('frameworkProblem', () => {
     ).toContain(file);
   });
 
+  // ADR-0036: every framework now gets a generated sprite loader.
   it.each([Framework.VUE, Framework.SVELTE])(
-    'rejects --cdn-url for %s: its loader is not generated yet',
+    'accepts --cdn-url for %s',
     (framework) => {
       expect(
         frameworkProblem(
@@ -813,9 +814,7 @@ describe('frameworkProblem', () => {
           },
           facts(),
         ),
-      ).toBe(
-        `--cdn-url is not supported for ${framework} yet: init does not write its sprite loader (see https://svgworm.com/docs/${framework})`,
-      );
+      ).toBeUndefined();
     },
   );
 
@@ -1222,6 +1221,57 @@ describe('planInit: CDN on another origin (--cdn-url, ADR-0027)', () => {
     ).toBeUndefined();
   });
 
+  it.each([
+    ['vue', facts({ usesVue: true }), 'components/SvgwormLoader.vue'],
+    [
+      'nuxt 4',
+      facts({ usesVue: true, usesNuxt: true, usesNuxtAppDir: true }),
+      'app/components/SvgwormLoader.vue',
+    ],
+    ['svelte', facts({ usesSvelte: true }), 'components/SvgwormLoader.svelte'],
+    [
+      'sveltekit',
+      facts({ usesSvelte: true, usesSvelteKit: true, hasSrcFolder: true }),
+      'src/lib/components/SvgwormLoader.svelte',
+    ],
+  ])(
+    'writes the loader next to the %s component (ADR-0036)',
+    (_label, projectFacts, file) => {
+      const loader = statusOf(planInit(cdn, projectFacts), file);
+      expect(loader).toMatchObject({ status: InitStatus.CREATED });
+      // Same order as createSpriteLoader: a connected script starts loading once src is set.
+      expect(loader?.content).toMatch(/crossorigin[^]*integrity[^]*src/);
+      expect(
+        statusOf(planInit(defaultInitOptions(), projectFacts), file),
+      ).toBeUndefined();
+    },
+  );
+
+  it('imports the manifest from the loader of a nested component', () => {
+    const plan = planInit(
+      { ...cdn, componentFile: 'src/ui/icons/Icon.vue' },
+      facts({ usesVue: true }),
+    );
+    expect(statusOf(plan, 'src/ui/icons/SvgwormLoader.vue')?.content).toContain(
+      "from '../../../svgworm/icons.js'",
+    );
+  });
+
+  it.each([
+    [
+      'vue',
+      facts({ usesVue: true }),
+      'Render <SvgwormLoader /> (components/SvgwormLoader.vue) once, in the root component',
+    ],
+    [
+      'sveltekit',
+      facts({ usesSvelte: true, usesSvelteKit: true, hasSrcFolder: true }),
+      'Render <SvgwormLoader /> (src/lib/components/SvgwormLoader.svelte) once, in the root layout',
+    ],
+  ])('tells where the %s loader goes', (_label, projectFacts, step) => {
+    expect(planInit(cdn, projectFacts).nextSteps.join('\n')).toContain(step);
+  });
+
   it('renders use icons by id from a version 2 manifest in Icon.astro', () => {
     const content =
       statusOf(
@@ -1271,6 +1321,8 @@ describe('planInit: generated components fit in 80 columns', () => {
     ['astro', defaultInitOptions(), facts({ usesAstro: true })],
     ['react cdn', cdnOptions, facts({ usesReact: true })],
     ['astro cdn', cdnOptions, facts({ usesAstro: true })],
+    ['vue cdn', cdnOptions, facts({ usesVue: true })],
+    ['svelte cdn', cdnOptions, facts({ usesSvelte: true })],
     ['vue', defaultInitOptions(), facts({ usesVue: true })],
     ['svelte', defaultInitOptions(), facts({ usesSvelte: true })],
   ])('%s', (_label, options, projectFacts) => {
