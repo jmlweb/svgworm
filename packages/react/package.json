@@ -1,6 +1,6 @@
 {
   "name": "@svgworm/react",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "React Server Component adapter for svgworm sprites.",
   "license": "MIT",
   "author": "svgworm contributors",
