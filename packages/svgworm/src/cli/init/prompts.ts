@@ -8,7 +8,6 @@ import {
   detectedFrameworks,
   Framework,
   FrameworkSource,
-  hasCdnLoader,
   resolveFramework,
   withFrameworkDefaults,
 } from './plan.ts';
@@ -92,12 +91,10 @@ export const askInitOptions = async (
       )
     : options.framework;
   const resolved = resolveFramework({ ...options, framework }, facts).framework;
-  // Never on by default: inject mode makes icons need JS (ADR-0027). Not offered where init
-  // writes no loader (ADR-0034).
+  // Never on by default: inject mode makes icons need JS (ADR-0027).
   const isCdn =
     options.cdnUrl !== undefined ||
     (options.publicPath === undefined &&
-      (resolved === undefined || hasCdnLoader(resolved)) &&
       orCancel(
         await confirm({
           message:
