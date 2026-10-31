@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 8 |
 | Active | 3 |
 | Blocked | 0 |
 | Complete | 93 |
@@ -24,6 +24,9 @@
 | TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | P3 | spike, vue, svelte, cross-origin, init, adr | 2026-10-16 |
 | TSK-100 | Conformance type check: generate the icons fixture from the core build | P4 | testing, conformance, types | 2026-10-16 |
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
+| TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | P4 | testing, watch, ci | 2026-10-31 |
+| TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | P4 | vue, init, conformance, testing | 2026-10-31 |
+| TSK-104 | Site: end-to-end worked example (one icon traced from SVG to render) | P2 | site | 2026-10-31 |
 
 ## Recently Completed
 

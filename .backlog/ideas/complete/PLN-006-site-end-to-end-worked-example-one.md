@@ -1,9 +1,11 @@
 ---
 id: PLN-006
 title: Site: end-to-end worked example (one icon traced from SVG to render)
-status: pending
+status: approved
 created: 2026-10-15
 complexity: medium
+reviewed: 2026-10-31
+task-id: TSK-104
 ---
 
 ## Goal

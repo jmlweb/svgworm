@@ -53,3 +53,6 @@ Let one `svgworm.config.json` build several sprites (for example `app` and `mark
 - Should an icon be allowed in two groups (duplicated bytes), or always be an error?
 - Should folder grouping (neodx `group: true`) be a shortcut, given that ADR-0023 rejected namespace splitting?
 - Should there be per-group `outDir` overrides, or one shared `outDir` only?
+
+## Revision History
+- [2026-10-31] Backlog grooming: trigger re-checked and still unmet (no GitHub issue on jmlweb/svgworm, nothing in `docs/metrics/manual.json`). Paths in Files to Modify verified on main 580c3ef (`OWNED_FILE` at `packages/svgworm/src/core/write.ts:11`). Left pending until a user reports the ADR-0023 trigger.

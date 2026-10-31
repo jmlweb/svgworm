@@ -48,3 +48,6 @@ Emit an optional CSS file with one class per mono icon (`.svgworm-home { mask: u
 - Should CSS output replace or duplicate the `<symbol>` sprite for mono icons?
 - Should the class prefix be configurable? What is the default?
 - Should multicolor icons be in CSS output at all?
+
+## Revision History
+- [2026-10-31] Backlog grooming: demand re-checked and still none (no GitHub issue on jmlweb/svgworm, nothing in `docs/metrics/manual.json`). Paths in Files to Modify verified on main 580c3ef. Left pending until users ask for CSS output.
