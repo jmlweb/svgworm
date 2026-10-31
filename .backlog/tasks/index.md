@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 4 |
+| Pending | 7 |
 | Active | 3 |
 | Blocked | 0 |
 | Complete | 94 |
@@ -23,6 +23,9 @@
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
 | TSK-100 | Conformance type check: generate the icons fixture from the core build | P4 | testing, conformance, types | 2026-10-16 |
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
+| TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | P4 | testing, watch, ci | 2026-10-31 |
+| TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | P4 | vue, init, conformance, testing | 2026-10-31 |
+| TSK-104 | Site: end-to-end worked example (one icon traced from SVG to render) | P2 | site | 2026-10-31 |
 
 ## Recently Completed
 

@@ -3,8 +3,10 @@ id: RPT-009
 title: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default)
 type: bug
 severity: low
-status: pending
+status: triaged
 created: 2026-10-16
+triaged: 2026-10-31
+task-id: TSK-102
 ---
 
 ## Summary
