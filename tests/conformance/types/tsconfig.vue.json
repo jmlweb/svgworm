@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["App.vue", "components/Icon.vue"]
+  "include": ["App.vue", "components/Icon.vue", "components/SvgwormLoader.vue"]
 }

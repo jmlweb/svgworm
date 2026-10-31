@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 7 |
 | Active | 3 |
 | Blocked | 0 |
-| Complete | 93 |
+| Complete | 94 |
 
 ## Active Tasks
 
@@ -21,7 +21,6 @@
 |----|-------|----------|------|---------|
 | TSK-020 | Kill-criteria review: launch + 12 weeks | P3 | measure, adr | 2026-10-07 |
 | TSK-034 | Move repo toolchain to TypeScript 7 at 7.1 | P3 | tooling, typescript | 2026-10-11 |
-| TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | P3 | spike, vue, svelte, cross-origin, init, adr | 2026-10-16 |
 | TSK-100 | Conformance type check: generate the icons fixture from the core build | P4 | testing, conformance, types | 2026-10-16 |
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
 | TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | P4 | testing, watch, ci | 2026-10-31 |
@@ -32,6 +31,7 @@
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | 2026-10-31 |
 | TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | 2026-10-17 |
 | TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | 2026-10-16 |
 | TSK-090 | Site: framework guide cards and help links | 2026-10-16 |
@@ -41,4 +41,3 @@
 | TSK-097 | Spike: worker_threads pool for large icon sets | 2026-10-16 |
 | TSK-098 | Icon conformance test renders the current init Icon.astro template | 2026-10-16 |
 | TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |
-| TSK-022 | Inline sprite output | 2026-10-15 |

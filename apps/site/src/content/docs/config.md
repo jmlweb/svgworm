@@ -107,7 +107,7 @@ The build then also writes `icons.loader.<hash>.js`. The loader does this:
 - It parses the sprite without running anything.
 - It puts the sprite at the start of `<body>` once.
 
-`use` icons then point at `#id` in the page. `img` and `mask` icons keep loading the stack file from the CDN. The manifest becomes version 2 with the loader's URL and `integrity`. It needs `@svgworm/react` 0.3 or later, or an `Icon.astro` written by the matching `svgworm init`.
+`use` icons then point at `#id` in the page. `img` and `mask` icons keep loading the stack file from the CDN. The manifest becomes version 2 with the loader's URL and `integrity`. It needs `@svgworm/react` 0.3 or later, or an `Icon.astro`, `Icon.vue` or `Icon.svelte` written by the matching `svgworm init`.
 
 What it costs, measured in Chromium, Firefox and WebKit ([ADR-0027](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0027-opt-in-cross-origin-sprites-through-an-injecting-loader.md)):
 
@@ -116,7 +116,7 @@ What it costs, measured in Chromium, Firefox and WebKit ([ADR-0027](https://gith
 - **A Content-Security-Policy needs the CDN origin** in `script-src`, `connect-src` and `img-src`.
 - **Render the loader tag once**, from the manifest, with its `integrity` and `crossorigin="anonymous"`. Then a CDN that serves a changed loader or sprite gets nothing to run, because the browser rejects both.
   - React: `createSpriteLoader(manifest)` in the root layout.
-  - Astro: the `SvgwormLoader.astro` that `init` writes.
+  - Astro, Vue and Svelte: the `SvgwormLoader.astro`, `SvgwormLoader.vue` or `SvgwormLoader.svelte` that `init` writes.
   - Plain HTML: `<script async src="…" integrity="…" crossorigin="anonymous">` with `sprites.icons.loader` from `manifest.json`.
 - **Upload `outDir` after every build** without deleting the previous files, so pages cached before a deploy keep working ([ADR-0022](https://github.com/jmlweb/svgworm/blob/main/docs/adr/0022-builds-keep-only-the-current-sprite.md)).
 

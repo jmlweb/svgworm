@@ -1,6 +1,6 @@
 # 0034. Vue and Svelte support through init-generated components
 
-- **Status:** accepted
+- **Status:** accepted; its `--cdn-url` limit is superseded by [0036](0036-vue-and-svelte-cdn-loader-through-init-generated-components.md)
 - **Date:** 2026-10-16
 - **Task:** TSK-092
 - **Resolves:** no open question; the Vue and Svelte gap ADR-0017 left (TSK-092)

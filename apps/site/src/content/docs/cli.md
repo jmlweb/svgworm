@@ -208,7 +208,7 @@ Fields are only added, never reordered, so read them by name. `durationMs` varie
 | `--no-component`          | Skip the component                                                                                                          |
 | `--no-scripts`            | Leave the package.json scripts alone (`predev` and `prebuild`, or `dev` and `build` on Yarn 2+)                             |
 | `--agents-md`             | Add a short svgworm section to `AGENTS.md` for AI agents                                                                    |
-| `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no. React and Astro only: with Vue or Svelte, `init` exits 2 |
+| `--cdn-url <https-url>`   | Serve the sprites from a CDN on another origin: writes `publicPath` and `crossOrigin: "inject"` and the loader wiring ([Sprites on a CDN](/docs/config/#sprites-on-a-cdn)). A terminal asks, default no. With Astro, Vue or Svelte it writes `SvgwormLoader.astro`, `.vue` or `.svelte` next to the component |
 | `--yes`, `-y`             | Accept every default without asking                                                                                         |
 
 `init` reports the framework it chose and why (`flag`, `prompt` or `detected`) in the plain output. In `--json` they are `framework` and `frameworkSource`. For Astro, Vue and Svelte it writes `Icon.astro`, `Icon.vue` or `Icon.svelte` instead of the React wiring. See the [Astro](/docs/astro/), [Vue](/docs/vue/) and [Svelte](/docs/svelte/) setups. For SvelteKit it also writes the sprites to `static/icons/`.

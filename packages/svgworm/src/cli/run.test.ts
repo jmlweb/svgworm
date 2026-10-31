@@ -651,22 +651,21 @@ describe('run: init (R-56)', () => {
       },
     );
 
-    it.each(['vue', 'svelte'])(
-      'exits 2 and writes nothing for --cdn-url with %s',
-      async (framework) => {
-        await put('package.json', JSON.stringify({}));
-        const { code, stderr } = await exec([
-          'init',
-          '--framework',
-          framework,
-          '--cdn-url',
-          'https://cdn.example.com/icons',
-        ]);
-        expect(code).toBe(ExitCode.USAGE);
-        expect(stderr).toContain(`--cdn-url is not supported for ${framework}`);
-        expect(await exists('svgworm.config.json')).toBe(false);
-      },
-    );
+    it.each([
+      ['vue', 'components/SvgwormLoader.vue'],
+      ['svelte', 'components/SvgwormLoader.svelte'],
+    ])('writes the %s sprite loader for --cdn-url', async (framework, file) => {
+      await put('package.json', JSON.stringify({}));
+      const { code } = await exec([
+        'init',
+        '--framework',
+        framework,
+        '--cdn-url',
+        'https://cdn.example.com/icons',
+      ]);
+      expect(code).toBe(ExitCode.OK);
+      expect(await exists(file)).toBe(true);
+    });
   });
 });
 
