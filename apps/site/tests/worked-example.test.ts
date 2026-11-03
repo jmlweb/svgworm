@@ -1,8 +1,9 @@
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // The worked example (TSK-104) must show the committed files as they are, never a hand copy.
 // The test reads them on its own, so a helper that drifts from the files cannot pass it.
@@ -40,8 +41,13 @@ let html: string;
 let source: string;
 let sprite: string;
 let manifest: Manifest;
+let previousCwd: string;
 
 beforeAll(async () => {
+  // The component reads from the site root, where Astro builds run. The root `pnpm test`
+  // runs from the repo root, so move there for the render and back afterwards.
+  previousCwd = process.cwd();
+  process.chdir(root);
   source = await readFile(join(root, 'icons/terminal.svg'), 'utf8');
   manifest = JSON.parse(
     await readFile(join(root, 'svgworm/manifest.json'), 'utf8'),
@@ -58,6 +64,10 @@ beforeAll(async () => {
   html = await container.renderToString(WorkedExample, {
     props: { terminalComment },
   });
+});
+
+afterAll(() => {
+  process.chdir(previousCwd);
 });
 
 describe('the worked example', () => {
