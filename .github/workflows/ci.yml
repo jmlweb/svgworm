@@ -164,7 +164,9 @@ jobs:
   # is the same on every OS, and one runner keeps browser downloads small. Not part of `pnpm verify`.
   render:
     name: Browser rendering matrix (Playwright, Linux)
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, which Playwright 1.58 cannot install system deps for
+    # (WebKit fails to load libicudata.so.74). Move with the Playwright version, not the image.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -181,7 +183,7 @@ jobs:
         id: browsers
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+          key: playwright-${{ runner.os }}-ubuntu-24.04-${{ steps.playwright.outputs.version }}
       - name: Install browsers and system dependencies
         if: steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium firefox webkit
