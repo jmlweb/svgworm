@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 7 |
+| Pending | 6 |
 | Active | 3 |
 | Blocked | 0 |
-| Complete | 94 |
+| Complete | 95 |
 
 ## Active Tasks
 
@@ -25,12 +25,12 @@
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
 | TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | P4 | testing, watch, ci | 2026-10-31 |
 | TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | P4 | vue, init, conformance, testing | 2026-10-31 |
-| TSK-104 | Site: end-to-end worked example (one icon traced from SVG to render) | P2 | site | 2026-10-31 |
 
 ## Recently Completed
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-104 | Site: end-to-end worked example (one icon traced from SVG to render) | 2026-11-03 |
 | TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | 2026-10-31 |
 | TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | 2026-10-17 |
 | TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | 2026-10-16 |
@@ -40,4 +40,3 @@
 | TSK-096 | Fuse svgo passes in transformIcon (5 optimize() rounds to 1) | 2026-10-16 |
 | TSK-097 | Spike: worker_threads pool for large icon sets | 2026-10-16 |
 | TSK-098 | Icon conformance test renders the current init Icon.astro template | 2026-10-16 |
-| TSK-021 | Multiple sprites (namespace or config groups) | 2026-10-15 |

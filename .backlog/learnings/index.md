@@ -66,3 +66,4 @@
 | LRN-060 | Worktree-guard refusals continued after LRN-021: the rule must be in the agent prompt | workflow, worktree, agents, git | active | 2026-10-18 |
 | LRN-061 | Svelte 5 and Vue render functions run a <script> on client-only mounts | svelte, vue, cross-origin, init | active | 2026-10-31 |
 | LRN-062 | SvelteKit 3, Node 25 and NODE_ENV=production traps when checking generated components | svelte, vue, testing, spike | active | 2026-10-31 |
+| LRN-063 | Astro components in site vitests must be imported dynamically for type-aware lint | site, testing, astro | active | 2026-11-03 |
