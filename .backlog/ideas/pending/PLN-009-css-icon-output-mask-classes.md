@@ -51,3 +51,4 @@ Emit an optional CSS file with one class per mono icon (`.svgworm-home { mask: u
 
 ## Revision History
 - [2026-10-31] Backlog grooming: demand re-checked and still none (no GitHub issue on jmlweb/svgworm, nothing in `docs/metrics/manual.json`). Paths in Files to Modify verified on main 580c3ef. Left pending until users ask for CSS output.
+- [2026-11-03] Backlog grooming: demand re-checked and still none (`gh issue list -R jmlweb/svgworm --state all` returns no issues; `docs/metrics/manual.json` records no request). Every existing path in Files to Modify verified on main 41c9ac2 (`scripts/render-check.mjs`, `tests/render/matrix.json`, `src/core/emit/`, `write.ts`). Left pending.

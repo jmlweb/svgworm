@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 8 |
 | Active | 3 |
 | Blocked | 0 |
 | Complete | 95 |
@@ -25,6 +25,8 @@
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | P4 | adapter, init, vue, svelte, astro, react, adr | 2026-10-16 |
 | TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | P4 | testing, watch, ci | 2026-10-31 |
 | TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | P4 | vue, init, conformance, testing | 2026-10-31 |
+| TSK-105 | Fix: CLI help still says --cdn-url is React and Astro only after TSK-099 | P4 |  | 2026-11-03 |
+| TSK-106 | Fix: A config file containing JSON null is accepted as an empty config | P4 |  | 2026-11-03 |
 
 ## Recently Completed
 
