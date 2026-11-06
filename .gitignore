@@ -21,8 +21,8 @@ tests/render/out/
 .impeccable/
 
 # Impeccable tool install (local)
-.claude/agents/
-.claude/skills/
-.github/agents/
-.github/hooks/
-.github/skills/
+.claude/agents/impeccable-*
+.claude/skills/impeccable/
+.github/agents/impeccable-*
+.github/hooks/impeccable.json
+.github/skills/impeccable/

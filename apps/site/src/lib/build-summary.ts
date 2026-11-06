@@ -15,34 +15,48 @@ export type BuildSummary = {
   readonly savings: string;
   readonly iconFiles: number;
   readonly writes: readonly { readonly path: string; readonly size: string }[];
-  readonly cacheYears: number;
+  readonly cache: string;
+  // Raw figures behind the formatted ones, so a test can compare them with svgworm's own stats.
+  readonly bytes: {
+    readonly source: number;
+    readonly sprite: number;
+    readonly stack: number;
+  };
 };
 
 const SECONDS_PER_YEAR = 31_536_000;
 
 // Same format as the CLI's plain reporter, so the terminal sample reads like a real run.
-const formatBytes = (bytes: number) =>
+export const formatBytes = (bytes: number) =>
   Math.abs(bytes) < 1024
     ? `${String(bytes)} B`
     : `${(bytes / 1024).toFixed(1)} KiB`;
 
+export const formatSavings = (savedBytes: number, sourceBytes: number) =>
+  sourceBytes === 0
+    ? formatBytes(savedBytes)
+    : `${formatBytes(savedBytes)} (${((savedBytes / sourceBytes) * 100).toFixed(1)}%)`;
+
 const sizeOf = (path: string) => statSync(join(process.cwd(), path)).size;
 
-const readCacheYears = () => {
-  const headers = readFileSync(join(process.cwd(), 'public/_headers'), 'utf8');
-  const maxAge = /^\/icons\/\*\n.*?max-age=(\d+)/ms.exec(headers)?.[1];
+// Only the indented lines under the /icons/* path, so another block's max-age cannot match.
+export const readCacheTime = (headers: string) => {
+  const block = /^\/icons\/\*\n((?:[ \t]+.*\n?)*)/m.exec(headers)?.[1];
+  const maxAge = block && /max-age=(\d+)/.exec(block)?.[1];
   if (!maxAge) throw new Error('build summary: no max-age for /icons/*');
-  return Number(maxAge) / SECONDS_PER_YEAR;
+  const years = Math.round(Number(maxAge) / SECONDS_PER_YEAR);
+  return `${String(years)} ${years === 1 ? 'year' : 'years'}`;
 };
 
 export const readBuildSummary = (): BuildSummary => {
   const group = manifest.sprites.icons;
-  const iconUrls = [group?.sprite?.url, group?.stack?.url].filter(
-    (url) => url !== undefined,
-  );
-  const [spriteBytes = 0, stackBytes = 0] = iconUrls.map((url) =>
-    sizeOf(`public${url}`),
-  );
+  const spriteUrl = group?.sprite?.url;
+  const stackUrl = group?.stack?.url;
+  const fileBytes = (url: string | undefined) =>
+    url === undefined ? 0 : sizeOf(`public${url}`);
+  const spriteBytes = fileBytes(spriteUrl);
+  const stackBytes = fileBytes(stackUrl);
+  const iconUrls = [spriteUrl, stackUrl].filter((url) => url !== undefined);
   const sources = readdirSync(join(process.cwd(), 'icons'), {
     recursive: true,
     encoding: 'utf8',
@@ -64,9 +78,12 @@ export const readBuildSummary = (): BuildSummary => {
     sprite: formatBytes(spriteBytes),
     stack: formatBytes(stackBytes),
     output: formatBytes(outputBytes),
-    savings: `${formatBytes(savedBytes)} (${((savedBytes / sourceBytes) * 100).toFixed(1)}%)`,
+    savings: formatSavings(savedBytes, sourceBytes),
     iconFiles: iconUrls.length,
     writes,
-    cacheYears: readCacheYears(),
+    cache: readCacheTime(
+      readFileSync(join(process.cwd(), 'public/_headers'), 'utf8'),
+    ),
+    bytes: { source: sourceBytes, sprite: spriteBytes, stack: stackBytes },
   };
 };

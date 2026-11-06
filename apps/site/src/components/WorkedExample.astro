@@ -1,9 +1,14 @@
 ---
+import { manifest } from '../../svgworm/icons.js';
 import { traceIcon } from '../lib/worked-example';
 
 // The hardest icon of this site, read from the committed files at build time (TSK-104): a stroke
 // icon cannot fail, so it would prove nothing.
 const iconName = 'proof/agate';
+// The copy below explains the stack file and <img>, so a changed delivery must stop the build.
+if (manifest.icons[iconName].delivery !== 'img') {
+  throw new Error(`worked example: ${iconName} no longer renders as <img>`);
+}
 const trace = traceIcon(iconName);
 const sourceLines = trace.source.split('\n').length;
 // The parent renders the real <Icon>, so step 4 prints the markup this page ships, not a template

@@ -1281,36 +1281,34 @@ details[open] > .fold-summary::before {
   margin: 0;
 }
 
-/* Same no-script pattern as the docs menu: on wide screens the summary goes and the prompt shows
-   through ::details-content, so the disclosure exists only where the height costs something. */
+/* A plain disclosure everywhere by default. Where ::details-content exists, wide screens drop the
+   summary and show the prompt through it, so the fold exists only where the height costs
+   something, with no script. A browser without it keeps a working <details>. */
 .hero-prompt > .fold-summary {
+  padding-block: 10px;
+  color: var(--ink-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hero-prompt > .agent-prompt-label {
   display: none;
 }
 
-.hero-prompt::details-content {
-  display: block;
-  content-visibility: visible;
-}
+@supports selector(::details-content) {
+  @media (min-width: 641px) {
+    .hero-prompt > .fold-summary {
+      display: none;
+    }
 
-@media (max-width: 640px) {
-  .hero-prompt > .fold-summary {
-    display: flex;
-    padding-block: 10px;
-    color: var(--ink-muted);
-    font-size: 15px;
-    font-weight: 600;
-  }
+    .hero-prompt > .agent-prompt-label {
+      display: block;
+    }
 
-  .hero-prompt > .agent-prompt-label {
-    display: none;
-  }
-
-  .hero-prompt::details-content {
-    content-visibility: hidden;
-  }
-
-  .hero-prompt[open]::details-content {
-    content-visibility: visible;
+    .hero-prompt::details-content {
+      display: block;
+      content-visibility: visible;
+    }
   }
 }
 

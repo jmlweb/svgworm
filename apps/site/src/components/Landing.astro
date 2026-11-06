@@ -83,7 +83,7 @@ const swatchStyle = swatches
   .join('');
 const suggestions = ['terminal'] as const;
 
-// One of each delivery form, so the demo shows every path the color can take.
+// Mono through use and mask, multicolor through use and img: every path the color can take.
 const colorStageIcons: readonly IconName[] = [
   'folder-open',
   'proof/fossil',
@@ -97,6 +97,22 @@ const recolorIcons: readonly IconName[] = [
   'emoji/carrot',
   'emoji/mushroom',
 ];
+const recolorSides = [
+  {
+    isSimulated: true,
+    tag: 'step-label-you',
+    label: 'simulated',
+    title: 'Recolor the whole folder',
+    alt: 'Four multicolor icons reduced to black silhouettes',
+  },
+  {
+    isSimulated: false,
+    tag: 'step-label-generated',
+    label: 'live output',
+    title: 'svgworm, per icon',
+    alt: 'The same four icons in their own colors',
+  },
+] as const;
 
 // The migration prompts share one slot: the same radio and :has() switch as the install command.
 const migrateStyle = migrationPrompts
@@ -189,7 +205,7 @@ assignable to type 'IconName'. Did you mean '"terminal"'?</code></pre>
         <span>sprite and stack</span>
       </div>
       <div>
-        <strong>{summary.cacheYears} year</strong>
+        <strong>{summary.cache}</strong>
         <span>immutable browser cache</span>
       </div>
     </div>
@@ -215,36 +231,19 @@ assignable to type 'IconName'. Did you mean '"terminal"'?</code></pre>
       </p>
       <figure class="recolor">
         <div class="recolor-sides">
-          <div class="recolor-side recolor-sim">
-            <span class="step-label step-label-you">simulated</span>
-            <h3>Recolor the whole folder</h3>
-            <div
-              aria-label="Four multicolor icons reduced to black silhouettes"
-              class="recolor-icons"
-              role="img"
-            >
-              {
-                recolorIcons.map((name) => (
-                  <Icon height={72} name={name} width={72} />
-                ))
-              }
-            </div>
-          </div>
-          <div class="recolor-side">
-            <span class="step-label step-label-generated">live output</span>
-            <h3>svgworm, per icon</h3>
-            <div
-              aria-label="The same four icons in their own colors"
-              class="recolor-icons"
-              role="img"
-            >
-              {
-                recolorIcons.map((name) => (
-                  <Icon height={72} name={name} width={72} />
-                ))
-              }
-            </div>
-          </div>
+          {
+            recolorSides.map((side) => (
+              <div class:list={['recolor-side', { 'recolor-sim': side.isSimulated }]}>
+                <span class={`step-label ${side.tag}`}>{side.label}</span>
+                <h3>{side.title}</h3>
+                <div aria-label={side.alt} class="recolor-icons" role="img">
+                  {recolorIcons.map((name) => (
+                    <Icon height={72} name={name} width={72} />
+                  ))}
+                </div>
+              </div>
+            ))
+          }
         </div>
         <figcaption>
           Both sides are the same icons from this page's build. The left adds a
@@ -496,7 +495,7 @@ pnpm svgworm</code></pre>
         <summary class="fold-summary">
           <h3>Moving from SVGR, or mixing an icon set with your own SVGs?</h3>
         </summary>
-        <p>Move them into one sprite. Pick where you come from and paste the prompt into your agent.</p>
+        <p>Move them into svgworm. Pick where you come from and paste the prompt into your agent.</p>
         <div class="migrate-switch">
           <style set:html={migrateStyle} />
           <fieldset class="install-tabs">
