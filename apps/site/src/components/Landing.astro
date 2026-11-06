@@ -3,25 +3,24 @@ import { version } from 'svgworm/package.json';
 
 import { manifest } from '../../svgworm/icons.js';
 import type { IconName } from '../../svgworm/icons.js';
+import { readBuildSummary } from '../lib/build-summary';
 import { migrationPrompts, setupPrompt } from '../lib/prompts';
 import CopyButtons from './CopyButtons.astro';
 import GuideCards from './GuideCards.astro';
 import Icon from './Icon.astro';
 import Install from './Install.astro';
+import ScrollRegions from './ScrollRegions.astro';
 import Soil from './Soil.astro';
 import WorkedExample from './WorkedExample.astro';
 import '../styles/landing.css';
 
-type Props = {
-  readonly spriteBytes: number;
-};
-
-const { spriteBytes } = Astro.props;
-
 const REPO = 'https://github.com/jmlweb/svgworm';
+const CI = `${REPO}/blob/main/.github/workflows/ci.yml`;
+const summary = readBuildSummary();
 
 // The page shows the real sprite it was built with, so the samples are the live output.
 const spriteUrl = manifest.sprites.icons?.sprite?.url ?? '/icons/icons.svg';
+const stackUrl = manifest.sprites.icons?.stack?.url ?? '/icons/icons.stack.svg';
 const iconNames = Object.keys(manifest.icons) as IconName[];
 const monoIcons = iconNames.filter(
   (name) => manifest.icons[name].color === 'mono',
@@ -31,9 +30,7 @@ const multicolorIcons = iconNames.filter(
 );
 const countDelivery = (delivery: 'use' | 'img' | 'mask') =>
   iconNames.filter((name) => manifest.icons[name].delivery === delivery).length;
-const terminalId = manifest.icons.terminal.id;
 
-const formatKib = (bytes: number) => `${(bytes / 1024).toFixed(1)} KiB`;
 // Icon names are [a-z0-9/-] by contract, so they are safe to inline; a name may wrap after a
 // folder slash and nowhere else.
 const breakable = (name: string) => name.replaceAll('/', '/<wbr>');
@@ -44,6 +41,9 @@ type Feature = {
   // Rendered bold before the body: the claim to take away from the tile.
   readonly lead: string;
   readonly body: string;
+  // The reproducible evidence for the tile's claim.
+  readonly proof: { readonly href: string; readonly label: string };
+  readonly caveat?: string;
 };
 
 // Two tiles fill the bento's second row next to the tall tile. Caching is in the stats band.
@@ -53,12 +53,18 @@ const features: readonly Feature[] = [
     title: 'Right colors, per icon',
     lead: 'Mono icons follow currentColor, multicolor icons keep their colors.',
     body: 'Gradients, masks and filters render in Chromium, Firefox and WebKit.',
+    proof: {
+      href: `${REPO}/blob/main/tests/render/matrix.json`,
+      label: 'See the render matrix',
+    },
+    caveat: "That is Playwright's WebKit, not Safari.",
   },
   {
     icon: 'git-branch',
     title: 'Plain files, no plugin',
     lead: 'A CLI that writes static files.',
     body: 'They are byte-identical on Linux, macOS and Windows. Turbopack, webpack and Vite need no plugin. svgworm check fails CI when the output is stale.',
+    proof: { href: CI, label: 'CI compares them on every PR' },
   },
 ];
 
@@ -77,6 +83,37 @@ const swatchStyle = swatches
   .join('');
 const suggestions = ['terminal'] as const;
 
+// Mono through use and mask, multicolor through use and img: every path the color can take.
+const colorStageIcons: readonly IconName[] = [
+  'folder-open',
+  'proof/fossil',
+  'emoji/snail',
+  'proof/agate',
+];
+// All multicolor: these are the icons a folder-wide recolor destroys.
+const recolorIcons: readonly IconName[] = [
+  'proof/agate',
+  'emoji/snail',
+  'emoji/carrot',
+  'emoji/mushroom',
+];
+const recolorSides = [
+  {
+    isSimulated: true,
+    tag: 'step-label-you',
+    label: 'simulated',
+    title: 'Recolor the whole folder',
+    alt: 'Four multicolor icons reduced to black silhouettes',
+  },
+  {
+    isSimulated: false,
+    tag: 'step-label-generated',
+    label: 'live output',
+    title: 'svgworm, per icon',
+    alt: 'The same four icons in their own colors',
+  },
+] as const;
+
 // The migration prompts share one slot: the same radio and :has() switch as the install command.
 const migrateStyle = migrationPrompts
   .map(
@@ -85,7 +122,6 @@ const migrateStyle = migrationPrompts
   )
   .join('');
 
-const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`;
 ---
 
 <main class="landing" id="content" tabindex="-1">
@@ -96,36 +132,37 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <span class="dot"></span> v{version} on npm · MIT · Node ^22.20 || >=24.11
         </p>
         <h1>
-          Your SVGs.
+          Your icons.{' '}
           <br />
-          <span class="squiggle">One sprite.</span>
+          <span class="squiggle">Right colors.</span>
         </h1>
-        <p class="lede">
-          Drop in the SVGs your designers export. svgworm writes <strong
-            >one content-hashed sprite</strong
-          > and a type with every icon name. Logos keep their colors, mono icons
-          follow <code>currentColor</code>, and a typo fails <code>tsc</code>.
-          Render it in Next.js Server Components, Vite, Astro, Vue or Svelte with <strong
-            >zero client JS</strong
-          >, and no Turbopack plugin.
+        <p class="hero-symptoms">
+          <span>Multicolor icons going black?</span>{' '}
+          <span>Gradients blank in SSR?</span>{' '}
+          <span>Turbopack plugin failing?</span>
         </p>
-        <Install id="hero" />
-        <div class="actions">
-          <a class="button" href="/docs/">
-            Get started <Icon name="arrow-right" />
-          </a>
+        <p class="lede">
+          svgworm decides per icon, with no config: mono icons follow <code
+            >currentColor</code
+          >, multicolor icons keep their colors, and gradients and masks keep
+          working. It renders in Server Components from <strong>one sprite</strong
+          >, plus a stack file for the gradient and mask icons, with typed names,
+          no plugin and <strong>zero client JS</strong>.
+        </p>
+        <Install hasTabs>
           <a class="button button-ghost" href={REPO}>
             <Icon name="star" /> Star on GitHub
           </a>
-        </div>
+        </Install>
         <p class="hero-fit">
           Only using lucide or another icon set? Its React package is fine.
           svgworm is for the icons you own.
         </p>
-        <div class="agent-prompt">
+        <details class="agent-prompt hero-prompt">
+          <summary class="fold-summary">Or paste this into your coding agent</summary>
           <p class="agent-prompt-label">Or paste this into your coding agent</p>
-          <pre aria-label="Prompt for your coding agent" class="code" data-copy role="region" tabindex="0"><code>{setupPrompt}</code></pre>
-        </div>
+          <pre class="code" data-copy><code>{setupPrompt}</code></pre>
+        </details>
       </div>
 
       <figure aria-label="svgworm build output" class="terminal">
@@ -136,15 +173,17 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           <code>~/my-app</code>
         </div>
         <pre aria-label="Build output" role="region" tabindex="0"><code><span class="t-prompt">$</span> pnpm svgworm
-<span class="t-ok">svgworm: build done</span>
+svgworm: reading {summary.sourceFiles} SVG file(s)
+{summary.writes.map((file) => <Fragment>write <span class="t-path">{file.path}</span> ({file.size}){'\n'}</Fragment>)}<span class="t-ok">svgworm: build done</span>
   icons     <span class="t-num">{iconNames.length}</span> ({monoIcons.length} mono, {multicolorIcons.length} multicolor)
   delivery  use {countDelivery('use')}, img {countDelivery('img')}, mask {countDelivery('mask')}
-  output    <span class="t-num">{formatKib(spriteBytes)}</span>
-  write     <span class="t-path">public{spriteUrl}</span>
+  source    {summary.source}
+  output    <span class="t-num">{summary.output}</span> (sprite {summary.sprite}, stack {summary.stack})
+  savings   {summary.savings}
 
 <span class="t-prompt">$</span> pnpm tsc
-<span class="t-err">error</span> TS2322: Type '"termnial"' is not
-  assignable to type 'IconName'.</code></pre>
+app/page.tsx(4,27): <span class="t-err">error</span> TS2820: Type '"termnial"' is not
+assignable to type 'IconName'. Did you mean '"terminal"'?</code></pre>
       </figure>
     </div>
   </section>
@@ -158,30 +197,28 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
         <span>JavaScript for icons</span>
       </div>
       <div>
-        <strong>1 request</strong>
+        <strong>{summary.iconFiles} files</strong>
         <span>for all {iconNames.length} icons</span>
       </div>
       <div>
-        <strong>{formatKib(spriteBytes)}</strong>
-        <span>the whole sprite</span>
+        <strong>{summary.output}</strong>
+        <span>sprite and stack</span>
       </div>
       <div>
-        <strong>1 year</strong>
+        <strong>{summary.cache}</strong>
         <span>immutable browser cache</span>
       </div>
     </div>
     <p class="wrap stats-caption">
-      These numbers are from this page's own build: the sprite it loads and the
-      headers it is served with.
+      File count and size are read from this page's build, and the cache time
+      from its <code>_headers</code>. The icon component ships no script.
     </p>
   </section>
 
-  <WorkedExample terminalComment={terminalComment} />
-
-  <section aria-labelledby="why" class="section">
+  <section aria-labelledby="proof" class="section section-dark">
     <div class="wrap">
-      <p class="kicker">Why svgworm</p>
-      <h2 id="why">Icons that render right, with no config.</h2>
+      <p class="kicker">This page is the demo</p>
+      <h2 id="proof">One folder, every icon right.</h2>
       <p class="section-lede">
         A sprite tool has to decide, per icon, whether to turn its fills into
         <code>currentColor</code>. Do it for the whole folder and logos turn
@@ -192,9 +229,117 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           >How it decides</a
         >.
       </p>
+      <figure class="recolor">
+        <div class="recolor-sides">
+          {
+            recolorSides.map((side) => (
+              <div class:list={['recolor-side', { 'recolor-sim': side.isSimulated }]}>
+                <span class={`step-label ${side.tag}`}>{side.label}</span>
+                <h3>{side.title}</h3>
+                <div aria-label={side.alt} class="recolor-icons" role="img">
+                  {recolorIcons.map((name) => (
+                    <Icon height={72} name={name} width={72} />
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <figcaption>
+          Both sides are the same icons from this page's build. The left adds a
+          CSS <code>brightness(0)</code> filter to imitate
+          <code>fill="currentColor"</code> on every path, under black text.
+        </figcaption>
+      </figure>
+      <div class="color-demo">
+        <style set:html={swatchStyle} />
+        <p>
+          Same folder, <strong>decided per icon</strong>. Pick a text color.
+          Mono icons follow it, whether they render through <code>use</code> or
+          a CSS <code>mask</code>. Multicolor icons keep their own colors. No
+          JavaScript, only CSS <code>color</code>.
+        </p>
+        <fieldset class="swatches">
+          <legend class="visually-hidden">Text color</legend>
+          {
+            swatches.map((swatch, index) => (
+              <label class="swatch" style={`--swatch:${swatch.color}`}>
+                <input
+                  checked={index === 0}
+                  id={`swatch-${swatch.id}`}
+                  name="swatch"
+                  type="radio"
+                  value={swatch.id}
+                />
+                <span class="visually-hidden">{swatch.label}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+        <ul class="color-stage">
+          {
+            colorStageIcons.map((name) => (
+              <li>
+                <Icon height={56} name={name} width={56} />
+                <code>{manifest.icons[name].delivery}</code>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
       <p class="section-lede">
-        Everything else stays out of your bundle: SVGR turns every icon into
-        JavaScript, svgworm ships <strong>one cached file and a name</strong>.{' '}
+        <code>{spriteUrl}</code> and <code>{stackUrl}</code>, rendered by the
+        generated <code>Icon.astro</code> at build time and served with
+        <code>Cache-Control: immutable</code>. Open your network panel: <strong
+          >two icon files and no JavaScript to render them</strong
+        >.
+      </p>
+      <div class="showcase-group">
+        <h3>
+          Multicolor <small>{multicolorIcons.length} icons, colors kept</small>
+        </h3>
+        <ul
+          aria-label="Multicolor icons from this build"
+          class="showcase showcase-multi"
+        >
+          {
+            multicolorIcons.map((name) => (
+              <li>
+                <Icon height={48} name={name} width={48} />
+                <code set:html={breakable(name)} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="showcase-group">
+        <h3>
+          Mono <small>{monoIcons.length} icons, follow currentColor</small>
+        </h3>
+        <ul aria-label="Mono icons from this build" class="showcase">
+          {
+            monoIcons.map((name) => (
+              <li>
+                <Icon height={32} name={name} width={32} />
+                <code set:html={breakable(name)} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <WorkedExample>
+    <Icon name="proof/agate" />
+  </WorkedExample>
+
+  <section aria-labelledby="why" class="section">
+    <div class="wrap">
+      <p class="kicker">Why svgworm</p>
+      <h2 id="why">Everything else stays out of your bundle.</h2>
+      <p class="section-lede">
+        SVGR turns every icon into JavaScript, svgworm ships <strong>a cached file and a name</strong>.{' '}
         <a href="/docs/comparison/">How it compares with SVGR and @neodx/svg</a>.
       </p>
       <div class="bento">
@@ -204,11 +349,9 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
             <h3>Rendered on the server</h3>
           </div>
           <p>
-            Each icon is a tiny <code>&lt;use href&gt;</code> into one hashed sprite.
+            Most icons are a tiny <code>&lt;use href&gt;</code> into one hashed sprite.
             The browser <strong>fetches the sprite once</strong> and keeps it.
           </p>
-          <pre aria-label="Icon usage and generated markup" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
-<span class="c-comment">{terminalComment}</span></code></pre>
         </article>
         <article class="tile tile-tall">
           <div class="tile-head">
@@ -241,7 +384,10 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
           </div>
           <ul class="checks">
             <li><Icon name="check" /> Autocomplete in your editor</li>
-            <li><Icon name="check" /> Checked with TypeScript 6 and 7</li>
+            <li>
+              <Icon name="check" />
+              <span>Checked with <a href={CI}>TypeScript 6 and 7</a></span>
+            </li>
             <li><Icon name="check" /> Clear errors for collisions</li>
             <li><Icon name="check" /> Renamed icons fail the type check</li>
           </ul>
@@ -256,144 +402,13 @@ const terminalComment = `// <svg><use href="${spriteUrl}#${terminalId}"/></svg>`
                 <h3>{feature.title}</h3>
               </div>
               <p>
-                <strong>{feature.lead}</strong> {feature.body}
+                <strong>{feature.lead}</strong> {feature.body}{' '}
+                <a href={feature.proof.href}>{feature.proof.label}</a>.{' '}
+                {feature.caveat}
               </p>
             </article>
           ))
         }
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="agents" class="section section-raised">
-    <div class="wrap agents">
-      <div>
-        <p class="kicker">Built for AI agents too</p>
-        <h2 id="agents">Your agent can set it up.</h2>
-        <p>
-          <strong>Everything works without a prompt:</strong> flags,
-          <code>--json</code>, stable exit codes, a JSON Schema for the config,
-          and <a href="/llms.txt">llms.txt</a>. The agent skills install svgworm
-          in a Next.js or an Astro app. They also explain each diagnostic code
-          with its fix.
-        </p>
-      </div>
-      <figure class="terminal terminal-small">
-        <div class="terminal-bar">
-          <span></span>
-          <span></span>
-          <span></span>
-          <Icon name="terminal" />
-        </div>
-        <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
-<span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
-      </figure>
-      <div class="agent-migrate">
-        <h3>Moving from SVGR, or mixing an icon set with your own SVGs?</h3>
-        <p>Move them into one sprite. Pick where you come from and paste the prompt into your agent.</p>
-        <div class="migrate-switch">
-          <style set:html={migrateStyle} />
-          <fieldset class="install-tabs">
-            <legend class="visually-hidden">Migrate from</legend>
-            {
-              migrationPrompts.map((prompt, index) => (
-                <label>
-                  <input
-                    checked={index === 0}
-                    name="migrate"
-                    type="radio"
-                    value={prompt.id}
-                  />
-                  {prompt.label}
-                </label>
-              ))
-            }
-          </fieldset>
-          {
-            migrationPrompts.map((prompt) => (
-              <div class={`agent-prompt migrate-${prompt.id}`}>
-                <pre aria-label={`Prompt: ${prompt.label}`} class="code" data-copy role="region" tabindex="0"><code>{prompt.text}</code></pre>
-              </div>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section aria-labelledby="proof" class="section section-dark">
-    <div class="wrap">
-      <p class="kicker">This page is the demo</p>
-      <h2 id="proof">Every icon here is one sprite.</h2>
-      <p class="section-lede">
-        <code>{spriteUrl}</code>, rendered by the generated <code>Icon.astro</code
-        > at build time. It is served with <code>Cache-Control: immutable</code>.
-        Open your network panel: <strong
-          >one icon sprite and no JavaScript to render it</strong
-        >.
-      </p>
-      <div class="showcase-group">
-        <h3>
-          Multicolor <small>{multicolorIcons.length} icons, colors kept</small>
-        </h3>
-        <ul
-          aria-label="Multicolor icons from the sprite"
-          class="showcase showcase-multi"
-        >
-          {
-            multicolorIcons.map((name) => (
-              <li>
-                <Icon height={48} name={name} width={48} />
-                <code set:html={breakable(name)} />
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-      <div class="showcase-group">
-        <h3>
-          Mono <small>{monoIcons.length} icons, follow currentColor</small>
-        </h3>
-        <ul aria-label="Mono icons from the sprite" class="showcase">
-          {
-            monoIcons.map((name) => (
-              <li>
-                <Icon height={32} name={name} width={32} />
-                <code set:html={breakable(name)} />
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-      <div class="color-demo">
-        <style set:html={swatchStyle} />
-        <p>
-          Same sprite, same <code>&lt;use href&gt;</code>, <strong
-            >decided per icon</strong
-          >. Pick a text color. The mono folder follows it; the multicolor snail
-          keeps its own colors. No JavaScript, only CSS <code>color</code>.
-        </p>
-        <fieldset class="swatches">
-          <legend class="visually-hidden">Text color</legend>
-          {
-            swatches.map((swatch, index) => (
-              <label class="swatch" style={`--swatch:${swatch.color}`}>
-                <input
-                  checked={index === 0}
-                  id={`swatch-${swatch.id}`}
-                  name="swatch"
-                  type="radio"
-                  value={swatch.id}
-                />
-                <span class="visually-hidden">{swatch.label}</span>
-              </label>
-            ))
-          }
-        </fieldset>
-        <p class="color-stage">
-          <Icon height={56} name="folder-open" width={56} />
-          <Icon height={56} name="emoji/snail" width={56} />
-        </p>
       </div>
     </div>
   </section>
@@ -453,6 +468,64 @@ pnpm svgworm</code></pre>
     </div>
   </section>
 
+  <section aria-labelledby="agents" class="section">
+    <div class="wrap agents">
+      <div>
+        <p class="kicker">Built for AI agents too</p>
+        <h2 id="agents">Your agent can set it up.</h2>
+        <p>
+          <strong>Everything works without a prompt:</strong> flags,
+          <code>--json</code>, stable exit codes, a JSON Schema for the config,
+          and <a href="/llms.txt">llms.txt</a>. The agent skills install svgworm
+          in a Next.js or an Astro app. They also explain each diagnostic code
+          with its fix.
+        </p>
+      </div>
+      <figure class="terminal terminal-small">
+        <div class="terminal-bar">
+          <span></span>
+          <span></span>
+          <span></span>
+          <Icon name="terminal" />
+        </div>
+        <pre aria-label="Agent skill install commands" role="region" tabindex="0"><code><span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-nextjs
+<span class="t-prompt">$</span> npx skills add jmlweb/svgworm --skill svgworm-astro</code></pre>
+      </figure>
+      <details class="agent-migrate">
+        <summary class="fold-summary">
+          <h3>Moving from SVGR, or mixing an icon set with your own SVGs?</h3>
+        </summary>
+        <p>Move them into svgworm. Pick where you come from and paste the prompt into your agent.</p>
+        <div class="migrate-switch">
+          <style set:html={migrateStyle} />
+          <fieldset class="install-tabs">
+            <legend class="visually-hidden">Migrate from</legend>
+            {
+              migrationPrompts.map((prompt, index) => (
+                <label>
+                  <input
+                    checked={index === 0}
+                    name="migrate"
+                    type="radio"
+                    value={prompt.id}
+                  />
+                  {prompt.label}
+                </label>
+              ))
+            }
+          </fieldset>
+          {
+            migrationPrompts.map((prompt) => (
+              <div class={`agent-prompt migrate-${prompt.id}`}>
+                <pre class="code" data-copy><code>{prompt.text}</code></pre>
+              </div>
+            ))
+          }
+        </div>
+      </details>
+    </div>
+  </section>
+
   <GuideCards />
 
   <section aria-labelledby="try" class="section cta">
@@ -460,19 +533,16 @@ pnpm svgworm</code></pre>
       <h2 id="try">Point it at your icon folder.</h2>
       <p>
         One <code>init</code>, Next.js, Vite, Astro, Vue or Svelte, and your icons ship as <strong
-          >one cached file</strong
+          >static, cached files</strong
         >.
       </p>
-      <Install id="cta" />
-      <div class="actions">
-        <a class="button" href="/docs/">
-          Get started <Icon name="arrow-right" />
-        </a>
+      <Install>
         <a class="button button-ghost" href={REPO}>
           <Icon name="star" /> Star on GitHub
         </a>
-      </div>
+      </Install>
     </div>
   </section>
 </main>
 <CopyButtons />
+<ScrollRegions />

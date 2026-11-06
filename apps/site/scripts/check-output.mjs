@@ -52,11 +52,24 @@ const spriteUrls = new Map(
     group.sprite ? [[group.sprite.url, name]] : [],
   ),
 );
+const stackUrls = new Set(
+  Object.values(manifest.sprites).flatMap((group) =>
+    group.stack ? [group.stack.url] : [],
+  ),
+);
 const usedIds = new Set();
 for (const page of pages) {
   const html = await readFile(join(dist, page), 'utf8');
   for (const [, url, id] of html.matchAll(/<use href="([^"#]+)#([^"]+)"/g)) {
     if (!spriteUrls.has(url)) problems.push(`${page}: unknown sprite ${url}`);
+    usedIds.add(`${url}#${id}`);
+  }
+  // `img` icons reference the stack by src, `mask` icons from an inline style. Only real
+  // elements count: the docs show sample markup with a made-up hash, escaped inside <code>.
+  for (const [, url, id] of html.matchAll(
+    /<(?:img|span)\b[^>]*(?:src="|mask:url\((?:&quot;|&#34;|'))([^"&'#]+\.stack\.[^"&'#]+)#([^"&')]+)/g,
+  )) {
+    if (!stackUrls.has(url)) problems.push(`${page}: unknown stack ${url}`);
     usedIds.add(`${url}#${id}`);
   }
 }
@@ -114,12 +127,13 @@ for (const slug of docSlugs) {
     problems.push(`llms-full.txt does not include doc "${slug}"`);
 }
 
-for (const url of spriteUrls.keys()) {
+for (const url of [...spriteUrls.keys(), ...stackUrls]) {
   if (!files.includes(url.replace(/^\//, '')))
     problems.push(`sprite ${url} is not in dist`);
 }
 for (const [name, icon] of Object.entries(manifest.icons)) {
-  const url = manifest.sprites[icon.sprite]?.sprite?.url;
+  const group = manifest.sprites[icon.sprite];
+  const url = icon.delivery === 'use' ? group?.sprite?.url : group?.stack?.url;
   if (!usedIds.has(`${url}#${icon.id}`))
     problems.push(`icon "${name}" is in the manifest but no page uses it`);
 }

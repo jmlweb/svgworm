@@ -13,14 +13,16 @@ type ManifestEntry = { readonly id: string };
 type Manifest = {
   readonly sprites: Record<
     string,
-    { readonly sprite: { readonly file: string } | null }
+    { readonly stack: { readonly file: string } | null }
   >;
   readonly icons: Record<string, ManifestEntry & { readonly sprite: string }>;
 };
 
 type Component = Parameters<AstroContainer['renderToString']>[0];
 
-const terminalComment = '// <svg><use href="/icons/x.svg#i-terminal"/></svg>';
+const name = 'proof/agate';
+// Stands in for the real <Icon> the landing page passes through the slot.
+const rendered = '<img alt src="/icons/x.stack.svg#i-proof--agate">';
 
 const unescapeHtml = (html: string) =>
   html
@@ -39,7 +41,7 @@ const codeBlocks = (html: string) =>
 
 let html: string;
 let source: string;
-let sprite: string;
+let stack: string;
 let manifest: Manifest;
 let previousCwd: string;
 
@@ -48,13 +50,13 @@ beforeAll(async () => {
   // runs from the repo root, so move there for the render and back afterwards.
   previousCwd = process.cwd();
   process.chdir(root);
-  source = await readFile(join(root, 'icons/terminal.svg'), 'utf8');
+  source = await readFile(join(root, `icons/${name}.svg`), 'utf8');
   manifest = JSON.parse(
     await readFile(join(root, 'svgworm/manifest.json'), 'utf8'),
   ) as Manifest;
-  const group = manifest.icons.terminal?.sprite ?? '';
-  const file = manifest.sprites[group]?.sprite?.file ?? '';
-  sprite = await readFile(join(root, 'public/icons', file), 'utf8');
+  const group = manifest.icons[name]?.sprite ?? '';
+  const file = manifest.sprites[group]?.stack?.file ?? '';
+  stack = await readFile(join(root, 'public/icons', file), 'utf8');
   // Imported dynamically and typed by hand: type-aware lint cannot see .astro types.
   const { default: WorkedExample } =
     (await import('../src/components/WorkedExample.astro')) as {
@@ -62,7 +64,7 @@ beforeAll(async () => {
     };
   const container = await AstroContainer.create();
   html = await container.renderToString(WorkedExample, {
-    props: { terminalComment },
+    slots: { default: rendered },
   });
 });
 
@@ -71,33 +73,34 @@ afterAll(() => {
 });
 
 describe('the worked example', () => {
-  it('shows the raw icons/terminal.svg as committed', () => {
+  it('shows the raw source file as committed', () => {
     expect(codeBlocks(html)).toContain(source.trimEnd());
   });
 
-  it('shows the terminal <symbol> from the built sprite, found by its manifest id', () => {
-    const id = manifest.icons.terminal?.id ?? '';
-    const symbol = codeBlocks(html).find((block) =>
-      block.startsWith(`<symbol id="${id}"`),
+  it('shows the entry from the built stack file, found by its manifest id', () => {
+    const id = manifest.icons[name]?.id ?? '';
+    const entry = codeBlocks(html).find((block) =>
+      block.startsWith(`<svg id="${id}"`),
     );
-    expect(symbol).toBeDefined();
-    expect(symbol?.endsWith('</symbol>')).toBe(true);
-    expect(sprite).toContain(symbol);
+    expect(entry).toBeDefined();
+    expect(entry?.endsWith('</svg>')).toBe(true);
+    expect(stack).toContain(entry);
   });
 
-  it('shows manifest.icons.terminal as committed', () => {
+  it('shows the manifest entry as committed', () => {
     const shown = codeBlocks(html).find((block) =>
-      block.startsWith('"terminal": '),
+      block.startsWith(`"${name}": `),
     );
     expect(shown).toBe(
-      `"terminal": ${JSON.stringify(manifest.icons.terminal, null, 2)}`,
+      `"${name}": ${JSON.stringify(manifest.icons[name], null, 2)}`,
     );
   });
 
-  it('ends with the Icon usage and the markup it renders', () => {
+  it('prints the markup the page rendered, and shows that same element', () => {
     expect(codeBlocks(html).at(-1)).toBe(
-      `<Icon name="terminal" />\n${terminalComment}`,
+      `<Icon name="${name}" />\n// ${rendered}`,
     );
+    expect(html).toContain(rendered);
   });
 
   it('labels every step with who writes it', () => {

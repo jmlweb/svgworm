@@ -10,36 +10,45 @@ import { manifest } from '../../svgworm/icons.js';
 // the page cannot drift from what svgworm wrote. Builds run from apps/site, like llms-source.ts.
 export type IconTrace = {
   readonly source: string;
-  readonly symbol: string;
+  // The <symbol> of a `use` icon, or the nested <svg> of an `img` or `mask` icon.
+  readonly generated: string;
+  readonly fileUrl: string;
   readonly manifestEntry: string;
 };
 
 const escapeRegExp = (text: string) =>
   text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// Found by the manifest id, whatever the attribute order. Symbols never nest, so the first
+// Found by the manifest id, whatever the attribute order. Entries never nest here, so the first
 // closing tag after the opening one ends it.
-export const extractSymbol = (sprite: string, id: string): string => {
-  const opening = new RegExp(`<symbol\\b[^>]*\\bid="${escapeRegExp(id)}"`);
-  const start = sprite.search(opening);
-  const end = sprite.indexOf('</symbol>', start);
+export const extractEntry = (
+  file: string,
+  tag: 'symbol' | 'svg',
+  id: string,
+): string => {
+  const opening = new RegExp(`<${tag}\\b[^>]*\\bid="${escapeRegExp(id)}"`);
+  const start = file.search(opening);
+  const end = file.indexOf(`</${tag}>`, start);
   if (start === -1 || end === -1) {
-    throw new Error(`worked example: no <symbol id="${id}"> in the sprite`);
+    throw new Error(`worked example: no <${tag} id="${id}"> in the file`);
   }
-  return sprite.slice(start, end + '</symbol>'.length);
+  return file.slice(start, end + `</${tag}>`.length);
 };
 
 export const traceIcon = (name: IconName): IconTrace => {
   const entry = manifest.icons[name];
-  const spriteUrl = manifest.sprites[entry.sprite]?.sprite?.url;
-  if (!spriteUrl) {
-    throw new Error(`worked example: ${name} is not in a sprite file`);
+  const inSprite = entry.delivery === 'use';
+  const group = manifest.sprites[entry.sprite];
+  const fileUrl = inSprite ? group?.sprite?.url : group?.stack?.url;
+  if (!fileUrl) {
+    throw new Error(`worked example: no generated file holds ${name}`);
   }
   const root = process.cwd();
-  const sprite = readFileSync(join(root, 'public', spriteUrl), 'utf8');
+  const file = readFileSync(join(root, 'public', fileUrl), 'utf8');
   return {
     source: readFileSync(join(root, 'icons', `${name}.svg`), 'utf8').trimEnd(),
-    symbol: extractSymbol(sprite, entry.id),
+    generated: extractEntry(file, inSprite ? 'symbol' : 'svg', entry.id),
+    fileUrl,
     manifestEntry: `"${name}": ${JSON.stringify(entry, null, 2)}`,
   };
 };

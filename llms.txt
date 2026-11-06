@@ -34,7 +34,7 @@ Fastest path: `svgworm init --yes` (add `--agents-md` to get a svgworm section i
 
 The full docs as one text file: [llms-full.txt](https://svgworm.com/llms-full.txt).
 
-- [Website](https://svgworm.com): landing page and docs, rendered with svgworm itself (every icon from one hashed sprite)
+- [Website](https://svgworm.com): landing page and docs, rendered with svgworm itself (every icon from one hashed sprite or its stack file)
 - [README](https://github.com/jmlweb/svgworm/blob/main/README.md): overview and get started
 - [Icon component reference](https://svgworm.com/docs/icon/): props of the React `Icon` and `Icon.astro`, the markup per delivery (`<svg><use>`, `<img>`, a CSS mask `<span>`), sizing and coloring with CSS
 - [How svgworm works](https://svgworm.com/docs/how-it-works/): sprite vs stack file, why each icon gets `use`, `img` or `mask`, the manifest and types, naming, determinism

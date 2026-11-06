@@ -1,5 +1,32 @@
 ---
 const REPO = 'https://github.com/jmlweb/svgworm';
+
+const groups = [
+  {
+    label: 'Use it',
+    links: [
+      { href: '/docs/cli/', text: 'CLI' },
+      { href: '/docs/config/', text: 'Config' },
+      { href: '/docs/troubleshooting/', text: 'Troubleshooting' },
+    ],
+  },
+  {
+    label: 'How it works',
+    links: [
+      { href: `${REPO}/blob/main/docs/output-contract.md`, text: 'Output contract' },
+      { href: `${REPO}/tree/main/docs/adr`, text: 'Decisions' },
+      { href: '/llms.txt', text: 'llms.txt' },
+    ],
+  },
+  {
+    label: 'Project',
+    links: [
+      { href: 'https://www.npmjs.com/package/svgworm', text: 'npm' },
+      { href: `${REPO}/issues`, text: 'Issues' },
+      { href: `${REPO}/discussions`, text: 'Discussions' },
+    ],
+  },
+] as const;
 ---
 
 <footer class="site-footer">
@@ -16,16 +43,21 @@ const REPO = 'https://github.com/jmlweb/svgworm';
       <a href="https://lucide.dev">Lucide</a> (ISC) and{' '}
       <a href="https://github.com/microsoft/fluentui-emoji">Fluent Emoji</a> (MIT).
     </p>
-    <nav aria-label="Docs">
-      <a href="https://www.npmjs.com/package/svgworm">npm</a>
-      <a href="/docs/cli/">CLI</a>
-      <a href="/docs/config/">Config</a>
-      <a href={`${REPO}/blob/main/docs/output-contract.md`}>Output contract</a>
-      <a href={`${REPO}/tree/main/docs/adr`}>Decisions</a>
-      <a href="/docs/troubleshooting/">Troubleshooting</a>
-      <a href={`${REPO}/issues`}>Issues</a>
-      <a href={`${REPO}/discussions`}>Discussions</a>
-      <a href="/llms.txt">llms.txt</a>
+    <nav aria-label="Footer">
+      {
+        groups.map((group) => (
+          <div>
+            <p class="footer-label">{group.label}</p>
+            <ul>
+              {group.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.text}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </nav>
   </div>
 </footer>

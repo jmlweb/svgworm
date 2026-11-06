@@ -57,6 +57,19 @@
   color: var(--accent);
 }
 
+/* Each symptom wraps as a unit: a visitor scans for their own failure, so none may split. */
+.hero-symptoms {
+  margin: 0 0 var(--space-3);
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.hero-symptoms span {
+  display: inline-block;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -327,6 +340,8 @@
 .stats-grid div {
   display: grid;
   gap: var(--space-1);
+  /* Two rows on phones: a row-mate's wrapped label must not pull this figure down. */
+  align-content: start;
   padding-left: var(--space-4);
   border-left: 2px solid var(--worm);
 }
@@ -347,6 +362,12 @@
 
 /* States where the figures come from (TSK-078). It sits in the grid's bottom padding, so the
    band keeps its height. */
+.stats-caption code {
+  padding: 0;
+  background: none;
+  color: inherit;
+}
+
 .stats-caption {
   display: block;
   margin-block: -22px 0;
@@ -395,7 +416,7 @@
 }
 
 .section-lede {
-  max-width: 62ch;
+  max-width: 50ch;
   margin: calc(-1 * var(--space-4)) 0 var(--space-8);
   color: var(--ink-muted);
   font-size: 18px;
@@ -598,14 +619,25 @@
   margin-top: auto;
 }
 
+/* Styled as the code it opens, so step 1 closes on the same dark block as step 2 beside it. */
 .trace-details summary {
-  color: var(--ink-muted);
-  font-size: 14px;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--term-bg);
+  color: var(--term-ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
   cursor: pointer;
 }
 
-.trace-render svg {
-  color: var(--accent);
+.trace-details[open] summary {
+  margin-bottom: var(--space-2);
+}
+
+.trace-render img {
+  /* Step 4 prints this element's real markup, so its 1em size is overridden here, not by props. */
+  width: 40px;
+  height: 40px;
   vertical-align: middle;
 }
 
@@ -644,18 +676,18 @@
 }
 
 .color-demo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-8);
   align-items: center;
-  justify-content: space-between;
-  margin-top: var(--space-8);
+  margin-block: var(--space-8);
   padding: var(--space-6);
   border-radius: var(--radius-lg);
   background: rgb(234 219 196 / 0.06);
 }
 
 .color-demo p {
+  grid-row: span 2;
   max-width: 44ch;
   margin: 0;
   color: #c4a88c;
@@ -706,6 +738,7 @@
 
 .color-stage {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-4);
   align-items: center;
   margin: 0;
@@ -713,7 +746,81 @@
   border-radius: var(--radius-md);
   background: var(--bone);
   color: #933a43;
+  list-style: none;
   transition: color 200ms ease;
+}
+
+.color-stage li {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: center;
+}
+
+.color-stage code {
+  padding: 0;
+  background: none;
+  color: var(--rust);
+  font-size: 12px;
+}
+
+/* The bone cards re-declare the light tokens: this is the one place on the dark band where the
+   comparison needs a light page behind it, because a black silhouette vanishes on dark ground. */
+.recolor {
+  margin: 0 0 var(--space-8);
+}
+
+.recolor-sides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.recolor-side {
+  --ink: var(--terra);
+  --ink-muted: var(--rust);
+  --accent: var(--worm-deep);
+  --surface: var(--bone);
+  --hairline: #dccbb0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--bone);
+  box-shadow: var(--shadow);
+  color: var(--terra);
+}
+
+.recolor-side .step-label-generated {
+  border: 1px solid var(--accent);
+}
+
+.recolor-side h3 {
+  margin-bottom: var(--space-6);
+}
+
+.recolor-icons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  justify-items: center;
+}
+
+.recolor-icons > * {
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.recolor-sim .recolor-icons > * {
+  filter: brightness(0);
+}
+
+.recolor figcaption {
+  max-width: 68ch;
+  margin-top: var(--space-4);
+  color: #c4a88c;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* Agents */
@@ -768,6 +875,12 @@
 /* Landing copy: an inline token such as --json or Cache-Control: immutable never breaks inside. */
 .landing :not(pre) > code {
   white-space: nowrap;
+}
+
+/* The hashed stack path is wider than a step card at 320px: it may break, the page may not. */
+.landing .trace-steps p code {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* Except the install command, which wraps when it does not fit (base.css). */
@@ -886,8 +999,15 @@
   flex-wrap: wrap;
 }
 
-.color-demo {
-  align-items: center;
+@media (max-width: 860px) {
+  .color-demo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .color-demo p {
+    grid-row: auto;
+    max-width: none;
+  }
 }
 
 /* The worm glow sits behind the lede on narrow screens: a lighter muted tone keeps 4.5:1. */
@@ -926,7 +1046,6 @@
      then scrolls inside its own box. */
   min-width: 0;
   max-width: 100%;
-  margin: 0 0 var(--space-6);
 }
 
 .install-tabs {
@@ -972,14 +1091,24 @@
 }
 
 .install-switch .install {
-  margin-bottom: 0;
+  margin-bottom: var(--space-6);
 }
 
-.install-switch:not(:has(input[value='next']:checked)) .install-next,
-.install-switch:not(:has(input[value='vite']:checked)) .install-vite,
-.install-switch:not(:has(input[value='astro']:checked)) .install-astro,
-.install-switch:not(:has(input[value='vue']:checked)) .install-vue,
-.install-switch:not(:has(input[value='svelte']:checked)) .install-svelte {
+.install-switch .actions {
+  margin-top: 0;
+}
+
+/* The hero's radios drive every instance on the page. */
+.landing:not(:has(input[name='install-framework'][value='next']:checked))
+  .for-next,
+.landing:not(:has(input[name='install-framework'][value='vite']:checked))
+  .for-vite,
+.landing:not(:has(input[name='install-framework'][value='astro']:checked))
+  .for-astro,
+.landing:not(:has(input[name='install-framework'][value='vue']:checked))
+  .for-vue,
+.landing:not(:has(input[name='install-framework'][value='svelte']:checked))
+  .for-svelte {
   display: none;
 }
 
@@ -1006,6 +1135,20 @@
   justify-content: center;
 }
 
+.cta .install {
+  margin-inline: auto;
+  text-align: left;
+}
+
+.landing .install code span {
+  display: inline-block;
+}
+
+/* On a wrapped command the prompt marks the first line, not the middle of the block. */
+.landing .install .t-prompt {
+  align-self: flex-start;
+}
+
 @media (max-width: 560px) {
   .terminal pre {
     padding: var(--space-4);
@@ -1020,6 +1163,20 @@
 
   .showcase li {
     padding: var(--space-4) var(--space-1);
+  }
+
+  .recolor-side {
+    padding: var(--space-4);
+  }
+
+  .color-stage {
+    gap: var(--space-3);
+    justify-content: space-between;
+    padding: var(--space-4);
+  }
+
+  .recolor-icons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   /* Names break only at the <wbr> after a folder slash, never inside a word. */
@@ -1081,6 +1238,78 @@
 
 .agent-migrate p {
   margin: 0 0 var(--space-4);
+}
+
+.agent-migrate[open] .fold-summary {
+  margin-bottom: var(--space-3);
+}
+
+.fold-summary {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  cursor: pointer;
+  list-style: none;
+}
+
+.fold-summary::-webkit-details-marker {
+  display: none;
+}
+
+.fold-summary::before {
+  content: '';
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid var(--ink-muted);
+  border-bottom: 2px solid var(--ink-muted);
+  transform: translateY(-0.15em) rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+details[open] > .fold-summary::before {
+  transform: translateY(0.1em) rotate(-135deg);
+}
+
+.fold-summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.fold-summary h3 {
+  margin: 0;
+}
+
+/* A plain disclosure everywhere by default. Where ::details-content exists, wide screens drop the
+   summary and show the prompt through it, so the fold exists only where the height costs
+   something, with no script. A browser without it keeps a working <details>. */
+.hero-prompt > .fold-summary {
+  padding-block: 10px;
+  color: var(--ink-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hero-prompt > .agent-prompt-label {
+  display: none;
+}
+
+@supports selector(::details-content) {
+  @media (min-width: 641px) {
+    .hero-prompt > .fold-summary {
+      display: none;
+    }
+
+    .hero-prompt > .agent-prompt-label {
+      display: block;
+    }
+
+    .hero-prompt::details-content {
+      display: block;
+      content-visibility: visible;
+    }
+  }
 }
 
 .guides {

@@ -1,23 +1,12 @@
 ---
-import { statSync } from 'node:fs';
-import { join } from 'node:path';
-import process from 'node:process';
-
-import { manifest } from '../../svgworm/icons.js';
 import Landing from '../components/Landing.astro';
 import Base from '../layouts/Base.astro';
 
-// The real sprite size, so the stats on the page are this build's numbers.
-const spriteUrl = manifest.sprites.icons?.sprite?.url;
-const spriteBytes = spriteUrl
-  ? statSync(join(process.cwd(), 'public', spriteUrl)).size
-  : 0;
-
-const title = 'svgworm: your SVG icons as one typed sprite, zero client JS';
+const title = 'svgworm: SVG icons in the right colors, as a typed sprite';
 const description =
-  'svgworm turns the SVG files your designers export into one content-hashed sprite with typed icon names. Colors are decided per icon. Render it in Next.js Server Components, Vite or Astro with zero client JavaScript.';
+  'Your SVGs render right: mono icons follow currentColor, multicolor icons keep their colors, and gradients and masks keep working. Typed names, zero client JS.';
 ---
 
 <Base title={title} description={description} path="/">
-  <Landing spriteBytes={spriteBytes} />
+  <Landing />
 </Base>

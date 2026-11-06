@@ -202,7 +202,7 @@ All three are self-hosted from `public/fonts/` as hashed variable `woff2` files.
 - **Display**: The single h1 on a page. Balanced wrapping.
 - **Headline**: Every h2 on the landing page. Docs h2s scale down to `clamp(24px, 3vw, 32px)`, so the reading column stays calm.
 - **Title**: h3 on tiles and sub-sections. Docs cards raise it to 22px at weight 700.
-- **Lede**: The paragraph under a headline, capped at 54ch in muted ink. Section ledes are 18px at 62ch.
+- **Lede**: The paragraph under a headline, capped at 54ch in muted ink. Section ledes are 18px at 50ch, about 75 characters of Instrument Sans.
 - **Body**: Running text. Docs paragraphs cap at 68ch.
 - **Label**: Uppercase kickers, tracked at 0.12em in the accent color. Docs nav titles use 12px at 0.08em.
 - **Code**: Commands, paths, config keys and output. 13px in landing blocks, 13.5px in docs, 12px in terminals on phones.
@@ -267,7 +267,7 @@ Soft-edged and tactile: everything rounded, everything answers the pointer with 
 
 - **Eyebrow:** A small pill on the card surface with a hairline border, muted 13px text and a green status dot.
 - **Step labels:** Uppercase 12px pills. "You" is outlined and "generated" is filled with the accent, so authorship reads at a glance.
-- **Install tabs:** Pills over real radio inputs, switched by `:has()`, with no script. The checked tab takes the accent border and soft fill, with ink text for contrast.
+- **Install tabs:** Pills over real radio inputs in the hero, switched by `:has()`, with no script. The checked tab takes the accent border and soft fill, with ink text for contrast. The choice drives the command and the "Get started with" link in the hero and in the closing CTA, which has no tabs of its own.
 
 ### Cards / Containers
 
@@ -282,6 +282,7 @@ Docs cards are the same card as one link, so the whole card is the target.
 ### Navigation
 
 - **Header:** Sticky and blurred, the themed logo at 150px, then 15px links at weight 500 in ink, with GitHub as an outlined pill. Hover and current page take the accent. Targets are at least 24px.
+- **Footer:** Credits on the left, three labeled link groups on the right. Targets are at least 24px.
 - **Docs nav:** A 220px sticky list with 8px rounded rows. Hover takes the raised ground, and the current page takes the soft accent fill at weight 600. On phones it collapses into a `<details>` menu with no script.
 
 ### Code and Terminals
@@ -305,7 +306,11 @@ The ground rising out of the soil's bedrock. Four figures in display type in Wor
 
 ### The Icon Showcase (signature)
 
-A grid of real sprite icons in hairline cells on the dark section, labeled by name in mono, split into multicolor and mono groups. A live color demo beside it changes `color` on mono icons through radio swatches and `:has()`, with no script.
+A grid of real icons in hairline cells on the dark section, labeled by name in mono, split into multicolor and mono groups. A live color demo above it changes `color` through radio swatches and `:has()`, with no script, on one icon of each delivery form, each labeled with its form.
+
+### The Recolor Comparison (signature)
+
+Two Bone cards on the dark section, with the same four multicolor icons at 72px. The left is labeled "simulated" and flattens them with a CSS `brightness(0)` filter, and its caption says so. The right is the real output. The cards stay light in both themes, because a black silhouette vanishes on a dark ground.
 
 ### The Autocomplete Tile (signature)
 
@@ -330,6 +335,6 @@ An editor-style suggestion list in a tile, showing typed icon names with one act
 - **Don't** fake italics or request Bricolage Grotesque at any weight but 800.
 - **Don't** use emoji in headings or prose. The logo replaces them.
 - **Don't** recolor, rotate, stretch or add effects to the logo, or set the wordmark in live text.
-- **Don't** add gradients or shadows to icons and illustrations. The hero's two soft radial glows are the only gradients in the interface.
+- **Don't** add gradients or shadows to icons and illustrations. The hero's two soft radial glows are the only gradients in the interface chrome. The exception is the `proof/` icons, whose gradients are the evidence: they exist to show that a hard icon renders right.
 - **Don't** add a shadow to a resting tile. Shadows belong to real output and to hover.
 - **Don't** wrap code. A wrapped `</svg>` reads as a mistake, so blocks scroll inside their own box. Prompts meant to be pasted are the exception.
