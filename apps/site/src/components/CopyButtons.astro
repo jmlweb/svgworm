@@ -20,6 +20,12 @@ import Icon from './Icon.astro';
     '.prose pre, [data-copy]',
   );
   if (template && 'clipboard' in globalThis.navigator) {
+    // One polite region for every button: a changed aria-label on the focused button is not
+    // announced by every screen reader.
+    const status = globalThis.document.createElement('span');
+    status.className = 'visually-hidden';
+    status.setAttribute('role', 'status');
+    globalThis.document.body.append(status);
     blocks.forEach((block) => {
       const button = template.content.firstElementChild?.cloneNode(true);
       if (!(button instanceof globalThis.HTMLButtonElement)) return;
@@ -32,12 +38,15 @@ import Icon from './Icon.astro';
           await globalThis.navigator.clipboard.writeText(text);
           if (label) label.textContent = 'Copied';
           button.setAttribute('aria-label', 'Copied');
+          status.textContent = 'Copied to the clipboard';
         } catch {
           if (label) label.textContent = 'Press Ctrl+C';
+          status.textContent = 'Could not copy. Press Ctrl+C';
         }
         globalThis.setTimeout(() => {
           if (label) label.textContent = 'Copy';
           button.setAttribute('aria-label', 'Copy code');
+          status.textContent = '';
         }, 2000);
       });
       block.append(button);

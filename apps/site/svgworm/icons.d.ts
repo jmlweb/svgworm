@@ -18,6 +18,8 @@ export type IconName =
   | "package"
   | "pause"
   | "play"
+  | "proof/agate"
+  | "proof/fossil"
   | "server"
   | "shield-check"
   | "star"

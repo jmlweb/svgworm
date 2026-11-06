@@ -7,7 +7,10 @@ export const manifest = {
         "file": "icons.ce28be92.svg",
         "url": "/icons/icons.ce28be92.svg"
       },
-      "stack": null
+      "stack": {
+        "file": "icons.stack.0222d2e4.svg",
+        "url": "/icons/icons.stack.0222d2e4.svg"
+      }
     }
   },
   "icons": {
@@ -136,6 +139,20 @@ export const manifest = {
       "viewBox": "0 0 24 24",
       "color": "mono",
       "delivery": "use"
+    },
+    "proof/agate": {
+      "sprite": "icons",
+      "id": "i-proof--agate",
+      "viewBox": "0 0 32 32",
+      "color": "multicolor",
+      "delivery": "img"
+    },
+    "proof/fossil": {
+      "sprite": "icons",
+      "id": "i-proof--fossil",
+      "viewBox": "0 0 32 32",
+      "color": "mono",
+      "delivery": "mask"
     },
     "server": {
       "sprite": "icons",

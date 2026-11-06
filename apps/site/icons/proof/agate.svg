@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Agate pebble, drawn for this site. Gradients and a clip path. -->
+  <defs>
+    <radialGradient id="rind" cx="0.38" cy="0.32" r="0.8">
+      <stop offset="0" stop-color="#de8f8a"/>
+      <stop offset="0.6" stop-color="#b85c5e"/>
+      <stop offset="1" stop-color="#6e2a32"/>
+    </radialGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbf7f0"/>
+      <stop offset="1" stop-color="#f0c27b"/>
+    </linearGradient>
+    <clipPath id="stone">
+      <path d="M16 3.5c7 0 12.5 4.6 12.5 11.6 0 8-5.4 13.4-13 13.4-7.2 0-12-4.9-12-12.1C3.500 8.800 9 3.500 16 3.500z"/>
+    </clipPath>
+  </defs>
+  <path fill="url(#rind)" d="M16 3.5c7 0 12.5 4.6 12.5 11.6 0 8-5.4 13.4-13 13.4-7.2 0-12-4.9-12-12.1C3.500 8.800 9 3.500 16 3.500z"/>
+  <g clip-path="url(#stone)" fill="none" stroke="url(#band)" stroke-width="1.8">
+    <ellipse cx="19" cy="18" rx="4" ry="2.8"/>
+    <ellipse cx="19" cy="18" rx="7.5" ry="5.600"/>
+    <ellipse cx="19" cy="18" rx="11.500" ry="9"/>
+  </g>
+</svg>

@@ -1,58 +1,101 @@
 ---
+import Icon from './Icon.astro';
+
 type Props = {
-  /** Distinct per instance: the radio group name must not be shared across the page. */
-  readonly id: string;
+  /** Only the first instance has the framework tabs; later ones follow its choice. */
+  readonly hasTabs?: boolean;
 };
 
-const { id } = Astro.props;
-// Two instances on the landing page: region names must differ.
-const where = id === 'hero' ? 'Install command' : 'Install command, second copy';
-const commands = {
-  next: 'pnpm add -D svgworm && pnpm add @svgworm/react',
-  vite: 'pnpm add -D svgworm && pnpm add @svgworm/react',
-  astro: 'pnpm add -D svgworm',
-  vue: 'pnpm add -D svgworm',
-  svelte: 'pnpm add -D svgworm',
-} as const;
-const labels = {
-  next: 'Next.js',
-  vite: 'Vite',
-  astro: 'Astro',
-  vue: 'Vue',
-  svelte: 'Svelte',
-} as const;
-const frameworks = Object.keys(commands) as (keyof typeof commands)[];
+const { hasTabs = false } = Astro.props;
+const frameworks = [
+  {
+    id: 'next',
+    label: 'Next.js',
+    guide: '/docs/nextjs/',
+    command:
+      'pnpm add -D svgworm && pnpm add @svgworm/react && pnpm svgworm init',
+  },
+  {
+    id: 'vite',
+    label: 'Vite',
+    guide: '/docs/vite/',
+    command:
+      'pnpm add -D svgworm && pnpm add @svgworm/react && pnpm svgworm init',
+  },
+  {
+    id: 'astro',
+    label: 'Astro',
+    guide: '/docs/astro/',
+    command: 'pnpm add -D svgworm && pnpm svgworm init',
+  },
+  {
+    id: 'vue',
+    label: 'Vue',
+    guide: '/docs/vue/',
+    command: 'pnpm add -D svgworm && pnpm svgworm init',
+  },
+  {
+    id: 'svelte',
+    label: 'Svelte',
+    guide: '/docs/svelte/',
+    command: 'pnpm add -D svgworm && pnpm svgworm init',
+  },
+] as const;
+
+// One box per command, so a narrow line breaks between commands, never inside one. The joining
+// spaces stay real text: the copy button reads textContent.
+const asSteps = (command: string) =>
+  command
+    .split(' && ')
+    .map((step) => step.replaceAll('&', '&amp;'))
+    .map((step, index, steps) =>
+      index < steps.length - 1 ? `<span>${step} &amp;&amp;</span>` : `<span>${step}</span>`,
+    )
+    .join(' ');
 ---
 
 {/*
-  A CSS-only framework switch (TSK-049): a radio per framework and :has() show the matching
-  command, so an Astro, Vue or Svelte visitor never copies @svgworm/react. The copy button (CopyButtons.astro) is added by
-  script and copies the visible command, since the other variants are display: none. Without
-  script, one click selects the whole command.
+  A CSS-only framework switch (TSK-049): one set of radios in the hero, and :has() on .landing
+  shows the matching command and guide link in every instance, so an Astro, Vue or Svelte visitor
+  never copies @svgworm/react and the choice survives the page. The copy button
+  (CopyButtons.astro) is added by script and copies the visible command, since the other variants
+  are display: none. Without script, one click selects the whole command.
 */}
 <div class="install-switch">
-  <fieldset class="install-tabs">
-    <legend class="visually-hidden">Install command for</legend>
-    {
-      frameworks.map((framework, index) => (
-        <label>
-          <input
-            checked={index === 0}
-            name={`install-${id}`}
-            type="radio"
-            value={framework}
-          />
-          {labels[framework]}
-        </label>
-      ))
-    }
-  </fieldset>
+  {
+    hasTabs && (
+      <fieldset class="install-tabs">
+        <legend class="visually-hidden">Install command for</legend>
+        {frameworks.map((framework, index) => (
+          <label>
+            <input
+              checked={index === 0}
+              name="install-framework"
+              type="radio"
+              value={framework.id}
+            />
+            {framework.label}
+          </label>
+        ))}
+      </fieldset>
+    )
+  }
   {
     frameworks.map((framework) => (
-      <p class={`install install-${framework}`} data-copy>
+      <p class={`install for-${framework.id}`} data-copy>
         <span aria-hidden="true" class="t-prompt">$</span>
-        <code aria-label={`${where} for ${labels[framework]}`} role="region" tabindex="0">{commands[framework]}</code>
+        <code set:html={asSteps(framework.command)} />
       </p>
     ))
   }
+  <div class="actions">
+    {
+      frameworks.map((framework) => (
+        <a class={`button for-${framework.id}`} href={framework.guide}>
+          Get started with {framework.label} <Icon name="arrow-right" />
+        </a>
+      ))
+    }
+    <slot />
+  </div>
 </div>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Ammonite in a pebble, drawn for this site. One color, cut by a mask. -->
+  <defs>
+    <mask id="spiral">
+      <rect width="32" height="32" fill="#fff"/>
+      <path fill="none" stroke="#000" stroke-width="2.200" stroke-linecap="round" d="M16 16.500c1.400-1.300 3.500-.3 3.400 1.600-.1 2.600-3.400 3.600-5.500 2.200-3-2-2.600-6.500.4-8.400 4.100-2.600 9.600-.6 10.900 4.200"/>
+    </mask>
+  </defs>
+  <path fill="#000" mask="url(#spiral)" d="M16 3.500c7 0 12.500 4.600 12.500 11.600 0 8-5.400 13.400-13 13.400-7.200 0-12-4.900-12-12.100C3.500 8.800 9 3.500 16 3.500z"/>
+</svg>

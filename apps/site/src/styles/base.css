@@ -294,12 +294,13 @@ pre {
 .footer-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4) var(--space-8);
-  align-items: center;
+  gap: var(--space-6) var(--space-8);
+  align-items: flex-start;
   padding-block: var(--space-8);
 }
 
 .footer-row p {
+  max-width: 34ch;
   margin: 0;
 }
 
@@ -314,8 +315,22 @@ pre {
 .footer-row nav {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-6) var(--space-12);
   margin-left: auto;
+}
+
+.footer-row .footer-label {
+  margin-bottom: var(--space-2);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.footer-row ul {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 h1 {

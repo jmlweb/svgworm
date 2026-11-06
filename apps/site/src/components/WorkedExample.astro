@@ -1,29 +1,25 @@
 ---
-import { manifest } from '../../svgworm/icons.js';
 import { traceIcon } from '../lib/worked-example';
-import Icon from './Icon.astro';
 
-type Props = {
-  // The same generated markup the #why tile shows, so the two sections cannot disagree.
-  readonly terminalComment: string;
-};
-
-const { terminalComment } = Astro.props;
-
-// One real icon of this site, read from the committed files at build time (TSK-104).
-const trace = traceIcon('terminal');
-const spriteUrl = manifest.sprites[manifest.icons.terminal.sprite]?.sprite?.url;
+// The hardest icon of this site, read from the committed files at build time (TSK-104): a stroke
+// icon cannot fail, so it would prove nothing.
+const iconName = 'proof/agate';
+const trace = traceIcon(iconName);
 const sourceLines = trace.source.split('\n').length;
+// The parent renders the real <Icon>, so step 4 prints the markup this page ships, not a template
+// of it.
+const rendered = (await Astro.slots.render('default')).trim();
 ---
 
 <section aria-labelledby="demo" class="section section-raised">
   <div class="wrap">
     <p class="kicker">One icon, end to end</p>
-    <h2 id="demo">Follow terminal.svg from file to render.</h2>
+    <h2 id="demo">Follow agate.svg from file to render.</h2>
     <p class="section-lede">
-      This is the <code>terminal</code> icon of this site, <strong
+      The hardest icon on this site: gradients and a clip path, which WebKit
+      drops from an external <code>&lt;use&gt;</code>. Steps 1 to 3 are <strong
         >read from its committed files when the page was built</strong
-      >. Nothing below is copied by hand.
+      >, and step 4 is the markup this page rendered. Nothing is pasted in.
     </p>
     <ol class="steps trace-steps">
       <li>
@@ -33,17 +29,18 @@ const sourceLines = trace.source.split('\n').length;
           Drop it in <code>icons/</code> as exported, comments and all.
         </p>
         <details class="trace-details">
-          <summary>icons/terminal.svg, {sourceLines} lines</summary>
-          <pre aria-label="Source of icons/terminal.svg" class="code" role="region" tabindex="0"><code>{trace.source}</code></pre>
+          <summary>icons/{iconName}.svg, {sourceLines} lines</summary>
+          <pre aria-label={`Source of icons/${iconName}.svg`} class="code" role="region" tabindex="0"><code>{trace.source}</code></pre>
         </details>
       </li>
       <li>
         <span class="step-label step-label-generated">svgworm generates</span>
-        <h3>A symbol in the sprite</h3>
+        <h3>An entry in the stack file</h3>
         <p>
-          Optimized, with an id from its name, in <code>public{spriteUrl}</code>.
+          Its <code>url(#…)</code> references keep it out of the sprite, so it
+          goes to <code>public{trace.fileUrl}</code>, optimized.
         </p>
-        <pre aria-label="The terminal symbol in the sprite" class="code" role="region" tabindex="0"><code>{trace.symbol}</code></pre>
+        <pre aria-label="The agate entry in the stack file" class="code" role="region" tabindex="0"><code>{trace.generated}</code></pre>
       </li>
       <li>
         <span class="step-label step-label-generated">svgworm generates</span>
@@ -51,17 +48,17 @@ const sourceLines = trace.source.split('\n').length;
         <p>
           The id, size, color and delivery the component reads.
         </p>
-        <pre aria-label="The terminal entry in svgworm/manifest.json" class="code" role="region" tabindex="0"><code>{trace.manifestEntry}</code></pre>
+        <pre aria-label="The agate entry in svgworm/manifest.json" class="code" role="region" tabindex="0"><code>{trace.manifestEntry}</code></pre>
       </li>
       <li>
         <span class="step-label step-label-you">you write</span>
         <h3>One line in your page</h3>
         <p class="trace-render">
-          It renders as a <code>&lt;use href&gt;</code>:
-          <Icon height={28} name="terminal" width={28} />
+          It renders as an <code>&lt;img&gt;</code>:
+          <Fragment set:html={rendered} />
         </p>
-        <pre aria-label="Icon usage and generated markup" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"terminal"</span> <span class="c-tag">/&gt;</span>
-<span class="c-comment">{terminalComment}</span></code></pre>
+        <pre aria-label="Icon usage and generated markup" class="code" role="region" tabindex="0"><code><span class="c-tag">&lt;Icon</span> <span class="c-attr">name</span>=<span class="c-str">"{iconName}"</span> <span class="c-tag">/&gt;</span>
+<span class="c-comment">// {rendered}</span></code></pre>
       </li>
     </ol>
   </div>

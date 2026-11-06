@@ -1,0 +1,29 @@
+{/* A code block that scrolls sideways needs keyboard access, so the markup ships role="region" and
+    tabindex="0" and works without script. But which blocks scroll depends on the width, and the
+    rest only flood the tab order and the landmark list: this drops both where nothing overflows,
+    and puts them back when a resize makes the block scroll. */}
+<script>
+  const blocks = globalThis.document.querySelectorAll<HTMLElement>(
+    '.landing pre[role="region"]',
+  );
+  const labels = new Map(
+    [...blocks].map((block) => [block, block.getAttribute('aria-label') ?? '']),
+  );
+  const observer = new globalThis.ResizeObserver((entries) => {
+    entries.forEach(({ target }) => {
+      if (!(target instanceof globalThis.HTMLElement)) return;
+      if (target.scrollWidth > target.clientWidth) {
+        target.setAttribute('role', 'region');
+        target.setAttribute('aria-label', labels.get(target) ?? '');
+        target.setAttribute('tabindex', '0');
+      } else {
+        target.removeAttribute('role');
+        target.removeAttribute('aria-label');
+        target.removeAttribute('tabindex');
+      }
+    });
+  });
+  blocks.forEach((block) => {
+    observer.observe(block);
+  });
+</script>
