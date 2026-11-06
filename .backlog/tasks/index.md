@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 10 |
 | Active | 3 |
 | Blocked | 0 |
 | Complete | 95 |
@@ -27,6 +27,8 @@
 | TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | P4 | vue, init, conformance, testing | 2026-10-31 |
 | TSK-105 | Fix: CLI help still says --cdn-url is React and Astro only after TSK-099 | P4 |  | 2026-11-03 |
 | TSK-106 | Fix: A config file containing JSON null is accepted as an empty config | P4 |  | 2026-11-03 |
+| TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
+| TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
 
 ## Recently Completed
 

@@ -22,6 +22,10 @@ import {
 // Rebuilds on a slow CI runner can take longer than vi.waitFor's 1 s default (RPT-009).
 const WAIT = { timeout: 5000 };
 
+// A dev test starts a Vite server and then waits up to WAIT, so it needs more than Vitest's 5 s
+// test default: the first server start on the Windows CI runner used all of it.
+const DEV_TEST = { timeout: 20_000 };
+
 /**
  * A watcher the test fires by hand. With real fs.watch, the macOS CI runner aborted after this
  * file (suspected FSEvents teardown racing the temp-folder removal), and the plugin does not
@@ -279,7 +283,7 @@ describe('svgworm vite plugin, build hooks', () => {
   });
 });
 
-describe('svgworm vite plugin, dev', () => {
+describe('svgworm vite plugin, dev', DEV_TEST, () => {
   it('builds before the server starts and rebuilds on an svg change', async () => {
     await put('icons/home.svg', svg());
     const logger = spyLogger();
