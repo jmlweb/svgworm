@@ -19,3 +19,10 @@ tests/render/out/
 
 # Impeccable design tool: critique snapshots and sidecars
 .impeccable/
+
+# Impeccable tool install (local)
+.claude/agents/
+.claude/skills/
+.github/agents/
+.github/hooks/
+.github/skills/
