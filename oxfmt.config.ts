@@ -8,8 +8,6 @@ export default defineConfig({
     '**/.next/**',
     'examples/*/svgworm/**',
     'apps/*/svgworm/**',
-    // A fixture in the shape of generated output (docs/output-contract.md).
-    'tests/conformance/types/svgworm/**',
     '**/.astro/**',
     // Oxfmt cannot format Astro components; astro check type-checks them.
     '**/*.astro',

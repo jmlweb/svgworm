@@ -1,3 +1,6 @@
 .generated/
 .generated-loader/
 types/components/
+types/icons/
+types/public/
+types/svgworm/

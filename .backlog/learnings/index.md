@@ -67,3 +67,4 @@
 | LRN-061 | Svelte 5 and Vue render functions run a <script> on client-only mounts | svelte, vue, cross-origin, init | active | 2026-10-31 |
 | LRN-062 | SvelteKit 3, Node 25 and NODE_ENV=production traps when checking generated components | svelte, vue, testing, spike | active | 2026-10-31 |
 | LRN-063 | Astro components in site vitests must be imported dynamically for type-aware lint | site, testing, astro | active | 2026-11-03 |
+| LRN-064 | NODE_ENV=production makes the Vue conformance throw tests fail locally | testing, conformance, vue | active | 2026-11-06 |
