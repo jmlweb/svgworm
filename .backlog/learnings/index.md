@@ -68,4 +68,3 @@
 | LRN-062 | SvelteKit 3, Node 25 and NODE_ENV=production traps when checking generated components | svelte, vue, testing, spike | active | 2026-10-31 |
 | LRN-063 | Astro components in site vitests must be imported dynamically for type-aware lint | site, testing, astro | active | 2026-11-03 |
 | LRN-064 | NODE_ENV=production makes the Vue conformance throw tests fail locally | testing, conformance, vue | active | 2026-11-06 |
-| LRN-065 | A helper generated into moduleDir cannot serve the published React adapter | adapter, init, react, output-contract | active | 2026-11-09 |

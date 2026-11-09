@@ -906,29 +906,6 @@ ${indent(LOADERS_FROM_MANIFEST, '  ')}
 `;
 };
 
-// The manifest shape every generated Icon reads. React keeps its own copy in @svgworm/react,
-// which may not import svgworm; the conformance tests catch drift between them (ADR-0037).
-const ICON_MANIFEST_TYPES = `type ManifestFile = { readonly url: string };
-type ManifestIcon = {
-  readonly sprite: string;
-  readonly id: string;
-  readonly viewBox: string;
-  readonly delivery: 'use' | 'img' | 'mask';
-};
-type IconManifest = {
-  readonly version: number;
-  readonly sprites: Readonly<
-    Record<
-      string,
-      {
-        readonly sprite: ManifestFile | null;
-        readonly stack: ManifestFile | null;
-      }
-    >
-  >;
-  readonly icons: Readonly<Record<string, ManifestIcon>>;
-};`;
-
 export const astroComponentContent = (
   componentFile: string,
   moduleDir: string,
@@ -951,7 +928,26 @@ interface Props extends Omit<HTMLAttributes<'svg'>, 'title' | 'name'> {
   label?: string;
 }
 
-${ICON_MANIFEST_TYPES}
+type ManifestFile = { readonly url: string };
+type ManifestIcon = {
+  readonly sprite: string;
+  readonly id: string;
+  readonly viewBox: string;
+  readonly delivery: 'use' | 'img' | 'mask';
+};
+type IconManifest = {
+  readonly version: number;
+  readonly sprites: Readonly<
+    Record<
+      string,
+      {
+        readonly sprite: ManifestFile | null;
+        readonly stack: ManifestFile | null;
+      }
+    >
+  >;
+  readonly icons: Readonly<Record<string, ManifestIcon>>;
+};
 
 const { icons, sprites, version } = manifest as IconManifest;
 if (version !== 1 && version !== 2) {
@@ -1094,7 +1090,26 @@ import { computed, useAttrs } from 'vue';
 
 import { manifest, type IconName } from '${specifier}';
 
-${ICON_MANIFEST_TYPES}
+type ManifestFile = { readonly url: string };
+type ManifestIcon = {
+  readonly sprite: string;
+  readonly id: string;
+  readonly viewBox: string;
+  readonly delivery: 'use' | 'img' | 'mask';
+};
+type IconManifest = {
+  readonly version: number;
+  readonly sprites: Readonly<
+    Record<
+      string,
+      {
+        readonly sprite: ManifestFile | null;
+        readonly stack: ManifestFile | null;
+      }
+    >
+  >;
+  readonly icons: Readonly<Record<string, ManifestIcon>>;
+};
 
 defineOptions({ inheritAttrs: false });
 
@@ -1220,7 +1235,26 @@ export const svelteComponentContent = (
 
   import { manifest, type IconName } from '${specifier}';
 
-${indent(ICON_MANIFEST_TYPES, '  ')}
+  type ManifestFile = { readonly url: string };
+  type ManifestIcon = {
+    readonly sprite: string;
+    readonly id: string;
+    readonly viewBox: string;
+    readonly delivery: 'use' | 'img' | 'mask';
+  };
+  type IconManifest = {
+    readonly version: number;
+    readonly sprites: Readonly<
+      Record<
+        string,
+        {
+          readonly sprite: ManifestFile | null;
+          readonly stack: ManifestFile | null;
+        }
+      >
+    >;
+    readonly icons: Readonly<Record<string, ManifestIcon>>;
+  };
 
   export interface Props
     extends Omit<SVGAttributes<SVGSVGElement>, 'name' | 'title' | 'style'> {
