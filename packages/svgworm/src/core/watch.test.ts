@@ -11,11 +11,15 @@ import { watch, type WatcherFactory } from './watch.ts';
 
 let root = '';
 
+// A real build on the Windows CI runner can outlast the 1 s default (RPT-009).
+const settled = { timeout: 5000 };
+
 beforeEach(async () => {
   root = await mkdtemp(join(tmpdir(), 'svgworm-watch-'));
 });
 afterEach(async () => {
-  await rm(root, { recursive: true, force: true });
+  // A watch left running by a failed test can still hold the folder on Windows.
+  await rm(root, { recursive: true, force: true, maxRetries: 5 });
 });
 
 const svg =
@@ -70,14 +74,14 @@ describe('watch', () => {
     });
     await vi.waitFor(() => {
       expect(results).toHaveLength(1);
-    });
+    }, settled);
 
     await put('icons/more.svg', svg.replace('M0 0', 'M1 1'));
     watcher.fire('more.svg');
     watcher.fire('more.svg');
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     const second = results[1];
     expect(
       second?.ok && second.manifest.icons.map((icon) => icon.name),
@@ -101,7 +105,7 @@ describe('watch', () => {
     });
     await vi.waitFor(() => {
       expect(results).toHaveLength(1);
-    });
+    }, settled);
     watcher.fire('notes.txt');
     watcher.fire('.DS_Store');
     await new Promise((resolve) => setTimeout(resolve, 30));
@@ -110,7 +114,7 @@ describe('watch', () => {
     watcher.fire('subfolder');
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     controller.abort();
     await done;
   });
@@ -128,18 +132,18 @@ describe('watch', () => {
     });
     await vi.waitFor(() => {
       expect(results).toHaveLength(1);
-    });
+    }, settled);
     await put('icons/broken.svg', '<svg');
     watcher.fire('broken.svg');
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     expect(results[1]?.ok).toBe(false);
     await rm(join(root, 'icons/broken.svg'));
     watcher.fire('broken.svg');
     await vi.waitFor(() => {
       expect(results).toHaveLength(3);
-    });
+    }, settled);
     expect(results[2]?.ok).toBe(true);
     controller.abort();
     await done;
@@ -163,7 +167,7 @@ describe('watch', () => {
     await put('icons/more.svg', svg.replace('M0 0', 'M1 1'));
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     const second = results[1];
     expect(
       second?.ok && second.manifest.icons.map((icon) => icon.name),
@@ -210,12 +214,12 @@ describe('watch', () => {
     });
     await vi.waitFor(() => {
       expect(results).toHaveLength(1);
-    });
+    }, settled);
     const failure = new Error('EMFILE: too many open files');
     watcher.fail(failure);
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     expect(errors).toEqual([failure]);
     controller.abort();
     await done;
@@ -245,7 +249,7 @@ describe('watch', () => {
     });
     await vi.waitFor(() => {
       expect(results.length).toBeGreaterThanOrEqual(1);
-    });
+    }, settled);
     // FSEvents on macOS can replay the folder creation once the watcher attaches, so let
     // any such build settle before counting.
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -279,7 +283,7 @@ describe('watch: incremental rebuilds (ADR-0015)', () => {
     });
     await vi.waitFor(() => {
       expect(results).toHaveLength(1);
-    });
+    }, settled);
     expect(events.filter((e) => e.type === 'icon' && e.fromCache)).toHaveLength(
       0,
     );
@@ -289,7 +293,7 @@ describe('watch: incremental rebuilds (ADR-0015)', () => {
     watcher.fire('home.svg');
     await vi.waitFor(() => {
       expect(results).toHaveLength(2);
-    });
+    }, settled);
     expect(
       events.flatMap((e) => (e.type === 'icon' ? [[e.name, e.fromCache]] : [])),
     ).toEqual([
