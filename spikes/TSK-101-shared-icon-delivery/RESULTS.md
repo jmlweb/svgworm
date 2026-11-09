@@ -4,8 +4,8 @@ Question (PR #14 review, TSK-092): the manifest types and the `use` / `img` / `m
 
 ## Method
 
-1. Render the three templates and the two loader templates with the current `plan.ts` for a fixed path pair (`src/components/Icon.<ext>`, `src/svgworm`) and keep the output.
-2. Strip leading whitespace and blank lines from each template output and from `packages/react/src/create-icon.tsx`, de-duplicate the lines, and intersect the sets with `comm -12`. This counts the lines that are literally shared.
+1. Render the three templates and the two loader templates with the current `plan.ts` for a fixed path pair (`src/components/Icon.<ext>`, `src/svgworm`). `src/measure.ts` does it: `node spikes/TSK-101-shared-icon-delivery/src/measure.ts <outDir>` from the repository root writes the rendered files to `<outDir>`, for a before/after `diff -r`.
+2. The same script trims each line of the template output and of `packages/react/src/create-icon.tsx`, drops blank lines, de-duplicates them, and intersects the sets. This counts the lines that are literally shared.
 3. Read each renderer and sort its logic into "pure, framework-free" and "bound to the framework".
 4. Check each option against the package rules (ADR-0008: `@svgworm/react` may not import `svgworm`), the output contract (`docs/output-contract.md`) and how `init` writes files (once, owned by the user afterwards).
 
@@ -22,7 +22,7 @@ Question (PR #14 review, TSK-092): the manifest types and the `use` / `img` / `m
 | Common to the three templates | 43 |
 | Common to all four | 25 |
 
-The 25 lines common to all four are the manifest types (13 lines) plus punctuation (`{`, `};`, `/>`, `<svg`, `</svg>`) and two fragments (`if (!file) {`, `focusable="false"`). No line of delivery logic is literally shared by all four: each renderer writes it in its own idiom.
+The 25 lines common to all four are the manifest type declarations (about half), markup and punctuation fragments (`{`, `};`, `/>`, `<img`, `<svg`, `</svg>`, `focusable="false"`), `if (!file) {`, and one line of the a11y choice (`? ({ 'aria-hidden': true } as const)`). Apart from that one ternary line, each renderer writes the delivery logic in its own idiom.
 
 The 43 lines common to the three templates add the version check (identical in Astro and Vue, wrapped differently in Svelte) and parts of `fileUrl`.
 

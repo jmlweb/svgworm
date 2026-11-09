@@ -29,9 +29,9 @@ Revisit this if a fifth renderer is added, or if `@svgworm/react` gets a reason 
 
 Spike [TSK-101](../../spikes/TSK-101-shared-icon-delivery/RESULTS.md) (2026-11-09):
 
-- Of the distinct non-blank lines in the four renderers (136 Astro, 109 Vue, 118 Svelte, 153 React), 25 are common to all four: the 13 lines of manifest types plus punctuation. 43 are common to the three templates. No line of delivery logic is literally shared by all four.
+- Of the distinct non-blank lines in the four renderers (136 Astro, 109 Vue, 118 Svelte, 153 React), 25 are common to all four: the manifest type declarations, markup and punctuation fragments, and a single line of the a11y choice. 43 are common to the three templates. Apart from that one line, no delivery logic is literally shared by all four.
 - About 40 lines per renderer are pure logic a helper could hold. The rest is bound to the framework: reactivity (`computed`, `$derived`), attribute spreading, style handling (an object in React, serialized by hand in Astro, an array in Vue, a string in Svelte) and the markup.
-- With `ICON_MANIFEST_TYPES` in place, the rendered `Icon.astro`, `Icon.vue`, `Icon.svelte` and both loader components are byte-identical to the previous output (`diff -r`), and the conformance tests pass unchanged.
+- With `ICON_MANIFEST_TYPES` in place, the rendered `Icon.astro`, `Icon.vue`, `Icon.svelte` and both loader components are byte-identical to the previous output (`diff -r` of the output of `spikes/TSK-101-shared-icon-delivery/src/measure.ts`), and the conformance tests pass unchanged.
 
 ## Consequences
 
