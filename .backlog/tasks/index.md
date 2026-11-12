@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 6 |
+| Pending | 7 |
 | Active | 3 |
 | Blocked | 2 |
 | Complete | 97 |
@@ -27,6 +27,7 @@
 | TSK-106 | Fix: A config file containing JSON null is accepted as an empty config | P4 |  | 2026-11-03 |
 | TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
+| TSK-109 | Fix: Absolute outDir and moduleDir are written under cwd, and an absolute source is reported as not found | P3 | core, config, paths | 2026-11-12 |
 
 ## Recently Completed
 
