@@ -69,3 +69,4 @@
 | LRN-063 | Astro components in site vitests must be imported dynamically for type-aware lint | site, testing, astro | active | 2026-11-03 |
 | LRN-064 | NODE_ENV=production makes the Vue conformance throw tests fail locally | testing, conformance, vue | active | 2026-11-06 |
 | LRN-065 | A helper generated into moduleDir cannot serve the published React adapter | adapter, init, react, output-contract | active | 2026-11-09 |
+| LRN-066 | Check git log for a fix landed outside the task before implementing it | testing, backlog, ci | active | 2026-11-12 |
