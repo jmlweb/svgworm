@@ -295,11 +295,17 @@ describe('svgworm vite plugin, dev', DEV_TEST, () => {
       'icons/star.svg',
       svg('M12 0l3 9h9l-7 5 3 10-8-6-8 6 3-10-7-5h9z'),
     );
+    const resultsBefore = logger.infos.length + logger.errors.length;
     watcher.fire('star.svg');
-    await vi.waitFor(async () => {
-      expect(await readManifest()).toContain('"star"');
+    // Wait on the logger, not by polling the manifest: on Windows, renaming the new manifest
+    // over one the test holds open fails with EPERM, and the rebuild fails with it.
+    await vi.waitFor(() => {
+      expect(logger.infos.length + logger.errors.length).toBeGreaterThan(
+        resultsBefore,
+      );
     }, WAIT);
     expect(logger.errors).toEqual([]);
+    expect(await readManifest()).toContain('"star"');
   });
 
   it('reports a failed build through the Vite logger and keeps watching', async () => {
