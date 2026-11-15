@@ -1,5 +1,5 @@
 import { lstat, readdir, stat } from 'node:fs/promises';
-import { join, posix, relative } from 'node:path';
+import { join, posix, relative, resolve } from 'node:path';
 
 import { comparePaths, toDisplayPath } from './collisions.ts';
 import { toSourceSpec, type SourceSpec } from './config/schema.ts';
@@ -104,7 +104,7 @@ export const discoverSvgFiles = async (
   const errors: Diagnostic[] = [];
   for (const entry of sources) {
     const source = toSourceSpec(entry);
-    const directory = join(cwd, source.dir);
+    const directory = resolve(cwd, source.dir);
     const stats = await stat(directory).catch(() => undefined);
     if (stats?.isDirectory() !== true) {
       throw new ConfigError(`source folder not found: ${source.dir}`);

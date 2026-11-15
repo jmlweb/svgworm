@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import type { CompileResult, CompileSuccess, OutputFile } from './compile.ts';
 import type { ResolvedConfig } from './config/resolve.ts';
@@ -93,7 +93,7 @@ const compareExpected = async (
   const encoder = new TextEncoder();
   const entries: CheckEntry[] = [];
   for (const file of files) {
-    const path = join(config.cwd, config[file.target], file.name);
+    const path = resolve(config.cwd, config[file.target], file.name);
     const onDisk = await readIfPresent(path);
     if (onDisk === undefined) {
       entries.push({
@@ -114,7 +114,7 @@ const findStaleSprites = async (
   config: ResolvedConfig,
   files: readonly OutputFile[],
 ): Promise<readonly CheckEntry[]> => {
-  const folder = join(config.cwd, config.outDir);
+  const folder = resolve(config.cwd, config.outDir);
   const kept = new Set(
     files.filter((file) => file.target === 'outDir').map((file) => file.name),
   );
@@ -143,7 +143,7 @@ export const check = async (
   const [expected, stale, before] = await Promise.all([
     compareExpected(config, compiled.files),
     findStaleSprites(config, compiled.files),
-    committedIconNames(join(config.cwd, config.moduleDir, 'manifest.json')),
+    committedIconNames(resolve(config.cwd, config.moduleDir, 'manifest.json')),
   ]);
   const entries = [...expected, ...stale];
   onEvent({ type: 'done', stats: compiled.stats });

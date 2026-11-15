@@ -1,5 +1,5 @@
 import { lstat, mkdir, readdir, rm } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
 import type { OutputFile } from './compile.ts';
 import type { BuildEventHandler } from './events.ts';
@@ -33,7 +33,7 @@ export const toReportPath = (cwd: string, absolute: string): string =>
   toPosix(relative(cwd, absolute));
 
 const folderOf = (targets: WriteTargets, file: OutputFile): string =>
-  join(targets.cwd, targets[file.target]);
+  resolve(targets.cwd, targets[file.target]);
 
 const writeOne = async (
   targets: WriteTargets,
@@ -58,7 +58,7 @@ const removeStale = async (
   kept: ReadonlySet<string>,
   onEvent: BuildEventHandler,
 ): Promise<readonly string[]> => {
-  const folder = join(targets.cwd, targets.outDir);
+  const folder = resolve(targets.cwd, targets.outDir);
   const names = await readdir(folder);
   const stale = names
     .filter((name) => isOwnedFile(name) && !kept.has(name))
@@ -93,7 +93,7 @@ export const writeOutput = async (
   for (const file of ordered) {
     written.push(await writeOne(targets, file, onEvent));
   }
-  await mkdir(join(targets.cwd, targets.outDir), { recursive: true });
+  await mkdir(resolve(targets.cwd, targets.outDir), { recursive: true });
   const kept = new Set(
     files.filter((file) => file.target === 'outDir').map((file) => file.name),
   );

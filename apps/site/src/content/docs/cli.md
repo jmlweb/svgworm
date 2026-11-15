@@ -37,6 +37,8 @@ svgworm migrate svgr [options] [--write] [--component-file <path>]
 
 Run it through your package manager: `pnpm svgworm`, `npx svgworm`, `yarn svgworm` or `bunx svgworm`. The pages here write `pnpm svgworm`. The command is the same with any of them.
 
+Relative `--source`, `--out-dir` and `--module-dir` paths start at the current folder; **absolute paths are used as given**.
+
 <aside class="alert alert-important">
 
 <p class="alert-title">Important</p>
