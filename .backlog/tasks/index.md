@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 5 |
 | Active | 3 |
 | Blocked | 2 |
-| Complete | 98 |
+| Complete | 99 |
 
 ## Active Tasks
 
@@ -26,12 +26,12 @@
 | TSK-106 | Fix: A config file containing JSON null is accepted as an empty config | P4 |  | 2026-11-03 |
 | TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
-| TSK-109 | Fix: Absolute outDir and moduleDir are written under cwd, and an absolute source is reported as not found | P3 | core, config, paths | 2026-11-12 |
 
 ## Recently Completed
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-109 | Fix: Absolute outDir and moduleDir are written under cwd, and an absolute source is reported as not found | 2026-11-15 |
 | TSK-102 | Fix: watch.test.ts 'keeps watching after a failed build' flakes on Windows CI (vi.waitFor 1 s default) | 2026-11-12 |
 | TSK-101 | One source of truth for the Icon delivery logic across React, Astro, Vue and Svelte | 2026-11-09 |
 | TSK-100 | Conformance type check: generate the icons fixture from the core build | 2026-11-06 |
@@ -41,4 +41,3 @@
 | TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | 2026-10-16 |
 | TSK-090 | Site: framework guide cards and help links | 2026-10-16 |
 | TSK-091 | @svgworm/vite plugin: rebuild the sprite during vite dev | 2026-10-16 |
-| TSK-092 | Vue and Svelte icon components through init --framework | 2026-10-16 |
