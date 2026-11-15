@@ -70,3 +70,5 @@
 | LRN-064 | NODE_ENV=production makes the Vue conformance throw tests fail locally | testing, conformance, vue | active | 2026-11-06 |
 | LRN-065 | A helper generated into moduleDir cannot serve the published React adapter | adapter, init, react, output-contract | active | 2026-11-09 |
 | LRN-066 | Check git log for a fix landed outside the task before implementing it | testing, backlog, ci | active | 2026-11-12 |
+| LRN-067 | path.join(cwd, p) mirrors an absolute p under cwd; resolve configured paths with path.resolve | core, config, paths | active | 2026-11-15 |
+| LRN-068 | Local gate noise: Next 16.4.0 SecurityFatalError on first build, Vue conformance fails on Node 25 | testing, ci, examples | active | 2026-11-15 |

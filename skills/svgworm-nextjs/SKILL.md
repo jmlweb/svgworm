@@ -90,7 +90,7 @@ Facts an agent should rely on:
 }
 ```
 
-Keys: `sources` (default `icons`; a folder path, or `{ "dir": "node_modules/lucide-static/icons", "include": ["house.svg", "arrow-*.svg"], "exclude": [...] }` to pick icons from a package by glob on the path inside `dir`, names from that path), `outDir` (default `public/icons`; `publicPath` is derived under `public/`, otherwise required), `publicPath` (default `/icons`; never includes `basePath` or `base` unless you add it), `moduleDir` (default `svgworm`), `flatten` (drop folder names), `color` (per-icon overrides: `auto`, `mono`, `preserve`; last match wins). Flags with the same names override the file.
+Keys: `sources` (default `icons`; a folder path, or `{ "dir": "node_modules/lucide-static/icons", "include": ["house.svg", "arrow-*.svg"], "exclude": [...] }` to pick icons from a package by glob on the path inside `dir`, names from that path), `outDir` (default `public/icons`; `publicPath` is derived under `public/`, otherwise required), `publicPath` (default `/icons`; never includes `basePath` or `base` unless you add it), `moduleDir` (default `svgworm`), `flatten` (drop folder names), `color` (per-icon overrides: `auto`, `mono`, `preserve`; last match wins). Relative paths start at the project folder; absolute paths are used as given. Flags with the same names override the file.
 
 ## Fixing errors
 

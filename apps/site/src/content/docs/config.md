@@ -26,6 +26,8 @@ Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main
 | `color`      | `[]`           | Per-icon color overrides (see [Color overrides](#color-overrides)). The last matching rule wins |
 | `crossOrigin` | `none`        | `inject` serves the sprite from another origin through a small loader script (see [Sprites on a CDN](#sprites-on-a-cdn)) |
 
+Relative paths in `sources`, `outDir` and `moduleDir` start at the project folder: the current folder for the CLI, the Vite `root` for the [Vite plugin](/docs/vite/). **Absolute paths are used as given.**
+
 <aside class="alert alert-tip">
 
 <p class="alert-title">Tip</p>
