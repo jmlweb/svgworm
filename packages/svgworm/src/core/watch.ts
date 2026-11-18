@@ -1,5 +1,5 @@
 import { watch as watchPath } from 'node:fs';
-import { basename, join } from 'node:path';
+import { basename, resolve as resolvePath } from 'node:path';
 
 import type { ResolvedConfig } from './config/resolve.ts';
 import type { BuildEventHandler } from './events.ts';
@@ -143,7 +143,7 @@ export const watch = async (
   for (const { dir: source } of config.sources) {
     try {
       watchers.push(
-        createWatcher(join(config.cwd, source), onChange, (error) => {
+        createWatcher(resolvePath(config.cwd, source), onChange, (error) => {
           onError(error);
           // The next build reports a vanished folder through the normal path.
           schedule();

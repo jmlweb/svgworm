@@ -109,5 +109,6 @@ In Astro, Vue and Svelte the prop is `class`. Every component puts the class on 
 - **Unknown name:** a `name` that is not in the manifest is a type error. At runtime (an untyped name, or a stale manifest) the component throws `Unknown icon "…"`, with the closest names in React.
 - **`Unsupported svgworm manifest version`:** the manifest was written by a newer svgworm than the adapter reads. Update `@svgworm/react`, or delete the generated `Icon.astro`, `Icon.vue` or `Icon.svelte` and re-run `svgworm init`.
 - **`Icon "…" needs the stack file …, but the manifest has none`:** the manifest is from an older build. Run `svgworm` again.
+- **Vue in production:** Vue's production build catches errors thrown while rendering. `Icon.vue` then **renders nothing**, and Vue passes the error to `app.config.errorHandler`, or to `console.error` when there is none. This covers the unknown name and the missing stack file above. Set `app.config.throwUnhandledErrorInProduction = true` (Vue 3.5+) to make it throw as in development.
 
 See [Troubleshooting](/docs/troubleshooting/) for icons that render blank or in the wrong color.
