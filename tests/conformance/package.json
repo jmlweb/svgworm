@@ -7,7 +7,7 @@
   },
   "description": "Conformance tests: the Vue and Svelte components svgworm init writes render the same markup as @svgworm/react (ADR-0034).",
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run && vitest run --config vitest.production.config.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

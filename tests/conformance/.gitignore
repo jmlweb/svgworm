@@ -1,4 +1,5 @@
 .generated/
+.generated-*/
 .generated-loader/
 types/components/
 types/icons/
