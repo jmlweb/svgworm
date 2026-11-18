@@ -1,5 +1,5 @@
 import { createIcon } from '@svgworm/react';
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createElement } from 'react';
@@ -7,8 +7,13 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { compile } from 'svelte/compiler';
 import { render as renderSvelteServer } from 'svelte/server';
 import ts from 'typescript';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createSSRApp, h, type Component as VueComponent } from 'vue';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  createSSRApp,
+  h,
+  type App as VueApp,
+  type Component as VueComponent,
+} from 'vue';
 import { compileScript, parse } from 'vue/compiler-sfc';
 import { renderToString as renderVueServer } from 'vue/server-renderer';
 
@@ -21,8 +26,12 @@ import { normalize } from '../normalize.ts';
 // The Icon.vue and Icon.svelte that `svgworm init` writes (ADR-0034) must render what
 // createIcon renders. Each comes from its template in plan.ts, compiled for the server the way
 // a bundler would, next to a fixture manifest with every delivery.
+// vitest.production.config.ts runs this file again with Vue's production build (TSK-103); the
+// default project follows the shell's NODE_ENV.
+const vueProduction = process.env['NODE_ENV'] === 'production';
 const root = fileURLToPath(new URL('..', import.meta.url));
-const scratch = join(root, '.generated');
+// One directory per run: the two conformance projects run this file in parallel.
+let scratch: string;
 const fixture = join(root, '../../apps/site/tests/fixtures/icons.js');
 
 const compileVue = (source: string): string => {
@@ -47,8 +56,12 @@ const compileSvelte = (source: string): string =>
 
 type Props = Record<string, unknown>;
 type Renderer = (props: Props) => Promise<string>;
+type VueRenderer = (
+  props: Props,
+  config?: Partial<VueApp['config']>,
+) => Promise<string>;
 
-let renderVue: Renderer;
+let renderVue: VueRenderer;
 let renderSvelte: Renderer;
 let ReactIcon: ReturnType<typeof createIcon>;
 
@@ -61,7 +74,7 @@ const load = async <T>(file: string, code: string): Promise<T> => {
 };
 
 beforeAll(async () => {
-  await rm(scratch, { recursive: true, force: true });
+  scratch = await mkdtemp(join(root, '.generated-'));
   await mkdir(join(scratch, 'src/components'), { recursive: true });
   await mkdir(join(scratch, 'svgworm'), { recursive: true });
   await cp(fixture, join(scratch, 'svgworm/icons.js'));
@@ -74,8 +87,11 @@ beforeAll(async () => {
     'src/components/Icon.vue.js',
     compileVue(vueComponentContent('src/components/Icon.vue', 'svgworm')),
   );
-  renderVue = (props) =>
-    renderVueServer(createSSRApp({ render: () => h(vueIcon, props) }));
+  renderVue = (props, config) => {
+    const app = createSSRApp({ render: () => h(vueIcon, props) });
+    Object.assign(app.config, config);
+    return renderVueServer(app);
+  };
 
   const svelteIcon = await load<Parameters<typeof renderSvelteServer>[0]>(
     'src/components/Icon.svelte.js',
@@ -224,15 +240,89 @@ describe.each(frameworks)(
       );
     });
 
-    it.each(['nope', 'constructor'])(
+    // Vue's production build catches a render error and logs it instead (see below).
+    const throwsHere = !(key === 'vue' && vueProduction);
+
+    it.runIf(throwsHere).each(['nope', 'constructor'])(
       'throws on the unknown name "%s"',
       async (name) => {
         await expect(render()({ name })).rejects.toThrow(/Unknown icon/);
       },
     );
 
-    it('throws when the delivery needs a file the manifest lacks', async () => {
-      await expect(render()({ name: 'broken' })).rejects.toThrow(/stack file/);
-    });
+    it.runIf(throwsHere)(
+      'throws when the delivery needs a file the manifest lacks',
+      async () => {
+        await expect(render()({ name: 'broken' })).rejects.toThrow(
+          /stack file/,
+        );
+      },
+    );
   },
 );
+
+// Vue's production runtime hands a render error to app.config.errorHandler, or to
+// console.error when there is none, and renders nothing. Vue 3.5's
+// app.config.throwUnhandledErrorInProduction makes it throw again. apps/site's icon.md
+// documents this; a template cannot opt out of Vue's error handling.
+describe.runIf(vueProduction)('Icon.vue in a Vue production build', () => {
+  const failures = [
+    { label: 'the unknown name "nope"', name: 'nope', error: /Unknown icon/ },
+    {
+      label: 'the unknown name "constructor"',
+      name: 'constructor',
+      error: /Unknown icon/,
+    },
+    {
+      label: 'a delivery that needs a file the manifest lacks',
+      name: 'broken',
+      error: /stack file/,
+    },
+  ];
+
+  const messageOf = (caught: unknown): string =>
+    caught instanceof Error ? caught.message : String(caught);
+
+  it.each(failures)(
+    'renders nothing and logs the error with console.error on $label',
+    async ({ name, error }) => {
+      const consoleError = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      try {
+        await expect(renderVue({ name })).resolves.toBe('');
+        expect(consoleError).toHaveBeenCalledOnce();
+        expect(messageOf(consoleError.mock.calls[0]?.[0])).toMatch(error);
+      } finally {
+        consoleError.mockRestore();
+      }
+    },
+  );
+
+  it.each(failures)(
+    'passes the error to app.config.errorHandler on $label',
+    async ({ name, error }) => {
+      const handled: unknown[] = [];
+      const html = await renderVue(
+        { name },
+        {
+          errorHandler: (caught) => {
+            handled.push(caught);
+          },
+        },
+      );
+      expect(html).toBe('');
+      expect(handled).toHaveLength(1);
+      expect(messageOf(handled[0])).toMatch(error);
+    },
+  );
+
+  it.each(failures)(
+    'throws with throwUnhandledErrorInProduction on $label',
+    async ({ name, error }) => {
+      await expect(
+        renderVue({ name }, { throwUnhandledErrorInProduction: true }),
+      ).rejects.toThrow(error);
+    },
+  );
+});
