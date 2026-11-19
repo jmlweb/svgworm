@@ -64,9 +64,9 @@
     "check:package": "publint && attw --pack . --profile esm-only"
   },
   "dependencies": {
-    "@clack/prompts": "1.8.0",
+    "@clack/prompts": "1.9.0",
     "svgo": "4.1.0",
-    "zod": "4.6.6"
+    "zod": "4.6.7"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0",
@@ -82,6 +82,6 @@
   },
   "devDependencies": {
     "typescript": "6.0.3",
-    "vite": "8.3.3"
+    "vite": "8.3.8"
   }
 }
