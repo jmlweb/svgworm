@@ -1,10 +1,11 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { ConfigError } from '../errors.ts';
 import { loadConfig, resolveConfig } from './resolve.ts';
+import { getConfigJsonSchema } from './schema.ts';
 
 let cwd = '';
 beforeEach(async () => {
@@ -253,6 +254,37 @@ describe('loadConfig', () => {
     await expect(loadConfig({ cwd, configFile: 'sub/c.json' })).rejects.toThrow(
       /c\.json.*JSON/s,
     );
+  });
+
+  it('resolves the paths of a config in another folder against cwd, not the config folder', async () => {
+    await mkdir(join(cwd, 'sub'));
+    await mkdir(join(cwd, 'icons'));
+    await writeFile(
+      join(cwd, 'sub', 'svgworm.config.json'),
+      JSON.stringify({
+        sources: ['icons'],
+        outDir: 'public/sprites',
+        moduleDir: 'generated',
+      }),
+    );
+    const config = await loadConfig({
+      cwd,
+      configFile: 'sub/svgworm.config.json',
+    });
+    expect(config.cwd).toBe(cwd);
+    expect(
+      config.sources.map((source) => resolve(config.cwd, source.dir)),
+    ).toEqual([join(cwd, 'icons')]);
+    expect(resolve(config.cwd, config.outDir)).toBe(
+      join(cwd, 'public', 'sprites'),
+    );
+    expect(resolve(config.cwd, config.moduleDir)).toBe(join(cwd, 'generated'));
+  });
+
+  it('describes config paths as relative to the working directory in the schema', () => {
+    const descriptions = JSON.stringify(getConfigJsonSchema());
+    expect(descriptions).not.toMatch(/relative to the config/);
+    expect(descriptions).toMatch(/relative to the working directory/);
   });
 
   it('builds from ./icons when there is no config file and no --source', async () => {

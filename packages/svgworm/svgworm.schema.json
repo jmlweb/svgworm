@@ -6,7 +6,7 @@
       "type": "string"
     },
     "sources": {
-      "description": "Folders that contain the SVG files, relative to the config: a path, or { \"dir\", \"include\", \"exclude\" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default \"icons\".",
+      "description": "Folders that contain the SVG files, relative to the working directory (the Vite root for svgworm/vite), not to the config file: a path, or { \"dir\", \"include\", \"exclude\" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default \"icons\".",
       "anyOf": [
         {
           "type": "string",
@@ -27,7 +27,7 @@
                   "dir": {
                     "type": "string",
                     "minLength": 1,
-                    "description": "Folder with the SVG files, relative to the config. It may point into node_modules."
+                    "description": "Folder with the SVG files, relative to the working directory (the Vite root for svgworm/vite), not to the config file. It may point into node_modules."
                   },
                   "include": {
                     "description": "Only files that match one of these globs are icons. Default: every .svg file. Globs on the path inside dir with \"/\" separators: \"house.svg\", \"arrows/*.svg\", \"**/arrow-*.svg\".",

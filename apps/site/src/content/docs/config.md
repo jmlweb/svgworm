@@ -26,7 +26,7 @@ Point `$schema` at the [JSON Schema](https://github.com/jmlweb/svgworm/blob/main
 | `color`      | `[]`           | Per-icon color overrides (see [Color overrides](#color-overrides)). The last matching rule wins |
 | `crossOrigin` | `none`        | `inject` serves the sprite from another origin through a small loader script (see [Sprites on a CDN](#sprites-on-a-cdn)) |
 
-Relative paths in `sources`, `outDir` and `moduleDir` start at the project folder: the current folder for the CLI, the Vite `root` for the [Vite plugin](/docs/vite/). **Absolute paths are used as given.**
+Relative paths in `sources`, `outDir` and `moduleDir` start at the project folder: the current folder for the CLI, the Vite `root` for the [Vite plugin](/docs/vite/). **This holds for a config in another folder too**: `svgworm --config sub/svgworm.config.json` reads `"sources": ["icons"]` from `./icons`, not `sub/icons`. **Absolute paths are used as given.**
 
 <aside class="alert alert-tip">
 
@@ -53,7 +53,7 @@ A source can point into `node_modules` and pick files by glob. So you can use an
 }
 ```
 
-- **`dir`:** the folder, relative to the config. A string entry is the same as `{ "dir": "…" }`.
+- **`dir`:** the folder, relative to the project folder (not to the config file). A string entry is the same as `{ "dir": "…" }`.
 - **`include` and `exclude`:** `include` keeps only the files that match one of its globs. `exclude` drops matches after that. Without `include`, every `.svg` file counts.
 - **Glob syntax:** globs are matched against the path inside `dir` with `/` separators. They support `*`, `**`, `?`, `[…]` and `{a,b}`: `house.svg`, `arrows/*.svg`, `**/arrow-*.svg`.
 - **Names:** they come from the path inside `dir`, as for any source: `house.svg` is `house`. The package folder is not part of the name. So an icon with the same name in two sources is a [collision](/docs/troubleshooting/#name-collision). Rename your own file or exclude the package's.

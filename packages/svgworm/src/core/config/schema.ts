@@ -107,7 +107,7 @@ const sourceObjectSchema = z.strictObject({
     .string()
     .min(1)
     .describe(
-      'Folder with the SVG files, relative to the config. It may point into node_modules.',
+      'Folder with the SVG files, relative to the working directory (the Vite root for svgworm/vite), not to the config file. It may point into node_modules.',
     ),
   include: z
     .array(z.string().min(1))
@@ -132,7 +132,7 @@ export const configSchema = z
       ])
       .optional()
       .describe(
-        'Folders that contain the SVG files, relative to the config: a path, or { "dir", "include", "exclude" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default "icons".',
+        'Folders that contain the SVG files, relative to the working directory (the Vite root for svgworm/vite), not to the config file: a path, or { "dir", "include", "exclude" } to pick files by glob (for example from an icon package in node_modules). A single string is one folder. Default "icons".',
       ),
     outDir: z
       .string()
