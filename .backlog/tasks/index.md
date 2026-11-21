@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 7 |
 | Active | 3 |
 | Blocked | 2 |
 | Complete | 100 |
@@ -26,6 +26,8 @@
 | TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
 | TSK-110 | Fix: Config paths resolve against cwd, not the config file, though docs say relative to the config | P3 |  | 2026-11-18 |
+| TSK-111 | Fix: An internal reference to an id the icon does not define builds silently and the icon renders blank | P3 |  | 2026-11-21 |
+| TSK-112 | Fix: check reports a directory or symlink with a sprite-like name as stale, but build never removes it, so check can never pass | P4 |  | 2026-11-21 |
 
 ## Recently Completed
 
