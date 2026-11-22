@@ -7,4 +7,10 @@ packages:
 # One @types/node, the root pin: the sitemap integration (ADR-0018) depends on a newer major,
 # which would split the vite peer instances and leave the vitest configs untyped.
 overrides:
-  '@types/node': 22.20.4
+  '@types/node': 22.20.5
+
+# pnpm 11+ fails the install on unreviewed build scripts. Neither is needed: esbuild ships
+# platform binaries as optional packages and workerd only runs under `wrangler dev`.
+allowBuilds:
+  esbuild: false
+  workerd: false

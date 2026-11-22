@@ -1,3 +1,5 @@
+import type { CANCEL_SYMBOL } from '@clack/prompts';
+
 import { confirm, isCancel, select, text } from '@clack/prompts';
 
 import type { InitOptions, ProjectFacts } from './plan.ts';
@@ -20,9 +22,10 @@ export class InitCancelledError extends Error {
   }
 }
 
-const orCancel = <T>(value: T | symbol): T => {
+// Since @clack/prompts 1.9 prompts resolve to `Value | typeof CANCEL_SYMBOL`, a unique symbol.
+const orCancel = <T>(value: T | typeof CANCEL_SYMBOL): T => {
   if (isCancel(value)) throw new InitCancelledError();
-  return value as T;
+  return value;
 };
 
 const CHOICE_LABEL = {
