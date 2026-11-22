@@ -73,3 +73,4 @@
 | LRN-067 | path.join(cwd, p) mirrors an absolute p under cwd; resolve configured paths with path.resolve | core, config, paths | active | 2026-11-15 |
 | LRN-068 | Local gate noise: Next 16.4.0 SecurityFatalError on first build, Vue conformance fails on Node 25 | testing, ci, examples | active | 2026-11-15 |
 | LRN-069 | Vitest test.env cannot pin a dependency's development or production build | testing, vitest, vue, conformance | active | 2026-11-18 |
+| LRN-070 | Config paths resolve against cwd, not the config file; schema:generate output needs oxfmt | config, paths, docs, schema | active | 2026-11-21 |
