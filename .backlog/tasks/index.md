@@ -4,10 +4,10 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 5 |
 | Active | 3 |
 | Blocked | 2 |
-| Complete | 101 |
+| Complete | 102 |
 
 ## Active Tasks
 
@@ -25,13 +25,13 @@
 | TSK-106 | Fix: A config file containing JSON null is accepted as an empty config | P4 |  | 2026-11-03 |
 | TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
-| TSK-111 | Fix: An internal reference to an id the icon does not define builds silently and the icon renders blank | P3 |  | 2026-11-21 |
 | TSK-112 | Fix: check reports a directory or symlink with a sprite-like name as stale, but build never removes it, so check can never pass | P4 |  | 2026-11-21 |
 
 ## Recently Completed
 
 | ID | Title | Completed |
 |----|-------|-----------|
+| TSK-111 | Fix: An internal reference to an id the icon does not define builds silently and the icon renders blank | 2026-11-24 |
 | TSK-110 | Fix: Config paths resolve against cwd, not the config file, though docs say relative to the config | 2026-11-21 |
 | TSK-103 | Fix: Generated Icon.vue renders nothing instead of throwing on an unknown name under NODE_ENV=production | 2026-11-18 |
 | TSK-109 | Fix: Absolute outDir and moduleDir are written under cwd, and an absolute source is reported as not found | 2026-11-15 |
@@ -41,4 +41,3 @@
 | TSK-104 | Site: end-to-end worked example (one icon traced from SVG to render) | 2026-11-03 |
 | TSK-099 | Spike: crossOrigin inject sprite loader for Vue and Svelte (init --cdn-url) | 2026-10-31 |
 | TSK-093 | SVGR migration: svgworm migrate svgr codemod and guide | 2026-10-17 |
-| TSK-089 | Site: agent-ready copy (paste-to-agent prompt, copy buttons, migration prompts) | 2026-10-16 |
