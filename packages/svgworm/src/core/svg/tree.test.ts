@@ -69,7 +69,7 @@ describe('validateTree', () => {
   it('accepts internal references and data URIs', () => {
     expect(
       errorsOf(
-        '<svg viewBox="0 0 1 1"><use href="#a"/><image href="data:image/png;base64,AAAA"/><rect fill="url(#g)"/></svg>',
+        '<svg viewBox="0 0 1 1"><path id="a" d="M0 0h1v1z"/><linearGradient id="g"/><use href="#a"/><image href="data:image/png;base64,AAAA"/><rect fill="url(#g)"/></svg>',
       ),
     ).toEqual([]);
   });
