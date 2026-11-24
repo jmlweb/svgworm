@@ -195,3 +195,109 @@ describe('transformIcon: one svgo run, same error precedence (TSK-096)', () => {
     );
   });
 });
+
+describe('transformIcon: references to ids the icon does not define (TSK-111)', () => {
+  const transform = (inner: string) =>
+    transformIcon({
+      ...input,
+      content: new TextEncoder().encode(
+        `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">${inner}</svg>`,
+      ),
+    });
+  const missing = (message: string) => ({
+    ok: false,
+    errors: [
+      {
+        code: DiagnosticCode.MISSING_REFERENCE,
+        file: 'icons/home.svg',
+        message,
+      },
+    ],
+  });
+
+  it('rejects a dangling <use href>', () => {
+    expect(transform('<use href="#missing"/>')).toStrictEqual(
+      missing(
+        '<use> href="#missing" points to id "missing", which the file does not define',
+      ),
+    );
+  });
+
+  it('rejects a dangling xlink:href', () => {
+    expect(transform('<use xlink:href="#missing"/>')).toStrictEqual(
+      missing(
+        '<use> xlink:href="#missing" points to id "missing", which the file does not define',
+      ),
+    );
+  });
+
+  it('rejects a dangling url() paint in an attribute', () => {
+    expect(
+      transform('<path fill="url(#grad)" d="M0 0h24v24z"/>'),
+    ).toStrictEqual(
+      missing(
+        '<path> fill references "url(#grad)", but the file does not define id "grad"',
+      ),
+    );
+  });
+
+  it('rejects a dangling url() in a style attribute', () => {
+    expect(
+      transform(`<path style="fill: url('#grad')" d="M0 0h24v24z"/>`),
+    ).toStrictEqual(
+      missing(
+        '<path> style references "url(#grad)", but the file does not define id "grad"',
+      ),
+    );
+  });
+
+  it('rejects a dangling url() in a <style> block', () => {
+    expect(
+      transform(
+        '<style>path { fill: url(#grad) }</style><path d="M0 0h24v24z"/>',
+      ),
+    ).toStrictEqual(
+      missing(
+        '<style> references "url(#grad)", but the file does not define id "grad"',
+      ),
+    );
+  });
+
+  it('rejects dangling SMIL begin and end references', () => {
+    expect(
+      transform(
+        '<path d="M0 0h24v24z"><animate attributeName="opacity" from="0" to="1" dur="1s" begin="0s;intro.end+1s" end="outro.begin"/></path>',
+      ),
+    ).toStrictEqual({
+      ok: false,
+      errors: [
+        {
+          code: DiagnosticCode.MISSING_REFERENCE,
+          file: 'icons/home.svg',
+          message:
+            '<animate> begin references "intro.end", but the file does not define id "intro"',
+        },
+        {
+          code: DiagnosticCode.MISSING_REFERENCE,
+          file: 'icons/home.svg',
+          message:
+            '<animate> end references "outro.begin", but the file does not define id "outro"',
+        },
+      ],
+    });
+  });
+
+  it('accepts references to ids the file defines, including forward references', () => {
+    const result = transform(
+      '<use href="#shape" fill="url(#grad)"/><path style="fill:url(#grad)" d="M0 0h1v1z"><animate id="a" attributeName="opacity" from="0" to="1" dur="1s" begin="0s;a.end"/></path><defs><linearGradient id="grad"><stop offset="0" stop-color="red"/></linearGradient><path id="shape" d="M0 0h24v24z"/></defs>',
+    );
+    expect(result.ok).toBe(true);
+  });
+
+  it('accepts SMIL timing values that name no element', () => {
+    const result = transform(
+      '<path d="M0 0h24v24z"><animate attributeName="opacity" from="0" to="1" dur="1.5s" begin="0.5s;click;indefinite" end="2.25s"/></path>',
+    );
+    expect(result.ok).toBe(true);
+  });
+});

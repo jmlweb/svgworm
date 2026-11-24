@@ -3,6 +3,7 @@ import {
   getDocumentElement,
   getTextContent,
   walkElements,
+  type XastElement,
   type XastRoot,
 } from './tree.ts';
 
@@ -110,6 +111,78 @@ const runsScript = (value: string): boolean =>
   // oxlint-disable-next-line no-control-regex -- the control characters are the point
   /^(?:javascript|vbscript):/i.test(value.replaceAll(/[\s\u0000-\u001f]/g, ''));
 
+// `url(#id)` with optional quotes, the internal form `renameIds` rewrites.
+const INTERNAL_URL = /url\(\s*(['"]?)#([^'")\s]+)\1\s*\)/g;
+// SMIL timing names an element as `id.event` (`intro.end`, `a.begin+1s`), in a `;` list. A
+// letter after the dot tells it apart from a clock value such as `0.5s`, as in `renameIds`.
+const TIMING_TARGET = /^\s*([^\s.;+-]+)\.([A-Za-z][A-Za-z0-9]*)/;
+
+const collectIds = (document: XastElement): ReadonlySet<string> => {
+  const ids = new Set<string>();
+  walkElements({ type: 'root', children: [document] }, (element) => {
+    const id = element.attributes['id'];
+    if (id !== undefined) ids.add(id);
+  });
+  return ids;
+};
+
+/**
+ * Finds every internal reference to an id the file does not define: `href`, `url(#…)` in an
+ * attribute or a `<style>`, and SMIL `begin`/`end`. The browser renders such a reference as
+ * nothing, and `renameIds` cannot scope it, so it is an error, not a silent blank icon.
+ */
+const findMissingReferences = (
+  document: XastElement,
+  file: string,
+): readonly Diagnostic[] => {
+  const ids = collectIds(document);
+  const errors: Diagnostic[] = [];
+  const add = (message: string): void => {
+    errors.push({ code: DiagnosticCode.MISSING_REFERENCE, file, message });
+  };
+  const checkUrls = (owner: string, value: string): void => {
+    [...unescapeCss(value).matchAll(INTERNAL_URL)].forEach((match) => {
+      const id = match[2] ?? '';
+      if (!ids.has(id)) {
+        add(
+          `${owner} references "url(#${id})", but the file does not define id "${id}"`,
+        );
+      }
+    });
+  };
+  walkElements({ type: 'root', children: [document] }, (element) => {
+    const owner = `<${element.name}>`;
+    if (localName(element.name) === 'style') {
+      checkUrls(owner, getTextContent(element));
+    }
+    Object.entries(element.attributes).forEach(([attribute, value]) => {
+      if (attribute === 'href' || attribute === 'xlink:href') {
+        const id = /^#(.+)$/.exec(value.trim())?.[1];
+        if (id !== undefined && !ids.has(id)) {
+          add(
+            `${owner} ${attribute}="${value}" points to id "${id}", which the file does not define`,
+          );
+        }
+        return;
+      }
+      if (attribute === 'begin' || attribute === 'end') {
+        value.split(';').forEach((part) => {
+          const match = TIMING_TARGET.exec(part);
+          const id = match?.[1];
+          if (id !== undefined && !ids.has(id)) {
+            add(
+              `${owner} ${attribute} references "${id}.${match?.[2] ?? ''}", but the file does not define id "${id}"`,
+            );
+          }
+        });
+        return;
+      }
+      checkUrls(`${owner} ${attribute}`, value);
+    });
+  });
+  return errors;
+};
+
 /** Checks the raw tree of one input. Returns every problem found. */
 export const validateTree = (
   root: XastRoot,
@@ -204,5 +277,5 @@ export const validateTree = (
       check(element.name, attribute, value);
     });
   });
-  return errors;
+  return [...errors, ...findMissingReferences(document, file)];
 };

@@ -102,6 +102,7 @@ Diagnostics print to stderr as `[code] file: message`, and `--json` returns them
 | `name/case-folded` (warning) | `ArrowLeft.svg` is named `arrowleft`: letter case is never split. Rename the file to the suggested `arrow-left.svg` if the readable name matters, and update the `name` props |
 | `svg/not-svg-root`, `svg/invalid-xml`, `svg/invalid-encoding` | The file is not a valid UTF-8 SVG. Re-export it |
 | `svg/forbidden-element`, `svg/forbidden-attribute`, `svg/external-reference` | `<script>`, `on*` event handlers and references to other files (`href`, `url(...)`) are rejected. Remove them or inline the asset |
+| `svg/missing-reference` | An `href="#id"`, `url(#id)` or SMIL `begin`/`end` points to an id the file does not define, so the icon would render blank. Add the referenced element (a gradient left out of the export, for example) or remove the reference |
 | `viewbox/underivable` | No `viewBox` and no plain-number `width`/`height`. Add a `viewBox` |
 | `viewbox/invalid` | The `viewBox` is not four numbers with a positive width and height. Fix it, or remove it so it is derived from plain-number `width`/`height` |
 | `io/unreadable` | A source file cannot be read. Check its permissions, or remove it |
