@@ -10,6 +10,7 @@ export const DiagnosticCode = {
   FORBIDDEN_ELEMENT: 'svg/forbidden-element',
   FORBIDDEN_ATTRIBUTE: 'svg/forbidden-attribute',
   EXTERNAL_REFERENCE: 'svg/external-reference',
+  MISSING_REFERENCE: 'svg/missing-reference',
   UNSCOPABLE_STYLE: 'style/unscopable',
   LEFTOVER_STYLE: 'style/leftover',
   MISSING_VIEWBOX: 'viewbox/underivable',

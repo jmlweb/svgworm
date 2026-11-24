@@ -190,6 +190,35 @@ describe('compile: invalid input', () => {
     );
   });
 
+  it('rejects references to ids the icon does not define (TSK-111)', () => {
+    const result = compile(
+      [
+        source('danglingref.svg', svg('<use href="#missing"/>')),
+        source(
+          'danglingfill.svg',
+          svg('<path fill="url(#grad)" d="M0 0h24v24z"/>'),
+        ),
+      ],
+      options,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.errors).toStrictEqual([
+      {
+        code: DiagnosticCode.MISSING_REFERENCE,
+        file: 'icons/danglingfill.svg',
+        message:
+          '<path> fill references "url(#grad)", but the file does not define id "grad"',
+      },
+      {
+        code: DiagnosticCode.MISSING_REFERENCE,
+        file: 'icons/danglingref.svg',
+        message:
+          '<use> href="#missing" points to id "missing", which the file does not define',
+      },
+    ]);
+  });
+
   it('fails with one error when there are no icons', () => {
     const result = compile([], options);
     expect(result.ok).toBe(false);

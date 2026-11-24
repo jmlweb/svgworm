@@ -74,3 +74,4 @@
 | LRN-068 | Local gate noise: Next 16.4.0 SecurityFatalError on first build, Vue conformance fails on Node 25 | testing, ci, examples | active | 2026-11-15 |
 | LRN-069 | Vitest test.env cannot pin a dependency's development or production build | testing, vitest, vue, conformance | active | 2026-11-18 |
 | LRN-070 | Config paths resolve against cwd, not the config file; schema:generate output needs oxfmt | config, paths, docs, schema | active | 2026-11-21 |
+| LRN-071 | Dangling internal id references are checked on the raw tree, before svgo | core, svg, validation, ids | active | 2026-11-24 |
