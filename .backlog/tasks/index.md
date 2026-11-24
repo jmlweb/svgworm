@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 8 |
+| Pending | 9 |
 | Active | 3 |
 | Blocked | 2 |
 | Complete | 101 |
@@ -27,6 +27,7 @@
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
 | TSK-111 | Fix: An internal reference to an id the icon does not define builds silently and the icon renders blank | P3 |  | 2026-11-21 |
 | TSK-112 | Fix: check reports a directory or symlink with a sprite-like name as stale, but build never removes it, so check can never pass | P4 |  | 2026-11-21 |
+| TSK-113 | Fix: img-delivery icons render at 1x1 px by default because width="1em" is not a valid img dimension | P2 |  | 2026-11-24 |
 
 ## Recently Completed
 
