@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 5 |
+| Pending | 7 |
 | Active | 4 |
 | Blocked | 2 |
 | Complete | 102 |
@@ -27,6 +27,8 @@
 | TSK-107 | Fix: An absolute --config path is reported as not found although the file exists | P4 |  | 2026-11-06 |
 | TSK-108 | Fix: A config file saved with a UTF-8 BOM is rejected as not valid JSON | P4 |  | 2026-11-06 |
 | TSK-112 | Fix: check reports a directory or symlink with a sprite-like name as stale, but build never removes it, so check can never pass | P4 |  | 2026-11-21 |
+| TSK-114 | Fix: Folder overlap checks miss a child folder whose name starts with two dots, so moduleDir is written into the served outDir | P4 |  | 2026-11-27 |
+| TSK-115 | Fix: A color rule that matches no icon is silently ignored, for example a file-style brand/*.svg glob | P4 |  | 2026-11-27 |
 
 ## Recently Completed
 
