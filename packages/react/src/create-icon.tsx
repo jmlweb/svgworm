@@ -160,14 +160,13 @@ export const createIcon = <const M extends IconManifest>(
     const { style, ...htmlRest } = rest as HTMLAttributes<HTMLElement>;
 
     if (icon.delivery === 'img') {
+      // HTML dimension attributes read width="1em" as 1 px (RPT-019), so the size is CSS.
       return (
         <img
           {...htmlRest}
           alt={accessibleName ?? ''}
-          height={height}
           src={resolveFileUrl(manifest, name, icon, 'stack')}
-          style={style}
-          width={width}
+          style={{ width, height, ...style }}
         />
       );
     }

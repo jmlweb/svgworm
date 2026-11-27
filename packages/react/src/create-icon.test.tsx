@@ -84,8 +84,31 @@ describe('delivery img', () => {
   it('renders an img from the stack url with an empty alt by default', () => {
     // React 19 prepends a preload hint for <img>, so match the element, not the whole string.
     expect(render(<Icon name="brand/sunset" />)).toContain(
-      '<img alt="" height="1em" src="/icons/icons.stack.91bff0b3.svg#i-brand--sunset" width="1em"/>',
+      '<img alt="" src="/icons/icons.stack.91bff0b3.svg#i-brand--sunset" style="width:1em;height:1em"/>',
     );
+  });
+
+  // RPT-019: HTML dimension attributes parse width="1em" as 1 px, so the size is CSS.
+  it('sizes the img with CSS, never with the width and height attributes', () => {
+    const html = render(<Icon name="brand/sunset" />);
+    expect(html).not.toMatch(/<img[^>]* (?:width|height)=/);
+  });
+
+  it('sizes the img from numeric and string width and height props', () => {
+    expect(
+      render(<Icon height={16} name="brand/sunset" width={32} />),
+    ).toContain('style="width:32px;height:16px"');
+    expect(
+      render(<Icon height="1.5rem" name="brand/sunset" width="1.5rem" />),
+    ).toContain('style="width:1.5rem;height:1.5rem"');
+  });
+
+  it('keeps the caller style after the size, so it can override it', () => {
+    expect(
+      render(
+        <Icon name="brand/sunset" style={{ width: '2rem', opacity: 0.5 }} />,
+      ),
+    ).toContain('style="width:2rem;height:1em;opacity:0.5"');
   });
 
   it('uses the title or label as alt', () => {

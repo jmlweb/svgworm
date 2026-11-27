@@ -56,13 +56,14 @@ The icon's paths live in the sprite's `<symbol>`. Mono icons are drawn with `cur
 ```html
 <img
   alt=""
-  height="1em"
   src="/icons/icons.stack.91bff0b3.svg#i-brand--sunset"
-  width="1em"
+  style="width:1em;height:1em"
 />
 ```
 
 The stack file shows the one nested `<svg>` whose id is the URL fragment. An `<img>` cannot inherit `currentColor`, which is fine, because these icons keep their own colors. `title` or `label` becomes the `alt`.
+
+Its size is an **inline style**, because the HTML `width` and `height` attributes of an `<img>` read `1em` as 1 pixel. Change it with the `width` and `height` props (or `style`), not with a class.
 
 ### `mask` (mono icons that need gradients, masks, clip paths or filters)
 
@@ -79,7 +80,7 @@ The icon is a CSS mask over a `currentColor` background, so it follows the paren
 
 - The default `1em` makes every delivery follow the parent's `font-size`: a 20 px line gets 20 px icons.
 - `width` and `height` props set the size on every delivery: `width={24} height={24}` or `width="1.5rem" height="1.5rem"`.
-- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` and `img` icons, but not `mask` icons, whose size is inline. **Use the props when the icon may be a mask icon.**
+- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` icons only. `img` and `mask` icons have an inline size, which beats a class rule. **Use the props when the icon may be an `img` or a `mask` icon.**
 
 ## Coloring
 

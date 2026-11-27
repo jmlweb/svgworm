@@ -120,6 +120,13 @@ const userStyle =
           })
           .join(';')
       : '';
+// HTML dimension attributes read width="1em" as 1 px, so img gets a CSS size.
+const imgStyle =
+  icon.delivery === 'img'
+    ? [`width:${length(width)}`, `height:${length(height)}`, userStyle].join(
+        ';',
+      )
+    : undefined;
 const maskStyle =
   icon.delivery === 'mask'
     ? [
@@ -137,10 +144,8 @@ const maskStyle =
     <img
       {...rest}
       alt={accessibleName ?? ''}
-      height={height}
       src={fileUrl('stack')}
-      style={style}
-      width={width}
+      style={imgStyle}
     />
   ) : icon.delivery === 'mask' ? (
     <span {...rest} {...a11y} aria-label={accessibleName} style={maskStyle} />
