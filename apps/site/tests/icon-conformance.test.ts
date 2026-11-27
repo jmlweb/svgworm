@@ -95,6 +95,18 @@ const cases: readonly Case[] = [
     react: { label: 'Photo', className: 'icon' },
     astro: { label: 'Photo', class: 'icon' },
   },
+  {
+    label: 'img, numeric size and style',
+    name: 'photo',
+    react: { width: 32, height: 24, style: { opacity: 0.5 } },
+    astro: { width: 32, height: 24, style: 'opacity:0.5' },
+  },
+  {
+    label: 'img, string size',
+    name: 'photo',
+    react: { width: '1.5rem', height: '2rem' },
+    astro: { width: '1.5rem', height: '2rem' },
+  },
   { label: 'mask, defaults', name: 'glyph', react: {}, astro: {} },
   {
     label: 'mask, title, size and style',

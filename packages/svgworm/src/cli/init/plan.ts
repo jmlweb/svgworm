@@ -1037,6 +1037,13 @@ const userStyle =
           })
           .join(';')
       : '';
+// HTML dimension attributes read width="1em" as 1 px, so img gets a CSS size.
+const imgStyle =
+  icon.delivery === 'img'
+    ? [\`width:\${length(width)}\`, \`height:\${length(height)}\`, userStyle].join(
+        ';',
+      )
+    : undefined;
 const maskStyle =
   icon.delivery === 'mask'
     ? [
@@ -1054,10 +1061,8 @@ const maskStyle =
     <img
       {...rest}
       alt={accessibleName ?? ''}
-      height={height}
       src={fileUrl('stack')}
-      style={style}
-      width={width}
+      style={imgStyle}
     />
   ) : icon.delivery === 'mask' ? (
     <span {...rest} {...a11y} aria-label={accessibleName} style={maskStyle} />
@@ -1164,6 +1169,12 @@ const a11y = computed(() =>
 // A bare number is pixels, as in React's style prop.
 const length = (value: string | number): string =>
   typeof value === 'number' ? \`\${value}px\` : value;
+// HTML dimension attributes read width="1em" as 1 px, so img gets a CSS size.
+const imgStyle = computed(() =>
+  [\`width:\${length(props.width)}\`, \`height:\${length(props.height)}\`].join(
+    ';',
+  ),
+);
 const maskStyle = computed(() =>
   [
     'display:inline-block',
@@ -1178,11 +1189,10 @@ const maskStyle = computed(() =>
 <template>
   <img
     v-if="icon.delivery === 'img'"
-    v-bind="attrs"
+    v-bind="{ ...attrs, style: undefined }"
     :alt="accessibleName ?? ''"
-    :height="height"
     :src="fileUrl('stack')"
-    :width="width"
+    :style="[imgStyle, attrs.style]"
   />
   <span
     v-else-if="icon.delivery === 'mask'"
@@ -1297,6 +1307,13 @@ ${indent(ICON_MANIFEST_TYPES, '  ')}
       ? ({ 'aria-hidden': true } as const)
       : ({ role: 'img' } as const),
   );
+  // HTML dimension attributes read width="1em" as 1 px, so img gets a CSS
+  // size.
+  const imgStyle = $derived(
+    [\`width:\${length(width)}\`, \`height:\${length(height)}\`, style ?? ''].join(
+      ';',
+    ),
+  );
   const maskStyle = $derived(
     icon.delivery === 'mask'
       ? [
@@ -1315,10 +1332,8 @@ ${indent(ICON_MANIFEST_TYPES, '  ')}
   <img
     {...rest as Record<string, unknown>}
     alt={accessibleName ?? ''}
-    {height}
     src={fileUrl('stack')}
-    {style}
-    {width}
+    style={imgStyle}
   />
 {:else if icon.delivery === 'mask'}
   <span

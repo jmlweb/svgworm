@@ -170,6 +170,18 @@ const cases: readonly Case[] = [
     react: { id: 'logo', 'data-testid': 'p', 'aria-describedby': 'd' },
     other: { id: 'logo', 'data-testid': 'p', 'aria-describedby': 'd' },
   },
+  {
+    label: 'img, numeric size and style',
+    name: 'photo',
+    react: { width: 32, height: 24, style: { opacity: 0.5 } },
+    other: { width: 32, height: 24, style: 'opacity:0.5' },
+  },
+  {
+    label: 'img, string size',
+    name: 'photo',
+    react: { width: '1.5rem', height: '2rem' },
+    other: { width: '1.5rem', height: '2rem' },
+  },
   { label: 'mask, defaults', name: 'glyph', react: {}, other: {} },
   {
     label: 'mask, label, id and data attributes',

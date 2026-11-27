@@ -20,9 +20,9 @@ order: 6
 | `name`                               | `IconName`                                                         | required | An icon from the manifest. The type is the union of every name, so a typo is a compile error (`tsc`, `astro check`, `vue-tsc` or `svelte-check`) |
 | `title`                              | `string`                                                           |          | Accessible name. Renders a `<title>` inside the `<svg>` (or `alt` / `aria-label` for the other deliveries) and sets `role="img"` |
 | `label`                              | `string`                                                           |          | Accessible name as `aria-label`, with `role="img"`. Use `title` or `label`, not both; `title` wins                               |
-| `width`, `height`                    | `number \| string`                                                 | `1em`    | Size. A bare number is pixels. `1em` follows the font size of the parent, so an icon next to text scales with it                 |
+| `width`, `height`                    | `number \| string`                                                 | `1em`    | Size. A bare number is pixels. A string needs a CSS unit (`"24px"`, not `"24"`). `1em` follows the font size of the parent, so an icon next to text scales with it |
 | `className` (React), `class` (others) | `string`                                                          |          | Passed to the rendered element, whatever it is                                                                                   |
-| `style`                              | React: object. Astro: string or object. Vue: any style binding. Svelte: string |          | Passed to the rendered element. On a mask icon it is merged after the mask declarations, so it can override them                 |
+| `style`                              | React: object. Astro: string or object. Vue: any style binding. Svelte: string |          | Passed to the rendered element. On an `img` or a `mask` icon it is merged after the size (and mask) declarations, so it can override them |
 | any other SVG prop                   | `SVGProps<SVGSVGElement>` minus `children`, `ref`, `title`, `name` |          | `id`, `data-*`, `aria-*`, `onClick` and so on. On the `img` and `mask` deliveries only HTML attributes carry over                |
 
 Without `title` or `label` the icon is **decorative**: `aria-hidden="true"` on the `<svg>` and the `<span>`, `alt=""` on the `<img>`. The `<svg>` also gets `focusable="false"` so old Edge does not tab into it.
@@ -56,13 +56,14 @@ The icon's paths live in the sprite's `<symbol>`. Mono icons are drawn with `cur
 ```html
 <img
   alt=""
-  height="1em"
   src="/icons/icons.stack.91bff0b3.svg#i-brand--sunset"
-  width="1em"
+  style="width:1em;height:1em"
 />
 ```
 
 The stack file shows the one nested `<svg>` whose id is the URL fragment. An `<img>` cannot inherit `currentColor`, which is fine, because these icons keep their own colors. `title` or `label` becomes the `alt`.
+
+Its size is an **inline style**, because the HTML `width` and `height` attributes of an `<img>` read `1em` as 1 pixel. Change it with the `width` and `height` props (or `style`), not with a class.
 
 ### `mask` (mono icons that need gradients, masks, clip paths or filters)
 
@@ -79,7 +80,7 @@ The icon is a CSS mask over a `currentColor` background, so it follows the paren
 
 - The default `1em` makes every delivery follow the parent's `font-size`: a 20 px line gets 20 px icons.
 - `width` and `height` props set the size on every delivery: `width={24} height={24}` or `width="1.5rem" height="1.5rem"`.
-- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` and `img` icons, but not `mask` icons, whose size is inline. **Use the props when the icon may be a mask icon.**
+- A CSS rule on a class (`.icon { width: 2rem; height: 2rem }`) resizes `svg` icons only. `img` and `mask` icons have an inline size, which beats a class rule. **Use the props when the icon may be an `img` or a `mask` icon.**
 
 ## Coloring
 
